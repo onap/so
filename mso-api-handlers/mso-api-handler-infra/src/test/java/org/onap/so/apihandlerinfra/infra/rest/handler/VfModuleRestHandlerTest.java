@@ -20,8 +20,7 @@
 
 package org.onap.so.apihandlerinfra.infra.rest.handler;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -82,7 +81,7 @@ public class VfModuleRestHandlerTest {
                         ModelType.vfModule.toString(), Action.createInstance.toString());
         Recipe actual = restHandler.findVfModuleRecipe("testModelId", ModelType.vfModule.toString(),
                 Action.createInstance.toString());
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         Mockito.verify(catalogDbClient, Mockito.times(1))
                 .getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction("testModelId",
                         ModelType.vfModule.toString(), Action.createInstance.toString());
@@ -99,7 +98,7 @@ public class VfModuleRestHandlerTest {
                         ModelType.vfModule.toString(), Action.createInstance.toString());
         Recipe actual = restHandler.findVfModuleRecipe("testModelId", ModelType.vfModule.toString(),
                 Action.createInstance.toString());
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         Mockito.verify(catalogDbClient, Mockito.times(1))
                 .getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction("testModelId",
                         ModelType.vfModule.toString(), Action.createInstance.toString());
@@ -145,7 +144,7 @@ public class VfModuleRestHandlerTest {
                 .setRequestUri("http://localhost:8080/serviceInstances").setApiVersion("v8").build();
         RequestClientParameter actual = restHandler.buildRequestParams(createTestRequest(),
                 "http://localhost:8080/serviceInstances", "requestId", "serviceInstanceId", "vnfId", "vfModuleId");
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -164,7 +163,7 @@ public class VfModuleRestHandlerTest {
         expected.setRequestScope(ModelType.vfModule.toString());
         InfraActiveRequests actual = restHandler.createInfraActiveRequestForDelete("requestId", "vfModuleId",
                 "serviceInstanceId", "vnfId", "userId", "VID", "http://localhost:9090");
-        assertThat(actual, sameBeanAs(expected).ignoring("startTime"));
+        assertThat(actual).usingRecursiveComparison().ignoringFields("startTime").isEqualTo(expected);
         Mockito.verify(infraActiveRequestsClient, Mockito.times(1)).save(actual);
     }
 

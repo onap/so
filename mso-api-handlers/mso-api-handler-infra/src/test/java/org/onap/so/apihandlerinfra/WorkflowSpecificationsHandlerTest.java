@@ -22,6 +22,7 @@
 
 package org.onap.so.apihandlerinfra;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,7 +49,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
@@ -162,7 +162,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
         WorkflowSpecifications realResponse = mapper.readValue(response.getBody(), WorkflowSpecifications.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        assertThat(expectedResponse, sameBeanAs(realResponse));
+        assertThat(expectedResponse).usingRecursiveComparison().isEqualTo(realResponse);
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
@@ -236,7 +236,6 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
         userParameter6.setName("lcpCloudRegionId");
         userParameter6.setPayloadLocation("cloudConfiguration");
 
-
         List<ActivitySpecUserParameters> activitySpecUserParameters = new ArrayList<ActivitySpecUserParameters>();
 
         ActivitySpecUserParameters activitySpecUserParameter1 = new ActivitySpecUserParameters();
@@ -250,7 +249,6 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
         ActivitySpecUserParameters activitySpecUserParameter3 = new ActivitySpecUserParameters();
         activitySpecUserParameter3.setUserParameters(userParameter3);
         activitySpecUserParameters.add(activitySpecUserParameter3);
-
 
         ActivitySpecUserParameters activitySpecUserParameter4 = new ActivitySpecUserParameters();
         activitySpecUserParameter4.setUserParameters(userParameter4);
@@ -316,7 +314,8 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
         String expectedResultJson = mapper.writeValueAsString(expectedResult);
 
         JSONAssert.assertEquals(expectedResultJson, workflowSpecificationsJson, false);
-        assertThat(expectedResult, sameBeanAs(workflowSpecifications).ignoring(WorkflowInputParameter.class));
+        assertThat(expectedResult).usingRecursiveComparison().ignoringFieldsOfTypes(WorkflowInputParameter.class)
+                .isEqualTo(workflowSpecifications);
     }
 
     @Test
@@ -357,7 +356,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
         WorkflowSpecifications realResponse = mapper.readValue(response.getBody(), WorkflowSpecifications.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        assertThat(expectedResponse, sameBeanAs(realResponse));
+        assertThat(expectedResponse).usingRecursiveComparison().isEqualTo(realResponse);
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
@@ -403,7 +402,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
         WorkflowSpecifications realResponse = mapper.readValue(response.getBody(), WorkflowSpecifications.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        assertThat(expectedResponse, sameBeanAs(realResponse));
+        assertThat(expectedResponse).usingRecursiveComparison().isEqualTo(realResponse);
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
@@ -450,7 +449,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
         WorkflowSpecifications realResponse = mapper.readValue(response.getBody(), WorkflowSpecifications.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        assertThat(expectedResponse, sameBeanAs(realResponse));
+        assertThat(expectedResponse).usingRecursiveComparison().isEqualTo(realResponse);
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));

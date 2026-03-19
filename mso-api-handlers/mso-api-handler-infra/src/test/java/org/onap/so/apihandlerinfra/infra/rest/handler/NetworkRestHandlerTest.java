@@ -20,8 +20,7 @@
 
 package org.onap.so.apihandlerinfra.infra.rest.handler;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import java.util.HashMap;
@@ -98,7 +97,7 @@ public class NetworkRestHandlerTest {
                 .setRequestUri("http://localhost:8080/serviceInstances").setApiVersion("v8").build();
         RequestClientParameter actual = restHandler.buildRequestParams(createTestRequest(),
                 "http://localhost:8080/serviceInstances", "requestId", "serviceInstanceId", "networkId");
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -116,7 +115,7 @@ public class NetworkRestHandlerTest {
         expected.setRequestUrl("http://localhost:9090");
         InfraActiveRequests actual = restHandler.createInfraActiveRequestForDelete("requestId", "serviceInstanceId",
                 "networkId", "userId", "VID", "http://localhost:9090");
-        assertThat(actual, sameBeanAs(expected).ignoring("startTime"));
+        assertThat(actual).usingRecursiveComparison().ignoringFields("startTime").isEqualTo(expected);
         Mockito.verify(infraActiveRequestsClient, Mockito.times(1)).save(actual);
     }
 

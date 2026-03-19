@@ -21,8 +21,7 @@
 
 package org.onap.so.adapters.requestsdb.client;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -127,13 +126,13 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
     }
 
     private void verifyOperationStatus(OperationStatus request, OperationStatus response) {
-        assertThat(request, sameBeanAs(response).ignoring("operateAt").ignoring("finishedAt"));
+        assertThat(request).usingRecursiveComparison().ignoringFields("operateAt", "finishedAt").isEqualTo(response);
     }
 
-
     private void verifyInfraActiveRequests(InfraActiveRequests infraActiveRequestsResponse) {
-        assertThat(infraActiveRequestsResponse, sameBeanAs(infraActiveRequests).ignoring("modifyTime").ignoring("log")
-                .ignoring("cloudApiRequests.created").ignoring("cloudApiRequests.id"));
+        assertThat(infraActiveRequestsResponse).usingRecursiveComparison()
+                .ignoringFields("modifyTime", "log", "cloudApiRequests.created", "cloudApiRequests.id")
+                .isEqualTo(infraActiveRequests);
     }
 
     @Test
@@ -249,7 +248,6 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
                 operationStatus.getOperationId()));
     }
 
-
     @Test
     public void getRequestProcessingDataBySoRequestIdTest() {
         List<RequestProcessingData> requestProcessingDataList =
@@ -258,7 +256,6 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         assertFalse(requestProcessingDataList.isEmpty());
         assertEquals(2, requestProcessingDataList.size());
     }
-
 
     @Test
     public void findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestIdTest() {
@@ -330,7 +327,7 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         requestsDbClient.save(request);
 
         List<InfraActiveRequests> infraActiveRequests = requestsDbClient.getInProgressVolumeGroupsAndVfModules();
-        assertThat(request, sameBeanAs(infraActiveRequests.get(0)).ignoring("modifyTime"));
+        assertThat(request).usingRecursiveComparison().isEqualTo(infraActiveRequests.get(0).ignoring("modifyTime"));
     }
 
     @Test
