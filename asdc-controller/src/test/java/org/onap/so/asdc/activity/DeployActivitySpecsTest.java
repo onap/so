@@ -19,9 +19,8 @@
  */
 package org.onap.so.asdc.activity;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import java.nio.file.Files;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -86,6 +85,6 @@ public class DeployActivitySpecsTest {
         ActivitySpec activitySpec = deployActivitySpecs.mapActivitySpecFromCatalogToSdc(catalogActivitySpec);
         ActivitySpec expected = mapper.readValue(
                 new String(Files.readAllBytes(Paths.get("src/test/resources/ActivitySpec.json"))), ActivitySpec.class);
-        assertThat(expected, sameBeanAs(activitySpec));
+        assertThat(expected).usingRecursiveComparison().isEqualTo(activitySpec);
     }
 }

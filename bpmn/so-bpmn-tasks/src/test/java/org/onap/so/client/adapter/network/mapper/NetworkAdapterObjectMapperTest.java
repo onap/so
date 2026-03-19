@@ -19,8 +19,7 @@
  */
 package org.onap.so.client.adapter.network.mapper;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import java.nio.file.Files;
@@ -140,8 +139,9 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
                 SPY_networkAdapterObjectMapper.createNetworkRequestMapper(requestContext, cloudRegion,
                         orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo, customer);
 
-        assertThat(createNetworkRequest, sameBeanAs(expectedCreateNetworkRequest).ignoring("contrailRequest")
-                .ignoring("contrailNetwork").ignoring("providerVlanNetwork").ignoring("subnets").ignoring("messageId"));
+        assertThat(createNetworkRequest).usingRecursiveComparison()
+                .ignoringFields("contrailRequest", "contrailNetwork", "providerVlanNetwork", "subnets", "messageId")
+                .isEqualTo(expectedCreateNetworkRequest);
     }
 
     @Test
@@ -167,8 +167,9 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
                 .createNetworkRollbackRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance,
                         l3Network, userInput, cloudRegionPo, createNetworkResponse);
 
-        assertThat(rollbackNetworkRequest, sameBeanAs(expectedRollbackNetworkRequest).ignoring("contrailNetwork")
-                .ignoring("providerVlanNetwork").ignoring("subnets").ignoring("networkParams").ignoring("messageId"));
+        assertThat(rollbackNetworkRequest).usingRecursiveComparison()
+                .ignoringFields("contrailNetwork", "providerVlanNetwork", "subnets", "networkParams", "messageId")
+                .isEqualTo(expectedRollbackNetworkRequest);
     }
 
     @Test
@@ -269,8 +270,8 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
                 SPY_networkAdapterObjectMapper.createNetworkUpdateRequestMapper(requestContext, cloudRegion,
                         orchestrationContext, serviceInstance, l3Network, userInput, customer);
 
-        assertThat(actualUpdateNetworkRequest,
-                sameBeanAs(expectedUpdateNetworkRequest).ignoring("msoRequest.requestId"));
+        assertThat(actualUpdateNetworkRequest).usingRecursiveComparison().ignoringAllOverriddenEquals()
+                .ignoringFields("msoRequest.requestId").isEqualTo(expectedUpdateNetworkRequest);
     }
 
     @Test
@@ -312,7 +313,7 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
         DeleteNetworkRequest deleteNetworkRequest = SPY_networkAdapterObjectMapper
                 .deleteNetworkRequestMapper(requestContext, cloudRegion, serviceInstance, l3Network);
 
-        assertThat(expectedDeleteNetworkRequest, sameBeanAs(deleteNetworkRequest));
+        assertThat(expectedDeleteNetworkRequest).usingRecursiveComparison().isEqualTo(deleteNetworkRequest);
     }
 
     @Test
@@ -353,7 +354,7 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
         DeleteNetworkRequest deleteNetworkRequest = SPY_networkAdapterObjectMapper
                 .deleteNetworkRequestMapper(requestContext, cloudRegion, serviceInstance, l3Network);
 
-        assertThat(expectedDeleteNetworkRequest, sameBeanAs(deleteNetworkRequest));
+        assertThat(expectedDeleteNetworkRequest).usingRecursiveComparison().isEqualTo(deleteNetworkRequest);
     }
 
     @Test
@@ -380,8 +381,9 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
                 SPY_networkAdapterObjectMapper.createNetworkRequestMapper(requestContext, cloudRegion,
                         orchestrationContext, serviceInstance, myNetwork, userInput, cloudRegionPo, customer);
         // ignoring dynamic fields and networkParams that throws parsing exception on json file load
-        assertThat(createNetworkRequest, sameBeanAs(expectedCreateNetworkRequest).ignoring("messageId")
-                .ignoring("msoRequest.requestId").ignoring("networkParams"));
+        assertThat(createNetworkRequest).usingRecursiveComparison().ignoringAllOverriddenEquals()
+                .ignoringFields("messageId", "msoRequest.requestId", "networkParams")
+                .isEqualTo(expectedCreateNetworkRequest);
     }
 
     @Test
@@ -396,7 +398,6 @@ public class NetworkAdapterObjectMapperTest extends TestDataSetup {
                 SPY_networkAdapterObjectMapper.buildOpenstackSubnetList(l3Network);
         assertEquals("192.168.0.0/16", subnets.get(0).getHostRoutes().get(0).getPrefix());
         assertEquals("192.168.1.5/16", subnets.get(0).getHostRoutes().get(1).getPrefix());
-
 
         assertEquals("NULL", subnets.get(1).getGatewayIp());
     }

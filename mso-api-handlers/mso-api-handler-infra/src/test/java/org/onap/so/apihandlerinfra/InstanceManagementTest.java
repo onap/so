@@ -20,14 +20,12 @@
 
 package org.onap.so.apihandlerinfra;
 
-
+import static org.assertj.core.api.Assertions.assertThat;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_PARTNER_NAME;
 import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_REQUEST_ID;
@@ -175,7 +173,8 @@ public class InstanceManagementTest extends BaseTest {
 
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -204,7 +203,8 @@ public class InstanceManagementTest extends BaseTest {
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
 
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test
@@ -233,7 +233,8 @@ public class InstanceManagementTest extends BaseTest {
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
 
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));
+        assertThat(realResponse).usingRecursiveComparison().ignoringFields("requestReferences.requestId")
+                .isEqualTo(expectedResponse);
     }
 
     @Test

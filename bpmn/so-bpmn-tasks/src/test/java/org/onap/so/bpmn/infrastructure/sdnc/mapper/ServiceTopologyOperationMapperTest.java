@@ -20,8 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.sdnc.mapper;
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import java.nio.file.Files;
@@ -96,7 +95,8 @@ public class ServiceTopologyOperationMapperTest {
         GenericResourceApiOnapmodelinformationOnapModelInformation reqMapper1 =
                 omapper.readValue(jsonToCompare, GenericResourceApiOnapmodelinformationOnapModelInformation.class);
 
-        assertThat(reqMapper1, sameBeanAs(serviceOpInformation.getServiceInformation().getOnapModelInformation()));
+        assertThat(reqMapper1).usingRecursiveComparison()
+                .isEqualTo(serviceOpInformation.getServiceInformation().getOnapModelInformation());
         assertEquals("MsoRequestId", serviceOpInformation.getRequestInformation().getRequestId());
         assertNotNull(serviceOpInformationNullReqContext.getRequestInformation().getRequestId());
     }

@@ -20,8 +20,7 @@
 
 package org.onap.so.client.adapter.vnf.mapper;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
@@ -98,7 +97,6 @@ public class VnfAdapterObjectMapperTest {
 
         serviceInstance.getVnfs().get(0).getVolumeGroups().add(volumeGroup);
 
-
         CloudRegion cloudRegion = new CloudRegion();
         cloudRegion.setLcpCloudRegionId("lcpCloudRegionId");
         cloudRegion.setTenantId("tenantId");
@@ -150,24 +148,28 @@ public class VnfAdapterObjectMapperTest {
         CreateVolumeGroupRequest actualCreateVolumeGroupRequest =
                 vnfAdapterObjectMapper.createVolumeGroupRequestMapper(requestContext, cloudRegion, orchestrationContext,
                         serviceInstance, genericVnf, volumeGroup, sdncVfModuleQueryResponse);
-        assertThat(actualCreateVolumeGroupRequest, sameBeanAs(expectedCreateVolumeGroupRequest));
+        assertThat(actualCreateVolumeGroupRequest).usingRecursiveComparison()
+                .isEqualTo(expectedCreateVolumeGroupRequest);
 
         doReturn("false").when(vnfAdapterObjectMapper).getProperty("mso.bridgeEnabled");
         actualCreateVolumeGroupRequest = vnfAdapterObjectMapper.createVolumeGroupRequestMapper(requestContext,
                 cloudRegion, orchestrationContext, serviceInstance, genericVnf, volumeGroup, sdncVfModuleQueryResponse);
-        assertThat(actualCreateVolumeGroupRequest, sameBeanAs(expectedCreateVolumeGroupRequest));
+        assertThat(actualCreateVolumeGroupRequest).usingRecursiveComparison()
+                .isEqualTo(expectedCreateVolumeGroupRequest);
 
         doReturn(null).when(vnfAdapterObjectMapper).getProperty("mso.bridgeEnabled");
         expectedCreateVolumeGroupRequest.setEnableBridge(true);
         actualCreateVolumeGroupRequest = vnfAdapterObjectMapper.createVolumeGroupRequestMapper(requestContext,
                 cloudRegion, orchestrationContext, serviceInstance, genericVnf, volumeGroup, sdncVfModuleQueryResponse);
-        assertThat(actualCreateVolumeGroupRequest, sameBeanAs(expectedCreateVolumeGroupRequest));
+        assertThat(actualCreateVolumeGroupRequest).usingRecursiveComparison()
+                .isEqualTo(expectedCreateVolumeGroupRequest);
 
         doReturn("true").when(vnfAdapterObjectMapper).getProperty("mso.bridgeEnabled");
         expectedCreateVolumeGroupRequest.setEnableBridge(true);
         actualCreateVolumeGroupRequest = vnfAdapterObjectMapper.createVolumeGroupRequestMapper(requestContext,
                 cloudRegion, orchestrationContext, serviceInstance, genericVnf, volumeGroup, sdncVfModuleQueryResponse);
-        assertThat(actualCreateVolumeGroupRequest, sameBeanAs(expectedCreateVolumeGroupRequest));
+        assertThat(actualCreateVolumeGroupRequest).usingRecursiveComparison()
+                .isEqualTo(expectedCreateVolumeGroupRequest);
     }
 
     @Test
@@ -187,7 +189,6 @@ public class VnfAdapterObjectMapperTest {
         genericVnf.setVnfName("vnfName");
         genericVnf.setVnfType("vnfType");
         serviceInstance.getVnfs().add(genericVnf);
-
 
         ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
         modelInfoVfModule.setModelName("modelName");
@@ -246,7 +247,8 @@ public class VnfAdapterObjectMapperTest {
         CreateVolumeGroupRequest actualCreateVolumeGroupRequest = vnfAdapterObjectMapper.createVolumeGroupRequestMapper(
                 requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, volumeGroup, null);
 
-        assertThat(actualCreateVolumeGroupRequest, sameBeanAs(expectedCreateVolumeGroupRequest));
+        assertThat(actualCreateVolumeGroupRequest).usingRecursiveComparison()
+                .isEqualTo(expectedCreateVolumeGroupRequest);
     }
 
     @Test
@@ -302,7 +304,8 @@ public class VnfAdapterObjectMapperTest {
         DeleteVolumeGroupRequest actualDeleteVolumeGroupRequest = vnfAdapterObjectMapper
                 .deleteVolumeGroupRequestMapper(requestContext, cloudRegion, serviceInstance, volumeGroup);
 
-        assertThat(actualDeleteVolumeGroupRequest, sameBeanAs(expectedDeleteVolumeGroupRequest));
+        assertThat(actualDeleteVolumeGroupRequest).usingRecursiveComparison()
+                .isEqualTo(expectedDeleteVolumeGroupRequest);
     }
 
     @Test
@@ -409,6 +412,6 @@ public class VnfAdapterObjectMapperTest {
 
         MsoRequest actualMsoRequest = vnfAdapterObjectMapper.createMsoRequest(requestContext, serviceInstance);
 
-        assertThat(expectedMsoRequest, sameBeanAs(actualMsoRequest));
+        assertThat(expectedMsoRequest).usingRecursiveComparison().isEqualTo(actualMsoRequest);
     }
 }
