@@ -20,13 +20,12 @@
 
 package org.onap.so.apihandlerinfra;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import java.io.IOException;
@@ -55,7 +54,6 @@ public class E2EServiceInstancesTest extends BaseTest {
     private final ObjectMapper mapper = new ObjectMapper();
 
     private final String e2eServInstancesUri = "/onap/so/infra/e2eServiceInstances/";
-
 
     @Before
     public void init() throws JsonProcessingException {
@@ -129,7 +127,7 @@ public class E2EServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse));
+        assertThat(realResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
     }
 
     @Test
@@ -249,7 +247,7 @@ public class E2EServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.BAD_GATEWAY.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse));
+        assertThat(realResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
     }
 
     @Test

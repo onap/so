@@ -20,8 +20,7 @@
 
 package org.onap.so.apihandlerinfra;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import java.net.URI;
@@ -48,7 +47,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
-
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {GenericStringConverter.class, HealthCheckConverter.class},
@@ -122,7 +120,8 @@ public class GlobalHealthcheckHandlerTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         HealthCheckResponse root;
         root = (HealthCheckResponse) response.getEntity();
-        assertThat(root, sameBeanAs(expected).ignoring("subsystems.uri").ignoring("subsystems.subsystem"));
+        assertThat(root).usingRecursiveComparison().ignoringFields("subsystems.uri", "subsystems.subsystem")
+                .isEqualTo(expected);
 
     }
 
@@ -139,7 +138,8 @@ public class GlobalHealthcheckHandlerTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         HealthCheckResponse root;
         root = (HealthCheckResponse) response.getEntity();
-        assertThat(root, sameBeanAs(expected).ignoring("subsystems.uri").ignoring("subsystems.subsystem"));
+        assertThat(root).usingRecursiveComparison().ignoringFields("subsystems.uri", "subsystems.subsystem")
+                .isEqualTo(expected);
     }
 
     @Test
@@ -148,7 +148,6 @@ public class GlobalHealthcheckHandlerTest {
         assertEquals(MediaType.APPLICATION_JSON, he.getHeaders().getAccept().get(0));
         assertEquals(MediaType.APPLICATION_JSON, he.getHeaders().getContentType());
     }
-
 
     @Test
     public void processResponseFromSubsystemTest() {

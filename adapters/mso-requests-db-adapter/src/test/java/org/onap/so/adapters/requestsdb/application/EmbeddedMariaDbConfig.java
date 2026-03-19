@@ -41,10 +41,10 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
-@Profile({"test"})
+@Profile({ "test" })
 @EnableTransactionManagement
-@EnableJpaRepositories(entityManagerFactoryRef = "requestEntityManagerFactory",
-        transactionManagerRef = "requestTransactionManager", basePackages = {"org.onap.so.db.request.data.repository"})
+@EnableJpaRepositories(entityManagerFactoryRef = "requestEntityManagerFactory", transactionManagerRef = "requestTransactionManager", basePackages = {
+        "org.onap.so.db.request.data.repository" })
 public class EmbeddedMariaDbConfig {
 
     @Bean

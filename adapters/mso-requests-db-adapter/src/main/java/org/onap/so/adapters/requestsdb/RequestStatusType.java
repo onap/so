@@ -25,14 +25,10 @@
 // Generated on: 2015.07.24 at 11:49:17 AM EDT
 //
 
-
 package org.onap.so.adapters.requestsdb;
-
-
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
-
 
 /**
  * <p>

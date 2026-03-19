@@ -20,11 +20,10 @@
 
 package org.onap.so.apihandlerinfra;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -92,7 +91,6 @@ public class OrchestrationRequestsUnitTest {
     private static final String ROLLBACK_EXT_SYSTEM_ERROR_SOURCE = "SDNC";
     private Timestamp startTime = new Timestamp(System.currentTimeMillis());
 
-
     @Before
     public void setup() {
         iar = new InfraActiveRequests();
@@ -132,7 +130,7 @@ public class OrchestrationRequestsUnitTest {
 
         Request result = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.DETAIL.toString(), "v7");
-        assertThat(result, sameBeanAs(expected));
+        assertThat(result).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -159,7 +157,7 @@ public class OrchestrationRequestsUnitTest {
 
         Request result = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.DETAIL.toString(), "v7");
-        assertThat(result, sameBeanAs(expected));
+        assertThat(result).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -190,7 +188,7 @@ public class OrchestrationRequestsUnitTest {
 
         Request result = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.DETAIL.toString(), "v8");
-        assertThat(result, sameBeanAs(expected));
+        assertThat(result).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -213,7 +211,6 @@ public class OrchestrationRequestsUnitTest {
         expected.setRequestScope(SERVICE);
         expected.setStartTime(new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss").format(startTime) + " GMT");
 
-
         expected.setWorkflowName(REQUEST_ACTION);
         expected.setRequestType(REQUEST_ACTION);
 
@@ -224,7 +221,7 @@ public class OrchestrationRequestsUnitTest {
 
         Request result = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.DETAIL.toString(), "v8");
-        assertThat(result, sameBeanAs(expected));
+        assertThat(result).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -250,7 +247,7 @@ public class OrchestrationRequestsUnitTest {
 
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.DETAIL.toString(), "v7");
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -277,7 +274,7 @@ public class OrchestrationRequestsUnitTest {
 
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.STATUSDETAIL.toString(), "v7");
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -305,7 +302,7 @@ public class OrchestrationRequestsUnitTest {
 
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.STATUSDETAIL.toString(), "v8");
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -328,7 +325,7 @@ public class OrchestrationRequestsUnitTest {
 
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.SIMPLENOTASKINFO.toString(), "v7");
-        assertThat(expected, sameBeanAs(actual));
+        assertThat(expected).usingRecursiveComparison().isEqualTo(actual);
     }
 
     @Test
@@ -351,7 +348,7 @@ public class OrchestrationRequestsUnitTest {
         includeCloudRequest = false;
 
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest, null, "v7");
-        assertThat(expected, sameBeanAs(actual));
+        assertThat(expected).usingRecursiveComparison().isEqualTo(actual);
     }
 
     @Test
@@ -378,7 +375,7 @@ public class OrchestrationRequestsUnitTest {
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.DETAIL.toString(), "v7");
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -404,7 +401,7 @@ public class OrchestrationRequestsUnitTest {
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.DETAIL.toString(), "v7");
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -446,7 +443,7 @@ public class OrchestrationRequestsUnitTest {
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.DETAIL.toString(), "v7");
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
@@ -473,14 +470,14 @@ public class OrchestrationRequestsUnitTest {
         Request actual = orchestrationRequests.mapInfraActiveRequestToRequest(iar, includeCloudRequest,
                 OrchestrationRequestFormat.DETAIL.toString(), "v7");
 
-        assertThat(actual, sameBeanAs(expected));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
     public void requestStatusExtSystemErrorSourceTest() {
         RequestStatus requestStatus = new RequestStatus();
         requestStatus.setExtSystemErrorSource(EXT_SYSTEM_ERROR_SOURCE);
-        assertThat(requestStatus.getExtSystemErrorSource(), is(equalTo(EXT_SYSTEM_ERROR_SOURCE)));
+        assertThat(requestStatus.getExtSystemErrorSource()).isEqualTo(EXT_SYSTEM_ERROR_SOURCE);
     }
 
     @Test
@@ -499,7 +496,6 @@ public class OrchestrationRequestsUnitTest {
 
         assertEquals(Status.ABORTED.toString(), result);
     }
-
 
     @Test
     public void mapRequestStatusToRequestForFormatEmptyStringTest() {

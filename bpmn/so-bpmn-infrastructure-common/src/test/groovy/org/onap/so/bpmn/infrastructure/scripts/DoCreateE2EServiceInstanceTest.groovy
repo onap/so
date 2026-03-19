@@ -20,8 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs
+import static org.assertj.core.api.Assertions.assertThat
 import static org.mockito.Mockito.times
 import static org.mockito.Mockito.when
 
@@ -54,7 +53,7 @@ class DoCreateE2EServiceInstanceTest extends MsoGroovyTest{
         DoCreateE2EServiceInstance serviceInstance = new DoCreateE2EServiceInstance()
         serviceInstance.preProcessRequest(mockExecution)
         Mockito.verify(mockExecution, times(7)).setVariable(captor.capture(), captor.capture())
-        assertThat(captor.getValue(), sameBeanAs(expectedServiceInstanceData))
+        assertThat(captor.getValue()).usingRecursiveComparison().isEqualTo(expectedServiceInstanceData)
     }
 
     private ServiceInstance getExpectedServiceInstance() {

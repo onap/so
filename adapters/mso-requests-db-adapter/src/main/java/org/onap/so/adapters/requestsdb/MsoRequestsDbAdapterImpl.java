@@ -48,9 +48,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Deprecated
-@WebService(serviceName = "RequestsDbAdapter",
-        endpointInterface = "org.onap.so.adapters.requestsdb.MsoRequestsDbAdapter",
-        targetNamespace = "http://org.onap.so/requestsdb")
+@WebService(serviceName = "RequestsDbAdapter", endpointInterface = "org.onap.so.adapters.requestsdb.MsoRequestsDbAdapter", targetNamespace = "http://org.onap.so/requestsdb")
 @Component
 @Primary
 public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
@@ -203,7 +201,8 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
     /**
      * Get SiteStatus by SiteName.
      *
-     * @param siteName The unique name of the site
+     * @param siteName
+     *            The unique name of the site
      * @return Status of that site
      */
     @Override
@@ -315,10 +314,14 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
     /**
      * init the operation status of all the resources <br>
      *
-     * @param serviceId the service Id
-     * @param operationId the operation Id
-     * @param operationType the operationType
-     * @param resourceTemplateUUIDs the resources, the UUID is split by ":"
+     * @param serviceId
+     *            the service Id
+     * @param operationId
+     *            the operation Id
+     * @param operationType
+     *            the operationType
+     * @param resourceTemplateUUIDs
+     *            the resources, the UUID is split by ":"
      * @throws MsoRequestsDbException
      * @since ONAP Amsterdam Release
      */
@@ -402,7 +405,8 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
     /**
      * update service operation status when a operation resource status updated <br>
      *
-     * @param operStatus the resource operation status
+     * @param operStatus
+     *            the resource operation status
      * @since ONAP Amsterdam Release
      */
     private void updateOperationStatusBasedOnResourceStatus(ResourceOperationStatus operStatus) {
@@ -412,8 +416,8 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
         logger.debug("Request database - update Operation Status Based On Resource Operation Status with service Id: "
                 + "{}, operationId: {}", serviceId, operationId);
 
-        List<ResourceOperationStatus> lstResourceStatus =
-                resourceOperationStatusRepository.findByServiceIdAndOperationId(serviceId, operationId);
+        List<ResourceOperationStatus> lstResourceStatus = resourceOperationStatusRepository
+                .findByServiceIdAndOperationId(serviceId, operationId);
         if (lstResourceStatus == null) {
             logger.error("Unable to retrieve resourceOperStatus Object by ServiceId: {} operationId: {}", serviceId,
                     operationId);
@@ -431,8 +435,8 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
             }
         }
 
-        OperationStatus serviceOperStatus =
-                operationStatusRepository.findOneByServiceIdAndOperationId(serviceId, operationId);
+        OperationStatus serviceOperStatus = operationStatusRepository.findOneByServiceIdAndOperationId(serviceId,
+                operationId);
         if (serviceOperStatus == null) {
             String error = "Entity not found. Unable to retrieve OperationStatus Object ServiceId: " + serviceId
                     + " operationId: " + operationId;
