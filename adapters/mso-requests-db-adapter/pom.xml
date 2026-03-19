@@ -92,16 +92,6 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>apache.snapshots</id>
-      <name>Maven Plugin Snapshots</name>
-      <url>https://repository.apache.org/snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
     <plugins>

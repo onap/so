@@ -125,10 +125,6 @@
       <url>https://repo1.maven.org/maven2</url>
     </pluginRepository>
     <pluginRepository>
-      <id>restlet</id>
-      <url>https://maven.restlet.com</url>
-    </pluginRepository>
-    <pluginRepository>
       <id>onap-public</id>
       <url>${nexusproxy}/${publicNexusPath}</url>
       <snapshots>
