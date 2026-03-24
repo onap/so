@@ -77,7 +77,7 @@
     <so-etsi-sol003-adapter-version>1.9.0-SNAPSHOT</so-etsi-sol003-adapter-version>
     <onap-logging-version>1.6.9</onap-logging-version>
     <jackson.version>2.14.3</jackson.version>
-    <grpc.version>1.25.0</grpc.version>
+    <grpc.version>1.29.0</grpc.version>
     <logback.version>1.2.11</logback.version>
     <kafka-clients.version>3.3.2</kafka-clients.version>
     <aai-schema.version>1.12.10</aai-schema.version>
@@ -1119,6 +1119,7 @@
         <artifactId>grpc-bom</artifactId>
         <version>${grpc.version}</version>
         <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
