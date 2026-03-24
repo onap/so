@@ -125,6 +125,20 @@
       <url>https://repo1.maven.org/maven2</url>
     </pluginRepository>
     <pluginRepository>
+      <id>camunda-bpm</id>
+      <url>https://artifacts.camunda.com/artifactory/camunda-bpm/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>camunda-public</id>
+      <url>https://artifacts.camunda.com/artifactory/public/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
       <id>onap-public</id>
       <url>${nexusproxy}/${publicNexusPath}</url>
       <snapshots>
@@ -170,11 +184,11 @@
     </repository>
     <repository>
       <id>camunda-bpm</id>
-      <url>https://app.camunda.com/nexus/content/repositories/camunda-bpm/</url>
+      <url>https://artifacts.camunda.com/artifactory/camunda-bpm/</url>
     </repository>
     <repository>
       <id>camunda-public</id>
-      <url>https://app.camunda.com/nexus/content/groups/public</url>
+      <url>https://artifacts.camunda.com/artifactory/public/</url>
     </repository>
     <repository>
       <id>onap-releases</id>
@@ -320,15 +334,6 @@
         <version>1.3.1</version>
       </plugin>
 
-      <plugin>
-        <groupId>com.fortify.ps.maven.plugin</groupId>
-        <artifactId>sca-maven-plugin</artifactId>
-        <version>4.20</version>
-        <configuration>
-          <buildId>mso-${project.version}</buildId>
-          <source>${java.version}</source>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
