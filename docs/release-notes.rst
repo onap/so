@@ -9,10 +9,59 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture.
 
+Version: 1.17.0
+---------------
+
+:Release Date: TBD (not yet released)
+
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - so-bpmn-infra **1.17.0**
+
+ - so-catalog-db-adapter **1.17.0**
+
+ - so-openstack-adapter **1.17.0**
+
+ - so-request-db-adapter **1.17.0**
+
+ - so-sdc-controller **1.17.0**
+
+ - so-sdnc-adapter **1.17.0**
+
+ - so-api-handler **1.17.0**
+
+
+Release Purpose
+~~~~~~~~~~~~~~~
+SO R-Series Release.
+
+**Changes**
+
+*  Migrate from Flyway to Liquibase for database schema management
+*  Upgrade Spring Boot to 2.6
+*  Upgrade Spring Boot to 2.7
+*  Upgrade bowman-client
+*  Remove shazamcrest dependency
+*  Update blueprints-proto in CDS client
+*  Fix stale Maven repositories
+*  Update mariadb4j to 2.6.0
+*  Improve pipeline execution time
+*  Enable bpmn-tasks unit tests
+*  Add tests for catalog-db client
+*  Resolve IDE problems and warnings
+*  Replace blockdiag/seqdiag documentation diagrams with Mermaid
+*  Fix tenantId NullPointerException in DeleteVfModuleBB macro flow
+*  CI: Deploy Python-based GitHub2Gerrit workflow
+*  Chore: Update ReadTheDocs and tox config for Ubuntu 24.04
+
+**********************************************************************************************************
+
+
 Version: 1.16.0
 ---------------
 
-:Release Date: TBD
+:Release Date: 2026-02-25
 
 SO Release Image Versions
 ~~~~~~~~~~~~~~~~~~~~~~~~~
