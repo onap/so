@@ -63,6 +63,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
@@ -2990,6 +2991,46 @@ public class BBInputSetupTest {
 
         verify(SPY_bbInputSetupUtils, times(1))
                 .getCatalogServiceByModelUUID(requestDetails.getModelInfo().getModelVersionId());
+    }
+
+    @Test
+    public void testGetGBBMacroExistingServiceNullCloudConfigPopulatesTenant() throws Exception {
+        // When cloudConfiguration is null (macro delete), the tenant should be populated
+        // from the AAI cloud info so that DeleteVFModule.createInventoryVariable() can
+        // pass a non-null tenantId to HeatBridgeImpl, allowing InventoryDelete to run.
+        String requestAction = "deleteInstance";
+        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
+                GeneralBuildingBlock.class);
+        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
+                ExecuteBuildingBlock.class);
+        RequestDetails requestDetails = mapper
+                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_requestDetails.json"), RequestDetails.class);
+        executeBB.setRequestDetails(requestDetails);
+        Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
+        lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "si123");
+
+        org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
+        aaiServiceInstance.setServiceInstanceId("si123");
+        aaiServiceInstance.setModelVersionId("modelVersionId");
+        Service service = new Service();
+        ServiceInstance serviceInstance = gBB.getServiceInstance();
+
+        CloudRegion cloudRegionFromAAI = new CloudRegion();
+        cloudRegionFromAAI.setCloudOwner("cloud-owner");
+        cloudRegionFromAAI.setLcpCloudRegionId("RegionOne");
+        cloudRegionFromAAI.setTenantId("tenant-id-from-aai");
+
+        doReturn(service).when(SPY_bbInputSetupUtils).getCatalogServiceByModelUUID("modelVersionId");
+        doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById("si123");
+        doReturn(serviceInstance).when(SPY_bbInputSetup).getExistingServiceInstance(aaiServiceInstance);
+        doReturn(gBB).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(any(BBInputSetupParameter.class));
+        doReturn(Optional.of(cloudRegionFromAAI)).when(SPY_cloudInfoFromAAI).getCloudInfoFromAAI(serviceInstance);
+
+        SPY_bbInputSetup.getGBBMacroExistingService(executeBB, lookupKeyMap, "DeleteVfModuleBB", requestAction, null);
+
+        Tenant resultTenant = gBB.getTenant();
+        assertNotNull("Tenant must not be null when cloudConfiguration is absent", resultTenant);
+        assertEquals("tenant-id-from-aai", resultTenant.getTenantId());
     }
 
     @Test
