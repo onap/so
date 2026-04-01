@@ -72,10 +72,9 @@
               <goal>test</goal>
             </goals>
             <configuration>
-              <!-- <includes>
-                <include>**/AllTestsTestSuite.java</include>
-              </includes> -->
-              <parallel>suites</parallel>
+              <includes>
+                <include>**/*Test.java</include>
+              </includes>
             </configuration>
           </execution>
         </executions>

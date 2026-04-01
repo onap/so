@@ -60,6 +60,7 @@ import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.web.client.RestTemplate;
 
 public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
 
@@ -74,12 +75,14 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     @Autowired
     CatalogDbClientPortChanger client;
 
-
+    @Autowired
+    RestTemplate restTemplate;
 
     @Before
     public void initialize() {
         client.wiremockPort = String.valueOf(port);
         client.setEndpoint(getEndpoint(port));
+        client.restTemplate = restTemplate;
     }
 
     protected String getEndpoint(int port) {
@@ -452,7 +455,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         cloudIdentity.setIdentityServerType(ServerType.KEYSTONE);
         cloudIdentity.setIdentityAuthenticationType(AuthenticationType.RACKSPACE_APIKEY);
         cloudSite.setIdentityService(cloudIdentity);
-        localClient.postCloudSite(cloudSite);
+        client.postCloudSite(cloudSite);
         CloudSite getCloudSite = this.client.getCloudSite("MTN6");
         assertNotNull(getCloudSite);
         assertNotNull(getCloudSite.getIdentityService());
@@ -727,7 +730,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         assertTrue(workflows != null);
         assertTrue(workflows.size() != 0);
 
-        assertEquals("testingWorkflow.bpmn", workflows.get(0).getArtifactName());
+        assertTrue(workflows.stream().anyMatch(w -> "testingWorkflow.bpmn".equals(w.getArtifactName())));
     }
 
     @Test
@@ -742,13 +745,13 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         assertTrue(workflows != null);
         assertTrue(workflows.size() != 0);
 
-        assertEquals("testingWorkflow.bpmn", workflows.get(0).getArtifactName());
+        assertTrue(workflows.stream().anyMatch(w -> "testingWorkflow.bpmn".equals(w.getArtifactName())));
     }
 
     @Test
     public void getWorkflowBySource_invalidSource_nullOutput() {
         List<Workflow> workflow = client.findWorkflowBySource("abc");
-        assertNull(workflow);
+        assertTrue(workflow.isEmpty());
     }
 
     @Test

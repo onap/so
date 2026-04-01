@@ -89,25 +89,11 @@
               </goals>
               <configuration>
                 <includes>
-                  <include>**/AllTestsTestSuite.java</include>
-                </includes>
-              </configuration>
-            </execution>
-            <execution>
-              <id>tasks-test</id>
-              <goals>
-                <goal>test</goal>
-              </goals>
-              <configuration>
-                <includes>
-                  <include>**/AllTasksTestsTestSuite.java</include>
+                  <include>**/*Test.java</include>
                 </includes>
               </configuration>
             </execution>
           </executions>
-          <configuration>
-            <parallel>suites</parallel>
-          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
