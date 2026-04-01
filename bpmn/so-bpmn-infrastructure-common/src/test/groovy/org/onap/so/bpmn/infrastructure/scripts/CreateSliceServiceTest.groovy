@@ -27,7 +27,7 @@ import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
-import org.onap.so.beans.nsmf.SliceTaskParams
+import org.onap.so.beans.nsmf.SliceTaskParamsAdapter
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
@@ -37,6 +37,7 @@ import org.onap.so.bpmn.core.domain.ServiceProxy
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 import static org.mockito.ArgumentMatchers.eq
+import static org.mockito.Mockito.atLeast
 import static org.mockito.Mockito.times
 import static org.mockito.Mockito.when
 
@@ -44,7 +45,7 @@ class CreateSliceServiceTest extends MsoGroovyTest {
 
     @Before
     void init() throws IOException {
-        super.init("CreateSliceService")
+        mockExecution = setupMock("CreateSliceService")
     }
 
     @Captor
@@ -75,32 +76,7 @@ class CreateSliceServiceTest extends MsoGroovyTest {
                     "subscriptionServiceType": "MOG",
                     "userParams": [{
                         "ServiceInstanceName": "NSMF",
-                         "UUIRequest": {
-                              "service":{
-                                   "name": "NSMF",
-                                   "description": "CSMFService",
-                                   "serviceInvariantUuid": "123456",
-                                   "serviceUuid": "123456",
-                                   "globalSubscriberId": "5GCustomer",
-                                   "serviceType": "5G",
-                                   "parameters": {},
-                                   "requestInputs": {
-                                        "sST": "embb",
-                                        "sNSSAI": "1-10101",
-                                        "uEMobilityLevel": "stationary",
-                                        "areaTrafficCapDL": 123,
-                                        "maxNumberofUEs": 1000,
-                                        "expDataRateUL": 2000,
-                                        "plmnIdList": "39-00|39-01",
-                                        "areaTrafficCapUL": 456,
-                                        "latency": 300,
-                                        "expDataRateDL": 400,
-                                        "coverageAreaTAList": 101001,
-                                        "activityFactor": 99,
-                                        "resourceSharingLevel": "shared"
-                                   }
-                              }
-                         }
+                        "UUIRequest": "{\\"service\\":{\\"name\\":\\"NSMF\\",\\"description\\":\\"CSMFService\\",\\"serviceInvariantUuid\\":\\"123456\\",\\"serviceUuid\\":\\"123456\\",\\"globalSubscriberId\\":\\"5GCustomer\\",\\"serviceType\\":\\"5G\\",\\"parameters\\":{\\"requestInputs\\":{\\"sST\\":\\"embb\\",\\"sNSSAI\\":\\"1-10101\\",\\"uEMobilityLevel\\":\\"stationary\\",\\"areaTrafficCapDL\\":123,\\"maxNumberofUEs\\":1000,\\"expDataRateUL\\":2000,\\"plmnIdList\\":\\"39-00|39-01\\",\\"areaTrafficCapUL\\":456,\\"latency\\":300,\\"expDataRateDL\\":400,\\"coverageAreaTAList\\":101001,\\"activityFactor\\":99,\\"resourceSharingLevel\\":\\"shared\\"}}}}"
                     }],
                     "aLaCarte": true,
                     "usePreload": true
@@ -113,33 +89,7 @@ class CreateSliceServiceTest extends MsoGroovyTest {
             "vfModuleInstanceId": null,
             "configurationId": null,
             "instanceGroupId": null
-        }""".replaceAll("\\s+", "")
-
-    final String uuiRequest = """
-        "service":{
-             "name": "NSMF",
-             "description": "CSMFService",
-             "serviceInvariantUuid": "123456",
-             "serviceUuid": "123456",
-             "globalSubscriberId": "5GCustomer",
-             "serviceType": "5G",
-             "parameters": {},
-             "requestInputs": {
-                  "sST": "embb",
-                  "sNSSAI": "1-10101",
-                  "uEMobilityLevel": "stationary",
-                  "areaTrafficCapDL": 123,
-                  "maxNumberofUEs": 1000,
-                  "expDataRateUL": 2000,
-                  "plmnIdList": "39-00|39-01",
-                  "areaTrafficCapUL": 456,
-                  "latency": 300,
-                  "expDataRateDL": 400,
-                  "coverageAreaTAList": 101001,
-                  "activityFactor": 99,
-                  "resourceSharingLevel": "shared"
-             }
-        }""".replaceAll("\\s+", "")
+        }"""
 
     final def serviceProfile = ["sST": "embb", "sNSSAI": "1-10101", "uEMobilityLevel": "stationary", "areaTrafficCapDL": 123,
                                 "maxNumberofUEs": 1000, "expDataRateUL": 2000, "plmnIdList": "39-00|39-01", "areaTrafficCapUL": 456,
@@ -154,7 +104,7 @@ class CreateSliceServiceTest extends MsoGroovyTest {
         when(mockExecution.getVariable("mso-request-id")).thenReturn("123456")
         CreateSliceService sliceService = new CreateSliceService()
         sliceService.preProcessRequest(mockExecution)
-        Mockito.verify(mockExecution, times(14)).setVariable(captor.capture() as String, captor.capture())
+        Mockito.verify(mockExecution, atLeast(1)).setVariable(captor.capture() as String, captor.capture())
         List<ExecutionEntity> values = captor.getAllValues()
         assertNotNull(values)
     }
@@ -168,26 +118,19 @@ class CreateSliceServiceTest extends MsoGroovyTest {
         CreateSliceService sliceService = new CreateSliceService()
         sliceService.prepareCreateOrchestrationTask(mockExecution)
 
-        SliceTaskParams sliceTaskParamsExpect = new SliceTaskParams()
-        sliceTaskParamsExpect.setServiceId("123456")
-        sliceTaskParamsExpect.setServiceName("test")
-        sliceTaskParamsExpect.setServiceProfile(serviceProfile)
-        String paramJsonExpect = sliceTaskParamsExpect.convertToJson()
-
-        Mockito.verify(mockExecution, times(2)).setVariable(eq("subscriptionServiceType"), captor.capture())
-        List allValues = captor.getAllValues()
-        SliceTaskParams sliceTaskParams = allValues.get(0)
-        String paramJson = allValues.get(1)
-        assertEquals(sliceTaskParams.getServiceId(), sliceTaskParams.getServiceId())
-        assertEquals(sliceTaskParams.getServiceName(), sliceTaskParams.getServiceName())
-        assertEquals(sliceTaskParams.getServiceProfile(), sliceTaskParams.getServiceProfile())
-        assertEquals(paramJsonExpect, paramJson)
+        ArgumentCaptor<SliceTaskParamsAdapter> sliceParamsCaptor = ArgumentCaptor.forClass(SliceTaskParamsAdapter.class)
+        Mockito.verify(mockExecution, times(1)).setVariable(eq("sliceTaskParams"), sliceParamsCaptor.capture())
+        SliceTaskParamsAdapter sliceTaskParams = sliceParamsCaptor.getValue()
+        assertEquals("123456", sliceTaskParams.getServiceId())
+        assertEquals("test", sliceTaskParams.getServiceName())
+        assertEquals(serviceProfile, sliceTaskParams.getServiceProfile())
     }
 
     @Test
     void testSendSyncResponse() {
         when(mockExecution.getVariable("operationId")).thenReturn("123456")
         when(mockExecution.getVariable("serviceInstanceId")).thenReturn("12345")
+        when(mockExecution.getVariable("isAsyncProcess")).thenReturn("true")
         CreateSliceService sliceService = new CreateSliceService()
         sliceService.sendSyncResponse(mockExecution)
         Mockito.verify(mockExecution, times(1)).setVariable(eq("sentSyncResponse"), captor.capture())

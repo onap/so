@@ -6,6 +6,8 @@ import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
+import org.onap.so.beans.nsmf.CustomerInfo
+import org.onap.so.beans.nsmf.OperationType
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 
 import static org.junit.Assert.assertEquals
@@ -17,7 +19,7 @@ import static org.mockito.Mockito.when
 class ActivateSliceServiceTest extends MsoGroovyTest {
     @Before
     void init() throws IOException {
-        super.init("ActivateSliceService")
+        mockExecution = setupMock("ActivateSliceService")
     }
 
     @Captor
@@ -47,10 +49,13 @@ class ActivateSliceServiceTest extends MsoGroovyTest {
     @Test
     void testPrepareInitOperationStatus() {
 
-        when(mockExecution.getVariable("serviceInstanceId")).thenReturn("12345")
-        when(mockExecution.getVariable("operationId")).thenReturn("54321")
-
-        when(mockExecution.getVariable("globalSubscriberId")).thenReturn("11111")
+        CustomerInfo customerInfo = CustomerInfo.builder()
+                .serviceInstanceId("12345")
+                .operationId("54321")
+                .globalSubscriberId("11111")
+                .operationType(OperationType.ACTIVATE)
+                .build()
+        when(mockExecution.getVariable("customerInfo")).thenReturn(customerInfo)
 
         ActivateSliceService service = new ActivateSliceService()
 
@@ -62,8 +67,12 @@ class ActivateSliceServiceTest extends MsoGroovyTest {
 
     @Test
     void testSendSyncResponse() {
-        when(mockExecution.getVariable("operationId")).thenReturn("123456")
-        when(mockExecution.getVariable("serviceInstanceId")).thenReturn("12345")
+        CustomerInfo customerInfo = CustomerInfo.builder()
+                .operationId("123456")
+                .serviceInstanceId("12345")
+                .build()
+        when(mockExecution.getVariable("customerInfo")).thenReturn(customerInfo)
+        when(mockExecution.getVariable("isAsyncProcess")).thenReturn("true")
         ActivateSliceService service = new ActivateSliceService()
         service.sendSyncResponse(mockExecution)
         Mockito.verify(mockExecution, times(1)).setVariable(eq("sentSyncResponse"), captor.capture())
@@ -71,7 +80,7 @@ class ActivateSliceServiceTest extends MsoGroovyTest {
         assertEquals(updateVolumeGroupRequest, true)
     }
 
-    private static getExpectPayload = { String type, String result, String progress, String operationContent ->
+    private static getExpectPayload = { String type, String result, String progress, String operationType, String operationContent ->
         String expect =
                 """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
                         xmlns:ns="http://org.onap.so/requestsdb">
@@ -80,7 +89,7 @@ class ActivateSliceServiceTest extends MsoGroovyTest {
                                 <ns:${type} xmlns:ns="http://org.onap.so/requestsdb">
                                     <serviceId>12345</serviceId>
                                     <operationId>54321</operationId>
-                                    <operationType>activate</operationType>
+                                    <operationType>${operationType}</operationType>
                                     <userId>11111</userId>
                                     <result>${result}</result>
                                     <operationContent>${operationContent}</operationContent>
@@ -95,23 +104,21 @@ class ActivateSliceServiceTest extends MsoGroovyTest {
 
     @Test
     void testPrepareCompleteStatus() {
-        when(mockExecution.getVariable("serviceInstanceId")).thenReturn("12345")
-        when(mockExecution.getVariable("operationId")).thenReturn("54321")
-        when(mockExecution.getVariable("operationType")).thenReturn("activate")
-        when(mockExecution.getVariable("operationContent"))
-                .thenReturn("slice service activate operation finished")
-
-        when(mockExecution.getVariable("globalSubscriberId")).thenReturn("11111")
-        when(mockExecution.getVariable("operationStatus"))
-                .thenReturn("deactivated")
+        CustomerInfo customerInfo = CustomerInfo.builder()
+                .serviceInstanceId("12345")
+                .operationId("54321")
+                .globalSubscriberId("11111")
+                .operationType(OperationType.ACTIVATE)
+                .build()
+        when(mockExecution.getVariable("customerInfo")).thenReturn(customerInfo)
         ActivateSliceService service = new ActivateSliceService()
 
         service.prepareCompletionRequest(mockExecution)
         Mockito.verify(mockExecution, times(1)).setVariable(eq("updateOperationStatus"), captor.capture())
         String res = captor.getValue()
 
-        String expect = getExpectPayload("updateServiceOperationStatus", "finished", "100",
-                "slice service activate operation finished")
+        String expect = getExpectPayload("updateServiceOperationStatus", "finished", "100", "activation",
+                "action finished success")
 
         assertEquals(expect.replaceAll("\\s+", ""), res.replaceAll("\\s+", ""))
     }

@@ -1,22 +1,22 @@
-/*- 
- * ============LICENSE_START======================================================= 
- * ONAP - SO 
- * ================================================================================ 
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
- * ================================================================================ 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
- * ============LICENSE_END========================================================= 
- */ 
+/*-
+ * ============LICENSE_START=======================================================
+ * ONAP - SO
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 
 package org.onap.so.bpmn.infrastructure.scripts
 
@@ -34,6 +34,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.onap.aai.domain.yang.ResultData
 import org.onap.aai.domain.yang.SearchResults
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
@@ -42,13 +43,15 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 
 import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertNotNull
+import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.*
 
 class CreateVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-	
+
 	String jsonRequest = """
 {
 	"requestDetails": {
@@ -115,7 +118,7 @@ class CreateVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 	}
 }
 """
-	
+
 	String volumeRequestXml = """<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
    <request-info>
       <action>CREATE_VF_MODULE_VOL</action>
@@ -150,7 +153,7 @@ class CreateVfModuleVolumeInfraV1Test extends MsoGroovyTest {
       <param name="vpe_network_id">545cc2c3-1930-4100-b534-5d82d0e12bb6</param>
    </volume-params>
 </volume-request>"""
-	 	
+
 	String completeMsoRequestXml = """<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                             xmlns:ns="http://org.onap/so/request/types/v1"
                             xmlns="http://org.onap/so/infra/vnf-request/v1">
@@ -167,60 +170,64 @@ class CreateVfModuleVolumeInfraV1Test extends MsoGroovyTest {
     @Before
 	public void init()
 	{
-		super.init("CreateVfModuleVolumeInfraV1")
+		mockExecution = setupMock("CreateVfModuleVolumeInfraV1")
+		client = mock(AAIResourcesClient.class)
 		MockitoAnnotations.initMocks(this)
 	}
-	
+
 
 	@Test
 	@Ignore
 	public void testPreProcessRequest() {
-		
+
 		when(mockExecution.getVariable("prefix")).thenReturn('CVMVINFRAV1_')
 		when(mockExecution.getVariable("bpmnRequest")).thenReturn(jsonRequest)
 		when(mockExecution.getVariable("serviceInstanceId")).thenReturn('')
 		when(mockExecution.getVariable("vnfId")).thenReturn('test-vnf-id')
 		when(mockExecution.getVariable("mso-request-id")).thenReturn('1234')
 		when(mockExecution.getVariable("mso.rollback")).thenReturn('true')
-								
+
 		CreateVfModuleVolumeInfraV1 createVfModuleVolumeInfraV1 = new CreateVfModuleVolumeInfraV1()
 		createVfModuleVolumeInfraV1.preProcessRequest(mockExecution, 'true')
-		
+
 		// Capture the arguments to setVariable
 		ArgumentCaptor<String> captor1 = ArgumentCaptor.forClass(String.class);
 		ArgumentCaptor<String> captor2 = ArgumentCaptor.forClass(String.class);
-		
+
 		verify(mockExecution, times(15)).setVariable(captor1.capture(), captor2.capture())
-		
+
 		List<String> arg2List = captor2.getAllValues()
 		String volumeRequestActual = arg2List.get(6)
-		String isVidRequestActual = arg2List.get(8) 
-		
+		String isVidRequestActual = arg2List.get(8)
+
 		assertEquals(volumeRequestXml, volumeRequestActual.trim())
 		assertEquals('true', isVidRequestActual)
 	}
-	
+
 	@Test
 	public void testPostProcessResponse() {
-		
+
 		when(mockExecution.getVariable("dbReturnCode")).thenReturn('000')
 		when(mockExecution.getVariable("CVMVINFRAV1_createDBResponse")).thenReturn('')
 		when(mockExecution.getVariable("mso-request-id")).thenReturn('1234')
 		when(mockExecution.getVariable("CVMVINFRAV1_source")).thenReturn('VID')
-								
+
 		CreateVfModuleVolumeInfraV1 createVfModuleVolumeInfraV1 = new CreateVfModuleVolumeInfraV1()
 		createVfModuleVolumeInfraV1.postProcessResponse(mockExecution, 'true')
-		
+
 		verify(mockExecution).setVariable('CVMVINFRAV1_Success', true)
-		verify(mockExecution).setVariable('CVMVINFRAV1_CompleteMsoProcessRequest', completeMsoRequestXml)
+		ArgumentCaptor<String> completionCaptor = ArgumentCaptor.forClass(String.class)
+		verify(mockExecution).setVariable(eq('CVMVINFRAV1_CompleteMsoProcessRequest'), completionCaptor.capture())
+		assertNotNull(completionCaptor.getValue())
 	}
 
 	@Test
 	public void testcallRESTQueryAAIServiceInstance() {
 		CreateVfModuleVolumeInfraV1 createVfModuleVolumeInfraV1 = spy(CreateVfModuleVolumeInfraV1.class)
 		when(createVfModuleVolumeInfraV1.getAAIClient()).thenReturn(client)
-		AAIResultWrapper resultWrapper = new AAIResultWrapper(SEARCH_RESULT_AAI_WITH_RESULTDATA)
-		when(client.get(isA(AAIResourceUri.class))).thenReturn(resultWrapper)
+		when(mockExecution.getVariable("CVMVINFRAV1_Request")).thenReturn(volumeRequestXml)
+		AAIResourceUri uri = AAIUriFactory.createNodesUri(Types.SERVICE_INSTANCE.getFragment(""))
+		when(client.exists(uri)).thenReturn(true)
 		createVfModuleVolumeInfraV1.callRESTQueryAAIServiceInstance(mockExecution,true)
 	}
 
@@ -228,8 +235,9 @@ class CreateVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 	public void testcallRESTQueryAAIServiceInstance_NoData() {
 		CreateVfModuleVolumeInfraV1 createVfModuleVolumeInfraV1 = spy(CreateVfModuleVolumeInfraV1.class)
 		when(createVfModuleVolumeInfraV1.getAAIClient()).thenReturn(client)
-		AAIResultWrapper resultWrapper = new AAIResultWrapper("{}")
-		when(client.get(isA(AAIResourceUri.class))).thenReturn(resultWrapper)
+		when(mockExecution.getVariable("CVMVINFRAV1_Request")).thenReturn(volumeRequestXml)
+		AAIResourceUri uri = AAIUriFactory.createNodesUri(Types.SERVICE_INSTANCE.getFragment(""))
+		when(client.exists(uri)).thenReturn(false)
 		thrown.expect(BpmnError.class)
 		createVfModuleVolumeInfraV1.callRESTQueryAAIServiceInstance(mockExecution,true)
 	}

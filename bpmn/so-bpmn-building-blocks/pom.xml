@@ -31,13 +31,12 @@
             </goals>
             <configuration>
               <includes>
-                <include>**/AllTestSuites.java</include>
+                <include>**/*Test.java</include>
               </includes>
             </configuration>
           </execution>
         </executions>
         <configuration>
-          <parallel>suites</parallel>
         </configuration>
       </plugin>
     </plugins>

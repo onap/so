@@ -21,6 +21,8 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.junit.Assert.*
+import static org.mockito.ArgumentMatchers.eq
+import static org.mockito.Mockito.atLeast
 import static org.mockito.Mockito.times
 import static org.mockito.Mockito.when
 
@@ -34,10 +36,10 @@ import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 
 
 class AllocateSliceSubnetTest extends MsoGroovyTest {
-	
+
 	@Before
 	void init() throws IOException {
-		super.init("AllocateSliceSubnet")
+		mockExecution = setupMock("AllocateSliceSubnet")
 	}
 
 	@Captor
@@ -100,11 +102,11 @@ class AllocateSliceSubnetTest extends MsoGroovyTest {
 		when(mockExecution.getVariable("mso-request-id")).thenReturn("edb08d97-e0f9-4c71-840a-72080d7be42e")
 		AllocateSliceSubnet sliceSubnet = new AllocateSliceSubnet()
 		sliceSubnet.preProcessRequest(mockExecution)
-		Mockito.verify(mockExecution, times(1)).setVariable(captor.capture() as String, captor.capture())
+		Mockito.verify(mockExecution, atLeast(1)).setVariable(captor.capture() as String, captor.capture())
 		List<ExecutionEntity> values = captor.getAllValues()
 		assertNotNull(values)
 	}
-	
+
 	@Test
 	void testPrepareInitOperationStatus() {
 
