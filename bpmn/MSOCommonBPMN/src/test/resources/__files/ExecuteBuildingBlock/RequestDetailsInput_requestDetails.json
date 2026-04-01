@@ -1,0 +1,10 @@
+{
+	"modelInfo": {
+		"modelType": "service",
+		"modelVersionId": "modelVersionId",
+		"modelUuid": "modelVersionId"
+	},
+	"requestParameters": {
+		"subscriptionServiceType": "subscriptionServiceType"
+	}
+}

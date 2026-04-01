@@ -1574,6 +1574,11 @@ public class BBInputSetup implements JavaDelegate {
             Optional<CloudRegion> cloudRegionOp = cloudInfoFromAAI.getCloudInfoFromAAI(serviceInstance);
             if (cloudRegionOp.isPresent()) {
                 cloudRegion = cloudRegionOp.get();
+                if (cloudRegion.getTenantId() != null) {
+                    Tenant tenant = new Tenant();
+                    tenant.setTenantId(cloudRegion.getTenantId());
+                    gBB.setTenant(tenant);
+                }
             }
         }
         if (cloudConfiguration != null) {
