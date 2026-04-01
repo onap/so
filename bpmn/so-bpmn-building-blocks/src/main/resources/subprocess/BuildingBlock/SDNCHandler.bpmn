@@ -16,7 +16,7 @@
       <bpmn:incoming>SequenceFlow_0rh24pq</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0yve6l6</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ecej8g</bpmn:outgoing>
-      <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_0a9exm4" name="Catch Event" camunda:asyncBefore="true" camunda:asyncAfter="true">
+      <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_0a9exm4" name="Catch Event" camunda:asyncAfter="true">
         <bpmn:incoming>SequenceFlow_1qxm8ot</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_05eggbt</bpmn:outgoing>
         <bpmn:messageEventDefinition messageRef="Message_06oc4iz" />
