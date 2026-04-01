@@ -215,8 +215,9 @@
             </goals>
             <configuration>
               <includes>
-                <include>**/NonSpringSuite.java</include>
+                <include>**/*Test.java</include>
               </includes>
+              <excludedGroups>org.onap.so.test.categories.SpringAware</excludedGroups>
             </configuration>
           </execution>
           <execution>
@@ -226,8 +227,9 @@
             </goals>
             <configuration>
               <includes>
-                <include>**/SpringSuite.java</include>
+                <include>**/*Test.java</include>
               </includes>
+              <groups>org.onap.so.test.categories.SpringAware</groups>
             </configuration>
           </execution>
         </executions>
@@ -258,9 +260,6 @@
             <systemPropertyVariables>
               <so.log.level>DEBUG</so.log.level>
             </systemPropertyVariables>
-            <parallel>suites</parallel>
-            <useUnlimitedThreads>false</useUnlimitedThreads>
-            <threadCount>1</threadCount>
             <argLine>${surefireArgLine}</argLine>
           </configuration>
         </plugin>

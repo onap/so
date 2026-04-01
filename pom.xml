@@ -81,6 +81,8 @@
     <logback.version>1.2.11</logback.version>
     <kafka-clients.version>3.3.2</kafka-clients.version>
     <aai-schema.version>1.12.10</aai-schema.version>
+    <surefire.forkCount>1</surefire.forkCount>
+    <surefire.threadCount>1</surefire.threadCount>
   </properties>
   <distributionManagement>
     <repository>
@@ -630,9 +632,11 @@
               <so.log.level>DEBUG</so.log.level>
             </systemPropertyVariables>
             <rerunFailingTestsCount>2</rerunFailingTestsCount>
+            <forkCount>${surefire.forkCount}</forkCount>
+            <reuseForks>true</reuseForks>
             <parallel>classes</parallel>
             <useUnlimitedThreads>false</useUnlimitedThreads>
-            <threadCount>1</threadCount>
+            <threadCount>${surefire.threadCount}</threadCount>
           </configuration>
         </plugin>
         <plugin>
