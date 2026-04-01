@@ -64,19 +64,11 @@
             </goals>
             <configuration>
               <includes>
-                <include>**/AllTestSuites.java</include>
+                <include>**/*Test.java</include>
               </includes>
-            </configuration>
-          </execution>
-          <execution>
-            <id>non-spring-tests</id>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <includes>
-                <include>**/NonSpringSuite.java</include>
-              </includes>
+              <excludes>
+                <exclude>**/bpmn/common/scripts/**/*Test.java</exclude>
+              </excludes>
             </configuration>
           </execution>
           <execution>
@@ -86,14 +78,11 @@
             </goals>
             <configuration>
               <includes>
-                <include>**/AllGroovyTestSuites.java</include>
+                <include>**/bpmn/common/scripts/**/*Test.java</include>
               </includes>
             </configuration>
           </execution>
         </executions>
-        <configuration>
-          <parallel>suites</parallel>
-        </configuration>
       </plugin>
     </plugins>
     <pluginManagement>

@@ -452,7 +452,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         cloudIdentity.setIdentityServerType(ServerType.KEYSTONE);
         cloudIdentity.setIdentityAuthenticationType(AuthenticationType.RACKSPACE_APIKEY);
         cloudSite.setIdentityService(cloudIdentity);
-        localClient.postCloudSite(cloudSite);
+        client.postCloudSite(cloudSite);
         CloudSite getCloudSite = this.client.getCloudSite("MTN6");
         assertNotNull(getCloudSite);
         assertNotNull(getCloudSite.getIdentityService());
@@ -748,7 +748,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     @Test
     public void getWorkflowBySource_invalidSource_nullOutput() {
         List<Workflow> workflow = client.findWorkflowBySource("abc");
-        assertNull(workflow);
+        assertTrue(workflow.isEmpty());
     }
 
     @Test
