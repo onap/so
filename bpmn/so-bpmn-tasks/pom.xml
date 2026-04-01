@@ -27,7 +27,7 @@
             </goals>
             <configuration>
               <includes>
-                <include>**/UnitTestSuite.java</include>
+                <include>**/*Test.java</include>
               </includes>
             </configuration>
           </execution>
@@ -38,14 +38,11 @@
             </goals>
             <configuration>
               <includes>
-                <include>**/IntegrationTestSuite.java</include>
+                <include>**/*IT.java</include>
               </includes>
             </configuration>
           </execution>
         </executions>
-        <configuration>
-          <parallel>suites</parallel>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>io.swagger.codegen.v3</groupId>

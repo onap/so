@@ -45,9 +45,9 @@ insert into service(model_uuid, model_name, model_invariant_uuid, model_version,
 ('5df8b6de-2083-11e7-93ae-92361f002672', 'MSOTADevInfra_vSAMP10a_Service', '9647dfc4-2083-11e7-93ae-92361f002671', '2.0', 'MSO aLaCarte Vfmodule with addon', '2017-04-14 13:42:39', null, 'NA', 'NA', 'Luna', 'Oxygen');
 
 insert into heat_template(artifact_uuid, name, version, description, body, timeout_minutes, artifact_checksum, creation_timestamp) values
-('ff874603-4222-11e7-9252-005056850d2e', 'module_mns_zrdm3frwl01exn_01_rgvm_1.yml', '1', 'created from csar', 'heat_template_version: 2013-05-23 description: heat template that creates TEST VNF parameters: TEST_server_name: type: string label: TEST server name description: TEST server name TEST_image_name: type: string label: image name description: TEST image name TEST_flavor_name: type: string label: TEST flavor name description: flavor name of TEST instance TEST_Role_net_name: type: string label: TEST network name description: TEST network name TEST_vnf_id: type: string label: TEST VNF Id description: TEST VNF Id resources:TEST: type: OS::Nova::Server properties: name: { get_param: TEST_server_name } image: { get_param: TEST_image_name } flavor: { get_param: TEST_flavor_name } networks: - port: { get_resource: TEST_port_0} metadata: vnf_id: {get_param: TEST_vnf_id} TEST_port_0: type: OS::Neutron::Port properties: network: { get_param: TEST_Role_net_name }', '60', 'MANUAL RECORD', '2017-01-21 23:26:56'), 
-('ff87482f-4222-11e7-9252-005056850d2e', 'module_mns_zrdm3frwl01exn_01_rgvm_1.yml', '1', 'created from csar', 'heat_template_version: 2013-05-23 description: heat template that creates TEST VNF parameters: TEST_server_name: type: string label: TEST server name description: TEST server name TEST_image_name: type: string label: image name description: TEST image name TEST_flavor_name: type: string label: TEST flavor name description: flavor name of TEST instance TEST_Role_net_name: type: string label: TEST network name description: TEST network name TEST_vnf_id: type: string label: TEST VNF Id description: TEST VNF Id resources:TEST: type: OS::Nova::Server properties: name: { get_param: TEST_server_name } image: { get_param: TEST_image_name } flavor: { get_param: TEST_flavor_name } networks: - port: { get_resource: TEST_port_0} metadata: vnf_id: {get_param: TEST_vnf_id} TEST_port_0: type: OS::Neutron::Port properties: network: { get_param: TEST_Role_net_name }', '60', 'MANUAL RECORD', '2017-01-21 23:26:56'), 
-('aa874603-4222-11e7-9252-005056850d2e', 'module_mns_zrdm3frwl01exn_01_rgvm_1.yml', '1', 'created from csar', 'heat_template_version: 2013-05-23 description: heat template that creates TEST VNF parameters: TEST_server_name: type: string label: TEST server name description: TEST server name TEST_image_name: type: string label: image name description: TEST image name TEST_flavor_name: type: string label: TEST flavor name description: flavor name of TEST instance TEST_Role_net_name: type: string label: TEST network name description: TEST network name TEST_vnf_id: type: string label: TEST VNF Id description: TEST VNF Id resources:TEST: type: OS::Nova::Server properties: name: { get_param: TEST_server_name } image: { get_param: TEST_image_name } flavor: { get_param: TEST_flavor_name } networks: - port: { get_resource: TEST_port_0} metadata: vnf_id: {get_param: TEST_vnf_id} TEST_port_0: type: OS::Neutron::Port properties: network: { get_param: TEST_Role_net_name }', '60', 'MANUAL RECORD', '2017-01-21 23:26:56'); 
+('ff874603-4222-11e7-9252-005056850d2e', 'module_mns_zrdm3frwl01exn_01_rgvm_1.yml', '1', 'created from csar', 'heat_template_version: 2013-05-23 description: heat template that creates TEST VNF parameters: TEST_server_name: type: string label: TEST server name description: TEST server name TEST_image_name: type: string label: image name description: TEST image name TEST_flavor_name: type: string label: TEST flavor name description: flavor name of TEST instance TEST_Role_net_name: type: string label: TEST network name description: TEST network name TEST_vnf_id: type: string label: TEST VNF Id description: TEST VNF Id resources:TEST: type: OS::Nova::Server properties: name: { get_param: TEST_server_name } image: { get_param: TEST_image_name } flavor: { get_param: TEST_flavor_name } networks: - port: { get_resource: TEST_port_0} metadata: vnf_id: {get_param: TEST_vnf_id} TEST_port_0: type: OS::Neutron::Port properties: network: { get_param: TEST_Role_net_name }', '60', 'MANUAL RECORD', '2017-01-21 23:26:56'),
+('ff87482f-4222-11e7-9252-005056850d2e', 'module_mns_zrdm3frwl01exn_01_rgvm_1.yml', '1', 'created from csar', 'heat_template_version: 2013-05-23 description: heat template that creates TEST VNF parameters: TEST_server_name: type: string label: TEST server name description: TEST server name TEST_image_name: type: string label: image name description: TEST image name TEST_flavor_name: type: string label: TEST flavor name description: flavor name of TEST instance TEST_Role_net_name: type: string label: TEST network name description: TEST network name TEST_vnf_id: type: string label: TEST VNF Id description: TEST VNF Id resources:TEST: type: OS::Nova::Server properties: name: { get_param: TEST_server_name } image: { get_param: TEST_image_name } flavor: { get_param: TEST_flavor_name } networks: - port: { get_resource: TEST_port_0} metadata: vnf_id: {get_param: TEST_vnf_id} TEST_port_0: type: OS::Neutron::Port properties: network: { get_param: TEST_Role_net_name }', '60', 'MANUAL RECORD', '2017-01-21 23:26:56'),
+('aa874603-4222-11e7-9252-005056850d2e', 'module_mns_zrdm3frwl01exn_01_rgvm_1.yml', '1', 'created from csar', 'heat_template_version: 2013-05-23 description: heat template that creates TEST VNF parameters: TEST_server_name: type: string label: TEST server name description: TEST server name TEST_image_name: type: string label: image name description: TEST image name TEST_flavor_name: type: string label: TEST flavor name description: flavor name of TEST instance TEST_Role_net_name: type: string label: TEST network name description: TEST network name TEST_vnf_id: type: string label: TEST VNF Id description: TEST VNF Id resources:TEST: type: OS::Nova::Server properties: name: { get_param: TEST_server_name } image: { get_param: TEST_image_name } flavor: { get_param: TEST_flavor_name } networks: - port: { get_resource: TEST_port_0} metadata: vnf_id: {get_param: TEST_vnf_id} TEST_port_0: type: OS::Neutron::Port properties: network: { get_param: TEST_Role_net_name }', '60', 'MANUAL RECORD', '2017-01-21 23:26:56');
 
 
 insert into heat_template_params(heat_template_artifact_uuid, param_name, is_required, param_type, param_alias) values
@@ -85,7 +85,7 @@ insert into vf_module_customization(model_customization_uuid, label, initial_cou
 
 
 insert into allotted_resource(model_uuid, model_invariant_uuid, model_version, model_name, tosca_node_type, subcategory, description, creation_timestamp) values
-('f6b7d4c6-e8a4-46e2-81bc-31cad5072842', 'b7a1b78e-6b6b-4b36-9698-8c9530da14af', '1.0', 'Tunnel_Xconn', '', '', '', '2017-05-26 15:08:24'); 
+('f6b7d4c6-e8a4-46e2-81bc-31cad5072842', 'b7a1b78e-6b6b-4b36-9698-8c9530da14af', '1.0', 'Tunnel_Xconn', '', '', '', '2017-05-26 15:08:24');
 
 insert into allotted_resource_customization(model_customization_uuid, model_instance_name, providing_service_model_invariant_uuid, target_network_role, nf_type, nf_role, nf_function, nf_naming_code, min_instances, max_instances, ar_model_uuid, creation_timestamp) values
 ('367a8ba9-057a-4506-b106-fbae818597c6', 'Sec_Tunnel_Xconn 11', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'f6b7d4c6-e8a4-46e2-81bc-31cad5072842', TIMESTAMP '2017-01-20 16:14:20.0');
@@ -120,7 +120,7 @@ insert into allotted_resource_customization_to_service(service_model_uuid, resou
 ('5df8b6de-2083-11e7-93ae-92361f002672', '367a8ba9-057a-4506-b106-fbae818597c6');
 
 insert into vnf_components(vnf_id, component_type, heat_template_id, heat_environment_id, creation_timestamp) values
-('13961', 'VOLUME', '13843', '13961', '2016-05-19 20:22:02');   
+('13961', 'VOLUME', '13843', '13961', '2016-05-19 20:22:02');
 
 
 INSERT INTO `cloudify_managers` (`ID`, `CLOUDIFY_URL`, `USERNAME`, `PASSWORD`, `VERSION`, `LAST_UPDATED_BY`, `CREATION_TIMESTAMP`, `UPDATE_TIMESTAMP`) VALUES ('mtn13', 'http://localhost:28090/v2.0', 'm93945', '93937EA01B94A10A49279D4572B48369', NULL, 'MSO_USER', '2018-07-17 14:05:08', '2018-07-17 14:05:08');
@@ -184,7 +184,7 @@ VALUES      ( '9bcce658-9b37-11e8-98d0-529269fb1459',
               'testVnfcCustomizationDescription',
               '2018-07-17 14:05:08');
 
-INSERT INTO `rainy_day_handler_macro` (`FLOW_NAME`,`SERVICE_TYPE`,`VNF_TYPE`,`ERROR_CODE`,`WORK_STEP`,`POLICY`,`SECONDARY_POLICY`,`REG_EX_ERROR_MESSAGE`, `SERVICE_ROLE`) 
+INSERT INTO `rainy_day_handler_macro` (`FLOW_NAME`,`SERVICE_TYPE`,`VNF_TYPE`,`ERROR_CODE`,`WORK_STEP`,`POLICY`,`SECONDARY_POLICY`,`REG_EX_ERROR_MESSAGE`, `SERVICE_ROLE`)
 VALUES ('AssignServiceInstanceBB','*','*','*','*','Rollback','Rollback','The Flavor ID.*could not be found.','*');
 
 INSERT INTO `cvnfc_customization`
@@ -227,16 +227,16 @@ VALUES      ( '1',
               'testNfcNamingCode',
               '2018-07-17 14:05:08',
               '9bcce658-9b37-11e8-98d0-529269fb1459',1);
-              
-              
+
+
 INSERT IGNORE INTO `configuration` (`MODEL_UUID`, `MODEL_INVARIANT_UUID`, `MODEL_VERSION`, `MODEL_NAME`, `TOSCA_NODE_TYPE`, `DESCRIPTION`, `CREATION_TIMESTAMP`) VALUES
 	('d2195b0e-307a-4d30-b82f-9c82001d965e', '2f0a4b7a-dfdb-4f82-a2ab-b65d1ddd5e8e', '13.0', 'Fabric Configuration', 'org.openecomp.nodes.FabricConfiguration', 'A fabric Configuration object', '2019-06-04 20:12:20');
-	
+
 INSERT IGNORE INTO `cvnfc_configuration_customization` (`MODEL_CUSTOMIZATION_UUID`, `MODEL_INSTANCE_NAME`, `CONFIGURATION_TYPE`, `CONFIGURATION_ROLE`, `CONFIGURATION_FUNCTION`, `POLICY_NAME`, `CREATION_TIMESTAMP`, `CONFIGURATION_MODEL_UUID`, `CVNFC_CUSTOMIZATION_ID`) VALUES
 	('386c9aa7-9318-48ee-a6d1-1bf0f85de385', 'Fabric Configuration 0', '5G', 'Fabric Config', 'Network Cloud', 'Config_MS_fabric_configuration_FRWL.1.xml', '2019-06-04 20:12:20', 'd2195b0e-307a-4d30-b82f-9c82001d965e', '2');
 
 
-	
+
 insert into service(model_uuid, model_name, model_invariant_uuid, model_version, description, creation_timestamp, tosca_csar_artifact_uuid, service_type, service_role, environment_context, workload_context) values
 ('5df8b6de-2083-11e7-93ae-92361f002676', 'PNF_routing_service', '9647dfc4-2083-11e7-93ae-92361f002676', '1.0', 'PNF service', '2019-03-08 12:00:29', null, 'NA', 'NA', 'Luna', 'Oxygen');
 
@@ -252,9 +252,8 @@ insert into pnf_resource_customization_to_service(service_model_uuid, resource_m
 insert into workflow(artifact_uuid, artifact_name, name, operation_name, version, description, body, resource_target, source) values
 ('5b0c4322-643d-4c9f-b184-4516049e99b1', 'testingWorkflow.bpmn', 'testingWorkflow', 'create', 1, 'Test Workflow', null, 'vnf', 'sdc');
 
-insert into vnf_resource_to_workflow(vnf_resource_model_uuid, workflow_id) values
-('ff2ae348-214a-11e7-93ae-92361f002671', '1');
+insert into vnf_resource_to_workflow(vnf_resource_model_uuid, workflow_id)
+select 'ff2ae348-214a-11e7-93ae-92361f002671', id from workflow where artifact_uuid = '5b0c4322-643d-4c9f-b184-4516049e99b1';
 
 insert into processing_flags (flag,value,endpoint,description) values
 ('TESTFLAG', 'NO', 'TESTENDPOINT', 'TEST FLAG');
-

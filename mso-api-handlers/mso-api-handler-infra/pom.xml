@@ -195,9 +195,8 @@
             </goals>
             <configuration>
               <includes>
-                <include>**/AllTestsTestSuite.java</include>
+                <include>**/*Test.java</include>
               </includes>
-              <parallel>suites</parallel>
             </configuration>
           </execution>
         </executions>

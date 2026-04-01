@@ -89,25 +89,66 @@
               </goals>
               <configuration>
                 <includes>
-                  <include>**/AllTestsTestSuite.java</include>
+                  <include>**/*Test.java</include>
                 </includes>
-              </configuration>
-            </execution>
-            <execution>
-              <id>tasks-test</id>
-              <goals>
-                <goal>test</goal>
-              </goals>
-              <configuration>
-                <includes>
-                  <include>**/AllTasksTestsTestSuite.java</include>
-                </includes>
+                <!-- Tests below have pre-existing failures due to API drift while previously
+                     excluded from CI via AllTestsTestSuite / AllTasksTestsTestSuite patterns.
+                     TODO: Fix each test and remove its exclusion. -->
+                <excludes>
+                  <exclude>**/scripts/ActivateSliceServiceTest.java</exclude>
+                  <exclude>**/scripts/AllocateSliceSubnetTest.java</exclude>
+                  <exclude>**/scripts/CreateCommunicationServiceTest.java</exclude>
+                  <exclude>**/scripts/CreateCustomE2EServiceInstanceTest.java</exclude>
+                  <exclude>**/scripts/CreateNetworkInstanceTest.java</exclude>
+                  <exclude>**/scripts/CreateSDNCNetworkResourceTest.java</exclude>
+                  <exclude>**/scripts/CreateSliceServiceTest.java</exclude>
+                  <exclude>**/scripts/CreateVFCNSResourceTest.java</exclude>
+                  <exclude>**/scripts/CreateVfModuleInfraTest.java</exclude>
+                  <exclude>**/scripts/CreateVfModuleVolumeInfraV1Test.java</exclude>
+                  <exclude>**/scripts/DeleteCustomE2EServiceInstanceTest.java</exclude>
+                  <exclude>**/scripts/DeleteNetworkInstanceTest.java</exclude>
+                  <exclude>**/scripts/DeleteVfModuleVolumeInfraV1Test.java</exclude>
+                  <exclude>**/scripts/DoActivateCoreNSSITest.java</exclude>
+                  <exclude>**/scripts/DoAllocateTnNssiTest.java</exclude>
+                  <exclude>**/scripts/DoCommonCoreNSSITest.java</exclude>
+                  <exclude>**/scripts/DoCompareServiceInstanceDataTest.java</exclude>
+                  <exclude>**/scripts/DoCreateCommunicationServiceTest.java</exclude>
+                  <exclude>**/scripts/DoCreateE2EServiceInstanceTest.java</exclude>
+                  <exclude>**/scripts/DoCreateNetworkInstanceRollbackTest.java</exclude>
+                  <exclude>**/scripts/DoCreateNetworkInstanceTest.java</exclude>
+                  <exclude>**/scripts/DoCreateServiceInstanceTest.java</exclude>
+                  <exclude>**/scripts/DoCreateVFCNetworkServiceInstanceTest.java</exclude>
+                  <exclude>**/scripts/DoCreateVfModuleRollbackTest.java</exclude>
+                  <exclude>**/scripts/DoCreateVfModuleTest.java</exclude>
+                  <exclude>**/scripts/DoCreateVfModuleVolumeV2Test.java</exclude>
+                  <exclude>**/scripts/DoCreateVnfAndModulesTest.java</exclude>
+                  <exclude>**/scripts/DoCreateVnfTest.java</exclude>
+                  <exclude>**/scripts/DoCustomDeleteE2EServiceInstanceTest.java</exclude>
+                  <exclude>**/scripts/DoDeallocateCoreNSSITest.java</exclude>
+                  <exclude>**/scripts/DoDeallocateNSSITest.java</exclude>
+                  <exclude>**/scripts/DoDeallocateTnNssiTest.java</exclude>
+                  <exclude>**/scripts/DoDeleteNetworkInstanceTest.java</exclude>
+                  <exclude>**/scripts/DoDeleteServiceInstanceTest.java</exclude>
+                  <exclude>**/scripts/DoDeleteSliceServiceTest.java</exclude>
+                  <exclude>**/scripts/DoDeleteVFCNetworkServiceInstanceTest.java</exclude>
+                  <exclude>**/scripts/DoDeleteVfModuleFromVnfTest.java</exclude>
+                  <exclude>**/scripts/DoDeleteVfModuleTest.java</exclude>
+                  <exclude>**/scripts/DoDeleteVfModuleVolumeV2Test.java</exclude>
+                  <exclude>**/scripts/DoDeleteVnfAndModulesTest.java</exclude>
+                  <exclude>**/scripts/DoModifyCoreNSSITest.java</exclude>
+                  <exclude>**/scripts/DoScaleE2EServiceInstanceTest.java</exclude>
+                  <exclude>**/scripts/DoUpdateNetworkInstanceTest.java</exclude>
+                  <exclude>**/scripts/DoUpdateVfModuleTest.java</exclude>
+                  <exclude>**/scripts/DoUpdateVnfAndModulesTest.java</exclude>
+                  <exclude>**/scripts/SacleCustomE2EServiceInstanceTest.java</exclude>
+                  <exclude>**/scripts/UpdateNetworkInstanceTest.java</exclude>
+                  <exclude>**/scripts/UpdateVfModuleVolumeInfraV1Test.java</exclude>
+                  <exclude>**/scripts/UpdateVfModuleVolumeTest.java</exclude>
+                  <exclude>**/workflow/service/ServicePluginFactoryTest.java</exclude>
+                </excludes>
               </configuration>
             </execution>
           </executions>
-          <configuration>
-            <parallel>suites</parallel>
-          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
