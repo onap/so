@@ -63,6 +63,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
@@ -185,9 +186,9 @@ public class BBInputSetupTest {
 
     @Test
     public void testGetAlaCarteServiceInstance() throws Exception {
-        ServiceInstance expected =
-                mapper.readValue(new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
-                        ServiceInstance.class);
+        ServiceInstance expected = mapper.readValue(
+                new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
+                ServiceInstance.class);
         RequestDetails requestDetails = new RequestDetails();
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setInstanceName("SharansInstanceName");
@@ -222,9 +223,9 @@ public class BBInputSetupTest {
 
     @Test(expected = Exception.class)
     public void testGetAlaCarteServiceInstanceException() throws Exception {
-        ServiceInstance expected =
-                mapper.readValue(new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
-                        ServiceInstance.class);
+        ServiceInstance expected = mapper.readValue(
+                new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
+                ServiceInstance.class);
         RequestDetails requestDetails = new RequestDetails();
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setInstanceName("SharansInstanceName");
@@ -308,8 +309,8 @@ public class BBInputSetupTest {
     @Test
     public void testGetExecuteBBFromExecution() {
         BuildingBlock bb = new BuildingBlock().setBpmnFlowName("AssignServiceInstanceBB");
-        ExecuteBuildingBlock expected =
-                new ExecuteBuildingBlock().setBuildingBlock(bb).setRequestId("00032ab7-3fb3-42e5-965d-8ea592502017");
+        ExecuteBuildingBlock expected = new ExecuteBuildingBlock().setBuildingBlock(bb)
+                .setRequestId("00032ab7-3fb3-42e5-965d-8ea592502017");
         DelegateExecution execution = Mockito.mock(DelegateExecution.class);
         doReturn(expected).when(execution).getVariable(any(String.class));
         ExecuteBuildingBlock actual = SPY_bbInputSetup.getExecuteBBFromExecution(execution);
@@ -338,8 +339,8 @@ public class BBInputSetupTest {
         doNothing().when(SPY_bbInputSetup).populateLookupKeyMapWithIds(executeBB.getWorkflowResourceIds(),
                 lookupKeyMap);
         boolean aLaCarte = true;
-        GeneralBuildingBlock actual =
-                SPY_bbInputSetup.getGBB(executeBB, lookupKeyMap, requestAction, aLaCarte, resourceId, null);
+        GeneralBuildingBlock actual = SPY_bbInputSetup.getGBB(executeBB, lookupKeyMap, requestAction, aLaCarte,
+                resourceId, null);
 
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -372,8 +373,8 @@ public class BBInputSetupTest {
                 .getAAIGenericVnf(ArgumentMatchers.isA(String.class));
         doReturn(null).when(bbInputSetupMapperLayer)
                 .mapAAIGenericVnfIntoGenericVnf(ArgumentMatchers.isA(org.onap.aai.domain.yang.GenericVnf.class));
-        GeneralBuildingBlock actual =
-                SPY_bbInputSetup.getGBBCM(executeBB, requestDetails, lookupKeyMap, requestAction, resourceId);
+        GeneralBuildingBlock actual = SPY_bbInputSetup.getGBBCM(executeBB, requestDetails, lookupKeyMap, requestAction,
+                resourceId);
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
@@ -417,8 +418,8 @@ public class BBInputSetupTest {
         doReturn(vnf1).when(SPY_bbInputSetupUtils).getAAIGenericVnf("vnf-001");
         doReturn(vnf2).when(SPY_bbInputSetupUtils).getAAIGenericVnf("vnf-002");
 
-        GeneralBuildingBlock actual =
-                SPY_bbInputSetup.getGBBCM(executeBB, requestDetails, lookupKeyMap, requestAction, instanceGroupId);
+        GeneralBuildingBlock actual = SPY_bbInputSetup.getGBBCM(executeBB, requestDetails, lookupKeyMap, requestAction,
+                instanceGroupId);
 
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -590,8 +591,7 @@ public class BBInputSetupTest {
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
 
         org.onap.so.serviceinstancebeans.Project requestProject = new org.onap.so.serviceinstancebeans.Project();
-        org.onap.so.serviceinstancebeans.OwningEntity requestOwningEntity =
-                new org.onap.so.serviceinstancebeans.OwningEntity();
+        org.onap.so.serviceinstancebeans.OwningEntity requestOwningEntity = new org.onap.so.serviceinstancebeans.OwningEntity();
         requestDetails.setProject(requestProject);
         requestDetails.setOwningEntity(requestOwningEntity);
 
@@ -635,8 +635,7 @@ public class BBInputSetupTest {
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
 
         org.onap.so.serviceinstancebeans.Project requestProject = new org.onap.so.serviceinstancebeans.Project();
-        org.onap.so.serviceinstancebeans.OwningEntity requestOwningEntity =
-                new org.onap.so.serviceinstancebeans.OwningEntity();
+        org.onap.so.serviceinstancebeans.OwningEntity requestOwningEntity = new org.onap.so.serviceinstancebeans.OwningEntity();
         requestDetails.setProject(requestProject);
         requestDetails.setOwningEntity(requestOwningEntity);
 
@@ -869,10 +868,10 @@ public class BBInputSetupTest {
         RequestInfo requestInfo = Mockito.mock(RequestInfo.class);
         RelatedInstanceList[] relatedInstanceList = new RelatedInstanceList[] {};
         CloudConfiguration cloudConfiguration = new CloudConfiguration();
-        org.onap.so.serviceinstancebeans.Platform platform =
-                Mockito.mock(org.onap.so.serviceinstancebeans.Platform.class);
-        org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness =
-                Mockito.mock(org.onap.so.serviceinstancebeans.LineOfBusiness.class);
+        org.onap.so.serviceinstancebeans.Platform platform = Mockito
+                .mock(org.onap.so.serviceinstancebeans.Platform.class);
+        org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness = Mockito
+                .mock(org.onap.so.serviceinstancebeans.LineOfBusiness.class);
         Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
 
         doReturn(modelInfo).when(requestDetails).getModelInfo();
@@ -938,18 +937,18 @@ public class BBInputSetupTest {
 
     @Test
     public void testPopulateGBBWithSIAndAdditionalInfo() throws Exception {
-        GeneralBuildingBlock expected =
-                mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpectedWUserParamsInfo.json"),
-                        GeneralBuildingBlock.class);
+        GeneralBuildingBlock expected = mapper.readValue(
+                new File(RESOURCE_PATH + "GeneralBuildingBlockExpectedWUserParamsInfo.json"),
+                GeneralBuildingBlock.class);
         ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
                 ExecuteBuildingBlock.class);
         RequestDetails requestDetails = mapper.readValue(
                 new File(RESOURCE_PATH + "RequestDetailsInput_withRelatedInstanceList.json"), RequestDetails.class);
-        RequestContext requestContext =
-                mapper.readValue(new File(RESOURCE_PATH + "RequestContextExpected.json"), RequestContext.class);
-        ServiceInstance serviceInstance =
-                mapper.readValue(new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
-                        ServiceInstance.class);
+        RequestContext requestContext = mapper.readValue(new File(RESOURCE_PATH + "RequestContextExpected.json"),
+                RequestContext.class);
+        ServiceInstance serviceInstance = mapper.readValue(
+                new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
+                ServiceInstance.class);
         CloudConfiguration cloudConfiguration = new CloudConfiguration();
         cloudConfiguration.setTenantId("tenantId");
         requestDetails.setCloudConfiguration(cloudConfiguration);
@@ -974,8 +973,7 @@ public class BBInputSetupTest {
         customer.setSubscriberType("subscriberType");
         customer.setServiceSubscription(serviceSubscription);
 
-        org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant tenant =
-                new org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant();
+        org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant tenant = new org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant();
         tenant.setTenantContext("tenantContext");
         tenant.setTenantId("tenantId");
         tenant.setTenantName("tenantName");
@@ -1010,9 +1008,9 @@ public class BBInputSetupTest {
 
     @Test
     public void testGetServiceInstanceNOAAI() throws Exception {
-        ServiceInstance expected =
-                mapper.readValue(new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
-                        ServiceInstance.class);
+        ServiceInstance expected = mapper.readValue(
+                new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
+                ServiceInstance.class);
         Service service = mapper.readValue(
                 new File(RESOURCE_PATH + "CatalogDBService_getServiceInstanceNOAAIInput.json"), Service.class);
         Customer customer = mapper.readValue(new File(RESOURCE_PATH + "Customer.json"), Customer.class);
@@ -1037,9 +1035,9 @@ public class BBInputSetupTest {
         String serviceInstanceId = "3655a595-05d1-433c-93c0-3afd6b572545";
         boolean aLaCarte = true;
 
-        ServiceInstance actual =
-                SPY_bbInputSetup.getALaCarteServiceInstance(service, requestDetails, customer, project, owningEntity,
-                        lookupKeyMap, serviceInstanceId, aLaCarte, executeBB.getBuildingBlock().getBpmnFlowName());
+        ServiceInstance actual = SPY_bbInputSetup.getALaCarteServiceInstance(service, requestDetails, customer, project,
+                owningEntity, lookupKeyMap, serviceInstanceId, aLaCarte,
+                executeBB.getBuildingBlock().getBpmnFlowName());
 
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -1051,8 +1049,7 @@ public class BBInputSetupTest {
         RequestParameters params = new RequestParameters();
         params.setSubscriptionServiceType("subscriptionServiceType");
         requestDetails.setRequestParameters(params);
-        org.onap.aai.domain.yang.ServiceSubscription aaiServiceSubscription =
-                new org.onap.aai.domain.yang.ServiceSubscription();
+        org.onap.aai.domain.yang.ServiceSubscription aaiServiceSubscription = new org.onap.aai.domain.yang.ServiceSubscription();
         Customer customer = new Customer();
         customer.setGlobalCustomerId("globalCustomerId");
         doReturn(aaiServiceSubscription).when(SPY_bbInputSetupUtils).getAAIServiceSubscription(
@@ -1094,9 +1091,9 @@ public class BBInputSetupTest {
     public void testPopulateNetworkCollectionAndInstanceGroupAssign() throws Exception {
         Service service = Mockito.mock(Service.class);
         String key = "collectionCustId";
-        ServiceInstance serviceInstance =
-                mapper.readValue(new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
-                        ServiceInstance.class);
+        ServiceInstance serviceInstance = mapper.readValue(
+                new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
+                ServiceInstance.class);
         String resourceId = "123";
         Collection collection = SPY_bbInputSetup.createCollection(resourceId);
         InstanceGroup instanceGroup = SPY_bbInputSetup.createInstanceGroup();
@@ -1179,7 +1176,7 @@ public class BBInputSetupTest {
         mi.setModelCustomizationId("vnfModelCustomizationUUID");
         ri.setModelInfo(mi);
         ril.setRelatedInstance(ri);
-        requestDetails.setRelatedInstanceList(new RelatedInstanceList[] {ril});
+        requestDetails.setRelatedInstanceList(new RelatedInstanceList[] { ril });
 
         ModelInfo modelInfo = new ModelInfo();
         modelInfo.setModelCustomizationId("volumeGroupCustId");
@@ -1302,7 +1299,7 @@ public class BBInputSetupTest {
         Service service = new Service();
         NetworkResourceCustomization resourceCust = new NetworkResourceCustomization();
         resourceCust.setModelCustomizationUUID("modelCustomizationUUID");
-        service.setNetworkCustomizations(Arrays.asList(new NetworkResourceCustomization[] {resourceCust}));
+        service.setNetworkCustomizations(Arrays.asList(new NetworkResourceCustomization[] { resourceCust }));
 
         doReturn(modelInfoNetwork).when(bbInputSetupMapperLayer).mapCatalogNetworkToNetwork(resourceCust);
 
@@ -1432,7 +1429,7 @@ public class BBInputSetupTest {
         Service service = new Service();
         NetworkResourceCustomization resourceCust = new NetworkResourceCustomization();
         resourceCust.setModelCustomizationUUID("modelCustomizationUUID");
-        service.setNetworkCustomizations(Arrays.asList(new NetworkResourceCustomization[] {resourceCust}));
+        service.setNetworkCustomizations(Arrays.asList(new NetworkResourceCustomization[] { resourceCust }));
 
         doReturn(modelInfoNetwork).when(bbInputSetupMapperLayer).mapCatalogNetworkToNetwork(resourceCust);
 
@@ -1470,8 +1467,7 @@ public class BBInputSetupTest {
         ServiceModel serviceModel = new ServiceModel();
         serviceModel.setCurrentService(service);
 
-        CvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization =
-                new CvnfcConfigurationCustomization();
+        CvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = new CvnfcConfigurationCustomization();
         ConfigurationResource configurationResource = new ConfigurationResource();
         configurationResource.setModelUUID("modelUUID");
         configurationResource.setModelInvariantUUID("modelInvariantUUID");
@@ -1492,8 +1488,7 @@ public class BBInputSetupTest {
     @Test
     public void testPopulateGenericVnf() throws IOException {
         org.onap.so.serviceinstancebeans.Platform platform = new org.onap.so.serviceinstancebeans.Platform();
-        org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness =
-                new org.onap.so.serviceinstancebeans.LineOfBusiness();
+        org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness = new org.onap.so.serviceinstancebeans.LineOfBusiness();
         String instanceName = "vnfName";
         ModelInfo modelInfo = new ModelInfo();
         modelInfo.setModelType(ModelType.vnf);
@@ -1504,8 +1499,8 @@ public class BBInputSetupTest {
         serviceInstance.getVnfs().add(vnf);
         String vnfType = "vnfType";
         String applicationId = "applicationId";
-        RequestDetails requestDetails =
-                mapper.readValue(new File(RESOURCE_PATH + "RequestDetails_CreateVnf.json"), RequestDetails.class);
+        RequestDetails requestDetails = mapper.readValue(new File(RESOURCE_PATH + "RequestDetails_CreateVnf.json"),
+                RequestDetails.class);
 
         Service service = mapper.readValue(
                 new File(RESOURCE_PATH + "CatalogDBService_getServiceInstanceNOAAIInput.json"), Service.class);
@@ -1527,8 +1522,7 @@ public class BBInputSetupTest {
         doNothing().when(SPY_bbInputSetup).mapCatalogVnf(vnf, modelInfo, service);
         org.onap.aai.domain.yang.InstanceGroup instanceGroupAAI = new org.onap.aai.domain.yang.InstanceGroup();
         doReturn(instanceGroupAAI).when(SPY_bbInputSetupUtils).getAAIInstanceGroup(any());
-        org.onap.so.db.catalog.beans.InstanceGroup catalogInstanceGroup =
-                new org.onap.so.db.catalog.beans.InstanceGroup();
+        org.onap.so.db.catalog.beans.InstanceGroup catalogInstanceGroup = new org.onap.so.db.catalog.beans.InstanceGroup();
         doReturn(catalogInstanceGroup).when(SPY_bbInputSetupUtils).getCatalogInstanceGroup(any());
         BBInputSetupParameter parameter = new BBInputSetupParameter.Builder().setRequestId(REQUEST_ID)
                 .setModelInfo(modelInfo).setInstanceName(instanceName).setPlatform(platform)
@@ -1565,8 +1559,7 @@ public class BBInputSetupTest {
     @Test
     public void testPopulateGenericVnfReplace() throws IOException {
         org.onap.so.serviceinstancebeans.Platform platform = new org.onap.so.serviceinstancebeans.Platform();
-        org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness =
-                new org.onap.so.serviceinstancebeans.LineOfBusiness();
+        org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness = new org.onap.so.serviceinstancebeans.LineOfBusiness();
         String instanceName = "vnfName";
         ModelInfo modelInfo = new ModelInfo();
         modelInfo.setModelType(ModelType.vnf);
@@ -1577,8 +1570,8 @@ public class BBInputSetupTest {
         serviceInstance.getVnfs().add(vnf);
         String vnfType = "vnfType";
         String applicationId = "applicationId";
-        RequestDetails requestDetails =
-                mapper.readValue(new File(RESOURCE_PATH + "RequestDetails_CreateVnf.json"), RequestDetails.class);
+        RequestDetails requestDetails = mapper.readValue(new File(RESOURCE_PATH + "RequestDetails_CreateVnf.json"),
+                RequestDetails.class);
 
         Service service = mapper.readValue(
                 new File(RESOURCE_PATH + "CatalogDBService_getServiceInstanceNOAAIInput.json"), Service.class);
@@ -1593,8 +1586,7 @@ public class BBInputSetupTest {
         doNothing().when(SPY_bbInputSetup).mapCatalogVnf(vnf, modelInfo, service);
         org.onap.aai.domain.yang.InstanceGroup instanceGroupAAI = new org.onap.aai.domain.yang.InstanceGroup();
         doReturn(instanceGroupAAI).when(SPY_bbInputSetupUtils).getAAIInstanceGroup(any());
-        org.onap.so.db.catalog.beans.InstanceGroup catalogInstanceGroup =
-                new org.onap.so.db.catalog.beans.InstanceGroup();
+        org.onap.so.db.catalog.beans.InstanceGroup catalogInstanceGroup = new org.onap.so.db.catalog.beans.InstanceGroup();
         doReturn(catalogInstanceGroup).when(SPY_bbInputSetupUtils).getCatalogInstanceGroup(any());
 
         BBInputSetupParameter parameter = new BBInputSetupParameter.Builder().setModelInfo(modelInfo)
@@ -1641,8 +1633,7 @@ public class BBInputSetupTest {
     @Test
     public void testPopulateGenericVnfWhereVnfTypeIsNull() throws IOException {
         org.onap.so.serviceinstancebeans.Platform platform = new org.onap.so.serviceinstancebeans.Platform();
-        org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness =
-                new org.onap.so.serviceinstancebeans.LineOfBusiness();
+        org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness = new org.onap.so.serviceinstancebeans.LineOfBusiness();
         String instanceName = "vnfName";
         ModelInfo modelInfo = new ModelInfo();
         modelInfo.setModelType(ModelType.vnf);
@@ -1653,8 +1644,8 @@ public class BBInputSetupTest {
         vnf.setVnfName("vnfName");
         serviceInstance.getVnfs().add(vnf);
         String vnfType = null;
-        RequestDetails requestDetails =
-                mapper.readValue(new File(RESOURCE_PATH + "RequestDetails_CreateVnf.json"), RequestDetails.class);
+        RequestDetails requestDetails = mapper.readValue(new File(RESOURCE_PATH + "RequestDetails_CreateVnf.json"),
+                RequestDetails.class);
 
         Service service = mapper.readValue(
                 new File(RESOURCE_PATH + "CatalogDBService_getServiceInstanceNOAAIInput.json"), Service.class);
@@ -1674,8 +1665,7 @@ public class BBInputSetupTest {
         doNothing().when(SPY_bbInputSetup).mapCatalogVnf(vnf, modelInfo, service);
         org.onap.aai.domain.yang.InstanceGroup instanceGroupAAI = new org.onap.aai.domain.yang.InstanceGroup();
         doReturn(instanceGroupAAI).when(SPY_bbInputSetupUtils).getAAIInstanceGroup(any());
-        org.onap.so.db.catalog.beans.InstanceGroup catalogInstanceGroup =
-                new org.onap.so.db.catalog.beans.InstanceGroup();
+        org.onap.so.db.catalog.beans.InstanceGroup catalogInstanceGroup = new org.onap.so.db.catalog.beans.InstanceGroup();
         doReturn(catalogInstanceGroup).when(SPY_bbInputSetupUtils).getCatalogInstanceGroup(any());
         BBInputSetupParameter parameter = new BBInputSetupParameter.Builder().setRequestId(REQUEST_ID)
                 .setModelInfo(modelInfo).setInstanceName(instanceName).setPlatform(platform)
@@ -1771,8 +1761,7 @@ public class BBInputSetupTest {
         collection.setInstanceGroup(instanceGroup);
 
         CollectionResource collectionResource = new CollectionResource();
-        org.onap.so.db.catalog.beans.InstanceGroup catalogInstanceGroup =
-                new org.onap.so.db.catalog.beans.InstanceGroup();
+        org.onap.so.db.catalog.beans.InstanceGroup catalogInstanceGroup = new org.onap.so.db.catalog.beans.InstanceGroup();
         collectionResource.setToscaNodeType("NetworkCollection");
         collectionResource.setInstanceGroup(catalogInstanceGroup);
 
@@ -1786,8 +1775,7 @@ public class BBInputSetupTest {
         serviceInstance.setCollection(collection);
 
         List<CollectionResourceInstanceGroupCustomization> instanceGroupCustList = new ArrayList<>();
-        CollectionResourceInstanceGroupCustomization instanceGroupCust =
-                new CollectionResourceInstanceGroupCustomization();
+        CollectionResourceInstanceGroupCustomization instanceGroupCust = new CollectionResourceInstanceGroupCustomization();
         instanceGroupCust.setFunction("function");
         instanceGroupCust.setDescription("description");
 
@@ -1846,10 +1834,10 @@ public class BBInputSetupTest {
         expectedAAI.setRelationshipList(relationshipList);
 
         Configuration expected = new Configuration();
-        AAIResourceUri aaiResourceUri =
-                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().configuration("configurationId"));
-        AAIResultWrapper configurationWrapper =
-                new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
+        AAIResourceUri aaiResourceUri = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.network().configuration("configurationId"));
+        AAIResultWrapper configurationWrapper = new AAIResultWrapper(
+                new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
 
         doReturn(configurationWrapper).when(SPY_bbInputSetupUtils).getAAIResourceDepthOne(aaiResourceUri);
         doReturn(expected).when(bbInputSetupMapperLayer)
@@ -1857,7 +1845,7 @@ public class BBInputSetupTest {
 
         List<Configuration> configurations = new ArrayList<>();
 
-        SPY_bbInputSetup.mapConfigurations(Arrays.asList(new AAIResourceUri[] {aaiResourceUri}), configurations);
+        SPY_bbInputSetup.mapConfigurations(Arrays.asList(new AAIResourceUri[] { aaiResourceUri }), configurations);
 
         assertEquals(expected, configurations.get(0));
     }
@@ -1871,10 +1859,10 @@ public class BBInputSetupTest {
         expectedAAI.setRelationshipList(relationshipList);
 
         GenericVnf expected = new GenericVnf();
-        AAIResourceUri aaiResourceUri =
-                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("vnfId"));
-        AAIResultWrapper vnfWrapper =
-                new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
+        AAIResourceUri aaiResourceUri = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.network().genericVnf("vnfId"));
+        AAIResultWrapper vnfWrapper = new AAIResultWrapper(
+                new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
 
         doReturn(vnfWrapper).when(SPY_bbInputSetupUtils).getAAIResourceDepthOne(aaiResourceUri);
         doReturn(expected).when(bbInputSetupMapperLayer)
@@ -1885,7 +1873,7 @@ public class BBInputSetupTest {
 
         List<GenericVnf> genericVnfs = new ArrayList<>();
 
-        SPY_bbInputSetup.mapGenericVnfs(Arrays.asList(new AAIResourceUri[] {aaiResourceUri}), genericVnfs);
+        SPY_bbInputSetup.mapGenericVnfs(Arrays.asList(new AAIResourceUri[] { aaiResourceUri }), genericVnfs);
 
         assertEquals(expected, genericVnfs.get(0));
         verify(SPY_bbInputSetup, times(1)).mapPlatform(any(), eq(expected));
@@ -1903,8 +1891,8 @@ public class BBInputSetupTest {
 
         Pnf expected = new Pnf();
         AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf("pnfId"));
-        AAIResultWrapper pnfWrapper =
-                new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
+        AAIResultWrapper pnfWrapper = new AAIResultWrapper(
+                new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
 
         doReturn(pnfWrapper).when(SPY_bbInputSetupUtils).getAAIResourceDepthOne(aaiResourceUri);
         doReturn(expected).when(bbInputSetupMapperLayer).mapAAIPnfIntoPnf(isA(org.onap.aai.domain.yang.Pnf.class));
@@ -1921,14 +1909,14 @@ public class BBInputSetupTest {
         org.onap.aai.domain.yang.VolumeGroup expectedAAI = new org.onap.aai.domain.yang.VolumeGroup();
 
         VolumeGroup expected = new VolumeGroup();
-        AAIResultWrapper vnfWrapper =
-                new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
+        AAIResultWrapper vnfWrapper = new AAIResultWrapper(
+                new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
 
         doReturn(expected).when(bbInputSetupMapperLayer)
                 .mapAAIVolumeGroup(isA(org.onap.aai.domain.yang.VolumeGroup.class));
 
-        List<VolumeGroup> volumeGroupsList =
-                SPY_bbInputSetup.mapVolumeGroups(Arrays.asList(new AAIResultWrapper[] {vnfWrapper}));
+        List<VolumeGroup> volumeGroupsList = SPY_bbInputSetup
+                .mapVolumeGroups(Arrays.asList(new AAIResultWrapper[] { vnfWrapper }));
 
         assertEquals(expected, volumeGroupsList.get(0));
     }
@@ -1938,15 +1926,15 @@ public class BBInputSetupTest {
         org.onap.aai.domain.yang.LineOfBusiness expectedAAI = new org.onap.aai.domain.yang.LineOfBusiness();
 
         LineOfBusiness expected = new LineOfBusiness();
-        AAIResultWrapper vnfWrapper =
-                new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
+        AAIResultWrapper vnfWrapper = new AAIResultWrapper(
+                new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
 
         doReturn(expected).when(bbInputSetupMapperLayer)
                 .mapAAILineOfBusiness(isA(org.onap.aai.domain.yang.LineOfBusiness.class));
 
         GenericVnf vnf = new GenericVnf();
 
-        SPY_bbInputSetup.mapLineOfBusiness(Arrays.asList(new AAIResultWrapper[] {vnfWrapper}), vnf);
+        SPY_bbInputSetup.mapLineOfBusiness(Arrays.asList(new AAIResultWrapper[] { vnfWrapper }), vnf);
 
         assertEquals(expected, vnf.getLineOfBusiness());
     }
@@ -1956,14 +1944,14 @@ public class BBInputSetupTest {
         org.onap.aai.domain.yang.Platform expectedAAI = new org.onap.aai.domain.yang.Platform();
 
         Platform expected = new Platform();
-        AAIResultWrapper vnfWrapper =
-                new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
+        AAIResultWrapper vnfWrapper = new AAIResultWrapper(
+                new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
 
         doReturn(expected).when(bbInputSetupMapperLayer).mapAAIPlatform(isA(org.onap.aai.domain.yang.Platform.class));
 
         GenericVnf vnf = new GenericVnf();
 
-        SPY_bbInputSetup.mapPlatform(Arrays.asList(new AAIResultWrapper[] {vnfWrapper}), vnf);
+        SPY_bbInputSetup.mapPlatform(Arrays.asList(new AAIResultWrapper[] { vnfWrapper }), vnf);
 
         assertEquals(expected, vnf.getPlatform());
     }
@@ -1974,10 +1962,8 @@ public class BBInputSetupTest {
         ServiceInstance serviceInstance = new ServiceInstance();
 
         org.onap.aai.domain.yang.Collection aaiCollection = new org.onap.aai.domain.yang.Collection();
-        org.onap.aai.domain.yang.RelationshipList collectionRelationshipList =
-                new org.onap.aai.domain.yang.RelationshipList();
-        org.onap.aai.domain.yang.Relationship collectionInstanceGroupRelationship =
-                new org.onap.aai.domain.yang.Relationship();
+        org.onap.aai.domain.yang.RelationshipList collectionRelationshipList = new org.onap.aai.domain.yang.RelationshipList();
+        org.onap.aai.domain.yang.Relationship collectionInstanceGroupRelationship = new org.onap.aai.domain.yang.Relationship();
         collectionRelationshipList.getRelationship().add(collectionInstanceGroupRelationship);
         aaiCollection.setRelationshipList(collectionRelationshipList);
 
@@ -1989,8 +1975,8 @@ public class BBInputSetupTest {
         List<InstanceGroup> instanceGroupsList = new ArrayList<>();
         InstanceGroup instanceGroup = new InstanceGroup();
         instanceGroupsList.add(instanceGroup);
-        NetworkCollectionResourceCustomization networkCollectionCust =
-                Mockito.mock(NetworkCollectionResourceCustomization.class);
+        NetworkCollectionResourceCustomization networkCollectionCust = Mockito
+                .mock(NetworkCollectionResourceCustomization.class);
         CollectionResource collectionResource = new CollectionResource();
         doReturn(collection).when(bbInputSetupMapperLayer)
                 .mapAAICollectionIntoCollection(isA(org.onap.aai.domain.yang.Collection.class));
@@ -2024,10 +2010,10 @@ public class BBInputSetupTest {
 
         L3Network expected = new L3Network();
         List<L3Network> l3Networks = new ArrayList<>();
-        AAIResultWrapper l3NetworksWrapper =
-                new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
-        AAIResourceUri aaiResourceUri =
-                AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network("networkId"));
+        AAIResultWrapper l3NetworksWrapper = new AAIResultWrapper(
+                new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
+        AAIResourceUri aaiResourceUri = AAIUriFactory
+                .createResourceUri(AAIFluentTypeBuilder.network().l3Network("networkId"));
 
         doReturn(l3NetworksWrapper).when(SPY_bbInputSetupUtils).getAAIResourceDepthTwo(aaiResourceUri);
         doReturn(expected).when(bbInputSetupMapperLayer).mapAAIL3Network(isA(org.onap.aai.domain.yang.L3Network.class));
@@ -2035,7 +2021,7 @@ public class BBInputSetupTest {
         doNothing().when(SPY_bbInputSetup).mapRouteTableReferences(any(),
                 eq(expected.getContrailNetworkRouteTableReferences()));
 
-        SPY_bbInputSetup.mapL3Networks(Arrays.asList(new AAIResourceUri[] {aaiResourceUri}), l3Networks);
+        SPY_bbInputSetup.mapL3Networks(Arrays.asList(new AAIResourceUri[] { aaiResourceUri }), l3Networks);
 
         assertEquals(expected, l3Networks.get(0));
         verify(SPY_bbInputSetup, times(1)).mapNetworkPolicies(any(), eq(expected.getNetworkPolicies()));
@@ -2049,13 +2035,13 @@ public class BBInputSetupTest {
 
         RouteTableReference expected = new RouteTableReference();
         List<RouteTableReference> contrailNetworkRouteTableReferences = new ArrayList<>();
-        AAIResultWrapper vnfWrapper =
-                new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
+        AAIResultWrapper vnfWrapper = new AAIResultWrapper(
+                new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
 
         doReturn(expected).when(bbInputSetupMapperLayer).mapAAIRouteTableReferenceIntoRouteTableReference(
                 isA(org.onap.aai.domain.yang.RouteTableReference.class));
 
-        SPY_bbInputSetup.mapRouteTableReferences(Arrays.asList(new AAIResultWrapper[] {vnfWrapper}),
+        SPY_bbInputSetup.mapRouteTableReferences(Arrays.asList(new AAIResultWrapper[] { vnfWrapper }),
                 contrailNetworkRouteTableReferences);
 
         assertEquals(expected, contrailNetworkRouteTableReferences.get(0));
@@ -2066,15 +2052,15 @@ public class BBInputSetupTest {
         org.onap.aai.domain.yang.OwningEntity expectedAAI = new org.onap.aai.domain.yang.OwningEntity();
 
         OwningEntity expected = new OwningEntity();
-        AAIResultWrapper vnfWrapper =
-                new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
+        AAIResultWrapper vnfWrapper = new AAIResultWrapper(
+                new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
 
         doReturn(expected).when(bbInputSetupMapperLayer)
                 .mapAAIOwningEntity(isA(org.onap.aai.domain.yang.OwningEntity.class));
 
         ServiceInstance serviceInstance = new ServiceInstance();
 
-        SPY_bbInputSetup.mapOwningEntity(Arrays.asList(new AAIResultWrapper[] {vnfWrapper}), serviceInstance);
+        SPY_bbInputSetup.mapOwningEntity(Arrays.asList(new AAIResultWrapper[] { vnfWrapper }), serviceInstance);
 
         assertEquals(expected, serviceInstance.getOwningEntity());
     }
@@ -2084,14 +2070,14 @@ public class BBInputSetupTest {
         org.onap.aai.domain.yang.Project expectedAAI = new org.onap.aai.domain.yang.Project();
 
         Project expected = new Project();
-        AAIResultWrapper vnfWrapper =
-                new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
+        AAIResultWrapper vnfWrapper = new AAIResultWrapper(
+                new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
 
         doReturn(expected).when(bbInputSetupMapperLayer).mapAAIProject(isA(org.onap.aai.domain.yang.Project.class));
 
         ServiceInstance serviceInstance = new ServiceInstance();
 
-        SPY_bbInputSetup.mapProject(Arrays.asList(new AAIResultWrapper[] {vnfWrapper}), serviceInstance);
+        SPY_bbInputSetup.mapProject(Arrays.asList(new AAIResultWrapper[] { vnfWrapper }), serviceInstance);
 
         assertEquals(expected, serviceInstance.getProject());
     }
@@ -2099,8 +2085,7 @@ public class BBInputSetupTest {
     @Test
     public void testMapCustomer() {
         org.onap.aai.domain.yang.Customer customerAAI = new org.onap.aai.domain.yang.Customer();
-        org.onap.aai.domain.yang.ServiceSubscription serviceSubscriptionAAI =
-                new org.onap.aai.domain.yang.ServiceSubscription();
+        org.onap.aai.domain.yang.ServiceSubscription serviceSubscriptionAAI = new org.onap.aai.domain.yang.ServiceSubscription();
 
         Customer expected = new Customer();
         ServiceSubscription serviceSubscription = new ServiceSubscription();
@@ -2244,8 +2229,8 @@ public class BBInputSetupTest {
         aaiVpnBinding.setVpnId("vpnBindingId");
         org.onap.aai.domain.yang.L3Network aaiLocalNetwork = new org.onap.aai.domain.yang.L3Network();
         aaiLocalNetwork.setNetworkId("localNetworkId");
-        Optional<org.onap.aai.domain.yang.VpnBinding> aaiAICVpnBindingOp =
-                Optional.of(new org.onap.aai.domain.yang.VpnBinding());
+        Optional<org.onap.aai.domain.yang.VpnBinding> aaiAICVpnBindingOp = Optional
+                .of(new org.onap.aai.domain.yang.VpnBinding());
         aaiAICVpnBindingOp.get().setVpnId("AICVpnBindingId");
         ServiceProxy proxy = new ServiceProxy();
         proxy.setType("transport");
@@ -2468,8 +2453,8 @@ public class BBInputSetupTest {
         List<NetworkResourceCustomization> networkCustList = new ArrayList<>();
         NetworkResourceCustomization networkCust = Mockito.mock(NetworkResourceCustomization.class);
         networkCustList.add(networkCust);
-        CollectionNetworkResourceCustomization collectionNetworkResourceCust =
-                Mockito.mock(CollectionNetworkResourceCustomization.class);
+        CollectionNetworkResourceCustomization collectionNetworkResourceCust = Mockito
+                .mock(CollectionNetworkResourceCustomization.class);
         org.onap.aai.domain.yang.GenericVnf aaiVnf = new org.onap.aai.domain.yang.GenericVnf();
         aaiVnf.setModelCustomizationId("modelCustId");
         ModelInfoNetwork modelInfoNetwork = Mockito.mock(ModelInfoNetwork.class);
@@ -2518,8 +2503,8 @@ public class BBInputSetupTest {
         List<NetworkResourceCustomization> networkCustList = new ArrayList<>();
         NetworkResourceCustomization networkCust = Mockito.mock(NetworkResourceCustomization.class);
         networkCustList.add(networkCust);
-        CollectionNetworkResourceCustomization collectionNetworkResourceCust =
-                Mockito.mock(CollectionNetworkResourceCustomization.class);
+        CollectionNetworkResourceCustomization collectionNetworkResourceCust = Mockito
+                .mock(CollectionNetworkResourceCustomization.class);
 
         ConfigurationResourceKeys configResourceKeys = prepareConfigurationResourceKeys();
         RequestDetails requestDetails = mapper
@@ -2993,6 +2978,46 @@ public class BBInputSetupTest {
     }
 
     @Test
+    public void testGetGBBMacroExistingServiceNullCloudConfigPopulatesTenant() throws Exception {
+        // When cloudConfiguration is null (macro delete), the tenant should be populated
+        // from the AAI cloud info so that DeleteVFModule.createInventoryVariable() can
+        // pass a non-null tenantId to HeatBridgeImpl, allowing InventoryDelete to run.
+        String requestAction = "deleteInstance";
+        GeneralBuildingBlock gBB = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
+                GeneralBuildingBlock.class);
+        ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
+                ExecuteBuildingBlock.class);
+        RequestDetails requestDetails = mapper
+                .readValue(new File(RESOURCE_PATH + "RequestDetailsInput_requestDetails.json"), RequestDetails.class);
+        executeBB.setRequestDetails(requestDetails);
+        Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
+        lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, "si123");
+
+        org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance = new org.onap.aai.domain.yang.ServiceInstance();
+        aaiServiceInstance.setServiceInstanceId("si123");
+        aaiServiceInstance.setModelVersionId("modelVersionId");
+        Service service = new Service();
+        ServiceInstance serviceInstance = gBB.getServiceInstance();
+
+        CloudRegion cloudRegionFromAAI = new CloudRegion();
+        cloudRegionFromAAI.setCloudOwner("cloud-owner");
+        cloudRegionFromAAI.setLcpCloudRegionId("RegionOne");
+        cloudRegionFromAAI.setTenantId("tenant-id-from-aai");
+
+        doReturn(service).when(SPY_bbInputSetupUtils).getCatalogServiceByModelUUID("modelVersionId");
+        doReturn(aaiServiceInstance).when(SPY_bbInputSetupUtils).getAAIServiceInstanceById("si123");
+        doReturn(serviceInstance).when(SPY_bbInputSetup).getExistingServiceInstance(aaiServiceInstance);
+        doReturn(gBB).when(SPY_bbInputSetup).populateGBBWithSIAndAdditionalInfo(any(BBInputSetupParameter.class));
+        doReturn(Optional.of(cloudRegionFromAAI)).when(SPY_cloudInfoFromAAI).getCloudInfoFromAAI(serviceInstance);
+
+        SPY_bbInputSetup.getGBBMacroExistingService(executeBB, lookupKeyMap, "DeleteVfModuleBB", requestAction, null);
+
+        Tenant resultTenant = gBB.getTenant();
+        assertNotNull("Tenant must not be null when cloudConfiguration is absent", resultTenant);
+        assertEquals("tenant-id-from-aai", resultTenant.getTenantId());
+    }
+
+    @Test
     public void testGetGBBMacroExistingServiceServiceinstancenotFoundInAai() throws Exception {
         ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
                 ExecuteBuildingBlock.class);
@@ -3090,8 +3115,8 @@ public class BBInputSetupTest {
         List<Map<String, String>> instanceParams = new ArrayList<>();
         instanceParams.add(cloudParams);
 
-        VolumeGroup actual =
-                SPY_bbInputSetup.createVolumeGroup(lookupKeyMap, volumeGroupId, instanceName, vnfType, instanceParams);
+        VolumeGroup actual = SPY_bbInputSetup.createVolumeGroup(lookupKeyMap, volumeGroupId, instanceName, vnfType,
+                instanceParams);
 
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         assertEquals("LookupKeyMap is populated", volumeGroupId, lookupKeyMap.get(ResourceKey.VOLUME_GROUP_ID));
@@ -3122,14 +3147,13 @@ public class BBInputSetupTest {
         List<Map<String, String>> instanceParams = new ArrayList<>();
         instanceParams.add(cloudParams);
         org.onap.so.serviceinstancebeans.Platform platformRequest = new org.onap.so.serviceinstancebeans.Platform();
-        org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusinessRequest =
-                new org.onap.so.serviceinstancebeans.LineOfBusiness();
+        org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusinessRequest = new org.onap.so.serviceinstancebeans.LineOfBusiness();
         lineOfBusinessRequest.setLineOfBusinessName("lineOfBusiness");
         platformRequest.setPlatformName("platformName");
         BBInputSetupParameter parameter = new BBInputSetupParameter.Builder().setRequestId(REQUEST_ID)
                 .setPlatform(platformRequest).setLineOfBusiness(lineOfBusinessRequest).build();
-        L3Network actual =
-                SPY_bbInputSetup.createNetwork(lookupKeyMap, instanceName, networkId, instanceParams, parameter);
+        L3Network actual = SPY_bbInputSetup.createNetwork(lookupKeyMap, instanceName, networkId, instanceParams,
+                parameter);
 
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         assertEquals("LookupKeyMap is populated", networkId, lookupKeyMap.get(ResourceKey.NETWORK_ID));
@@ -3171,8 +3195,7 @@ public class BBInputSetupTest {
         instanceParams.add(cloudParams);
         org.onap.so.serviceinstancebeans.Platform requestPlatform = new org.onap.so.serviceinstancebeans.Platform();
         platform.setPlatformName(platformName);
-        org.onap.so.serviceinstancebeans.LineOfBusiness requestLineOfBusiness =
-                new org.onap.so.serviceinstancebeans.LineOfBusiness();
+        org.onap.so.serviceinstancebeans.LineOfBusiness requestLineOfBusiness = new org.onap.so.serviceinstancebeans.LineOfBusiness();
         lineOfBusiness.setLineOfBusinessName(lineOfBusinessName);
 
         doReturn(platform).when(bbInputSetupMapperLayer).mapRequestPlatform(requestPlatform);
@@ -3479,8 +3502,8 @@ public class BBInputSetupTest {
         String vnfcName = "vnfcName";
         org.onap.aai.domain.yang.Configuration expectedAAI = new org.onap.aai.domain.yang.Configuration();
         AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().vnfc(vnfcName));
-        AAIResultWrapper configurationWrapper =
-                new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
+        AAIResultWrapper configurationWrapper = new AAIResultWrapper(
+                new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
 
         doReturn(new AAIResultWrapper(null)).when(SPY_bbInputSetupUtils).getAAIResourceDepthOne(aaiResourceUri);
         Vnfc vnfc = SPY_bbInputSetup.getVnfcToConfiguration(vnfcName);
