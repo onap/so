@@ -1,12 +1,12 @@
-server: 
-  port: 8080  
+server:
+  port: 8080
   tomcat:
     max-threads: 50
 mso:
   infra:
     auditInventory: false
   camundaAuth: AE2E9BE6EF9249085AF98689C4EE087736A5500629A72F35068FFB88813A023581DD6E765071F1C04075B36EA4213A
-spring: 
+spring:
   datasource:
     hikari:
       jdbcUrl: jdbc:mariadb://${DB_HOST}:${DB_PORT}/camundabpmn
@@ -15,6 +15,11 @@ spring:
       driver-class-name: org.mariadb.jdbc.Driver
       pool-name: bpmn-pool
       registerMbeans: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/camundabpmn
+    user: ${DB_ADMIN_USERNAME}
+    password: ${DB_ADMIN_PASSWORD}
   http:
     multipart:
       enabled: false
@@ -24,6 +29,8 @@ spring:
     allow-bean-definition-overriding: true
 camunda:
   bpm:
+    database:
+      schema-update: false
     application:
       delete-upon-undeploy: false
       scan-for-process-definitions: true

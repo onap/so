@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <!-- Baseline: Camunda engine schema 7.14.0 (matches OOM init SQL).
+         Skipped if tables already exist (existing deployment). -->
+    <changeSet id="camunda-engine-7.14.0-baseline" author="so-migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="ACT_GE_PROPERTY"/>
+            </not>
+        </preConditions>
+        <sqlFile path="db/changelog/mariadb_engine_7.14.0.sql"
+                 relativeToChangelogFile="false"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <!-- Baseline: Camunda identity schema 7.14.0.
+         Skipped if tables already exist. -->
+    <changeSet id="camunda-identity-7.14.0-baseline" author="so-migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="ACT_ID_USER"/>
+            </not>
+        </preConditions>
+        <sqlFile path="db/changelog/mariadb_identity_7.14.0.sql"
+                 relativeToChangelogFile="false"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <!-- Upgrade: Camunda engine 7.14 to 7.15.
+         Skipped if already at 7.15 (e.g. Camunda auto-update ran previously). -->
+    <changeSet id="camunda-engine-7.14-to-7.15" author="so-migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="ACT_RU_TASK_METER_LOG"/>
+            </not>
+        </preConditions>
+        <sqlFile path="db/changelog/mariadb_engine_7.14_to_7.15.sql"
+                 relativeToChangelogFile="false"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+</databaseChangeLog>
