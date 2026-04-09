@@ -47,4 +47,32 @@
                  stripComments="true"/>
     </changeSet>
 
+    <!-- Upgrade: Camunda engine 7.15 to 7.16.
+         Skipped if ACT_RE_CAMFORMDEF already exists. -->
+    <changeSet id="camunda-engine-7.15-to-7.16" author="so-migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="ACT_RE_CAMFORMDEF"/>
+            </not>
+        </preConditions>
+        <sqlFile path="db/changelog/mariadb_engine_7.15_to_7.16.sql"
+                 relativeToChangelogFile="false"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <!-- Upgrade: Camunda engine 7.16 to 7.17.
+         Skipped if LAST_FAILURE_LOG_ID_ column already exists on ACT_RU_JOB. -->
+    <changeSet id="camunda-engine-7.16-to-7.17" author="so-migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="ACT_RU_JOB" columnName="LAST_FAILURE_LOG_ID_"/>
+            </not>
+        </preConditions>
+        <sqlFile path="db/changelog/mariadb_engine_7.16_to_7.17.sql"
+                 relativeToChangelogFile="false"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
 </databaseChangeLog>
