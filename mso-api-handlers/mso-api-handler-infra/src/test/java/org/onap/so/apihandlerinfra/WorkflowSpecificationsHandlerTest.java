@@ -1,5 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
@@ -75,7 +76,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
         wireMockServer.stubFor(get(urlMatching(
-                "/workflow/search/findWorkflowByVnfModelUUID[?]vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"))
+                "/workflow/search/findWorkflowByVnfModelUUID\\?vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("WorkflowSpecificationsQuery_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -328,7 +329,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
         wireMockServer.stubFor(get(urlMatching(
-                "/workflow/search/findWorkflowByPnfModelUUID[?]pnfResourceModelUUID=f2d1f2b2-88bb-49da-b716-36ae420ccbff"))
+                "/workflow/search/findWorkflowByPnfModelUUID\\?pnfResourceModelUUID=f2d1f2b2-88bb-49da-b716-36ae420ccbff"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb(
                                         "WorkflowSpecificationsForPnfQuery_Response.json"))
@@ -371,7 +372,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-        String WORKFLOW_QUERY = "/workflow/search/findByResourceTarget[?]resourceTarget=service";
+        String WORKFLOW_QUERY = "/workflow/search/findByResourceTarget\\?resourceTarget=service";
         String WORKFLOW_SPEC_QUERY = "/workflow/5/workflowActivitySpecSequence";
         String JSON_FILE_PATH = "src/test/resources/__files/catalogdb/WorkflowSpecificationsForService.json";
         String MOCK_RESP_FILE = "WorkflowSpecificationsForServiceWorkflows_Response.json";
@@ -418,7 +419,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest {
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity(null, headers);
 
-        wireMockServer.stubFor(get(urlMatching("/workflow/search/findByResourceTarget[?]resourceTarget=pnf"))
+        wireMockServer.stubFor(get(urlMatching("/workflow/search/findByResourceTarget\\?resourceTarget=pnf"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(
                                 getWiremockResponseForCatalogdb("WorkflowSpecificationsForPnfWorkflows_Response.json"))

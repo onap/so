@@ -1,5 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
@@ -22,7 +23,6 @@ package org.onap.so.apihandlerinfra.tenantisolation.process;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
@@ -30,6 +30,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.HttpHeaders;
@@ -58,7 +60,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 public class ActivateVnfOperationalEnvironmentTest extends BaseTest {
 
     @Rule
@@ -83,16 +84,15 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest {
 
     @Before
     public void init() {
-        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/")).withRequestBody(equalTo(
-                "{\"requestId\":\"TEST_requestId\",\"operationalEnvId\":\"1dfe7154-eae0-44f2-8e7a-8e5e7882e55d\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"SENT\",\"recoveryAction\":\"RETRY\",\"retryCount\":3,\"workloadContext\":\"PVT\",\"createTime\":null,\"modifyTime\":null,\"vnfOperationalEnvId\":\"1dfe7154-eae0-44f2-8e7a-8e5e7882e66d\"}"))
-                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/")).withRequestBody(equalTo(
-                "{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"1dfe7154-eae0-44f2-8e7a-8e5e7882e55d\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestId\",\"distributionIdStatus\":\"SENT\",\"distributionIdErrorReason\":\"\",\"createTime\":null,\"modifyTime\":null}"))
-                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/")).willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/")).willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(
+                get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findAllByOperationalEnvIdAndRequestId"))
+                        .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                .withBody("[]").withStatus(HttpStatus.SC_OK)));
     }
-
 
     @Test
     public void getAAIOperationalEnvironmentTest() {
@@ -172,6 +172,8 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest {
         wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString())
                         .withStatus(HttpStatus.SC_ACCEPTED)));
+
+        doNothing().when(requestsDbClient).save(any());
 
         assertDoesNotThrow(() -> activateVnf.processActivateSDCRequest(requestId, operationalEnvironmentId,
                 serviceModelVersionIdList, workloadContext, vnfOperationalEnvironmentId));
