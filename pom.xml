@@ -81,6 +81,7 @@
     <logback.version>1.2.11</logback.version>
     <kafka-clients.version>3.3.2</kafka-clients.version>
     <aai-schema.version>1.12.10</aai-schema.version>
+    <junit-jupiter.version>5.5.2</junit-jupiter.version>
     <surefire.forkCount>1</surefire.forkCount>
     <surefire.threadCount>1</surefire.threadCount>
   </properties>
@@ -624,7 +625,7 @@
             <dependency>
               <groupId>org.junit.jupiter</groupId>
               <artifactId>junit-jupiter-engine</artifactId>
-              <version>5.5.2</version>
+              <version>${junit-jupiter.version}</version>
             </dependency>
           </dependencies>
           <configuration>
@@ -805,8 +806,8 @@
     </dependency>
     <dependency>
       <groupId>com.github.tomakehurst</groupId>
-      <artifactId>wiremock-standalone</artifactId>
-      <version>2.13.0</version>
+      <artifactId>wiremock-jre8-standalone</artifactId>
+      <version>2.35.0</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -1058,7 +1059,13 @@
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-contract-wiremock</artifactId>
-        <version>1.2.4.RELEASE</version>
+        <version>3.1.10</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit-jupiter.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
