@@ -146,6 +146,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.camunda.bpm.extension.mockito</groupId>
       <artifactId>camunda-bpm-mockito</artifactId>
       <scope>test</scope>

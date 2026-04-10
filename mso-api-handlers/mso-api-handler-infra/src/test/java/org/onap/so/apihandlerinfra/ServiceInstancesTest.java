@@ -1,5 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
+ * Copyright (C) 2026 Deutsche Telekom AG
  *  Copyright (C) 2020 Nordix Foundation.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -119,7 +120,7 @@ public class ServiceInstancesTest extends BaseTest {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests/")).willReturn(aResponse()
+        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests/.*")).willReturn(aResponse()
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
         Mockito.doReturn(null).when(requestsDbClient).getInfraActiveRequestbyRequestId(Mockito.any());
     }
@@ -440,7 +441,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(".*/service-design-and-creation/services/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("/aai/ServiceFromAAI.json").withStatus(HttpStatus.SC_OK)));
+                        .withBodyFile("aai/ServiceFromAAI.json").withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -487,7 +488,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(".*/service-design-and-creation/services/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("/aai/ServiceFromAAI.json").withStatus(HttpStatus.SC_OK)));
+                        .withBodyFile("aai/ServiceFromAAI.json").withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -533,7 +534,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(".*/service-design-and-creation/services/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("/aai/ServiceFromAAI.json").withStatus(HttpStatus.SC_OK)));
+                        .withBodyFile("aai/ServiceFromAAI.json").withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -791,7 +792,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vnfResourceCustomization/search/findByModelCustomizationUUID[?]MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002671"))
+                ".*/vnfResourceCustomization/search/findByModelCustomizationUUID\\?MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002671"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb(
                                         "vnfResourceCustomization_ReplaceVnf_Response.json"))
@@ -803,7 +804,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]nfRole=GR-API-DEFAULT&action=createInstance"))
+                ".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction\\?nfRole=GR-API-DEFAULT&action=createInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vnfRecipeReplaceInstance_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -846,7 +847,7 @@ public class ServiceInstancesTest extends BaseTest {
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]nfRole=GR-API-DEFAULT&action=createInstance"))
+                ".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction\\?nfRole=GR-API-DEFAULT&action=createInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vnfRecipeCreateInstance_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -894,7 +895,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vnfResourceCustomization/search/findByModelCustomizationUUID[?]MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002671"))
+                ".*/vnfResourceCustomization/search/findByModelCustomizationUUID\\?MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002671"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb(
                                         "vnfResourceCustomization_ReplaceVnf_Response.json"))
@@ -906,7 +907,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]nfRole=GR-API-DEFAULT&action=replaceInstance"))
+                ".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction\\?nfRole=GR-API-DEFAULT&action=replaceInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vnfRecipeReplaceInstance_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -935,7 +936,7 @@ public class ServiceInstancesTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vnfResourceCustomization/search/findByModelCustomizationUUID[?]MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002671"))
+                ".*/vnfResourceCustomization/search/findByModelCustomizationUUID\\?MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002671"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb(
                                         "vnfResourceCustomization_ReplaceVnf_Response.json"))
@@ -945,7 +946,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBody(getWiremockResponseForCatalogdb("vnfResources_ReplaceVnf_Response.json"))
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]nfRole=GR-API-DEFAULT&action=replaceInstance"))
+                ".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction\\?nfRole=GR-API-DEFAULT&action=replaceInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vnfRecipeReplaceInstance_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -973,7 +974,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vnfResourceCustomization/search/findByModelCustomizationUUID[?]MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002674"))
+                ".*/vnfResourceCustomization/search/findByModelCustomizationUUID\\?MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002674"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vnfResourceCustomization_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -984,7 +985,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]nfRole=TEST&action=replaceInstance"))
+                ".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction\\?nfRole=TEST&action=replaceInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vnfRecipe_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -1014,7 +1015,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vnfResourceCustomization/search/findByModelCustomizationUUID[?]MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002674"))
+                ".*/vnfResourceCustomization/search/findByModelCustomizationUUID\\?MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002674"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vnfResourceCustomization_Response"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -1025,7 +1026,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]nfRole=GR-API-DEFAULT&action=recreateInstance"))
+                ".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction\\?nfRole=GR-API-DEFAULT&action=recreateInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vnfRecipe_ResponseWorkflowAction.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -1054,7 +1055,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vnfResourceCustomization/search/findByModelCustomizationUUID[?]MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002674"))
+                ".*/vnfResourceCustomization/search/findByModelCustomizationUUID\\?MODEL_CUSTOMIZATION_UUID=68dc9a92-214c-11e7-93ae-92361f002674"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vnfResourceCustomization_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -1065,7 +1066,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction"
-                + "[?]nfRole=GR-API-DEFAULT&action=updateInstance"))
+                + "\\?nfRole=GR-API-DEFAULT&action=updateInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("UpdateVnfRecipe_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -1093,7 +1094,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction"
-                + "[?]nfRole=GR-API-DEFAULT&action=applyUpdatedConfig"))
+                + "\\?nfRole=GR-API-DEFAULT&action=applyUpdatedConfig"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vnfRecipeApplyUpdatedConfig_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -1122,7 +1123,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction"
-                + "[?]nfRole=GR-API-DEFAULT&action=deleteInstance"))
+                + "\\?nfRole=GR-API-DEFAULT&action=deleteInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vnfRecipeDelete_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -1202,7 +1203,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(
                 "/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
-                        + "[?]vfModuleModelUUID=20c4431c-246d-11e7-93ae-92361f002671&vnfComponentType=vfModule&action=createInstance"))
+                        + "\\?vfModuleModelUUID=20c4431c-246d-11e7-93ae-92361f002671&vnfComponentType=vfModule&action=createInstance"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb("vnfComponentRecipe_Response.json"))
                                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -1237,7 +1238,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer
                 .stubFor(get(urlMatching(".*/vnfResourceCustomization/search/findByModelInstanceNameAndVnfResources"
-                        + "[?]MODEL_INSTANCE_NAME=test&VNF_RESOURCE_MODEL_UUID=fe6478e4-ea33-3346-ac12-ab121484a3fe"))
+                        + "\\?MODEL_INSTANCE_NAME=test&VNF_RESOURCE_MODEL_UUID=fe6478e4-ea33-3346-ac12-ab121484a3fe"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
                                                 "vnfResourceCustomizationForVfModule_Response.json"))
@@ -1249,7 +1250,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDAndVfModuleModelUUIDOrderByCreatedDesc[?]"
+                ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDAndVfModuleModelUUIDOrderByCreatedDesc\\?"
                         + "MODEL_CUSTOMIZATION_UUID=b4ea86b4-253f-11e7-93ae-92361f002672&MODEL_UUID=066de97e-253e-11e7-93ae-92361f002672"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
@@ -1268,7 +1269,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(
                 get(urlMatching(".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVnfComponentTypeAndAction"
-                        + "[?]vnfComponentType=vfModule&action=createInstance"))
+                        + "\\?vnfComponentType=vfModule&action=createInstance"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
                                                 "vnfComponentRecipeVNF_API_Response.json"))
@@ -1315,7 +1316,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc[?]MODEL_CUSTOMIZATION_UUID=b4ea86b4-253f-11e7-93ae-92361f002672"))
+                ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc\\?MODEL_CUSTOMIZATION_UUID=b4ea86b4-253f-11e7-93ae-92361f002672"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vfModuleCustomizationPCM_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -1332,7 +1333,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
-                        + "[?]vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=deleteInstance"))
+                        + "\\?vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=deleteInstance"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
                                                 "vnfComponentRecipeDeleteVfModule_Response.json"))
@@ -1366,7 +1367,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer
                 .stubFor(get(urlMatching(".*/vnfResourceCustomization/search/findByModelInstanceNameAndVnfResources"
-                        + "[?]MODEL_INSTANCE_NAME=test&VNF_RESOURCE_MODEL_UUID=fe6478e4-ea33-3346-ac12-ab121484a3fe"))
+                        + "\\?MODEL_INSTANCE_NAME=test&VNF_RESOURCE_MODEL_UUID=fe6478e4-ea33-3346-ac12-ab121484a3fe"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
                                                 "vnfResourceCustomizationForVfModule_Response.json"))
@@ -1378,7 +1379,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(
-                get(urlMatching(".*/vfModuleCustomization/search/findByModelCustomizationUUIDAndVfModuleModelUUID[?]"
+                get(urlMatching(".*/vfModuleCustomization/search/findByModelCustomizationUUIDAndVfModuleModelUUID\\?"
                         + "modelCustomizationUUID=b4ea86b4-253f-11e7-93ae-92361f002672&vfModuleModelUUID=066de97e-253e-11e7-93ae-92361f002672"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
@@ -1402,7 +1403,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer
-                .stubFor(get(urlMatching(".*/vfModule/search/findFirstVfModuleByModelInvariantUUIDAndModelVersion[?]"
+                .stubFor(get(urlMatching(".*/vfModule/search/findFirstVfModuleByModelInvariantUUIDAndModelVersion\\?"
                         + "modelInvariantUUID=78ca26d0-246d-11e7-93ae-92361f002671&modelVersion=2"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb("vfModule_Response.json"))
@@ -1410,7 +1411,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
-                        + "[?]vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=replaceInstance"))
+                        + "\\?vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=replaceInstance"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
                                                 "vnfComponentRecipeDeleteVfModule_Response.json"))
@@ -1442,14 +1443,14 @@ public class ServiceInstancesTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
         wireMockServer
-                .stubFor(get(urlMatching(".*/vfModule/search/findFirstVfModuleByModelInvariantUUIDAndModelVersion[?]"
+                .stubFor(get(urlMatching(".*/vfModule/search/findFirstVfModuleByModelInvariantUUIDAndModelVersion\\?"
                         + "modelInvariantUUID=78ca26d0-246d-11e7-93ae-92361f002671&modelVersion=2"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb("vfModule_Response.json"))
                                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
-                        + "[?]vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=replaceInstance"))
+                        + "\\?vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=replaceInstance"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
                                                 "vnfComponentRecipeDeleteVfModule_Response.json"))
@@ -1478,7 +1479,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc[?]MODEL_CUSTOMIZATION_UUID=cb82ffd8-252a-11e7-93ae-92361f002671"))
+                ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc\\?MODEL_CUSTOMIZATION_UUID=cb82ffd8-252a-11e7-93ae-92361f002671"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vfModuleCustomization_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -1495,7 +1496,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
-                        + "[?]vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=updateInstance"))
+                        + "\\?vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=updateInstance"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
                                                 "vnfComponentRecipe_GRAPI_Response.json"))
@@ -1553,7 +1554,7 @@ public class ServiceInstancesTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]"
+        wireMockServer.stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction\\?"
                 + "nfRole=GR-API-DEFAULT&action=inPlaceSoftwareUpdate"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vnfRecipeInPlaceUpdate_Response.json"))
@@ -1583,7 +1584,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer
-                .stubFor(get(urlMatching(".*/vfModule/search/findFirstVfModuleByModelInvariantUUIDAndModelVersion[?]"
+                .stubFor(get(urlMatching(".*/vfModule/search/findFirstVfModuleByModelInvariantUUIDAndModelVersion\\?"
                         + "modelInvariantUUID=78ca26d0-246d-11e7-93ae-92361f002671&modelVersion=2"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb("vfModule_Response.json"))
@@ -1591,7 +1592,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
-                        + "[?]vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=deleteInstance"))
+                        + "\\?vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=deleteInstance"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
                                                 "vnfComponentRecipeDeleteVfModule_Response.json"))
@@ -1622,7 +1623,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
-                        + "[?]vfModuleModelUUID=VNF-API-DEFAULT&vnfComponentType=vfModule&action=deleteInstance"))
+                        + "\\?vfModuleModelUUID=VNF-API-DEFAULT&vnfComponentType=vfModule&action=deleteInstance"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
                                                 "vnfComponentRecipeDeleteVfModule_Response.json"))
@@ -1652,7 +1653,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer
-                .stubFor(get(urlMatching(".*/vfModule/search/findFirstVfModuleByModelInvariantUUIDAndModelVersion[?]"
+                .stubFor(get(urlMatching(".*/vfModule/search/findFirstVfModuleByModelInvariantUUIDAndModelVersion\\?"
                         + "modelInvariantUUID=78ca26d0-246d-11e7-93ae-92361f002671&modelVersion=2"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb("vfModule_Response.json"))
@@ -1660,7 +1661,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
-                        + "[?]vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=deactivateAndCloudDelete"))
+                        + "\\?vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=deactivateAndCloudDelete"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
                                                 "vnfComponentRecipeDeactivate_Response.json"))
@@ -1690,7 +1691,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc[?]MODEL_CUSTOMIZATION_UUID=b4ea86b4-253f-11e7-93ae-92361f002671"))
+                ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc\\?MODEL_CUSTOMIZATION_UUID=b4ea86b4-253f-11e7-93ae-92361f002671"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vfModuleCustomizationVolGrp_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -1702,7 +1703,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
-                        + "[?]vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=volumeGroup&action=createInstance"))
+                        + "\\?vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=volumeGroup&action=createInstance"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
                                                 "vnfComponentRecipeVolGrp_GRAPI_Response.json"))
@@ -1732,7 +1733,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc[?]MODEL_CUSTOMIZATION_UUID=b4ea86b4-253f-11e7-93ae-92361f002671"))
+                ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc\\?MODEL_CUSTOMIZATION_UUID=b4ea86b4-253f-11e7-93ae-92361f002671"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vfModuleCustomizationVolGrp_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -1744,7 +1745,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
-                        + "[?]vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=volumeGroup&action=updateInstance"))
+                        + "\\?vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=volumeGroup&action=updateInstance"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
                                                 "vnfComponentRecipeVolGrp_GRAPI_Response.json"))
@@ -1778,7 +1779,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc[?]MODEL_CUSTOMIZATION_UUID=b4ea86b4-253f-11e7-93ae-92361f002671"))
+                ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc\\?MODEL_CUSTOMIZATION_UUID=b4ea86b4-253f-11e7-93ae-92361f002671"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vfModuleCustomizationVolGrp_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -1790,7 +1791,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
-                        + "[?]vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=volumeGroup&action=deleteInstance"))
+                        + "\\?vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=volumeGroup&action=deleteInstance"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
                                                 "vnfComponentRecipeVolGrp_GRAPI_Response.json"))
@@ -1830,7 +1831,7 @@ public class ServiceInstancesTest extends BaseTest {
                                 .withBody(getWiremockResponseForCatalogdb("networkResource_Response.json"))
                                 .withStatus(HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]"
+        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction\\?"
                 + "modelName=GR-API-DEFAULT&action=createInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("networkRecipe_Response.json"))
@@ -1869,7 +1870,7 @@ public class ServiceInstancesTest extends BaseTest {
                                 .withBody(getWiremockResponseForCatalogdb("networkResource_Response.json"))
                                 .withStatus(HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]"
+        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction\\?"
                 + "modelName=GR-API-DEFAULT&action=updateInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("networkRecipe_Response.json"))
@@ -1908,7 +1909,7 @@ public class ServiceInstancesTest extends BaseTest {
                                 .withBody(getWiremockResponseForCatalogdb("networkResource_Response.json"))
                                 .withStatus(HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]"
+        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction\\?"
                 + "modelName=VNF-API-DEFAULT&action=deleteInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("networkRecipe_Response.json"))
@@ -1937,7 +1938,7 @@ public class ServiceInstancesTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]"
+        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction\\?"
                 + "modelName=GR-API-DEFAULT&action=deleteInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("networkRecipe_Response.json"))
@@ -2013,7 +2014,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(".*/service-design-and-creation/services/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("/aai/ServiceFromAAI.json").withStatus(HttpStatus.SC_OK)));
+                        .withBodyFile("aai/ServiceFromAAI.json").withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -2053,7 +2054,7 @@ public class ServiceInstancesTest extends BaseTest {
                                 .withBody(getWiremockResponseForCatalogdb("networkResource_Response.json"))
                                 .withStatus(HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]"
+        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction\\?"
                 + "modelName=GR-API-DEFAULT&action=createInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("networkRecipe_Response.json"))
@@ -2112,7 +2113,7 @@ public class ServiceInstancesTest extends BaseTest {
                                 .withBody(getWiremockResponseForCatalogdb("networkResource_Response.json"))
                                 .withStatus(HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]"
+        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction\\?"
                 + "modelName=GR-API-DEFAULT&action=createInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("networkRecipe_Response.json"))
@@ -2152,7 +2153,7 @@ public class ServiceInstancesTest extends BaseTest {
                                 .withBody(getWiremockResponseForCatalogdb("networkResource_Response.json"))
                                 .withStatus(HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]"
+        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction\\?"
                 + "modelName=VNF-API-DEFAULT&action=createInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("networkRecipeVNF_API_Response.json"))
@@ -2196,7 +2197,7 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(".*/service-design-and-creation/services/service/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("/aai/ServiceFromAAI.json").withStatus(HttpStatus.SC_OK)));
+                        .withBodyFile("aai/ServiceFromAAI.json").withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/serviceRecipe/search.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -2420,7 +2421,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc[?]MODEL_CUSTOMIZATION_UUID=cb82ffd8-252a-11e7-93ae-92361f002671"))
+                ".*/vfModuleCustomization/search/findFirstByModelCustomizationUUIDOrderByCreatedDesc\\?MODEL_CUSTOMIZATION_UUID=cb82ffd8-252a-11e7-93ae-92361f002671"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vfModuleCustomization_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -2437,14 +2438,14 @@ public class ServiceInstancesTest extends BaseTest {
 
         wireMockServer.stubFor(get(urlMatching(
                 ".*/vnfComponentsRecipe/search/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction"
-                        + "[?]vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=scaleOut"))
+                        + "\\?vfModuleModelUUID=GR-API-DEFAULT&vnfComponentType=vfModule&action=scaleOut"))
                                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                         .withBody(getWiremockResponseForCatalogdb(
                                                 "vnfComponentRecipeVfModuleScaleOut_Response.json"))
                                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vfModule/search/findByModelInvariantUUIDOrderByModelVersionDesc[?]modelInvariantUUID=78ca26d0-246d-11e7-93ae-92361f002671"))
+                ".*/vfModule/search/findByModelInvariantUUIDOrderByModelVersionDesc\\?modelInvariantUUID=78ca26d0-246d-11e7-93ae-92361f002671"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vfModulesListByInvariantId_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -2656,7 +2657,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/vnfResourceCustomization/search/findByModelCustomizationUUID[?]MODEL_CUSTOMIZATION_UUID=2ccae1b4-7d9e-46fa-a452-9180ce008d17"))
+                ".*/vnfResourceCustomization/search/findByModelCustomizationUUID\\?MODEL_CUSTOMIZATION_UUID=2ccae1b4-7d9e-46fa-a452-9180ce008d17"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("vnfResourceCustomization_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -2667,7 +2668,7 @@ public class ServiceInstancesTest extends BaseTest {
                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction"
-                + "[?]nfRole=GR-API-DEFAULT&action=updateInstance"))
+                + "\\?nfRole=GR-API-DEFAULT&action=updateInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("UpdateVnfRecipe_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -2830,7 +2831,7 @@ public class ServiceInstancesTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_NOT_FOUND)));
 
-        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction[?]"
+        wireMockServer.stubFor(get(urlMatching(".*/networkRecipe/search/findFirstByModelNameAndAction\\?"
                 + "modelName=VNF-API-DEFAULT&action=deleteInstance"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("networkRecipe_Response.json"))
@@ -3046,4 +3047,3 @@ public class ServiceInstancesTest extends BaseTest {
     }
 
 }
-

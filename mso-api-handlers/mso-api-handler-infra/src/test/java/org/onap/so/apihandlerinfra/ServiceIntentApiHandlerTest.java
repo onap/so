@@ -1,5 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2020 Wipro Limited.
@@ -77,7 +78,7 @@ public class ServiceIntentApiHandlerTest extends BaseTest {
         wireMockServer.stubFor(get(urlPathEqualTo("/serviceRecipe/search/findFirstByServiceModelUUIDAndAction"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(MAPPER.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests/")).willReturn(aResponse()
+        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests/.*")).willReturn(aResponse()
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
         Mockito.doReturn(null).when(requestsDbClient).getInfraActiveRequestbyRequestId(Mockito.any());
     }
@@ -150,7 +151,4 @@ public class ServiceIntentApiHandlerTest extends BaseTest {
         assertEquals(expectedResponse, actualResponse);
     }
 
-
 }
-
-

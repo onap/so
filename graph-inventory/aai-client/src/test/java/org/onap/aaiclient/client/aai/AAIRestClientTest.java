@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,12 +100,12 @@ public class AAIRestClientTest {
     public void verifyAdditionalHeadersTest() throws URISyntaxException {
         AAIRestClient client = new AAIRestClient(new DefaultAAIPropertiesImpl(wireMockRule.port()), new URI("/test"),
                 new MultivaluedHashMap<String, Pair<String, String>>(
-                        ImmutableMap.of("ALL", Pair.with("test", "value"), "GET", Pair.with("get test", "value"))));
+                        ImmutableMap.of("ALL", Pair.with("test", "value"), "GET", Pair.with("get-test", "value"))));
         wireMockRule.stubFor(get(urlPathEqualTo("/test")).willReturn(aResponse().withStatus(200)));
         client.get();
         wireMockRule.verify(getRequestedFor(urlPathEqualTo("/test")).withHeader("X-FromAppId", equalTo("MSO"))
                 .withHeader("X-TransactionId", matching(".*")).withHeader("test", equalTo("value"))
-                .withHeader("get test", equalTo("value")));
+                .withHeader("get-test", equalTo("value")));
     }
 
 

@@ -1,5 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
@@ -155,7 +156,7 @@ public class InstanceManagementTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/workflow/search/findByArtifactUUID[?]artifactUUID=71526781-e55c-4cb7-adb3-97e09d9c76be"))
+                ".*/workflow/search/findByArtifactUUID\\?artifactUUID=71526781-e55c-4cb7-adb3-97e09d9c76be"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("workflow_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -184,7 +185,7 @@ public class InstanceManagementTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/workflow/search/findByArtifactUUID[?]artifactUUID=81526781-e55c-4cb7-adb3-97e09d9c76bf"))
+                ".*/workflow/search/findByArtifactUUID\\?artifactUUID=81526781-e55c-4cb7-adb3-97e09d9c76bf"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("workflow_pnf_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -214,7 +215,7 @@ public class InstanceManagementTest extends BaseTest {
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(get(urlMatching(
-                ".*/workflow/search/findByArtifactUUID[?]artifactUUID=81526781-e55c-4cb7-adb3-97e09d9c76bf"))
+                ".*/workflow/search/findByArtifactUUID\\?artifactUUID=81526781-e55c-4cb7-adb3-97e09d9c76bf"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("workflow_ServiceLevel_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -240,7 +241,7 @@ public class InstanceManagementTest extends BaseTest {
     @Test
     public void workflowAndOperationNameTest() {
         wireMockServer.stubFor(get(urlMatching(
-                ".*/workflow/search/findByArtifactUUID[?]artifactUUID=71526781-e55c-4cb7-adb3-97e09d9c76be"))
+                ".*/workflow/search/findByArtifactUUID\\?artifactUUID=71526781-e55c-4cb7-adb3-97e09d9c76be"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(getWiremockResponseForCatalogdb("workflow_Response.json"))
                                 .withStatus(org.apache.http.HttpStatus.SC_OK)));

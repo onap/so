@@ -3,13 +3,14 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2025 Deutsche Telekom AG.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +21,6 @@
 
 package org.onap.so.apihandlerinfra;
 
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
@@ -30,6 +30,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_REQUEST_ID;
 import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
 import static org.onap.logging.filter.base.Constants.HttpHeaders.ONAP_PARTNER_NAME;
@@ -162,7 +164,6 @@ public class RequestHandlerUtilsTest extends BaseTest {
         assertEquals(sir.getRequestDetails().getCloudConfiguration().getTenantId(), "88a6ca3ee0394ade9403f075db23167e");
         assertNotEquals(sir.getRequestDetails().getRequestParameters().getUserParams().size(), 0);
     }
-
 
     @Test
     public void test_mapJSONtoMSOStyleUsePreload() throws IOException {
@@ -316,6 +317,7 @@ public class RequestHandlerUtilsTest extends BaseTest {
                 ("/sobpmnengine/history/process-instance?processInstanceBusinessKey=f0a35706-efc4-4e27-80ea-a995d7a2a40f&active=true&maxResults=1"))
                         .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody("[]").withStatus(org.apache.http.HttpStatus.SC_OK)));
+        doNothing().when(requestsDbClient).save(any(InfraActiveRequests.class));
 
         InfraActiveRequests duplicateRecord = new InfraActiveRequests();
         duplicateRecord.setRequestId("f0a35706-efc4-4e27-80ea-a995d7a2a40f");
