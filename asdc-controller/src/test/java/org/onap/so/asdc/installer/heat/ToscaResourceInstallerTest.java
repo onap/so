@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Copyright (C) 2026 Deutsche Telekom AG
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,7 +34,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,7 +59,6 @@ import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.RequirementAssignment;
-import org.onap.sdc.toscaparser.api.RequirementAssignments;
 import org.onap.sdc.toscaparser.api.SubstitutionMappings;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.sdc.toscaparser.api.elements.StatefulEntityType;
@@ -82,7 +82,6 @@ import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
-import java.util.stream.Collectors;
 
 public class ToscaResourceInstallerTest extends BaseTest {
     @Autowired
@@ -700,41 +699,40 @@ public class ToscaResourceInstallerTest extends BaseTest {
 
     @Test
     public void testProcessVNFCGroupSequence() {
-        List<Group> groupList = new ArrayList<>();
+        List<IEntityDetails> groupList = new ArrayList<>();
 
-        Group group1 = mock(Group.class);
-        NodeTemplate node1 = mock(NodeTemplate.class);
-        List<NodeTemplate> nodeList1 = new ArrayList<>();
+        IEntityDetails group1 = mock(IEntityDetails.class);
+        IEntityDetails node1 = mock(IEntityDetails.class);
+        List<IEntityDetails> nodeList1 = new ArrayList<>();
         nodeList1.add(node1);
         doReturn("VfcInstanceGroup..0").when(group1).getName();
         doReturn(nodeList1).when(group1).getMemberNodes();
         doReturn("deviceV3").when(node1).getName();
+        doReturn(Collections.emptyList()).when(node1).getRequirements();
 
-        Group group2 = mock(Group.class);
-        NodeTemplate node2 = mock(NodeTemplate.class);
-        List<NodeTemplate> nodeList2 = new ArrayList<>();
+        IEntityDetails group2 = mock(IEntityDetails.class);
+        IEntityDetails node2 = mock(IEntityDetails.class);
+        List<IEntityDetails> nodeList2 = new ArrayList<>();
         nodeList2.add(node2);
         doReturn("VfcInstanceGroup..1").when(group2).getName();
         doReturn(nodeList2).when(group2).getMemberNodes();
-        RequirementAssignments requirements2 = mock(RequirementAssignments.class);
         RequirementAssignment requirement2 = mock(RequirementAssignment.class);
         List<RequirementAssignment> requirementCollection2 = new ArrayList<>();
         requirementCollection2.add(requirement2);
-        doReturn(requirementCollection2).when(requirements2).getAll();
+        doReturn(requirementCollection2).when(node2).getRequirements();
         doReturn("deviceV3").when(requirement2).getNodeTemplateName();
         doReturn("SiteV2").when(node2).getName();
 
-        Group group3 = mock(Group.class);
-        NodeTemplate node3 = mock(NodeTemplate.class);
-        List<NodeTemplate> nodeList3 = new ArrayList<>();
+        IEntityDetails group3 = mock(IEntityDetails.class);
+        IEntityDetails node3 = mock(IEntityDetails.class);
+        List<IEntityDetails> nodeList3 = new ArrayList<>();
         nodeList3.add(node3);
         doReturn("VfcInstanceGroup..2").when(group3).getName();
         doReturn(nodeList3).when(group3).getMemberNodes();
-        RequirementAssignments requirements3 = mock(RequirementAssignments.class);
         RequirementAssignment requirement3 = mock(RequirementAssignment.class);
         List<RequirementAssignment> requirementCollection3 = new ArrayList<>();
         requirementCollection3.add(requirement3);
-        doReturn(requirementCollection3).when(requirements3).getAll();
+        doReturn(requirementCollection3).when(node3).getRequirements();
         doReturn("SiteV2").when(requirement3).getNodeTemplateName();
         doReturn("siteWanV2").when(node3).getName();
 
@@ -745,27 +743,8 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
 
         ToscaResourceInstaller installer = new ToscaResourceInstaller();
-        Method[] methods = installer.getClass().getDeclaredMethods();
-        Method testMethod = null;
-        for (Method method : methods) {
-            String name = method.getName();
-            if (name.equals("processVNFCGroupSequence")) {
-                method.setAccessible(true);
-                testMethod = method;
-            }
-        }
-
-        if (null != testMethod) {
-            try {
-                Object seqResult = testMethod.invoke(installer, toscaResourceStructure, groupList);
-                if (seqResult instanceof List) {
-                    String resultStr = ((List<String>) seqResult).stream().collect(Collectors.joining(","));
-                    assertEquals(((List<String>) seqResult).size(), 3);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
+        List<String> seqResult = installer.processVNFCGroupSequence(toscaResourceStructure, groupList);
+        assertEquals(seqResult.size(), 3);
 
     }
 

@@ -6,6 +6,8 @@
  * ================================================================================
  * Copyright (C) 2018 Nokia.
  * ================================================================================
+ * Copyright (C) 2026 Deutsche Telekom AG
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,12 +40,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class PnfEventReadyKafkaClient implements KafkaClient {
     private static final Logger logger = LoggerFactory.getLogger(PnfEventReadyKafkaClient.class);
-    private Map<String, Runnable> pnfCorrelationIdToThreadMap;
+    Map<String, Runnable> pnfCorrelationIdToThreadMap;
     private int topicListenerDelayInSeconds;
-    private volatile ScheduledThreadPoolExecutor executor;
-    private volatile boolean kafkaThreadListenerIsRunning;
-    private KafkaConsumerImpl consumerForPnfReady;
-    private KafkaConsumerImpl consumerForPnfUpdate;
+    volatile ScheduledThreadPoolExecutor executor;
+    volatile boolean kafkaThreadListenerIsRunning;
+    KafkaConsumerImpl consumerForPnfReady;
+    KafkaConsumerImpl consumerForPnfUpdate;
     private String pnfReadyTopic;
     private String pnfUpdateTopic;
     private String consumerGroup;

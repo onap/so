@@ -6,6 +6,8 @@
  * ================================================================================
  * Copyright (C) 2018 Nokia.
  * ================================================================================
+ * Copyright (C) 2026 Deutsche Telekom AG
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,7 +32,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -73,7 +74,7 @@ public class PnfEventReadyKafkaClientTest {
     private ScheduledThreadPoolExecutor executorMock;
 
     @Before
-    public void init() throws NoSuchFieldException, IllegalAccessException, IOException {
+    public void init() throws IOException {
         when(env.getProperty(eq("pnf.kafka.kafkaBootstrapServers"))).thenReturn(KAFKA_BOOTSTRAP_SERVERS);
         when(env.getProperty(eq("pnf.kafka.pnfReadyTopicName"))).thenReturn(TOPIC_NAME);
         when(env.getProperty(eq("pnf.kafka.pnfUpdateTopicName"))).thenReturn(TOPIC_NAME_UPDATE);
@@ -159,32 +160,16 @@ public class PnfEventReadyKafkaClientTest {
         verifyNoInteractions(threadMockToNotifyCamundaFlow, executorMock);
     }
 
-    private void setPrivateField() throws NoSuchFieldException, IllegalAccessException {
-        Field consumerForPnfReadyField = testedObject.getClass().getDeclaredField("consumerForPnfReady");
-        consumerForPnfReadyField.setAccessible(true);
-        consumerForPnfReadyField.set(testedObject, kafkaConsumerMock);
-        consumerForPnfReadyField.setAccessible(false);
+    private void setPrivateField() {
+        testedObject.consumerForPnfReady = kafkaConsumerMock;
+        testedObject.consumerForPnfUpdate = kafkaConsumerMock;
+        testedObject.executor = executorMock;
 
-        Field consumerForPnfUpdateField = testedObject.getClass().getDeclaredField("consumerForPnfUpdate");
-        consumerForPnfUpdateField.setAccessible(true);
-        consumerForPnfUpdateField.set(testedObject, kafkaConsumerMock);
-        consumerForPnfUpdateField.setAccessible(false);
-
-        Field executorField = testedObject.getClass().getDeclaredField("executor");
-        executorField.setAccessible(true);
-        executorField.set(testedObject, executorMock);
-        executorField.setAccessible(false);
-
-        Field pnfCorrelationToThreadMapField = testedObject.getClass().getDeclaredField("pnfCorrelationIdToThreadMap");
-        pnfCorrelationToThreadMapField.setAccessible(true);
         Map<String, Runnable> pnfCorrelationToThreadMap = new ConcurrentHashMap<>();
         pnfCorrelationToThreadMap.put(PNF_CORRELATION_ID, threadMockToNotifyCamundaFlow);
-        pnfCorrelationToThreadMapField.set(testedObject, pnfCorrelationToThreadMap);
+        testedObject.pnfCorrelationIdToThreadMap = pnfCorrelationToThreadMap;
 
-        Field threadRunFlag = testedObject.getClass().getDeclaredField("kafkaThreadListenerIsRunning");
-        threadRunFlag.setAccessible(true);
-        threadRunFlag.set(testedObject, true);
-        threadRunFlag.setAccessible(false);
+        testedObject.kafkaThreadListenerIsRunning = true;
     }
 
 }
