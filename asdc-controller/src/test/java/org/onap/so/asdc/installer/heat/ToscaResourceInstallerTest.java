@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Copyright (C) 2026 Deutsche Telekom AG
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,7 +34,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -82,7 +83,6 @@ import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
-import java.util.stream.Collectors;
 
 public class ToscaResourceInstallerTest extends BaseTest {
     @Autowired
@@ -745,27 +745,8 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
 
         ToscaResourceInstaller installer = new ToscaResourceInstaller();
-        Method[] methods = installer.getClass().getDeclaredMethods();
-        Method testMethod = null;
-        for (Method method : methods) {
-            String name = method.getName();
-            if (name.equals("processVNFCGroupSequence")) {
-                method.setAccessible(true);
-                testMethod = method;
-            }
-        }
-
-        if (null != testMethod) {
-            try {
-                Object seqResult = testMethod.invoke(installer, toscaResourceStructure, groupList);
-                if (seqResult instanceof List) {
-                    String resultStr = ((List<String>) seqResult).stream().collect(Collectors.joining(","));
-                    assertEquals(((List<String>) seqResult).size(), 3);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
+        List<String> seqResult = installer.processVNFCGroupSequence(toscaResourceStructure, groupList);
+        assertEquals(seqResult.size(), 3);
 
     }
 

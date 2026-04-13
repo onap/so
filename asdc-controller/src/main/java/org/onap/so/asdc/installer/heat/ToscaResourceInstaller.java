@@ -7,6 +7,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Copyright (C) 2026 Deutsche Telekom AG
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1111,7 +1113,7 @@ public class ToscaResourceInstaller {
         }
     }
 
-    private List<String> processVNFCGroupSequence(ToscaResourceStructure toscaResourceStructure,
+    List<String> processVNFCGroupSequence(ToscaResourceStructure toscaResourceStructure,
             List<IEntityDetails> groupEntityDetails) {
         if (CollectionUtils.isEmpty(groupEntityDetails)) {
             return Collections.emptyList();
