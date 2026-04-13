@@ -16,6 +16,23 @@
       "message": "All comments are resolved.",
       "revId": "49774cf8c9798cd6b0221a2bf8e921bc73f2ab20",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "635689fd_eb4fe083",
+        "filename": "bpmn/mso-infrastructure-bpmn/src/main/java/org/onap/so/bpmn/common/workflow/service/WorkflowAsyncResource.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-04-13T13:44:06Z",
+      "side": 1,
+      "message": "What is the dynamic condition here that let\u0027s this exit prematurely? Please provide  a summary in three bulletpoints what this whole block is doing. For me it reads like:\n- sleep\n- instantiate 10 objects\n- check `if (foundContext !\u003d null)` [0]\n- return the response then\n\n[0] how can `foundContext` be `null` here?! You have no method invocation that could dynamically return anything here that would be null. You are only instantiating objects",
+      "revId": "49774cf8c9798cd6b0221a2bf8e921bc73f2ab20",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
