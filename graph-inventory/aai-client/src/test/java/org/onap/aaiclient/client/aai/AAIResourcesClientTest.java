@@ -24,6 +24,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
@@ -36,9 +37,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import java.io.IOException;
 import java.util.Optional;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,6 +63,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.defaultproperties.DefaultAAIPropertiesImpl;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryMultipleItemsException;
+import org.onap.so.client.ClientBuilderCustomizer;
 import org.onap.so.client.RestClient;
 import com.github.tomakehurst.wiremock.admin.NotFoundException;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -322,16 +328,34 @@ public class AAIResourcesClientTest {
     }
 
     @Test
-    public void testGetFirstWrongPluralClass() {
-        GenericVnf vnf = new GenericVnf();
-        AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnfs());
-        RestClient restClientMock = mock(RestClient.class);
-        doReturn(restClientMock).when(client).createClient(uri);
-        when(restClientMock.get(GenericVnf.class)).thenReturn(Optional.of(vnf));
+    public void clientBuilderCustomizerPropagatesFromResourcesClient() {
+        final String customHeaderName = "X-Trace-Propagation";
+        final String customHeaderValue = "trace-abc-123";
 
-        Optional<GenericVnf> result = aaiClient.getFirst(GenericVnf.class, GenericVnf.class, uri);
+        ClientBuilderCustomizer customizer = builder -> {
+            builder.register(new ClientRequestFilter() {
+                @Override
+                public void filter(ClientRequestContext requestContext) throws IOException {
+                    requestContext.getHeaders().add(customHeaderName, customHeaderValue);
+                }
+            });
+            return builder;
+        };
 
-        assertFalse(result.isPresent());
+        AAIResourceUri path = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test-custom"));
+        wireMockRule.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBodyFile("aai/resources/mockObject.json").withStatus(200)));
+
+        AAIClient customClient = spy(new AAIClient(customizer));
+        doReturn(new DefaultAAIPropertiesImpl(wireMockRule.port())).when(customClient).getRestProperties();
+        AAIResourcesClient resourcesClient = new AAIResourcesClient(customClient);
+
+        AAIResultWrapper result = resourcesClient.get(path);
+        assertNotNull(result);
+
+        wireMockRule.verify(getRequestedFor(urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build()))
+                .withHeader(customHeaderName, equalTo(customHeaderValue)));
     }
 
 }

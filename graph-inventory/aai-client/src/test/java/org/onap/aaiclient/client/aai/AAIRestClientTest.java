@@ -40,10 +40,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import org.javatuples.Pair;
@@ -56,6 +59,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aaiclient.client.defaultproperties.DefaultAAIPropertiesImpl;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryPatchConverter;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryPatchDepthExceededException;
+import org.onap.so.client.ClientBuilderCustomizer;
 import org.onap.so.client.RestClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -215,5 +219,41 @@ public class AAIRestClientTest {
         response.readEntity(String.class);
         verify(2, getRequestedFor(urlEqualTo("/cached/1")));
 
+    }
+
+    @Test
+    public void clientBuilderCustomizerAddsFilter() throws URISyntaxException {
+        final String customHeaderName = "X-Custom-Trace";
+        final String customHeaderValue = "test-trace-id-123";
+
+        ClientBuilderCustomizer customizer = builder -> {
+            builder.register(new ClientRequestFilter() {
+                @Override
+                public void filter(ClientRequestContext requestContext) throws IOException {
+                    requestContext.getHeaders().add(customHeaderName, customHeaderValue);
+                }
+            });
+            return builder;
+        };
+
+        wireMockRule.stubFor(get(urlPathEqualTo("/customized")).willReturn(aResponse().withStatus(200)));
+
+        AAIRestClient client = new AAIRestClient(new DefaultAAIPropertiesImpl(wireMockRule.port()),
+                new URI("/customized"), new MultivaluedHashMap<>(), customizer);
+        client.get();
+
+        wireMockRule.verify(getRequestedFor(urlPathEqualTo("/customized")).withHeader(customHeaderName,
+                equalTo(customHeaderValue)));
+    }
+
+    @Test
+    public void clientWithoutCustomizerDoesNotAddCustomHeader() throws URISyntaxException {
+        wireMockRule.stubFor(get(urlPathEqualTo("/no-customizer")).willReturn(aResponse().withStatus(200)));
+
+        AAIRestClient client = new AAIRestClient(new DefaultAAIPropertiesImpl(wireMockRule.port()),
+                new URI("/no-customizer"), new MultivaluedHashMap<>());
+        client.get();
+
+        wireMockRule.verify(getRequestedFor(urlPathEqualTo("/no-customizer")).withoutHeader("X-Custom-Trace"));
     }
 }

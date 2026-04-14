@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +27,7 @@ import org.onap.aaiclient.client.aai.entities.uri.AAIFluentTypeReverseLookup;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryQueryClient;
 import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventoryUri;
+import org.onap.so.client.ClientBuilderCustomizer;
 
 public class AAIQueryClient
         extends GraphInventoryQueryClient<AAIQueryClient, CustomQuery, AAIResultWrapper, AAIObjectType> {
@@ -36,6 +38,14 @@ public class AAIQueryClient
 
     public AAIQueryClient(AAIVersion version) {
         super(new AAIClient(version));
+    }
+
+    public AAIQueryClient(ClientBuilderCustomizer clientBuilderCustomizer) {
+        super(new AAIClient(clientBuilderCustomizer));
+    }
+
+    public AAIQueryClient(AAIVersion version, ClientBuilderCustomizer clientBuilderCustomizer) {
+        super(new AAIClient(version, clientBuilderCustomizer));
     }
 
     @Override

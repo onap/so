@@ -3,13 +3,14 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,6 +28,7 @@ import org.javatuples.Pair;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryPatchConverter;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryRestClient;
 import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.client.ClientBuilderCustomizer;
 import org.onap.so.client.ResponseExceptionMapper;
 
 public class AAIRestClient extends GraphInventoryRestClient {
@@ -37,6 +39,14 @@ public class AAIRestClient extends GraphInventoryRestClient {
     protected AAIRestClient(AAIProperties props, URI uri,
             MultivaluedMap<String, Pair<String, String>> additionalHeaders) {
         super(props, uri);
+        this.aaiProperties = props;
+        this.additionalHeaders = additionalHeaders;
+    }
+
+    protected AAIRestClient(AAIProperties props, URI uri,
+            MultivaluedMap<String, Pair<String, String>> additionalHeaders,
+            ClientBuilderCustomizer clientBuilderCustomizer) {
+        super(props, uri, clientBuilderCustomizer);
         this.aaiProperties = props;
         this.additionalHeaders = additionalHeaders;
     }

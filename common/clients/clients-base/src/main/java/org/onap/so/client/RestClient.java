@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,6 +77,7 @@ public abstract class RestClient {
     protected SOMetricLogClientFilter metricLogClientFilter;
     protected MDCSetup mdcSetup = new MDCSetup();
     protected RestProperties props;
+    protected ClientBuilderCustomizer clientBuilderCustomizer;
 
     protected RestClient(RestProperties props, Optional<URI> path) {
 
@@ -200,8 +202,12 @@ public abstract class RestClient {
         if (props.isCachingEnabled()) {
             enableCaching(builder);
         }
-        return builder.connectTimeout(props.getConnectionTimeout(), TimeUnit.MILLISECONDS)
-                .readTimeout(props.getReadTimeout(), TimeUnit.MILLISECONDS);
+        builder.connectTimeout(props.getConnectionTimeout(), TimeUnit.MILLISECONDS).readTimeout(props.getReadTimeout(),
+                TimeUnit.MILLISECONDS);
+        if (clientBuilderCustomizer != null) {
+            builder = clientBuilderCustomizer.customize(builder);
+        }
+        return builder;
     }
 
     protected ClientBuilder enableCaching(ClientBuilder builder) {

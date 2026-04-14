@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +32,7 @@ import org.onap.aaiclient.client.FlushCache;
 import org.onap.logging.filter.base.ONAPComponentsList;
 import org.onap.so.client.AddCacheHeaders;
 import org.onap.so.client.CacheFactory;
+import org.onap.so.client.ClientBuilderCustomizer;
 import org.onap.so.client.ResponseExceptionMapper;
 import org.onap.so.client.RestClientSSL;
 import org.onap.so.client.RestProperties;
@@ -38,8 +40,7 @@ import org.onap.so.client.CommonObjectMapperProvider;
 
 public abstract class GraphInventoryRestClient extends RestClientSSL {
 
-    protected static final GraphInventoryCommonObjectMapperProvider standardProvider =
-            new GraphInventoryCommonObjectMapperProvider();
+    protected static final GraphInventoryCommonObjectMapperProvider standardProvider = new GraphInventoryCommonObjectMapperProvider();
 
     protected final GraphInventoryPatchConverter patchConverter = new GraphInventoryPatchConverter();
 
@@ -47,6 +48,9 @@ public abstract class GraphInventoryRestClient extends RestClientSSL {
         super(props, Optional.of(uri));
     }
 
+    protected GraphInventoryRestClient(RestProperties props, URI uri, ClientBuilderCustomizer clientBuilderCustomizer) {
+        super(props, Optional.of(uri), clientBuilderCustomizer);
+    }
 
     protected ClientBuilder enableCaching(ClientBuilder builder) {
         builder.register(new AddCacheHeaders(props.getCacheProperties()));

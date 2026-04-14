@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +25,11 @@ import org.onap.aaiclient.client.aai.AAICommonObjectMapperProvider;
 import org.onap.aaiclient.client.aai.AAIQueryClient;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.ClientBuilderCustomizer;
 import org.onap.so.client.cds.CDSProcessingClient;
 import org.onap.so.client.cds.CDSProcessingListener;
 import org.onap.so.client.policy.PolicyClientImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /*
@@ -41,11 +44,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class InjectionHelper {
+    @Autowired(required = false)
+    private ClientBuilderCustomizer clientBuilderCustomizer;
+
     public AAIResourcesClient getAaiClient() {
+        if (clientBuilderCustomizer != null) {
+            return new AAIResourcesClient(clientBuilderCustomizer);
+        }
         return new AAIResourcesClient();
     }
 
     public AAIQueryClient getAaiQueryClient() {
+        if (clientBuilderCustomizer != null) {
+            return new AAIQueryClient(clientBuilderCustomizer);
+        }
         return new AAIQueryClient();
     }
 
