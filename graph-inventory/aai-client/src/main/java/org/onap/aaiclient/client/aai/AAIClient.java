@@ -3,13 +3,14 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,6 +29,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.javatuples.Pair;
 import org.onap.aaiclient.client.graphinventory.GraphInventoryClient;
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryUriComputationException;
+import org.onap.so.client.ClientBuilderCustomizer;
 import org.onap.so.client.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +58,15 @@ public class AAIClient extends GraphInventoryClient {
         this.version = version;
     }
 
+    protected AAIClient(ClientBuilderCustomizer clientBuilderCustomizer) {
+        super(AAIProperties.class, new MultivaluedHashMap<>(), clientBuilderCustomizer);
+    }
+
+    protected AAIClient(AAIVersion version, ClientBuilderCustomizer clientBuilderCustomizer) {
+        super(AAIProperties.class, new MultivaluedHashMap<>(), clientBuilderCustomizer);
+        this.version = version;
+    }
+
     @Override
     protected URI constructPath(URI uri) {
 
@@ -65,7 +76,10 @@ public class AAIClient extends GraphInventoryClient {
     @Override
     protected RestClient createClient(URI uri) {
         try {
-
+            if (clientBuilderCustomizer != null) {
+                return new AAIRestClient(getRestProperties(), constructPath(uri), additionalHeaders,
+                        clientBuilderCustomizer);
+            }
             return new AAIRestClient(getRestProperties(), constructPath(uri), additionalHeaders);
         } catch (GraphInventoryUriComputationException | NotFoundException e) {
             logger.debug("failed to construct A&AI uri", e);
@@ -81,7 +95,6 @@ public class AAIClient extends GraphInventoryClient {
             return this.version;
         }
     }
-
 
     @Override
     public String getGraphDBName() {

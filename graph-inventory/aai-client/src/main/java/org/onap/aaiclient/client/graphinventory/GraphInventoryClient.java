@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +27,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.javatuples.Pair;
 import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventoryUri;
 import org.onap.aaiclient.client.graphinventory.entities.uri.HttpAwareUri;
+import org.onap.so.client.ClientBuilderCustomizer;
 import org.onap.so.client.RestClient;
 import org.onap.so.client.RestProperties;
 import org.onap.so.client.RestPropertiesLoader;
@@ -34,12 +36,20 @@ public abstract class GraphInventoryClient {
 
     private RestProperties props;
     protected final MultivaluedMap<String, Pair<String, String>> additionalHeaders;
+    protected final ClientBuilderCustomizer clientBuilderCustomizer;
 
     protected GraphInventoryClient(Class<? extends RestProperties> propertiesClass,
             MultivaluedMap<String, Pair<String, String>> additionalHeaders) {
+        this(propertiesClass, additionalHeaders, null);
+    }
+
+    protected GraphInventoryClient(Class<? extends RestProperties> propertiesClass,
+            MultivaluedMap<String, Pair<String, String>> additionalHeaders,
+            ClientBuilderCustomizer clientBuilderCustomizer) {
         RestProperties props = RestPropertiesLoader.getInstance().getNewImpl(propertiesClass);
         this.props = props;
         this.additionalHeaders = additionalHeaders;
+        this.clientBuilderCustomizer = clientBuilderCustomizer;
     }
 
     protected abstract URI constructPath(URI uri);
@@ -57,7 +67,6 @@ public abstract class GraphInventoryClient {
         return createClient(result);
 
     }
-
 
     @SuppressWarnings("unchecked")
     public <T extends RestProperties> T getRestProperties() {
