@@ -20,6 +20,8 @@ COPY scripts/wait-for.sh /app
 COPY ca-certificates/onap-ca.crt /app/ca-certificates/onap-ca.crt
 RUN chown -R so:so /app
 
+ENV JVM_ARGS="-XX:MaxRAMPercentage=75.0"
+
 USER so
 # Springboot configuration (required)
 VOLUME /app/config
