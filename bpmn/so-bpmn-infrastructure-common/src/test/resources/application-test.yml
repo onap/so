@@ -1,5 +1,5 @@
 aai:
-  auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
+  auth: test:test
   dme2:
     timeout: '30000'
   endpoint: http://localhost:${wiremock.server.port}
@@ -15,7 +15,7 @@ camunda:
       enabled: false
       db-reporter-activate: false
 canopi:
-  auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
+  auth: test:test
 csi:
   aots:
     addincidentmanagement:
@@ -36,7 +36,7 @@ mso:
     completemsoprocess:
       endpoint: http://localhost:30253/CompleteMsoProcess
     db:
-      auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
+      auth: test:test
       password: wLg4sjrAFUS8rfVfdvTXeQ==
       endpoint: http://localhost:${wiremock.server.port}/services/RequestsDbAdapter
       spring:
@@ -49,8 +49,8 @@ mso:
       db:
         endpoint: http://localhost:${wiremock.server.port}/services/RequestsDbAdapter
     po:
-      auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
-      password: 3141634BF7E070AA289CF2892C986C0B
+      auth: test:test
+      password: poBpmn:password1$
     sdnc:
       endpoint: http://localhost:${wiremock.server.port}/adapters/SDNCAdapter
       rest:
@@ -104,7 +104,6 @@ mso:
   infra:
     customer:
       id: testCustIdInfra
-  msoKey: 07a7159d3bf51a0e53be7a8f89699be7
   oam:
     network:
       role:
@@ -125,7 +124,7 @@ mso:
       yang:
         model:
           version: '2015-05-15'
-    password: 3141634BF7E070AA289CF2892C986C0B
+    password: poBpmn:password1$
     timeout:
       firewall:
         minutes: '20'

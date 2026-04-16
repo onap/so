@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -75,9 +75,7 @@ public class CamundaClientTest {
 
     @Before
     public void setup() {
-        when(env.getRequiredProperty("mso.camundaAuth"))
-                .thenReturn("015E7ACF706C6BBF85F2079378BDD2896E226E09D13DC2784BA309E27D59AB9FAD3A5E039DF0BB8408");
-        when(env.getRequiredProperty("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
+        when(env.getRequiredProperty("mso.camundaAuth")).thenReturn("user:password");
         when(env.getRequiredProperty("mso.camundaURL")).thenReturn("http://localhost:8080");
     }
 
