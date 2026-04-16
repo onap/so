@@ -41,7 +41,8 @@ public final class SDNCAdapterUtils {
     /**
      * Instantiation is not allowed.
      */
-    private SDNCAdapterUtils() {}
+    private SDNCAdapterUtils() {
+    }
 
     /**
      * Returns a node's child elements in a list.
@@ -63,7 +64,8 @@ public final class SDNCAdapterUtils {
     /**
      * Encodes a URL path segment according to RFC 3986 Section 2.
      * 
-     * @param pathSegment the path segment to encode
+     * @param pathSegment
+     *            the path segment to encode
      * @return the encoded path segment
      */
     public static String encodeURLPathSegment(String pathSegment) {

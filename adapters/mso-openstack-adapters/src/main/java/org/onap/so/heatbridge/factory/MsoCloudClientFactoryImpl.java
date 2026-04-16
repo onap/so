@@ -41,7 +41,6 @@ import org.onap.so.heatbridge.openstack.api.OpenstackAccess.OpenstackAccessBuild
 import org.onap.so.heatbridge.openstack.api.OpenstackClient;
 import org.onap.so.heatbridge.openstack.api.OpenstackClientException;
 import org.onap.so.heatbridge.openstack.factory.OpenstackClientFactory;
-import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +80,7 @@ public class MsoCloudClientFactoryImpl implements MsoCloudClientFactory {
         try {
             final OpenstackAccess osAccess = new OpenstackAccessBuilder().setBaseUrl(url) // keystone URL
                     .setUser(msoId) // keystone username
-                    .setPassword(CryptoUtils.decryptCloudConfigPassword(msoPass)) // keystone decrypted password
+                    .setPassword(msoPass) // keystone password
                     .setRegion(regionId) // openstack region
                     .setDomainName(userDomainName).setProjectName(projectDomainName).setTenantId(tenantId) // tenantId
                     .build();

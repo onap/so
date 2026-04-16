@@ -22,7 +22,6 @@
 
 package org.onap.so.adapters.sdnc.client;
 
-
 import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -41,17 +40,16 @@ import org.slf4j.LoggerFactory;
  *
  */
 // SDNCAdapter to BPEL Async response WEB Service
-@WebServiceClient(name = "SDNCCallbackAdapterService", wsdlLocation = "main/resources/SDNCCallbackAdapter.wsdl",
-        targetNamespace = "http://org.onap/workflow/sdnc/adapter/callback/wsdl/v1")
+@WebServiceClient(name = "SDNCCallbackAdapterService", wsdlLocation = "main/resources/SDNCCallbackAdapter.wsdl", targetNamespace = "http://org.onap/workflow/sdnc/adapter/callback/wsdl/v1")
 public class SDNCCallbackAdapterService extends Service {
 
     private static Logger logger = LoggerFactory.getLogger(SDNCCallbackAdapterService.class);
     private static final String SDNC_CALLBACK_ADAPTER_WSDL = "SDNCCallbackAdapter.wsdl";
     public static final URL WSDL_LOCATION;
-    public static final QName SERVICE =
-            new QName("http://org.onap/workflow/sdnc/adapter/callback/wsdl/v1", "SDNCCallbackAdapterService");
-    public static final QName SDNCCallbackAdapterSoapHttpPort =
-            new QName("http://org.onap/workflow/sdnc/adapter/callback/wsdl/v1", "SDNCCallbackAdapterSoapHttpPort");
+    public static final QName SERVICE = new QName("http://org.onap/workflow/sdnc/adapter/callback/wsdl/v1",
+            "SDNCCallbackAdapterService");
+    public static final QName SDNCCallbackAdapterSoapHttpPort = new QName(
+            "http://org.onap/workflow/sdnc/adapter/callback/wsdl/v1", "SDNCCallbackAdapterSoapHttpPort");
     static {
         URL wsdlUrl = null;
         try {
@@ -121,8 +119,9 @@ public class SDNCCallbackAdapterService extends Service {
 
     /**
      *
-     * @param features A list of {@link javax.xml.ws.WebServiceFeature} to configure on the proxy. Supported features
-     *        not in the <code>features</code> parameter will have their default values.
+     * @param features
+     *            A list of {@link javax.xml.ws.WebServiceFeature} to configure on the proxy. Supported features not in
+     *            the <code>features</code> parameter will have their default values.
      * @return returns SDNCCallbackAdapterPortType
      */
     @WebEndpoint(name = "SDNCCallbackAdapterSoapHttpPort")
