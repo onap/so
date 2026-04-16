@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
@@ -51,7 +50,7 @@ public class SDNCServiceTest {
     private SDNCService sdncService;
 
     @Test
-    public void testExecutePostTask() throws IOException, GeneralSecurityException {
+    public void testExecutePostTask() throws IOException {
         String payload = new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "/sdncRequest.json")));
 
         Mockito.when(env.getProperty("org.onap.so.adapters.sdnc.sdncHost")).thenReturn("sdncHost");

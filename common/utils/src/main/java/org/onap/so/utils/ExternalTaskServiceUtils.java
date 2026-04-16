@@ -1,6 +1,5 @@
 package org.onap.so.utils;
 
-import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,10 +51,9 @@ public class ExternalTaskServiceUtils {
 
     protected String getAuth() throws Exception {
         try {
-            return CryptoUtils.decrypt(env.getRequiredProperty("mso.auth.password"),
-                    env.getRequiredProperty("mso.msoKey"));
-        } catch (IllegalStateException | GeneralSecurityException e) {
-            logger.error("Error Decrypting Password", e);
+            return env.getRequiredProperty("mso.auth.password");
+        } catch (IllegalStateException e) {
+            logger.error("Error loading password", e);
             throw new Exception("Cannot load password");
         }
     }
