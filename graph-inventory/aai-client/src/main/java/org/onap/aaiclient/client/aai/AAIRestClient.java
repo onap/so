@@ -66,7 +66,7 @@ public class AAIRestClient extends GraphInventoryRestClient {
         String auth = aaiProperties.getAuth();
         String key = aaiProperties.getKey();
 
-        if (auth != null && !auth.isEmpty() && key != null && !key.isEmpty()) {
+        if (auth != null && !auth.isEmpty()) {
             addBasicAuthHeader(auth, key);
         }
 

@@ -124,9 +124,7 @@ public class BPRestCallbackUnitTest {
     @Test
     public void setAuthorizationHeaderTest() {
         HttpHeaders authHeaders = new HttpHeaders();
-        when(env.getProperty(Constants.BPEL_AUTH_PROP))
-                .thenReturn("5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C");
-        when(env.getProperty(Constants.ENCRYPTION_KEY_PROP)).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
+        when(env.getProperty(Constants.BPEL_AUTH_PROP)).thenReturn("test:test");
         boolean result = bpRestCallback.setAuthorizationHeader(authHeaders);
         assertFalse(result);
     }
@@ -134,8 +132,7 @@ public class BPRestCallbackUnitTest {
     @Test
     public void setAuthorizationHeaderErrorTest() {
         HttpHeaders authHeaders = new HttpHeaders();
-        when(env.getProperty(Constants.BPEL_AUTH_PROP)).thenReturn("test");
-        when(env.getProperty(Constants.ENCRYPTION_KEY_PROP)).thenReturn("test");
+        when(env.getProperty(Constants.BPEL_AUTH_PROP)).thenReturn(null);
         boolean result = bpRestCallback.setAuthorizationHeader(authHeaders);
         assertTrue(result);
     }
