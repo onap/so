@@ -56,36 +56,35 @@ mso:
         apiMinorVersion: 0
         apiPatchVersion: 0
   camundaURL: http://localhost:${wiremock.server.port}
-  camundaAuth: 015E7ACF706C6BBF85F2079378BDD2896E226E09D13DC2784BA309E27D59AB9FAD3A5E039DF0BB8408
+  camundaAuth: user:password
   async:
     core-pool-size: 50
     max-pool-size: 50
     queue-capacity: 500
   sdc:
     client:
-      auth: 97FF88AB352DA16E00DDD81E3876431DEF8744465DACA489EB3B3BE1F10F63EDA1715E626D0A4827A3E19CD88421BF
+      auth: ci:123456
     activate:
       instanceid: test
       userid: cs0008
     endpoint: http://localhost:${wiremock.server.port}
-  msoKey: 07a7159d3bf51a0e53be7a8f89699be7
   tenant:
     isolation:
       retry:
         count: 3
   aai:
     endpoint: http://localhost:${wiremock.server.port}
-    auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
+    auth: test:test
   grm:
     endpoint: http://localhost:${wiremock.server.port}
-    auth: 6AAD26000E278148A0B987436D9696A5B2D99BBF0DC545F9E64D6DF05298FFA987A6CF565F6F274EBC085678
+    auth: gmruser:password
   so:
     operational-environment:
       dmaap:
         username: testuser
         password: VjR5NDcxSzA=
         host: http://localhost:${wiremock.server.port}
-        auth: B3705D6C2D521257CC2422ACCF03B001811ACC49F564DDB3A2CF2A1378B6D35A23CDCB696F2E1EDFBE6758DFE7C74B94F4A7DF84A0E2BB904935AC4D900D5597DF981ADE6CE1FF3AF993BED0
+        auth: m32050@non-prod.mso.ecomp.att.com:Att32050Life!@
       publisher:
         topic: test.operationalEnvironmentEvent
 
@@ -143,7 +142,6 @@ org:
     so:
       adapters:
         network:
-          encryptionKey: aa3871669d893c7fb8abbcda31b88b4f
 
 subnetCapability:
   config:

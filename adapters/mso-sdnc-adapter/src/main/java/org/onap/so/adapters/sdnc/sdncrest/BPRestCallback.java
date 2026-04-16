@@ -32,7 +32,6 @@ import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
-import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +56,7 @@ public class BPRestCallback {
     private static final Logger logger = LoggerFactory.getLogger(BPRestCallback.class);
 
     private static final String CAMUNDA = "Camunda";
-    private static final String MSO_INTERNAL_ERROR = "MsoInternalError";
+
     @Autowired
     private Environment env;
 
@@ -123,8 +122,7 @@ public class BPRestCallback {
     protected boolean setAuthorizationHeader(HttpHeaders headers) {
         boolean error = false;
         try {
-            String userCredentials = CryptoUtils.decrypt(env.getProperty(Constants.BPEL_AUTH_PROP),
-                    env.getProperty(Constants.ENCRYPTION_KEY_PROP));
+            String userCredentials = env.getProperty(Constants.BPEL_AUTH_PROP);
             String authorization = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
             headers.set("Authorization", authorization);
         } catch (Exception e) {

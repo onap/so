@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,7 +41,7 @@ public class GlobalDmaapPublisherTest extends BaseTest {
         assertEquals(
                 "81B7E3533B91A6706830611FB9A8ECE529BBCCE754B1F1520FA7C8698B42F97235BEFA993A387E664D6352C63A6185D68DA7F0B1D360637CBA102CB166E3E62C11EB1F75386D3506BCECE51E54",
                 globalDmaapPublisher.getAuth());
-        assertEquals("07a7159d3bf51a0e53be7a8f89699be7", globalDmaapPublisher.getKey());
+        assertEquals(null, globalDmaapPublisher.getKey());
         assertEquals("com.att.mso.asyncStatusUpdate", globalDmaapPublisher.getTopic());
         assertEquals("http://test:1234", globalDmaapPublisher.getHost().get());
     }

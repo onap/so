@@ -42,10 +42,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
 
-
-
     private static Logger logger = LoggerFactory.getLogger(SDNCAdapterPortTypeImpl.class);
-
 
     @Autowired
     private SDNCRestClient sdncClient;
@@ -62,7 +59,6 @@ public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
     public void healthCheck() {
         logger.debug("Health check call in SDNC Adapter");
     }
-
 
     @Override
     public SDNCAdapterResponse sdncAdapter(SDNCAdapterRequest bpelRequest) {

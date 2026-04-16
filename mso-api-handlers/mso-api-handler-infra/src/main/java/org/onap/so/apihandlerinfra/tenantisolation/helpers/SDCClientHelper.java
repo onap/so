@@ -36,7 +36,6 @@ import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.utils.CryptoUtils;
 import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,12 +69,10 @@ public class SDCClientHelper {
     private String sdcActivateInstanceId;
     @Value("${mso.sdc.client.auth}")
     private String sdcClientAuth;
-    @Value("${mso.msoKey}")
-    private String msoKey;
 
     /**
      * Send POST request to SDC for operational activation
-     * 
+     *
      * @param serviceModelVersionI - String
      * @param operationalEnvironmentId - String
      * @param workloadContext - String
@@ -105,7 +102,7 @@ public class SDCClientHelper {
             URL url = new URL(urlString);
 
             HttpClient httpClient = httpClientFactory.newJsonClient(url, ONAPComponents.SDC);
-            httpClient.addBasicAuthHeader(sdcClientAuth, msoKey);
+            httpClient.addBasicAuthHeader(sdcClientAuth, "");
             httpClient.addAdditionalHeader("X-ECOMP-InstanceID", sdcActivateInstanceId);
             httpClient.addAdditionalHeader("Content-Type", SDCClientHelper.SDC_CONTENT_TYPE);
             httpClient.addAdditionalHeader("Accept", SDCClientHelper.SDC_ACCEPT_TYPE);
@@ -131,7 +128,7 @@ public class SDCClientHelper {
 
     /**
      * set HttpPostResponse
-     * 
+     *
      * @param config - RESTConfig object
      * @param jsonPayload - String
      * @return client - RestClient object
@@ -151,7 +148,7 @@ public class SDCClientHelper {
 
     /**
      * enhance Response
-     * 
+     *
      * @param sdcResponseJsonObj - JSONObject object
      * @param statusCode - int
      * @return enhancedAsdcResponseJsonObj - JSONObject object
@@ -198,7 +195,7 @@ public class SDCClientHelper {
 
     /**
      * Build Uri
-     * 
+     *
      * @param serviceModelVersionId - String
      * @param operationalEnvironmentId - String
      * @return uriBuilder - String
@@ -211,7 +208,7 @@ public class SDCClientHelper {
 
     /**
      * Build JSON context
-     * 
+     *
      * @param workloadContext - String
      * @return String json
      * @throws JSONException
@@ -223,24 +220,12 @@ public class SDCClientHelper {
 
     /**
      * decrypt value
-     * 
+     *
      * @param toDecrypt - String
      * @param msokey - String
      * @return result - String
      */
-    public synchronized String decrypt(String toDecrypt, String msokey) {
-        String result = null;
-        try {
-            result = CryptoUtils.decrypt(toDecrypt, msokey);
-
-        } catch (Exception e) {
-            logger.debug("Failed to decrypt credentials: {}", toDecrypt, e);
-        }
-        return result;
-    }
-
     private String getBasicAuth() {
-        return decrypt(sdcClientAuth, msoKey);
+        return sdcClientAuth;
     }
 }
-

@@ -26,7 +26,6 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -51,7 +50,6 @@ import org.onap.logging.filter.base.MDCSetup;
 import org.onap.logging.filter.base.ONAPComponentsList;
 import org.onap.logging.filter.base.PayloadLoggingClientFilter;
 import org.onap.so.logging.jaxrs.filter.SOMetricLogClientFilter;
-import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
@@ -172,17 +170,12 @@ public abstract class RestClient {
     /**
      * Adds a basic authentication header to the request.
      *
-     * @param auth the encrypted credentials
-     * @param key the key for decrypting the credentials
+     * @param auth the plaintext credentials (user:password)
+     * @param key unused, kept for API compatibility
      */
     protected void addBasicAuthHeader(String auth, String key) {
-        try {
-            byte[] decryptedAuth = CryptoUtils.decrypt(auth, key).getBytes();
-            String authHeaderValue = "Basic " + Base64.getEncoder().encodeToString(decryptedAuth);
-            headerMap.add("ALL", Pair.with("Authorization", authHeaderValue));
-        } catch (GeneralSecurityException e) {
-            logger.error(e.getMessage(), e);
-        }
+        String authHeaderValue = "Basic " + Base64.getEncoder().encodeToString(auth.getBytes());
+        headerMap.add("ALL", Pair.with("Authorization", authHeaderValue));
     }
 
     protected String getAccept() {
