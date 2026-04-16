@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -85,8 +85,6 @@ public class CamundaRequestHandlerUnitTest {
     private List<HistoricActivityInstanceEntity> activityInstanceList = null;
     private List<HistoricProcessInstanceEntity> processInstanceList = null;
 
-
-
     @Before
     public void setup() throws IOException {
         ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -106,7 +104,6 @@ public class CamundaRequestHandlerUnitTest {
         doReturn("/sobpmnengine/history/process-instance").when(env).getProperty("mso.camunda.rest.history.uri");
         doReturn("/sobpmnengine/history/activity-instance").when(env).getProperty("mso.camunda.rest.activity.uri");
         doReturn("auth").when(env).getRequiredProperty("mso.camundaAuth");
-        doReturn("key").when(env).getRequiredProperty("mso.msoKey");
         doReturn("http://localhost:8089").when(env).getProperty("mso.camundaURL");
 
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
@@ -127,7 +124,8 @@ public class CamundaRequestHandlerUnitTest {
         List<org.springframework.http.MediaType> acceptableMediaTypes = new ArrayList<>();
         acceptableMediaTypes.add(org.springframework.http.MediaType.APPLICATION_JSON);
         headers.setAccept(acceptableMediaTypes);
-        headers.add(HttpHeaders.AUTHORIZATION, "auth");
+        headers.add(HttpHeaders.AUTHORIZATION,
+                "Basic " + java.util.Base64.getEncoder().encodeToString("auth".getBytes()));
 
         return headers;
     }
@@ -358,7 +356,7 @@ public class CamundaRequestHandlerUnitTest {
 
     @Test
     public void setCamundaHeadersTest() {
-        String encryptedAuth = "015E7ACF706C6BBF85F2079378BDD2896E226E09D13DC2784BA309E27D59AB9FAD3A5E039DF0BB8408"; // user:password
+        String encryptedAuth = "user:password"; // user:password
         String key = "07a7159d3bf51a0e53be7a8f89699be7";
 
         HttpHeaders headers = camundaRequestHandler.setCamundaHeaders(encryptedAuth, key);

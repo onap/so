@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.onap.so.heatbridge.HeatBridgeException;
 import org.onap.so.heatbridge.openstack.api.OpenstackAccess;
 import org.onap.so.heatbridge.openstack.factory.OpenstackClientFactory;
-import org.onap.so.utils.CryptoUtils;
 
 public class MsoCloudClientFactoryImplTest {
 
@@ -37,7 +36,7 @@ public class MsoCloudClientFactoryImplTest {
     private static final String URL_WITH_UNSUPPORTED_VERSION = "http://localhost:8080/v4";
 
     private static final String MSO_ID = "testMsoId";
-    private static final String ENCRYPTED_PASSWORD = CryptoUtils.encryptCloudConfigPassword("testPassword");
+    private static final String ENCRYPTED_PASSWORD = "testPassword";
     private static final String REGION_ID = "testCloudRegionId";
     private static final String TENANT_ID = "testTenantId";
     private static final String USER_DOMAIN_NAME = "userDomainName";

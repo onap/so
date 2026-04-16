@@ -36,7 +36,6 @@ import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.utils.CryptoUtils;
 import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -228,19 +227,7 @@ public class SDCClientHelper {
      * @param msokey - String
      * @return result - String
      */
-    public synchronized String decrypt(String toDecrypt, String msokey) {
-        String result = null;
-        try {
-            result = CryptoUtils.decrypt(toDecrypt, msokey);
-
-        } catch (Exception e) {
-            logger.debug("Failed to decrypt credentials: {}", toDecrypt, e);
-        }
-        return result;
-    }
-
     private String getBasicAuth() {
-        return decrypt(sdcClientAuth, msoKey);
+        return sdcClientAuth;
     }
 }
-

@@ -85,8 +85,10 @@ public class TypedRequestTunables {
      * org.onap.so.adapters.sdnc.service.SERVICE.OPERATION
      * </pre>
      * 
-     * @param service the sdncService
-     * @param operation the sdncOperation
+     * @param service
+     *            the sdncService
+     * @param operation
+     *            the sdncOperation
      */
     public void setServiceKey(String service, String operation) {
         key = Constants.REQUEST_TUNABLES + ".service." + service + "." + operation;

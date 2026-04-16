@@ -328,7 +328,7 @@ public class RequestHandlerUtilsTest extends BaseTest {
 
     @Test
     public void setCamundaHeadersTest() {
-        String encryptedAuth = "015E7ACF706C6BBF85F2079378BDD2896E226E09D13DC2784BA309E27D59AB9FAD3A5E039DF0BB8408"; // user:password
+        String encryptedAuth = "user:password"; // user:password
         String key = "07a7159d3bf51a0e53be7a8f89699be7";
         HttpHeaders headers = camundaRequestHandler.setCamundaHeaders(encryptedAuth, key);
         List<org.springframework.http.MediaType> acceptedType = headers.getAccept();
