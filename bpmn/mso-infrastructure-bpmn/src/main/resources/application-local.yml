@@ -32,7 +32,7 @@ mso:
     core-pool-size: 50
     max-pool-size: 50
     queue-capacity: 500
-  adapters:   
+  adapters:
     requestDb:
       endpoint: http://request-db-adapter:8083
       auth: Basic bTA0NzY4QG5vbi1wcm9kLm1zby5lY29tcC5hdHQuY29tOkF0dG0wNDc2OExpZmUhQA==
@@ -41,7 +41,7 @@ mso:
     db:
       auth: 5A1272FE739BECA4D4374A86B25C021DFE6745E3BB7BE6836BF64A6059B8220E586C21FD7567AF41DB42571EB7
       password: wLg4sjrAFUS8rfVfdvTXeQ==
-      endpoint: http://localhost:30257/services/RequestsDbAdapter      
+      endpoint: http://localhost:30257/services/RequestsDbAdapter
       spring:
         endpoint: http://localhost:30257
     network:
@@ -52,8 +52,8 @@ mso:
       db:
         endpoint: http://localhost:30257/services/RequestsDbAdapter
     po:
-      auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
-      password: 3141634BF7E070AA289CF2892C986C0B
+      auth: test:test
+      password: poBpmn:password1$
     sdnc:
       endpoint: http://localhost:30254/adapters/SDNCAdapter
       rest:
@@ -83,22 +83,24 @@ mso:
     auth: Basic YnBlbDptc28tZGItMTUwNyE=
   default:
     adapter:
-      namespace: http://com.att.mso  
+      namespace: http://com.att.mso
   healthcheck:
     log:
       debug: 'false'
   infra:
     customer:
       id: testCustIdInfra
-  msoKey: 07a7159d3bf51a0e53be7a8f89699be7
   po:
-    timeout: PT60S  
+    timeout: PT60S
   request:
     db:
       endpoint: http://localhost:28090/
   rollback: 'true'
-  sdnc:    
-    password: 3141634BF7E070AA289CF2892C986C0B
+  sdnc:
+  healthcheck:
+    log:
+      debug: 'false'
+    password: poBpmn:password1$
   service:
     agnostic:
       sniro:
@@ -109,12 +111,12 @@ mso:
     auth: test:testpwd
     callback: http://localhost:28090/adapters/rest/SDNCNotify
     endpoint: http://localhost:28090/optimizationInstance/V1/create
-    timeout: PT30M  
+    timeout: PT30M
   workflow:
     CreateGenericVNFV1:
       aai:
         volume-group:
-          uri: /aai/v6/cloud-infrastructure/volume-groups/volume-group   
+          uri: /aai/v6/cloud-infrastructure/volume-groups/volume-group
     default:
       aai:
         version: '8'
@@ -178,7 +180,7 @@ mso:
     global:
       default:
         aai:
-          namespace: http://org.openecomp.aai.inventory/   
+          namespace: http://org.openecomp.aai.inventory/
     message:
       endpoint: http://localhost:30252/mso/WorkflowMessage
     notification:
@@ -200,7 +202,7 @@ mso:
       password: alRyMzJ3NUNeakxl
       host: http://localhost:3904
       publisher:
-        topic: com.att.mso.dev.25239-asyncStatusUpdate-v1 
+        topic: com.att.mso.dev.25239-asyncStatusUpdate-v1
 policy:
   auth: Basic dGVzdHBkcDphbHBoYTEyMw==
   client:
@@ -211,13 +213,13 @@ sdnc:
   auth: Basic YWRtaW46YWRtaW4=
   host: https://localhost:8443
   path: /restconf/operations/GENERIC-RESOURCE-API
-      
+
 appc:
   client:
     topic:
-      read: 
+      read:
         name: APPC-TEST-AMDOCS2
-        timeout: 360000 
+        timeout: 360000
       write: APPC-TEST-AMDOCS1-IST
     response:
       timeout: 360000
@@ -226,32 +228,30 @@ appc:
     service: ueb
     poolMembers: localhost:3904
 
-spring:  
+spring:
   security:
     usercredentials:
-    -  
+    -
       username: apihBpmn
       password: '$2a$12$chgDUKcdlf1t41CtS/kjIOwRuq0zWdvCcYYXtyL5TqNdPW0GhN4e6'
       role: BPMN-Client
-    -  
+    -
       username: sdncaBpmn
       password: '$2a$12$1TeeS2hAXtqXgdL7f2jCWeF5on7/lrrVZqRmqUqYijOTfrlS2CZae'
-      role: BPMN-Client 
-    -  
+      role: BPMN-Client
+    -
       username: poBpmn
       password: '$2a$12$TixZE5fK3YkTzWcpktm.Uuk5ePFOD2n9sj2ugGRybfsz0QQ0TKLAS'
       role: BPMN-Client
-    -  
+    -
       username: wmaBpmn
       password: '$2a$12$WucJSJD5iUD9MuEzhfuSmeF1W/zPMbcu.384Lh8gCkB7SPtKqZQna'
       role: BPMN-Client
-    -  
+    -
       username: sniro
       password: '$2a$12$lbOQWS1iDmdQPxW2Mb6OiuTzGaPUrkrvoKVn2zwpFWb6n5Y86Lf1y'
       role: SNIRO-Client
-    -  
+    -
       username: mso_admin
       password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
       role: ACTUATOR
-
-

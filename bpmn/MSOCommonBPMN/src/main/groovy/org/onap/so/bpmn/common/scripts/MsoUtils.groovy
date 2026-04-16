@@ -33,7 +33,6 @@ import org.onap.so.bpmn.core.xml.XmlTool
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.onap.so.utils.CryptoUtils
 import org.slf4j.MDC
 import org.w3c.dom.Element
 
@@ -829,44 +828,27 @@ class MsoUtils {
 
 
 	/**
-	 * @param encryptedAuth: encrypted credentials from urn properties
-	 * @param msoKey: key to use to decrypt from urn properties
+	 * @param auth: plaintext credentials (user:password)
+	 * @param msoKey: unused, kept for API compatibility
 	 * @return base 64 encoded basic auth credentials
 	 */
-	def getBasicAuth(encryptedAuth, msoKey){
-		if ((encryptedAuth == null || encryptedAuth.isEmpty()) || (msoKey == null || msoKey.isEmpty()))
+	def getBasicAuth(auth, msoKey){
+		if (auth == null || auth.isEmpty())
 			return null
-		try {
-			def auth = decrypt(encryptedAuth, msoKey)
-			byte[] encoded = Base64.encodeBase64(auth.getBytes())
-			String encodedString = new String(encoded)
-			encodedString = "Basic " + encodedString
-			return encodedString
-		} catch (Exception ex) {
-			log("ERROR", "Unable to encode basic auth")
-			throw ex
-		}
+		byte[] encoded = Base64.encodeBase64(auth.getBytes())
+		String encodedString = new String(encoded)
+		encodedString = "Basic " + encodedString
+		return encodedString
 	}
 
+	/** @deprecated encryption removed, returns input unchanged */
 	def encrypt(toEncrypt, msokey){
-		try {
-			String result = CryptoUtils.encrypt(toEncrypt, msokey);
-			return result
-		}
-		catch (Exception e) {
-			log("ERROR", "Failed to encrypt credentials")
-		}
+		return toEncrypt
 	}
 
+	/** @deprecated encryption removed, returns input unchanged */
 	def decrypt(toDecrypt, msokey){
-		try {
-			String result = CryptoUtils.decrypt(toDecrypt, msokey);
-			return result
-		}
-		catch (Exception e) {
-			log("ERROR", "Failed to decrypt credentials")
-			throw e
-		}
+		return toDecrypt
 	}
 
 	/**

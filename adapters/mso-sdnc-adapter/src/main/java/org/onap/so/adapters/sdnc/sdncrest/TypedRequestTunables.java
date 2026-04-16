@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,13 +32,13 @@ import org.slf4j.LoggerFactory;
  * keys.
  * <p>
  * General format:
- * 
+ *
  * <pre>
  * org.onap.so.adapters.sdnc.TYPE.KEY1[.KEY2...]=METHOD|TIMEOUT|URL|HEADER|NAMESPACE
  * </pre>
- * 
+ *
  * Currently supported type(s): service
- * 
+ *
  * <pre>
  * org.onap.so.adapters.sdnc.service.SERVICE.OPERATION = METHOD | TIMEOUT | URL | HEADER | NAMESPACE
  * </pre>
@@ -80,11 +80,11 @@ public class TypedRequestTunables {
 
     /**
      * Sets the key for a service request:
-     * 
+     *
      * <pre>
      * org.onap.so.adapters.sdnc.service.SERVICE.OPERATION
      * </pre>
-     * 
+     *
      * @param service the sdncService
      * @param operation the sdncOperation
      */

@@ -848,7 +848,7 @@ String rollbackNetworkRequest =
         when(mockExecution.getVariable("sdncVersion")).thenReturn("1610")
         when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
         when(mockExecution.getVariable("mso.adapters.po.auth")).
-                thenReturn("5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C")
+                thenReturn("test:test")
         when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 
@@ -915,7 +915,7 @@ String rollbackNetworkRequest =
         when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 
         when(mockExecution.getVariable("mso.adapters.po.auth")).
-                thenReturn("5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C")
+                thenReturn("test:test")
         when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
         when(mockExecution.getVariable("mso.rollback")).thenReturn("true")
@@ -978,7 +978,7 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("sdncVersion")).thenReturn("1610")
 
 			when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
-			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("3141634BF7E070AA289CF2892C986C0B")
+			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("poBpmn:password1\$")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.rollback")).thenReturn("true")
@@ -1034,7 +1034,7 @@ String rollbackNetworkRequest =
 
 			when(mockExecution.getVariable("bpmnRequest")).thenReturn(jsonIncomingRequest_MissingCloudRegion)
 			when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
-			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("3141634BF7E070AA289CF2892C986C0B")
+			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("poBpmn:password1\$")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.rollback")).thenReturn("true")
