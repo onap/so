@@ -22,11 +22,10 @@
 
 package org.onap.so.asdc.client;
 
-import java.security.GeneralSecurityException;
+
 import java.util.Arrays;
 import java.util.List;
 import org.onap.sdc.api.consumer.IConfiguration;
-import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,25 +126,13 @@ public class ASDCConfiguration implements IConfiguration {
     }
 
     public String getEncryptedPropertyOrNull(String propertyName) {
-        String decryptedKey;
         String config = env.getProperty(propertyName);
 
         if (config == null || "NULL".equals(config) || config.isEmpty()) {
             return null;
         }
 
-        try {
-            decryptedKey = CryptoUtils.decrypt(config, this.configKey);
-        } catch (GeneralSecurityException e) {
-            logger.debug("Exception while decrypting property: {}", propertyName, e);
-            return null;
-        }
-
-        if (decryptedKey.isEmpty()) {
-            return null;
-        } else {
-            return decryptedKey;
-        }
+        return config;
     }
 
     public boolean getBooleanPropertyWithDefault(String propertyName, boolean defaultValue) {
