@@ -25,21 +25,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.GeneralSecurityException;
+import java.util.Base64;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
-import org.apache.commons.codec.binary.Base64;
 import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
-import org.onap.so.utils.CryptoUtils;
 
 public class AdapterRestClientTest {
-
-    private static final String CRYPTO_KEY = "546573746F736973546573746F736973";
-    private static final String INVALID_CRYPTO_KEY = "1234";
 
     private MultivaluedMap<String, Pair<String, String>> headerMap;
     private AdapterRestProperties adapterRestPropertiesMock;
@@ -52,17 +47,16 @@ public class AdapterRestClientTest {
     }
 
     @Test
-    public void initializeHeaderMap_success() throws URISyntaxException, GeneralSecurityException {
+    public void initializeHeaderMap_success() throws URISyntaxException {
         // given
-        String encyptedMessage = CryptoUtils.encrypt("testAdapter", CRYPTO_KEY);
-        when(adapterRestPropertiesMock.getAuth()).thenReturn(encyptedMessage);
-        when(adapterRestPropertiesMock.getKey()).thenReturn(CRYPTO_KEY);
+        when(adapterRestPropertiesMock.getAuth()).thenReturn("testAdapter");
+        when(adapterRestPropertiesMock.getKey()).thenReturn("");
         AdapterRestClient testedObject = new AdapterRestClient(adapterRestPropertiesMock, new URI(""));
         // when
         testedObject.initializeHeaderMap(headerMap);
         // then
-        assertThat(headerMap.get("ALL"))
-                .containsOnly(Pair.with("Authorization", getExpectedEncodedString(encyptedMessage)));
+        String expectedAuth = "Basic " + Base64.getEncoder().encodeToString("testAdapter".getBytes());
+        assertThat(headerMap.get("ALL")).containsOnly(Pair.with("Authorization", expectedAuth));
     }
 
     @Test
@@ -76,11 +70,10 @@ public class AdapterRestClientTest {
     }
 
     @Test
-    public void initializeHeaderMap_putNullToMapWhenExOccurs() throws URISyntaxException, GeneralSecurityException {
+    public void initializeHeaderMap_putNullToMapWhenAuthIsEmpty() throws URISyntaxException {
         // given
-        String encyptedMessage = CryptoUtils.encrypt("testAdapter", CRYPTO_KEY);
-        when(adapterRestPropertiesMock.getAuth()).thenReturn(encyptedMessage);
-        when(adapterRestPropertiesMock.getKey()).thenReturn(INVALID_CRYPTO_KEY);
+        when(adapterRestPropertiesMock.getAuth()).thenReturn("");
+        when(adapterRestPropertiesMock.getKey()).thenReturn("");
         AdapterRestClient testedObject =
                 new AdapterRestClient(adapterRestPropertiesMock, new URI(""), "accept", "contentType");
         // when
@@ -99,12 +92,5 @@ public class AdapterRestClientTest {
     public void getCommonObjectMapperProvider_success() throws URISyntaxException {
         AdapterRestClient testedObject = new AdapterRestClient(adapterRestPropertiesMock, new URI(""));
         assertThat(testedObject.getCommonObjectMapperProvider()).isInstanceOf(JettisonStyleMapperProvider.class);
-    }
-
-    private String getExpectedEncodedString(String encryptedMessage) throws GeneralSecurityException {
-        String auth = CryptoUtils.decrypt(encryptedMessage, CRYPTO_KEY);
-        byte[] encoded = Base64.encodeBase64(auth.getBytes());
-        String encodedString = new String(encoded);
-        return "Basic " + encodedString;
     }
 }
