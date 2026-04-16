@@ -1,6 +1,6 @@
 package org.onap.so.adapters.sdnc.tasks;
 
-import java.security.GeneralSecurityException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +11,6 @@ import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.logging.tasks.AuditMDCSetup;
-import org.onap.so.utils.CryptoUtils;
 import org.onap.so.utils.ExternalTaskUtils;
 import org.onap.so.utils.RetrySequenceLevel;
 import org.slf4j.Logger;
@@ -109,7 +108,7 @@ public class SDNCService extends ExternalTaskUtils {
         return jsonRequest;
     }
 
-    private HttpHeaders getHttpHeader() throws GeneralSecurityException {
+    private HttpHeaders getHttpHeader() {
         HttpHeaders httpHeader = new HttpHeaders();
         httpHeader.set("Authorization", getAuth());
         httpHeader.setContentType(MediaType.APPLICATION_JSON);
@@ -120,9 +119,8 @@ public class SDNCService extends ExternalTaskUtils {
         return httpHeader;
     }
 
-    protected String getAuth() throws GeneralSecurityException {
-        String auth = CryptoUtils.decrypt(env.getProperty(Constants.SDNC_AUTH_PROP),
-                env.getProperty(Constants.ENCRYPTION_KEY_PROP));
+    protected String getAuth() {
+        String auth = env.getProperty(Constants.SDNC_AUTH_PROP);
         return "Basic " + DatatypeConverter.printBase64Binary(auth.getBytes());
     }
 

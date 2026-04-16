@@ -26,7 +26,7 @@ mso:
     completemsoprocess:
       endpoint: http://localhost:${wiremock.server.port}/CompleteMsoProcess
     db:
-      auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
+      auth: test:test
       endpoint: http://localhost:${wiremock.server.port}/dbadapters/RequestsDbAdapter
       spring:
         endpoint: http://localhost:${wiremock.server.port}
@@ -38,8 +38,8 @@ mso:
       db:
         endpoint: http://localhost:${wiremock.server.port}/dbadapters/RequestsDbAdapter
     po:
-      auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
-      password: 3141634BF7E070AA289CF2892C986C0B
+      auth: test:test
+      password: poBpmn:password1$
     sdnc:
       endpoint: http://localhost:${wiremock.server.port}/SDNCAdapter
       rest:
@@ -96,7 +96,6 @@ mso:
     customer:
       id: testCustIdInfra
   logPath: logs
-  msoKey: 07a7159d3bf51a0e53be7a8f89699be7
   po:
     timeout: PT60S
   request:
@@ -108,7 +107,7 @@ mso:
     endpoint: http://localhost:${wiremock.server.port}
   rollback: 'true'
   sdnc:
-    password: 3141634BF7E070AA289CF2892C986C0B
+    password: poBpmn:password1$
   site-name: localDevEnv
   workflow:
     default:

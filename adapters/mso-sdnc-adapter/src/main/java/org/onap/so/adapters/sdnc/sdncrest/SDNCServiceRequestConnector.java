@@ -77,7 +77,8 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
      * SDNCServiceError is returned. If the content cannot be parsed, or if the content does not contain all required
      * elements, a parse exception is thrown. This method performs no logging or alarming.
      *
-     * @throws ParseException on error
+     * @throws ParseException
+     *             on error
      */
     public SDNCResponseCommon parseResponseContent(String responseContent)
             throws ParseException, ParserConfigurationException, SAXException, IOException {
@@ -118,22 +119,22 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
         for (Element child : SDNCAdapterUtils.childElements(configurationResponseCommon)) {
 
             switch (child.getNodeName()) {
-                case "response-code":
-                    responseCode = child.getTextContent();
-                    break;
-                case "response-message":
-                    responseMessage = child.getTextContent();
-                    break;
-                case "svc-request-id":
-                    svcRequestId = child.getTextContent();
-                    break;
-                case "ack-final-indicator":
-                    ackFinalIndicator = child.getTextContent();
-                    break;
-                case "response-parameters":
-                    responseParameters.add(child);
-                    break;
-                default:
+            case "response-code":
+                responseCode = child.getTextContent();
+                break;
+            case "response-message":
+                responseMessage = child.getTextContent();
+                break;
+            case "svc-request-id":
+                svcRequestId = child.getTextContent();
+                break;
+            case "ack-final-indicator":
+                ackFinalIndicator = child.getTextContent();
+                break;
+            case "response-parameters":
+                responseParameters.add(child);
+                break;
+            default:
             }
         }
 
@@ -181,8 +182,8 @@ public class SDNCServiceRequestConnector extends SDNCConnector {
             String svcRequestId, String ackFinalIndicator, List<Element> responseParameters) throws ParseException {
 
         // Create a success response object.
-        SDNCServiceResponse response =
-                new SDNCServiceResponse(svcRequestId, responseCode, responseMessage, ackFinalIndicator);
+        SDNCServiceResponse response = new SDNCServiceResponse(svcRequestId, responseCode, responseMessage,
+                ackFinalIndicator);
 
         // Process any response-parameters that might be present.
 
