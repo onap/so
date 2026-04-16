@@ -39,7 +39,7 @@ mso:
     completemsoprocess:
       endpoint: http://localhost:28090/CompleteMsoProcess
     db:
-      auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
+      auth: test:test
       endpoint: http://localhost:28090/dbadapters/RequestsDbAdapter
       spring:
         endpoint: http://localhost:28090
@@ -51,8 +51,8 @@ mso:
       db:
         endpoint: http://localhost:28090/dbadapters/RequestsDbAdapter
     po:
-      auth: 5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C
-      password: 3141634BF7E070AA289CF2892C986C0B
+      auth: test:test
+      password: poBpmn:password1$
     sdnc:
       endpoint: http://localhost:28090/SDNCAdapter
       rest:
@@ -103,7 +103,6 @@ mso:
     log:
       debug: 'false'
   logPath: logs
-  msoKey: 07a7159d3bf51a0e53be7a8f89699be7
   po:
     timeout: PT60S
   request:

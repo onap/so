@@ -46,7 +46,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.logging.filter.base.ErrorCode;
-import org.onap.so.utils.CryptoUtils;
 import org.onap.so.adapters.sdnc.SDNCAdapterRequest;
 import org.onap.so.adapters.sdnc.client.CallbackHeader;
 import org.onap.so.adapters.sdnc.client.SDNCAdapterCallbackRequest;
@@ -145,8 +144,7 @@ public class SDNCRestClient {
             con.setConnectTimeout(Integer.parseInt(env.getProperty(Constants.SDNC_CONNECTTIME_PROP)));
             con.setReadTimeout(Integer.parseInt(rt.getTimeout()));
             con.setRequestProperty("Accept", "application/yang.data+xml"); // for response in xml
-            String userCredentials = CryptoUtils.decrypt(env.getProperty(Constants.SDNC_AUTH_PROP),
-                    env.getProperty(Constants.ENCRYPTION_KEY_PROP));
+            String userCredentials = env.getProperty(Constants.SDNC_AUTH_PROP);
 
             String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
             con.setRequestProperty("Authorization", basicAuth);
@@ -313,8 +311,7 @@ public class SDNCRestClient {
             try {
                 Map<String, Object> reqCtx = bp.getRequestContext();
                 Map<String, List<String>> headers = new HashMap<>();
-                String userCredentials = CryptoUtils.decrypt(env.getProperty(Constants.BPEL_AUTH_PROP),
-                        env.getProperty(Constants.ENCRYPTION_KEY_PROP));
+                String userCredentials = env.getProperty(Constants.BPEL_AUTH_PROP);
 
                 String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
                 reqCtx.put(MessageContext.HTTP_REQUEST_HEADERS, headers);

@@ -59,12 +59,12 @@ public class HttpClient extends RestClient {
     /**
      * Adds a basic authentication header to the request.
      *
-     * @param auth the encrypted credentials
-     * @param key the key for decrypting the credentials
+     * @param auth the plaintext credentials (user:password)
+     * @param key unused, kept for API compatibility
      */
     @Override
     public void addBasicAuthHeader(String auth, String key) {
-        if (isNotBlank(auth) && isNotBlank(key)) {
+        if (isNotBlank(auth)) {
             super.addBasicAuthHeader(auth, key);
         } else {
             log.warn("Not adding basic auth to headers.");

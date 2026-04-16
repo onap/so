@@ -24,7 +24,6 @@ import java.util.Collections;
 import org.onap.so.cloud.authentication.models.RackspaceAuthentication;
 import org.onap.so.db.catalog.beans.AuthenticationType;
 import org.onap.so.db.catalog.beans.CloudIdentity;
-import org.onap.so.utils.CryptoUtils;
 import org.springframework.stereotype.Component;
 import com.woorea.openstack.keystone.model.Authentication;
 import com.woorea.openstack.keystone.model.authentication.UsernamePassword;
@@ -54,11 +53,9 @@ public final class AuthenticationMethodFactory {
         }
         AuthenticationType authenticationType = cloudIdentity.getIdentityAuthenticationType();
         if (AuthenticationType.RACKSPACE_APIKEY.equals(authenticationType)) {
-            return new RackspaceAuthentication(cloudIdentity.getMsoId(),
-                    CryptoUtils.decryptCloudConfigPassword(cloudIdentity.getMsoPass()));
+            return new RackspaceAuthentication(cloudIdentity.getMsoId(), cloudIdentity.getMsoPass());
         } else {
-            return new UsernamePassword(cloudIdentity.getMsoId(),
-                    CryptoUtils.decryptCloudConfigPassword(cloudIdentity.getMsoPass()));
+            return new UsernamePassword(cloudIdentity.getMsoId(), cloudIdentity.getMsoPass());
         }
     }
 
@@ -75,7 +72,7 @@ public final class AuthenticationMethodFactory {
         userDomain.setName(cloudIdentity.getUserDomainName());
         projectDomain.setName(cloudIdentity.getProjectDomainName());
         user.setName(cloudIdentity.getMsoId());
-        user.setPassword(CryptoUtils.decryptCloudConfigPassword(cloudIdentity.getMsoPass()));
+        user.setPassword(cloudIdentity.getMsoPass());
         user.setDomain(userDomain);
         password.setUser(user);
         project.setDomain(projectDomain);
@@ -102,7 +99,7 @@ public final class AuthenticationMethodFactory {
         userDomain.setName(cloudIdentity.getUserDomainName());
         projectDomain.setName(cloudIdentity.getAdminProjectDomainName());
         user.setName(cloudIdentity.getMsoId());
-        user.setPassword(CryptoUtils.decryptCloudConfigPassword(cloudIdentity.getMsoPass()));
+        user.setPassword(cloudIdentity.getMsoPass());
         user.setDomain(userDomain);
         password.setUser(user);
         project.setDomain(projectDomain);
