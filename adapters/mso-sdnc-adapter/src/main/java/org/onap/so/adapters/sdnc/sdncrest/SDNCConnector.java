@@ -63,7 +63,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.onap.so.utils.CryptoUtils;
 import org.springframework.core.env.Environment;
 
 /**
@@ -91,8 +90,7 @@ public abstract class SDNCConnector {
             method = getHttpRequestMethod(content, rt);
 
 
-            String userCredentials = CryptoUtils.decrypt(env.getProperty(Constants.SDNC_AUTH_PROP),
-                    env.getProperty(Constants.ENCRYPTION_KEY_PROP));
+            String userCredentials = env.getProperty(Constants.SDNC_AUTH_PROP);
             String authorization = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
             if (null != method) {
                 method.setHeader("Authorization", authorization);

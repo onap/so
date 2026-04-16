@@ -25,7 +25,6 @@ package org.onap.so.apihandler.common;
 
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.DatatypeConverter;
@@ -40,7 +39,6 @@ import org.onap.so.apihandler.camundabeans.CamundaVIDRequest;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ClientConnectionException;
-import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -266,22 +264,15 @@ public class CamundaClient {
         acceptableMediaTypes.add(org.springframework.http.MediaType.APPLICATION_JSON);
         headers.setAccept(acceptableMediaTypes);
         headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-        headers.add(HttpHeaders.AUTHORIZATION, addAuthorizationHeader(env.getRequiredProperty("mso.camundaAuth"),
-                env.getRequiredProperty("mso.msoKey")));
+        headers.add(HttpHeaders.AUTHORIZATION, addAuthorizationHeader(env.getRequiredProperty("mso.camundaAuth"), ""));
         return headers;
     }
 
     protected String addAuthorizationHeader(String auth, String msoKey) {
-        String basicAuth = null;
-        try {
-            String userCredentials = CryptoUtils.decrypt(auth, msoKey);
-            if (userCredentials != null) {
-                basicAuth = BASIC + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
-            }
-        } catch (GeneralSecurityException e) {
-            logger.error("Security exception", e);
+        if (auth != null) {
+            return BASIC + DatatypeConverter.printBase64Binary(auth.getBytes());
         }
-        return basicAuth;
+        return null;
     }
 
     protected BPMNFailureException createBPMNFailureException(HttpStatusCodeException e) {

@@ -37,15 +37,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 // BPEL SDNCAdapter SOAP Web Service implementation
-@WebService(serviceName = "SDNCAdapterService", endpointInterface = "org.onap.so.adapters.sdnc.SDNCAdapterPortType",
-        targetNamespace = "http://org.onap/workflow/sdnc/adapter/wsdl/v1")
+@WebService(serviceName = "SDNCAdapterService", endpointInterface = "org.onap.so.adapters.sdnc.SDNCAdapterPortType", targetNamespace = "http://org.onap/workflow/sdnc/adapter/wsdl/v1")
 @Component
 public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
 
-
-
     private static Logger logger = LoggerFactory.getLogger(SDNCAdapterPortTypeImpl.class);
-
 
     @Autowired
     private SDNCRestClient sdncClient;
@@ -62,7 +58,6 @@ public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
     public void healthCheck() {
         logger.debug("Health check call in SDNC Adapter");
     }
-
 
     @Override
     public SDNCAdapterResponse sdncAdapter(SDNCAdapterRequest bpelRequest) {
