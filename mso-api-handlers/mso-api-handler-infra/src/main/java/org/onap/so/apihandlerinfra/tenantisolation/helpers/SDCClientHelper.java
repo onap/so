@@ -36,7 +36,6 @@ import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.utils.CryptoUtils;
 import org.onap.logging.filter.base.ONAPComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,15 +69,16 @@ public class SDCClientHelper {
     private String sdcActivateInstanceId;
     @Value("${mso.sdc.client.auth}")
     private String sdcClientAuth;
-    @Value("${mso.msoKey}")
-    private String msoKey;
 
     /**
      * Send POST request to SDC for operational activation
-     * 
-     * @param serviceModelVersionI - String
-     * @param operationalEnvironmentId - String
-     * @param workloadContext - String
+     *
+     * @param serviceModelVersionI
+     *            - String
+     * @param operationalEnvironmentId
+     *            - String
+     * @param workloadContext
+     *            - String
      * @return sdcResponseJsonObj - JSONObject object
      * @throws JSONException
      */
@@ -92,9 +92,8 @@ public class SDCClientHelper {
             String basicAuthCred = getBasicAuth();
 
             if (basicAuthCred == null || "".equals(basicAuthCred)) {
-                ErrorLoggerInfo errorLoggerInfo =
-                        new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcessError)
-                                .build();
+                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION,
+                        ErrorCode.BusinessProcessError).build();
 
                 throw new ValidateException.Builder(
                         " SDC credentials 'mso.sdc.client.auth' not setup in properties file!",
@@ -105,14 +104,15 @@ public class SDCClientHelper {
             URL url = new URL(urlString);
 
             HttpClient httpClient = httpClientFactory.newJsonClient(url, ONAPComponents.SDC);
-            httpClient.addBasicAuthHeader(sdcClientAuth, msoKey);
+            httpClient.addBasicAuthHeader(sdcClientAuth, "");
             httpClient.addAdditionalHeader("X-ECOMP-InstanceID", sdcActivateInstanceId);
             httpClient.addAdditionalHeader("Content-Type", SDCClientHelper.SDC_CONTENT_TYPE);
             httpClient.addAdditionalHeader("Accept", SDCClientHelper.SDC_ACCEPT_TYPE);
             httpClient.addAdditionalHeader("USER_ID", sdcActivateUserId);
 
             Response apiResponse = setHttpPostResponse(httpClient, jsonPayload);
-            int statusCode = apiResponse.getStatus();;
+            int statusCode = apiResponse.getStatus();
+            ;
 
             String responseData = apiResponse.readEntity(String.class);
             sdcResponseJsonObj = enhanceJsonResponse(new JSONObject(responseData), statusCode);
@@ -131,18 +131,19 @@ public class SDCClientHelper {
 
     /**
      * set HttpPostResponse
-     * 
-     * @param config - RESTConfig object
-     * @param jsonPayload - String
+     *
+     * @param config
+     *            - RESTConfig object
+     * @param jsonPayload
+     *            - String
      * @return client - RestClient object
      */
     public Response setHttpPostResponse(HttpClient client, String jsonPayload) throws ApiException {
         try {
             return client.post(jsonPayload);
         } catch (Exception ex) {
-            ErrorLoggerInfo errorLoggerInfo =
-                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcessError)
-                            .build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION,
+                    ErrorCode.BusinessProcessError).build();
 
             throw new ValidateException.Builder("Bad request could not post payload", HttpStatus.SC_BAD_REQUEST,
                     ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(ex).errorInfo(errorLoggerInfo).build();
@@ -151,9 +152,11 @@ public class SDCClientHelper {
 
     /**
      * enhance Response
-     * 
-     * @param sdcResponseJsonObj - JSONObject object
-     * @param statusCode - int
+     *
+     * @param sdcResponseJsonObj
+     *            - JSONObject object
+     * @param statusCode
+     *            - int
      * @return enhancedAsdcResponseJsonObj - JSONObject object
      */
     public JSONObject enhanceJsonResponse(JSONObject sdcResponseJsonObj, int statusCode) {
@@ -198,9 +201,11 @@ public class SDCClientHelper {
 
     /**
      * Build Uri
-     * 
-     * @param serviceModelVersionId - String
-     * @param operationalEnvironmentId - String
+     *
+     * @param serviceModelVersionId
+     *            - String
+     * @param operationalEnvironmentId
+     *            - String
      * @return uriBuilder - String
      */
     public String buildUriBuilder(String serviceModelVersionId, String operationalEnvironmentId) {
@@ -211,8 +216,9 @@ public class SDCClientHelper {
 
     /**
      * Build JSON context
-     * 
-     * @param workloadContext - String
+     *
+     * @param workloadContext
+     *            - String
      * @return String json
      * @throws JSONException
      */
@@ -223,24 +229,14 @@ public class SDCClientHelper {
 
     /**
      * decrypt value
-     * 
-     * @param toDecrypt - String
-     * @param msokey - String
+     *
+     * @param toDecrypt
+     *            - String
+     * @param msokey
+     *            - String
      * @return result - String
      */
-    public synchronized String decrypt(String toDecrypt, String msokey) {
-        String result = null;
-        try {
-            result = CryptoUtils.decrypt(toDecrypt, msokey);
-
-        } catch (Exception e) {
-            logger.debug("Failed to decrypt credentials: {}", toDecrypt, e);
-        }
-        return result;
-    }
-
     private String getBasicAuth() {
-        return decrypt(sdcClientAuth, msoKey);
+        return sdcClientAuth;
     }
 }
-

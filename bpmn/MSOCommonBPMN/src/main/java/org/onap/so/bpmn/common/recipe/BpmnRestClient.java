@@ -23,7 +23,6 @@
 package org.onap.so.bpmn.common.recipe;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import javax.xml.bind.DatatypeConverter;
 import org.onap.so.logger.LoggingAnchor;
 import org.apache.http.HttpResponse;
@@ -36,7 +35,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -194,10 +192,8 @@ public class BpmnRestClient {
      * @since ONAP Beijing Release
      */
     protected String getEncryptedPropValue(String prop, String defaultValue, String encryptionKey) {
-        try {
-            return CryptoUtils.decrypt(prop, urnPropertiesReader.getVariable(encryptionKey));
-        } catch (GeneralSecurityException e) {
-            logger.debug("Security exception", e);
+        if (prop != null && !prop.isEmpty()) {
+            return prop;
         }
         return defaultValue;
     }

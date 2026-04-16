@@ -2994,7 +2994,7 @@ String sdncAdapterWorkflowAssignResponse =
 			when(mockExecution.getVariable("subscriptionServiceType")).thenReturn("MSO-dev-service-type")
 			when(mockExecution.getVariable("globalSubscriberId")).thenReturn("globalId_45678905678")
 
-			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("3141634BF7E070AA289CF2892C986C0B")
+			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("poBpmn:password1\$")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 			when(mockExecution.getVariable("mso.rollback")).thenReturn("true")
@@ -3056,7 +3056,7 @@ String sdncAdapterWorkflowAssignResponse =
 			when(mockExecution.getVariable("sdncVersion")).thenReturn("1610")                      // 1610 default
 			when(mockExecution.getVariable("disableRollback")).thenReturn(true)
 
-			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("3141634BF7E070AA289CF2892C986C0B")
+			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("poBpmn:password1\$")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 			when(mockExecution.getVariable("mso.rollback")).thenReturn("true")
@@ -3110,7 +3110,7 @@ String sdncAdapterWorkflowAssignResponse =
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("bpmnRequest")).thenReturn(xmlIncomingRequest)                      // XML format
 
-			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("3141634BF7E070AA289CF2892C986C0B")
+			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("poBpmn:password1\$")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 			when(mockExecution.getVariable("mso.rollback")).thenReturn("true")

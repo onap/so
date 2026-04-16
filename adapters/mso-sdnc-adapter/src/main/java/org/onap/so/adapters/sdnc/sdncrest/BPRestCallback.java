@@ -32,7 +32,6 @@ import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
-import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,10 +64,14 @@ public class BPRestCallback {
      * Sends a message to the BPMN workflow message service. The URL path is constructed using the specified message
      * type and correlator.
      *
-     * @param workflowMessageUrl the base BPMN WorkflowMessage URL
-     * @param messageType the message type
-     * @param correlator the message correlator
-     * @param message the JSON content
+     * @param workflowMessageUrl
+     *            the base BPMN WorkflowMessage URL
+     * @param messageType
+     *            the message type
+     * @param correlator
+     *            the message correlator
+     * @param message
+     *            the JSON content
      * @return true if the message was consumed successfully by the endpoint
      */
     public boolean send(String workflowMessageUrl, String messageType, String correlator, String message) {
@@ -89,8 +92,10 @@ public class BPRestCallback {
      * Sends a message to the BPMN workflow message service. The specified URL must have the message type and correlator
      * already embedded in it.
      *
-     * @param url the endpoint URL
-     * @param message the JSON content
+     * @param url
+     *            the endpoint URL
+     * @param message
+     *            the JSON content
      * @return true if the message was consumed successfully by the endpoint
      */
     public boolean send(String url, String message) {
@@ -123,8 +128,7 @@ public class BPRestCallback {
     protected boolean setAuthorizationHeader(HttpHeaders headers) {
         boolean error = false;
         try {
-            String userCredentials = CryptoUtils.decrypt(env.getProperty(Constants.BPEL_AUTH_PROP),
-                    env.getProperty(Constants.ENCRYPTION_KEY_PROP));
+            String userCredentials = env.getProperty(Constants.BPEL_AUTH_PROP);
             String authorization = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
             headers.set("Authorization", authorization);
         } catch (Exception e) {
