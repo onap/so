@@ -21,16 +21,14 @@
 package org.onap.so.client.adapter.rest;
 
 import java.net.URI;
-import java.security.GeneralSecurityException;
+import java.util.Base64;
 import java.util.Optional;
 import javax.ws.rs.core.MultivaluedMap;
-import org.apache.commons.codec.binary.Base64;
 import org.javatuples.Pair;
 import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.client.CommonObjectMapperProvider;
 import org.onap.so.client.RestClient;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
-import org.onap.so.utils.CryptoUtils;
 
 public class AdapterRestClient extends RestClient {
 
@@ -62,19 +60,11 @@ public class AdapterRestClient extends RestClient {
         return new JettisonStyleMapperProvider();
     }
 
-    private String getBasicAuth(String encryptedAuth, String msoKey) {
-        if ((encryptedAuth == null || encryptedAuth.isEmpty()) || (msoKey == null || msoKey.isEmpty())) {
+    private String getBasicAuth(String auth, String msoKey) {
+        if (auth == null || auth.isEmpty()) {
             return null;
         }
-        try {
-            String auth = CryptoUtils.decrypt(encryptedAuth, msoKey);
-            byte[] encoded = Base64.encodeBase64(auth.getBytes());
-            String encodedString = new String(encoded);
-            encodedString = "Basic " + encodedString;
-            return encodedString;
-        } catch (GeneralSecurityException e) {
-            logger.error(e.getMessage(), e);
-            return null;
-        }
+        String encodedString = Base64.getEncoder().encodeToString(auth.getBytes());
+        return "Basic " + encodedString;
     }
 }

@@ -37,9 +37,11 @@ public class FileUtil {
     /**
      * Read the specified resource file and return the contents as a String.
      *
-     * @param fileName Name of the resource file
+     * @param fileName
+     *            Name of the resource file
      * @return the contents of the resource file as a String
-     * @throws IOException if there is a problem reading the file
+     * @throws IOException
+     *             if there is a problem reading the file
      */
     public static String readResourceFile(String fileName) {
         InputStream stream;
@@ -63,9 +65,11 @@ public class FileUtil {
     /**
      * Get an InputStream for the resource specified.
      *
-     * @param resourceName Name of resource for which to get InputStream.
+     * @param resourceName
+     *            Name of resource for which to get InputStream.
      * @return an InputStream for the resource specified.
-     * @throws IOException If we can't get the InputStream for whatever reason.
+     * @throws IOException
+     *             If we can't get the InputStream for whatever reason.
      */
     private static InputStream getResourceAsStream(String resourceName) throws IOException {
         InputStream stream = FileUtil.class.getClassLoader().getResourceAsStream(resourceName);

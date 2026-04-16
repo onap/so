@@ -22,7 +22,6 @@
 
 package org.onap.so.adapters.sdnc.impl;
 
-
 import java.io.StringWriter;
 import java.time.Instant;
 import java.util.UUID;
@@ -50,7 +49,8 @@ public class Utils {
     private static Logger logger = LoggerFactory.getLogger(Utils.class);
     private static int MSOJsonIndentFactor = 3;
 
-    private Utils() {}
+    private Utils() {
+    }
 
     public static String genSdncReq(Document reqDoc, RequestTunables rt) {
         try {
@@ -265,8 +265,10 @@ public class Utils {
     /**
      * Uses the JSONObject static method to convert a XML doc to JSON.
      *
-     * @param xml String containing the XML doc
-     * @param pretty flag to determine if the output should be formatted
+     * @param xml
+     *            String containing the XML doc
+     * @param pretty
+     *            flag to determine if the output should be formatted
      * @return String containing the JSON translation
      */
     public static String xml2json(String xml, boolean pretty) {
@@ -288,7 +290,8 @@ public class Utils {
     /**
      * Removes namespaces and namespace declarations from an XML document.
      *
-     * @param xml the XML document
+     * @param xml
+     *            the XML document
      * @return a possibly modified document
      */
     public static String removeNamespaces(Object xml) {
@@ -310,7 +313,6 @@ public class Utils {
 
         return text;
     }
-
 
     public static String genMsoFailResp(SDNCResponse resp) {
         try {
@@ -346,7 +348,6 @@ public class Utils {
         }
         return null;
     }
-
 
     public static String domToStr(Document doc) {
         if (doc != null) {

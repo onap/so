@@ -20,10 +20,10 @@
 
 package org.onap.so.adapters.sdnc.util;
 
-
 public class SDNCRequestIdUtil {
     // Add private constructor to prevent instance creation.
-    private SDNCRequestIdUtil() {}
+    private SDNCRequestIdUtil() {
+    }
 
     public static String getSDNCOriginalRequestId(String newRequestId) {
 
