@@ -128,13 +128,6 @@
       <url>https://repo1.maven.org/maven2</url>
     </pluginRepository>
     <pluginRepository>
-      <id>camunda-bpm</id>
-      <url>https://artifacts.camunda.com/artifactory/camunda-bpm/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </pluginRepository>
-    <pluginRepository>
       <id>camunda-public</id>
       <url>https://artifacts.camunda.com/artifactory/public/</url>
       <snapshots>
@@ -184,10 +177,6 @@
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
-    </repository>
-    <repository>
-      <id>camunda-bpm</id>
-      <url>https://artifacts.camunda.com/artifactory/camunda-bpm/</url>
     </repository>
     <repository>
       <id>camunda-public</id>

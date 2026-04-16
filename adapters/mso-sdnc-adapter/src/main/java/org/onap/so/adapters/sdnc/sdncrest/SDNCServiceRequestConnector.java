@@ -48,7 +48,6 @@ import org.xml.sax.SAXException;
 /**
  * SDNCConnector for "agnostic" API services.
  */
-
 @Component
 public class SDNCServiceRequestConnector extends SDNCConnector {
 
