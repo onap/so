@@ -1021,7 +1021,9 @@ public class JsonUtils {
      *
      */
     public static boolean jsonElementExist(String jsonStr, String keys) {
-
+        if (keys == null) {
+            return true;
+        }
         try {
             Object rawValue = getJsonRawValue(jsonStr, keys);
 

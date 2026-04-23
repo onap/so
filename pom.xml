@@ -41,7 +41,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sonar.language>java</sonar.language>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <sonar.surefire.reportsPath>${project.build.directory}/surefire-reports</sonar.surefire.reportsPath>
     <sonar.coverage.jacoco.xmlReportPaths>${project.reporting.outputDirectory}/jacoco-ut/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
@@ -231,7 +231,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
+        <version>3.11.0</version>
         <configuration>
           <debug>true</debug>
           <compilerArgument>-Xlint</compilerArgument>
@@ -242,9 +242,8 @@
             <arg>-parameters</arg>
           </compilerArgs>
           <forceJavacCompilerUse>true</forceJavacCompilerUse>
-          <source>11</source>
-          <target>11</target>
-          <release>11</release>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
         </configuration>
       </plugin>
       <plugin>
@@ -329,6 +328,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.12</version>
         <executions>
           <execution>
             <id>prepare-agent</id>
@@ -530,6 +530,11 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>3.11.0</version>
+        </plugin>
+        <plugin>
           <groupId>org.eclipse.m2e</groupId>
           <artifactId>lifecycle-mapping</artifactId>
           <version>1.0.0</version>
@@ -609,7 +614,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M9</version>
+          <version>3.1.2</version>
           <dependencies>
             <dependency>
               <groupId>org.junit.jupiter</groupId>
@@ -618,6 +623,16 @@
             </dependency>
           </dependencies>
           <configuration>
+            <argLine>
+              --add-opens java.base/java.lang=ALL-UNNAMED
+              --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+              --add-opens java.base/java.util=ALL-UNNAMED
+              --add-opens java.base/java.io=ALL-UNNAMED
+              --add-opens java.base/java.nio=ALL-UNNAMED
+              --add-opens java.base/java.text=ALL-UNNAMED
+              --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+              --add-opens java.base/sun.reflect.generics.reflectiveObjects=ALL-UNNAMED
+            </argLine>
             <systemPropertyVariables>
               <so.log.level>DEBUG</so.log.level>
             </systemPropertyVariables>
@@ -1042,7 +1057,7 @@
       <dependency>
         <groupId>ch.vorburger.mariaDB4j</groupId>
         <artifactId>mariaDB4j</artifactId>
-        <version>2.6.0</version>
+        <version>3.1.0</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -1156,6 +1171,18 @@
       <properties>
         <originalClassifier />
       </properties>
+    </profile>
+    <profile>
+      <id>openrewrite</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.openrewrite.maven</groupId>
+            <artifactId>rewrite-maven-plugin</artifactId>
+            <version>5.31.0</version>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
