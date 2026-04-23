@@ -67,7 +67,7 @@ public class ExceptionBuilderUnitTest {
     @Test
     public void buildAndThrowWorkflowExceptionTest() {
         String expectedErrorMessage =
-                "Exception in org.onap.so.client.exception.ExceptionBuilder.buildAndThrowWorkflowException failure message";
+                "Exception in org.onap.so.client.exception.ExceptionBuilderUnitTest.buildAndThrowWorkflowExceptionTest failure message";
         doNothing().when(exceptionBuilder).buildAndThrowWorkflowException(execution, 7000, expectedErrorMessage,
                 ONAPComponents.SDNC);
 
@@ -80,7 +80,7 @@ public class ExceptionBuilderUnitTest {
     @Test
     public void buildAndThrowWorkflowExceptionBuildingBlockExecutionTest() {
         String expectedErrorMessage =
-                "Exception in org.onap.so.client.exception.ExceptionBuilder.buildAndThrowWorkflowException failure message";
+                "Exception in org.onap.so.client.exception.ExceptionBuilderUnitTest.buildAndThrowWorkflowExceptionBuildingBlockExecutionTest failure message";
         doNothing().when(exceptionBuilder).buildAndThrowWorkflowException(buildingBlockExecution, 7000,
                 expectedErrorMessage, ONAPComponents.SDNC);
 
