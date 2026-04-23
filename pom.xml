@@ -41,7 +41,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sonar.language>java</sonar.language>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <sonar.surefire.reportsPath>${project.build.directory}/surefire-reports</sonar.surefire.reportsPath>
     <sonar.coverage.jacoco.xmlReportPaths>${project.reporting.outputDirectory}/jacoco-ut/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
@@ -64,11 +64,11 @@
     <snapshotNexusPath>content/repositories/snapshots/</snapshotNexusPath>
     <publicNexusPath>content/repositories/public/</publicNexusPath>
     <siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
-    <cxf.version>3.4.10</cxf.version>
+    <cxf.version>4.0.5</cxf.version>
     <jax.ws.rs>2.1</jax.ws.rs>
-    <springboot.version>2.7.18</springboot.version>
-    <spring-cloud.version>2021.0.9</spring-cloud.version>
-    <camunda.version>7.17.0</camunda.version>
+    <springboot.version>3.0.13</springboot.version>
+    <spring-cloud.version>2022.0.5</spring-cloud.version>
+    <camunda.version>7.20.0</camunda.version>
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>0.33.0</io.fabric8.version>
@@ -77,11 +77,11 @@
     <so-etsi-sol003-adapter-version>1.9.0-SNAPSHOT</so-etsi-sol003-adapter-version>
     <onap-logging-version>1.6.9</onap-logging-version>
     <jackson.version>2.14.3</jackson.version>
-    <grpc.version>1.29.0</grpc.version>
-    <logback.version>1.2.11</logback.version>
-    <kafka-clients.version>3.3.2</kafka-clients.version>
-    <aai-schema.version>1.12.10</aai-schema.version>
-    <junit-jupiter.version>5.8.2</junit-jupiter.version>
+    <grpc.version>1.58.0</grpc.version>
+    <logback.version>1.4.14</logback.version>
+    <kafka-clients.version>3.4.1</kafka-clients.version>
+    <aai-schema.version>1.14.0</aai-schema.version>
+    <junit-jupiter.version>5.9.3</junit-jupiter.version>
     <surefire.forkCount>1</surefire.forkCount>
     <surefire.threadCount>1</surefire.threadCount>
   </properties>
@@ -231,7 +231,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
+        <version>3.11.0</version>
         <configuration>
           <debug>true</debug>
           <compilerArgument>-Xlint</compilerArgument>
@@ -242,9 +242,9 @@
             <arg>-parameters</arg>
           </compilerArgs>
           <forceJavacCompilerUse>true</forceJavacCompilerUse>
-          <source>11</source>
-          <target>11</target>
-          <release>11</release>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <release>${java.version}</release>
         </configuration>
       </plugin>
       <plugin>
@@ -609,7 +609,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M9</version>
+          <version>3.1.2</version>
           <dependencies>
             <dependency>
               <groupId>org.junit.jupiter</groupId>
@@ -1121,6 +1121,58 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <!--
+        Legacy deps dropped from Spring Boot 3.0 / Spring Cloud 2022.0 BOMs.
+        Pinned here to keep module POMs resolvable during incremental migration.
+        Each pin is removed as the consuming module migrates to the SB3/SC2022 replacement.
+      -->
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-bom</artifactId>
+        <version>3.0.23</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-sleuth</artifactId>
+        <version>3.1.10</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+        <version>3.1.10</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.annotation</groupId>
+        <artifactId>javax.annotation-api</artifactId>
+        <version>1.3.2</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>4.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.xml.ws</groupId>
+        <artifactId>jaxws-api</artifactId>
+        <version>2.3.1</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.ws.rs</groupId>
+        <artifactId>javax.ws.rs-api</artifactId>
+        <version>2.1.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>5.6.15.Final</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>2.0.1.Final</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <profiles>
@@ -1156,6 +1208,27 @@
       <properties>
         <originalClassifier />
       </properties>
+    </profile>
+    <profile>
+      <!--
+        Wires the OpenRewrite Maven plugin. Recipe artifacts (rewrite-spring,
+        rewrite-migrate-java) are NOT preloaded here because the exact
+        compatible version combo depends on the specific migration step.
+        Per-phase CRs add recipe artifacts via
+          -Drewrite.recipeArtifactCoordinates=<GAV>,<GAV>...
+        at invocation time, so migration work can pin a tested combo
+        without churning this profile.
+      -->
+      <id>openrewrite</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.openrewrite.maven</groupId>
+            <artifactId>rewrite-maven-plugin</artifactId>
+            <version>5.31.0</version>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
