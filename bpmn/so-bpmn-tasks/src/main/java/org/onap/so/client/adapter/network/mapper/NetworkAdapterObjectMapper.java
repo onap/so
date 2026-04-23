@@ -261,6 +261,23 @@ public class NetworkAdapterObjectMapper {
      * @param L3Network
      * @return List<org.onap.so.openstack.beans.Subnet>
      */
+    // Named static nested class instead of anonymous inner class.
+    // Under Java 17 + ModelMapper 3.x, anonymous PropertyMap subclasses that capture
+    // an outer reference trigger NPE in ExplicitMappingBuilder$ExplicitMappingInterceptor.
+    private static class SubnetPropertyMap
+            extends PropertyMap<org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet, org.onap.so.openstack.beans.Subnet> {
+        @Override
+        protected void configure() {
+            map().setSubnetName(source.getSubnetName());
+            map(source.getSubnetId(), destination.getSubnetId());
+            map(source.getNeutronSubnetId(), destination.getNeutronId());
+            map(source.getGatewayAddress(), destination.getGatewayIp());
+            map(source.getIpVersion(), destination.getIpVersion());
+            map(source.isDhcpEnabled(), destination.getEnableDHCP());
+            map(source.getSubnetSequence(), destination.getSubnetSequence());
+        }
+    }
+
     protected List<Subnet> buildOpenstackSubnetList(L3Network l3Network) {
 
         List<org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet> subnets = l3Network.getSubnets();
@@ -268,20 +285,7 @@ public class NetworkAdapterObjectMapper {
         // create mapper from onap Subnet to openstack bean Subnet
         if (modelMapper.getTypeMap(org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet.class,
                 org.onap.so.openstack.beans.Subnet.class) == null) {
-            PropertyMap<org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet, org.onap.so.openstack.beans.Subnet> personMap =
-                    new PropertyMap<org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet, org.onap.so.openstack.beans.Subnet>() {
-                        @Override
-                        protected void configure() {
-                            map().setSubnetName(source.getSubnetName());
-                            map(source.getSubnetId(), destination.getSubnetId());
-                            map(source.getNeutronSubnetId(), destination.getNeutronId());
-                            map(source.getGatewayAddress(), destination.getGatewayIp());
-                            map(source.getIpVersion(), destination.getIpVersion());
-                            map(source.isDhcpEnabled(), destination.getEnableDHCP());
-                            map(source.getSubnetSequence(), destination.getSubnetSequence());
-                        }
-                    };
-            modelMapper.addMappings(personMap);
+            modelMapper.addMappings(new SubnetPropertyMap());
         }
 
         for (org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet subnet : subnets) {

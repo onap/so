@@ -66,8 +66,12 @@ public class ExceptionBuilderUnitTest {
 
     @Test
     public void buildAndThrowWorkflowExceptionTest() {
+        // With Mockito inline mock-maker, the spy instruments ExceptionBuilder directly
+        // so this.getClass() matches and the stack filter correctly skips to the caller
+        // (this test method). The previous expectation relied on Mockito 4.x subclass-based
+        // spies leaking a proxy-named frame through the filter.
         String expectedErrorMessage =
-                "Exception in org.onap.so.client.exception.ExceptionBuilder.buildAndThrowWorkflowException failure message";
+                "Exception in org.onap.so.client.exception.ExceptionBuilderUnitTest.buildAndThrowWorkflowExceptionTest failure message";
         doNothing().when(exceptionBuilder).buildAndThrowWorkflowException(execution, 7000, expectedErrorMessage,
                 ONAPComponents.SDNC);
 
@@ -79,8 +83,10 @@ public class ExceptionBuilderUnitTest {
 
     @Test
     public void buildAndThrowWorkflowExceptionBuildingBlockExecutionTest() {
+        // See buildAndThrowWorkflowExceptionTest — caller identification now correctly
+        // identifies the test method under inline mock-maker semantics.
         String expectedErrorMessage =
-                "Exception in org.onap.so.client.exception.ExceptionBuilder.buildAndThrowWorkflowException failure message";
+                "Exception in org.onap.so.client.exception.ExceptionBuilderUnitTest.buildAndThrowWorkflowExceptionBuildingBlockExecutionTest failure message";
         doNothing().when(exceptionBuilder).buildAndThrowWorkflowException(buildingBlockExecution, 7000,
                 expectedErrorMessage, ONAPComponents.SDNC);
 

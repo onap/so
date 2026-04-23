@@ -70,7 +70,11 @@ public class ExceptionBuilder {
             StackTraceElement[] trace = Thread.currentThread().getStackTrace();
             for (StackTraceElement traceElement : trace) {
                 if (!traceElement.getClassName().equals(this.getClass().getName())
-                        && !traceElement.getClassName().equals(Thread.class.getName())) {
+                        && !traceElement.getClassName().equals(Thread.class.getName())
+                        && !traceElement.getClassName().startsWith("jdk.internal.reflect.")
+                        && !traceElement.getClassName().startsWith("sun.reflect.")
+                        && !traceElement.getClassName().startsWith("org.mockito.")
+                        && !traceElement.getClassName().equals("java.lang.reflect.Method")) {
                     msg = String.format(msg, traceElement.getClassName(), traceElement.getMethodName());
                     String shortClassName =
                             traceElement.getClassName().substring(traceElement.getClassName().lastIndexOf(".") + 1);
@@ -103,7 +107,11 @@ public class ExceptionBuilder {
             StackTraceElement[] trace = Thread.currentThread().getStackTrace();
             for (StackTraceElement traceElement : trace) {
                 if (!traceElement.getClassName().equals(this.getClass().getName())
-                        && !traceElement.getClassName().equals(Thread.class.getName())) {
+                        && !traceElement.getClassName().equals(Thread.class.getName())
+                        && !traceElement.getClassName().startsWith("jdk.internal.reflect.")
+                        && !traceElement.getClassName().startsWith("sun.reflect.")
+                        && !traceElement.getClassName().startsWith("org.mockito.")
+                        && !traceElement.getClassName().equals("java.lang.reflect.Method")) {
                     msg = String.format(msg, traceElement.getClassName(), traceElement.getMethodName());
                     String shortClassName =
                             traceElement.getClassName().substring(traceElement.getClassName().lastIndexOf(".") + 1);
@@ -135,7 +143,11 @@ public class ExceptionBuilder {
             StackTraceElement[] trace = Thread.currentThread().getStackTrace();
             for (StackTraceElement traceElement : trace) {
                 if (!traceElement.getClassName().equals(this.getClass().getName())
-                        && !traceElement.getClassName().equals(Thread.class.getName())) {
+                        && !traceElement.getClassName().equals(Thread.class.getName())
+                        && !traceElement.getClassName().startsWith("jdk.internal.reflect.")
+                        && !traceElement.getClassName().startsWith("sun.reflect.")
+                        && !traceElement.getClassName().startsWith("org.mockito.")
+                        && !traceElement.getClassName().equals("java.lang.reflect.Method")) {
                     msg = String.format(msg, traceElement.getClassName(), traceElement.getMethodName());
                     String shortClassName =
                             traceElement.getClassName().substring(traceElement.getClassName().lastIndexOf(".") + 1);
@@ -167,7 +179,11 @@ public class ExceptionBuilder {
             StackTraceElement[] trace = Thread.currentThread().getStackTrace();
             for (StackTraceElement traceElement : trace) {
                 if (!traceElement.getClassName().equals(this.getClass().getName())
-                        && !traceElement.getClassName().equals(Thread.class.getName())) {
+                        && !traceElement.getClassName().equals(Thread.class.getName())
+                        && !traceElement.getClassName().startsWith("jdk.internal.reflect.")
+                        && !traceElement.getClassName().startsWith("sun.reflect.")
+                        && !traceElement.getClassName().startsWith("org.mockito.")
+                        && !traceElement.getClassName().equals("java.lang.reflect.Method")) {
                     msg = String.format(msg, traceElement.getClassName(), traceElement.getMethodName());
                     String shortClassName =
                             traceElement.getClassName().substring(traceElement.getClassName().lastIndexOf(".") + 1);

@@ -1021,7 +1021,13 @@ public class JsonUtils {
      *
      */
     public static boolean jsonElementExist(String jsonStr, String keys) {
-
+        // Preserve legacy contract where null keys return true. Under Java 11 this
+        // happened accidentally via a chained NPE in getJsonRawValue's catch block;
+        // Java 14+ helpful NPEs (JEP 358) make that chain no longer fire, so handle
+        // the null case explicitly here.
+        if (keys == null) {
+            return true;
+        }
         try {
             Object rawValue = getJsonRawValue(jsonStr, keys);
 

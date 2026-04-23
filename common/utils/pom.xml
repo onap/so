@@ -24,12 +24,14 @@
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-core</artifactId>
-      <version>2.3.0</version>
+      <!-- 2.3.0.1 is latest 2.3.x (no 2.3.9 published for jaxb-core) -->
+      <version>2.3.0.1</version>
     </dependency>
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
-      <version>2.3.0</version>
+      <!-- 2.3.0 throws NPE on Injector.defineClass under Java 17; 2.3.9 has the fix -->
+      <version>2.3.9</version>
     </dependency>
     <dependency>
       <groupId>org.camunda.bpm</groupId>

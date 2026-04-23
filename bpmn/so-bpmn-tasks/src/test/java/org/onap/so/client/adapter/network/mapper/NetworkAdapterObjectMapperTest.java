@@ -60,7 +60,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class NetworkAdapterObjectMapperTest extends TestDataSetup {
 
-    private NetworkAdapterObjectMapper SPY_networkAdapterObjectMapper = Mockito.spy(NetworkAdapterObjectMapper.class);
+    private NetworkAdapterObjectMapper SPY_networkAdapterObjectMapper = Mockito.spy(new NetworkAdapterObjectMapper());
 
     private L3Network l3Network;
     private RequestContext requestContext;
