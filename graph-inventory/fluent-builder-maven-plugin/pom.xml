@@ -43,7 +43,8 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.6.0</version>
+        <!-- Bumped from 3.6.0 for Java 17 bytecode support -->
+        <version>3.11.0</version>
         <configuration>
           <goalPrefix>fluent-builder</goalPrefix>
         </configuration>

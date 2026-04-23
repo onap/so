@@ -41,7 +41,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sonar.language>java</sonar.language>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <sonar.surefire.reportsPath>${project.build.directory}/surefire-reports</sonar.surefire.reportsPath>
     <sonar.coverage.jacoco.xmlReportPaths>${project.reporting.outputDirectory}/jacoco-ut/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
@@ -231,7 +231,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
+        <version>3.11.0</version>
         <configuration>
           <debug>true</debug>
           <compilerArgument>-Xlint</compilerArgument>
@@ -242,9 +242,13 @@
             <arg>-parameters</arg>
           </compilerArgs>
           <forceJavacCompilerUse>true</forceJavacCompilerUse>
-          <source>11</source>
-          <target>11</target>
-          <release>11</release>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <!--
+            <release> intentionally omitted. groovy-eclipse-batch 3.0.8-01
+            (latest available under org.codehaus.groovy) rejects
+            "release version 17". source/target flags are accepted.
+          -->
         </configuration>
       </plugin>
       <plugin>
@@ -329,6 +333,8 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
+        <!-- Override oparent's 0.8.5 with a version that supports Java 17 bytecode (class file major 61) -->
+        <version>0.8.12</version>
         <executions>
           <execution>
             <id>prepare-agent</id>
@@ -529,6 +535,12 @@
     </plugins>
     <pluginManagement>
       <plugins>
+        <!-- Override oparent's 3.6.0 with a version that supports Java 17 bytecode (class file major 61) -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>3.11.0</version>
+        </plugin>
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
           <artifactId>lifecycle-mapping</artifactId>
@@ -609,7 +621,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M9</version>
+          <version>3.1.2</version>
           <dependencies>
             <dependency>
               <groupId>org.junit.jupiter</groupId>
@@ -1156,6 +1168,25 @@
       <properties>
         <originalClassifier />
       </properties>
+    </profile>
+    <profile>
+      <!--
+        Wires the OpenRewrite Maven plugin for later-phase CRs that apply
+        Jakarta namespace / Spring Boot 3 migration recipes. Recipe artifacts
+        are NOT preloaded here because the compatible recipe combo depends
+        on the specific migration step; they are passed at invocation time
+        via -Drewrite.recipeArtifactCoordinates.
+      -->
+      <id>openrewrite</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.openrewrite.maven</groupId>
+            <artifactId>rewrite-maven-plugin</artifactId>
+            <version>5.31.0</version>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
