@@ -1,4 +1,4 @@
-FROM docker.io/openjdk:11-jre-slim
+FROM docker.io/eclipse-temurin:17-jre-alpine
 
 #Create User so
 RUN addgroup -g 1000 so && adduser -S -u 1000 -G so so
@@ -12,13 +12,13 @@ ENV artifact_id $artifact_id
 
 ENV no_proxy localhost
 
-VOLUME /tmp 
+VOLUME /tmp
 WORKDIR /app
 
-ADD /maven/${artifact_id}-${project_version}.jar /app/app.jar 
+ADD /maven/${artifact_id}-${project_version}.jar /app/app.jar
 RUN chown -R so:so /app
 
-USER so 
+USER so
 
 
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app/app.jar"]
