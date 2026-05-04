@@ -1,11 +1,15 @@
-FROM onap/integration-java11:7.0.0
-MAINTAINER mc4615@att.com
+FROM eclipse-temurin:17-jre-alpine
 EXPOSE 8080
-ENV APP_HOME /home/$USER_NAME/app
-RUN mkdir $APP_HOME
+
+RUN addgroup -g 1000 so && adduser -S -u 1000 -G so -s /bin/sh so
+
+ENV APP_HOME /home/so/app
+RUN mkdir -p $APP_HOME
 ADD mso-openstack-adapters-1.1.0-SNAPSHOT.jar $APP_HOME/mso-openstack-adapters-1.1.0-SNAPSHOT.jar
+RUN chown -R so:so $APP_HOME
 WORKDIR $APP_HOME
-RUN touch mso-openstack-adapters-1.1.0-SNAPSHOT.jar
+
+USER so
 ENTRYPOINT ["java","-jar","-Dspring.profiles.active=dev","mso-openstack-adapters-1.1.0-SNAPSHOT.jar"]
 
 
