@@ -9,6 +9,47 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture.
 
+Version: 1.19.0
+---------------
+
+:Release Date: 2026-05-07
+
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - so-api-handler-infra **1.19.0**
+
+ - so-bpmn-infra **1.19.0**
+
+ - so-catalog-db-adapter **1.19.0**
+
+ - so-openstack-adapter **1.19.0**
+
+ - so-request-db-adapter **1.19.0**
+
+ - so-sdc-controller **1.19.0**
+
+ - so-sdnc-adapter **1.19.0**
+
+ - so-appc-orchestrator **1.19.0**
+
+ - so-simulator **1.19.0**
+
+
+Release Purpose
+~~~~~~~~~~~~~~~
+SO T-Series Release.
+
+**Changes**
+
+*  migrate SO to java 17
+*  remove custom encryption from SO
+*  set default MaxRAMPercentage for SO pods
+*  support dependency injecting http client into aai-client
+
+**********************************************************************************************************
+
+
 Version: 1.18.0
 ---------------
 
@@ -55,7 +96,7 @@ SO S-Series Release.
 Version: 1.17.0
 ---------------
 
-:Release Date: TBD (not yet released)
+:Release Date: 2026-04-01
 
 SO Release Image Versions
 ~~~~~~~~~~~~~~~~~~~~~~~~~
