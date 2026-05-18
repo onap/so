@@ -205,7 +205,7 @@ jobs:
           egress-policy: audit
 
       - name: Get workflow conclusion
-        uses: im-open/workflow-conclusion@fce18569e28a9f2ed1feca1e6d4251e6a7365fdc # v2.2.4
+        uses: im-open/workflow-conclusion@7b146947e59eaf7fc3328822357861ab1758c088 # v2.2.5
 
       - name: Report workflow conclusion
         # yamllint disable-line rule:line-length
