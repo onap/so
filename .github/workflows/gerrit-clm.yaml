@@ -1,0 +1,341 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 The Linux Foundation
+
+name: '🔐 Security Scans (CLM)'
+
+on:
+  schedule:
+    # Intentionally scheduled at an odd minute letting GitHub's queue randomize the exact start.
+    - cron: "37 0 * * 6"
+
+  push:
+    branches: ["main", "master"]
+    paths:
+      - "**"
+      - "!.github/**"
+
+  workflow_dispatch:
+    inputs:
+      GERRIT_BRANCH:
+        description: "Branch that change is against"
+        required: false
+        type: string
+      GERRIT_CHANGE_ID:
+        description: "The ID for the change"
+        required: false
+        type: string
+      GERRIT_CHANGE_NUMBER:
+        description: "The Gerrit number"
+        required: false
+        type: string
+      GERRIT_CHANGE_URL:
+        description: "URL to the change"
+        required: false
+        type: string
+      GERRIT_EVENT_TYPE:
+        description: "Type of Gerrit event"
+        required: false
+        type: string
+      GERRIT_PATCHSET_NUMBER:
+        description: "The patch number for the change"
+        required: false
+        type: string
+      GERRIT_PATCHSET_REVISION:
+        description: "The revision sha"
+        required: false
+        type: string
+      GERRIT_PROJECT:
+        description: "Project in Gerrit"
+        required: false
+        type: string
+      GERRIT_REFSPEC:
+        description: "Gerrit refspec of change"
+        required: false
+        type: string
+      GERRIT_DISABLED:
+        description: "Run without Gerrit components"
+        required: false
+        default: false
+        type: boolean
+      java_distribution:
+        description: "JAVA SE distribution to setup/run for Nexus CLI tool"
+        required: false
+        type: string
+        default: "temurin"
+      java_version:
+        description: "Java runtime to setup/run for Nexus CLI tool"
+        required: false
+        type: string
+        default: "17"
+      iq_cli_version:
+        description: "Specific version of Nexus CLI to setup/run"
+        required: false
+        type: string
+        default: "2.4.2-01"
+      application_id:
+        description: "Organisation and project name in Nexus IQ"
+        required: false
+        type: string
+        default: ""
+      scan_targets:
+        description: "Location of file(s) or folder(s) to scan"
+        required: false
+        type: string
+        default: "."
+      debug:
+        description: "Enable debug logging"
+        required: false
+        type: boolean
+        default: false
+
+# Fallback mechanism for non-manual triggers (like push and schedule)
+env:
+  JAVA_DISTRIBUTION: ${{ inputs.java_distribution || 'temurin' }}
+  JAVA_VERSION: ${{ inputs.java_version || '17' }}
+  IQ_CLI_VERSION: ${{ inputs.iq_cli_version || '2.4.2-01' }}
+  APPLICATION_ID: ${{ inputs.application_id || format('{0}-{1}', github.repository_owner, github.event.repository.name) }}
+  SCAN_TARGETS: ${{ inputs.scan_targets || '.' }}
+  DEBUG: ${{ inputs.debug || false }}
+
+permissions: {}
+
+concurrency:
+  group: "gerrit-clm-${{ github.workflow }}-${{ github.event.inputs.GERRIT_CHANGE_ID || github.run_id }}"
+  cancel-in-progress: true
+
+jobs:
+  notify:
+    if: github.event_name == 'workflow_dispatch' && inputs.GERRIT_DISABLED != true
+    runs-on: ubuntu-latest
+    steps:
+      # Harden the runner used by this workflow
+      # yamllint disable-line rule:line-length
+      - uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
+        with:
+          egress-policy: audit
+
+      - name: Notify job start
+        # yamllint disable-line rule:line-length
+        uses: lfreleng-actions/gerrit-review-action@a5de1d5bf17c2603ae81544dc2a455017b454ec8 # v1.1.1
+        with:
+          host: ${{ vars.GERRIT_SERVER }}
+          username: ${{ vars.GERRIT_SSH_USER }}
+          key: ${{ secrets.GERRIT_SSH_PRIVKEY }}
+          known_hosts: ${{ vars.GERRIT_KNOWN_HOSTS }}
+          gerrit-change-number: ${{ inputs.GERRIT_CHANGE_NUMBER }}
+          gerrit-patchset-number: ${{ inputs.GERRIT_PATCHSET_NUMBER }}
+          vote-type: clear
+
+      - name: Allow replication
+        run: sleep 10s
+
+  call-sonatype-lifecycle:
+    name: 'Sonatype Lifecycle/CLM -> Nexus IQ'
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [notify]
+    timeout-minutes: 45 # Set this timeout value as needed
+    steps:
+      # Harden the runner used by this workflow
+      # yamllint disable-line rule:line-length
+      - uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
+        with:
+          egress-policy: audit
+
+      # Allow time for Gerrit-to-GitHub mirror replication on push
+      - name: 'Wait for mirror replication'
+        if: github.event_name == 'push'
+        run: sleep 10s
+
+      # Standard checkout for push events or manual runs without Gerrit
+      - name: 'Checkout repository'
+        # yamllint disable-line rule:line-length
+        if: github.event_name == 'schedule' || github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.GERRIT_DISABLED == true)
+        # yamllint disable-line rule:line-length
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      # Gerrit-aware checkout for workflow_dispatch with Gerrit context
+      - name: 'Checkout Gerrit change'
+        # yamllint disable-line rule:line-length
+        if: github.event_name == 'workflow_dispatch' && inputs.GERRIT_DISABLED != true
+        # yamllint disable-line rule:line-length
+        uses: lfreleng-actions/checkout-gerrit-change-action@8523d768952d9690702b4696a8310d2a84b1be39 # v1.0.1
+        with:
+          gerrit-refspec: ${{ inputs.GERRIT_REFSPEC }}
+          gerrit-project: ${{ inputs.GERRIT_PROJECT }}
+          gerrit-url: ${{ vars.GERRIT_URL }}
+          delay: "0s"
+
+      - name: 'Check for pom.xml'
+        id: check-pom-xml
+        # yamllint disable-line rule:line-length
+        uses: lfreleng-actions/path-check-action@9606e61c870025bc956e63156d1d55c5df54426c # v0.2.0
+        with:
+          path: 'pom.xml'
+
+      - name: 'Extract project name from .gitreview'
+        id: extract-project
+        if: steps.check-pom-xml.outputs.exists == 'true'
+        run: |
+          if [ -f .gitreview ]; then
+            PROJECT_NAME=$(grep '^project=' .gitreview | cut -d'=' -f2 | sed 's/\.git$//' | tr '/' '-')
+            echo "project-name=${PROJECT_NAME}" >> $GITHUB_OUTPUT
+            echo "Detected project: ${PROJECT_NAME}"
+          else
+            echo "Error: .gitreview file not found"
+            exit 1
+          fi
+
+      - name: Load secret from 1Password
+        if: steps.check-pom-xml.outputs.exists == 'true'
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v4.0.0
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          NEXUS_V2_PASSWORD: "op://elnqtgip7eqavqvgodjbiiaqd4/${{ steps.extract-project.outputs.project-name }}/password"
+
+      - name: 'Output SHA1 sum of password'
+        if: steps.check-pom-xml.outputs.exists == 'true'
+        env:
+          NEXUS_V2_PASSWORD: ${{ env.NEXUS_V2_PASSWORD }}
+        run: |
+          # Output SHA1 sum of password
+          VALUE_SHA1=$(printf '%s' "$NEXUS_V2_PASSWORD" | shasum -a 1 | awk '{print $1}')
+          echo "SHA1 sum of NEXUS_V2_PASSWORD is: $VALUE_SHA1"
+
+      - name: 'Generate Maven global settings content'
+        id: create-settings
+        if: steps.check-pom-xml.outputs.exists == 'true'
+        env:
+          NEXUS_V2_PASSWORD: ${{ env.NEXUS_V2_PASSWORD }}
+          PROJECT_NAME: ${{ steps.extract-project.outputs.project-name }}
+        run: |
+          # Generate settings content for maven-build-action
+          {
+            echo 'settings-content<<SETTINGS_EOF'
+            cat << EOF
+          <settings>
+            <servers>
+              <server>
+                <id>ecomp-releases</id>
+                <username>${PROJECT_NAME}</username>
+                <password>${NEXUS_V2_PASSWORD}</password>
+              </server>
+              <server>
+                <id>ecomp-snapshots</id>
+                <username>${PROJECT_NAME}</username>
+                <password>${NEXUS_V2_PASSWORD}</password>
+              </server>
+              <server>
+                <id>onap-releases</id>
+                <username>${PROJECT_NAME}</username>
+                <password>${NEXUS_V2_PASSWORD}</password>
+              </server>
+              <server>
+                <id>onap-snapshots</id>
+                <username>${PROJECT_NAME}</username>
+                <password>${NEXUS_V2_PASSWORD}</password>
+              </server>
+              <server>
+                <id>nexus3.onap.org:10003</id>
+                <username>${PROJECT_NAME}</username>
+                <password>${NEXUS_V2_PASSWORD}</password>
+              </server>
+            </servers>
+            <mirrors>
+              <mirror>
+                <id>onap-public</id>
+                <mirrorOf>*</mirrorOf>
+                <url>https://nexus.onap.org/content/groups/public/</url>
+              </mirror>
+            </mirrors>
+            <profiles>
+              <profile>
+                <id>onap-nexus</id>
+                <repositories>
+                  <repository>
+                    <id>onap-public</id>
+                    <url>https://nexus.onap.org/content/groups/public/</url>
+                    <releases><enabled>true</enabled></releases>
+                    <snapshots><enabled>true</enabled></snapshots>
+                  </repository>
+                </repositories>
+                <pluginRepositories>
+                  <pluginRepository>
+                    <id>onap-public</id>
+                    <url>https://nexus.onap.org/content/groups/public/</url>
+                    <releases><enabled>true</enabled></releases>
+                    <snapshots><enabled>true</enabled></snapshots>
+                  </pluginRepository>
+                </pluginRepositories>
+              </profile>
+            </profiles>
+            <activeProfiles>
+              <activeProfile>onap-nexus</activeProfile>
+            </activeProfiles>
+          </settings>
+          EOF
+            echo 'SETTINGS_EOF'
+          } >> $GITHUB_OUTPUT
+
+      - name: 'Build with Maven'
+        if: steps.check-pom-xml.outputs.exists == 'true'
+        continue-on-error: true
+        # yamllint disable-line rule:line-length
+        uses: lfreleng-actions/maven-build-action@3e8765bbc2685951fb7c2be03964304179106b70 # v0.2.1
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          mvn-version: '3.9.5'
+          mvn-phases: 'clean package'
+          mvn-params: '-DskipTests -Djib.skip=true --fail-at-end'
+          # yamllint disable-line rule:line-length
+          mvn-opts: '-Ddocker.push.registry=nexus3.onap.org:10003 -Ddocker.pull.registry=nexus3.onap.org:10003 -Dmaven.repo.local=/tmp/r -Dorg.ops4j.pax.url.mvn.localRepository=/tmp/r -DaltDeploymentRepository=staging::default::file:"${GITHUB_WORKSPACE}"/m2repo -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn'
+          global-settings: |
+            ${{ steps.create-settings.outputs.settings-content }}
+          run-jacoco: 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Run CLM Scan"
+        # yamllint disable-line rule:line-length
+        uses: lfreleng-actions/sonatype-lifecycle-scan-action@e792424948d830e1d00ce828ecbcbbd40890006a  # v0.1.3
+        with:
+          nexus_iq_server: ${{ vars.NEXUS_IQ_SERVER }}
+          nexus_iq_username: ${{ vars.NEXUS_IQ_USERNAME }}
+          nexus_iq_password: ${{ secrets.NEXUS_IQ_PASSWORD }}
+          java_distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java_version: ${{ env.JAVA_VERSION }}
+          iq_cli_version: ${{ env.IQ_CLI_VERSION }}
+          application_id: ${{ env.APPLICATION_ID }}
+          scan_targets: ${{ env.SCAN_TARGETS }}
+          debug: ${{ env.DEBUG }}
+          no_checkout: true
+
+  report-status:
+    if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.GERRIT_DISABLED != true }}
+    needs: [notify, call-sonatype-lifecycle]
+    runs-on: ubuntu-latest
+    steps:
+      # Harden the runner used by this workflow
+      # yamllint disable-line rule:line-length
+      - uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
+        with:
+          egress-policy: audit
+
+      - name: Get workflow conclusion
+        uses: im-open/workflow-conclusion@7b146947e59eaf7fc3328822357861ab1758c088 # v2.2.5
+
+      - name: Report workflow conclusion
+        # yamllint disable-line rule:line-length
+        uses: lfreleng-actions/gerrit-review-action@a5de1d5bf17c2603ae81544dc2a455017b454ec8 # v1.1.1
+        with:
+          host: ${{ vars.GERRIT_SERVER }}
+          username: ${{ vars.GERRIT_SSH_USER }}
+          key: ${{ secrets.GERRIT_SSH_PRIVKEY }}
+          known_hosts: ${{ vars.GERRIT_KNOWN_HOSTS }}
+          gerrit-change-number: ${{ inputs.GERRIT_CHANGE_NUMBER }}
+          gerrit-patchset-number: ${{ inputs.GERRIT_PATCHSET_NUMBER }}
+          vote-type: ${{ env.WORKFLOW_CONCLUSION }}
