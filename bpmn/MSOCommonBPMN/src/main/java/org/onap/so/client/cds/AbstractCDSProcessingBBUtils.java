@@ -28,7 +28,9 @@ import com.google.protobuf.Struct;
 import com.google.protobuf.Struct.Builder;
 import com.google.protobuf.util.JsonFormat;
 import io.grpc.Status;
+import java.sql.SQLTransactionRollbackException;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.dao.DataAccessException;
 import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -81,14 +83,15 @@ public class AbstractCDSProcessingBBUtils {
     /**
      * Extracting data from execution object and building the ExecutionServiceInput Object
      *
-     * @param execution DelegateExecution object
+     * @param execution
+     *            DelegateExecution object
      */
     public void constructExecutionServiceInputObject(DelegateExecution execution) {
         logger.trace("Start AbstractCDSProcessingBBUtils.preProcessRequest for DelegateExecution object.");
 
         try {
-            AbstractCDSPropertiesBean executionObject =
-                    (AbstractCDSPropertiesBean) execution.getVariable(EXECUTION_OBJECT);
+            AbstractCDSPropertiesBean executionObject = (AbstractCDSPropertiesBean) execution
+                    .getVariable(EXECUTION_OBJECT);
 
             ExecutionServiceInput executionServiceInput = prepareExecutionServiceInput(executionObject);
 
@@ -102,7 +105,8 @@ public class AbstractCDSProcessingBBUtils {
     /**
      * Extracting data from execution object and building the ExecutionServiceInput Object
      *
-     * @param execution BuildingBlockExecution object
+     * @param execution
+     *            BuildingBlockExecution object
      */
     public void constructExecutionServiceInputObjectBB(BuildingBlockExecution execution) {
         logger.trace("Start AbstractCDSProcessingBBUtils.preProcessRequest for BuildingBlockExecution object.");
@@ -123,7 +127,8 @@ public class AbstractCDSProcessingBBUtils {
     /**
      * get the executionServiceInput object from execution and send a request to CDS Client and wait for TIMEOUT period
      *
-     * @param execution DelegateExecution object
+     * @param execution
+     *            DelegateExecution object
      */
     public void sendRequestToCDSClient(DelegateExecution execution) {
 
@@ -146,7 +151,8 @@ public class AbstractCDSProcessingBBUtils {
     /**
      * get the executionServiceInput object from execution and send a request to CDS Client
      *
-     * @param execution BuildingBlockExecution object
+     * @param execution
+     *            BuildingBlockExecution object
      */
     public void sendRequestToCDSClientBB(BuildingBlockExecution execution) {
         logger.trace("Start AbstractCDSProcessingBBUtils.sendRequestToCDSClient for BuildingBlockExecution object.");
@@ -159,9 +165,9 @@ public class AbstractCDSProcessingBBUtils {
             }
             execution.setVariable(CDS_REQUEST_ID, messageCorrelationId);
 
-            MessageCorrelationBuilder messageCorrelationBuilder =
-                    processEngine.getRuntimeService().createMessageCorrelation(CONTROLLER_MESSAGE)
-                            .processInstanceVariableEquals(CDS_REQUEST_ID, messageCorrelationId);
+            MessageCorrelationBuilder messageCorrelationBuilder = processEngine.getRuntimeService()
+                    .createMessageCorrelation(CONTROLLER_MESSAGE)
+                    .processInstanceVariableEquals(CDS_REQUEST_ID, messageCorrelationId);
             MessageSendingHandler handler = new MessageSendingHandler(messageCorrelationBuilder);
             CDSProcessingClient client = new CDSProcessingClient(handler);
             handler.setClient(client);
@@ -206,10 +212,10 @@ public class AbstractCDSProcessingBBUtils {
         CommonHeader commonHeader = CommonHeader.newBuilder().setOriginatorId(executionObject.getOriginatorId())
                 .setRequestId(executionObject.getRequestId()).setSubRequestId(executionObject.getSubRequestId())
                 .build();
-        ActionIdentifiers actionIdentifiers =
-                ActionIdentifiers.newBuilder().setBlueprintName(executionObject.getBlueprintName())
-                        .setBlueprintVersion(executionObject.getBlueprintVersion())
-                        .setActionName(executionObject.getActionName()).setMode(executionObject.getMode()).build();
+        ActionIdentifiers actionIdentifiers = ActionIdentifiers.newBuilder()
+                .setBlueprintName(executionObject.getBlueprintName())
+                .setBlueprintVersion(executionObject.getBlueprintVersion())
+                .setActionName(executionObject.getActionName()).setMode(executionObject.getMode()).build();
 
         Builder struct = Struct.newBuilder();
         try {
@@ -241,16 +247,16 @@ public class AbstractCDSProcessingBBUtils {
             EventType eventType = message.getStatus().getEventType();
 
             switch (eventType) {
-                case EVENT_COMPONENT_PROCESSING:
-                    cdsResponse.status = PROCESSING;
-                    break;
-                case EVENT_COMPONENT_EXECUTED:
-                    cdsResponse.status = SUCCESS;
-                    break;
-                default:
-                    cdsResponse.status = FAILED;
-                    cdsResponse.errorMessage = message.getStatus().getErrorMessage();
-                    break;
+            case EVENT_COMPONENT_PROCESSING:
+                cdsResponse.status = PROCESSING;
+                break;
+            case EVENT_COMPONENT_EXECUTED:
+                cdsResponse.status = SUCCESS;
+                break;
+            default:
+                cdsResponse.status = FAILED;
+                cdsResponse.errorMessage = message.getStatus().getErrorMessage();
+                break;
             }
             cdsResponse.payload = message.getPayload();
         }
@@ -339,7 +345,23 @@ public class AbstractCDSProcessingBBUtils {
                 return true;
             } catch (MismatchingMessageCorrelationException e) {
                 return false;
+            } catch (DataAccessException e) {
+                if (isRetryableException(e)) {
+                    logger.warn("Retryable exception during message correlation, will retry", e);
+                    return false;
+                }
+                throw e;
             }
+        }
+
+        private boolean isRetryableException(Throwable t) {
+            while (t != null) {
+                if (t instanceof SQLTransactionRollbackException) {
+                    return true;
+                }
+                t = t.getCause();
+            }
+            return false;
         }
 
         private void closeClient() {
