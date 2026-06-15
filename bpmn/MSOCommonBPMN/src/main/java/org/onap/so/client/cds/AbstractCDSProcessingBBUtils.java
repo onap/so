@@ -28,7 +28,9 @@ import com.google.protobuf.Struct;
 import com.google.protobuf.Struct.Builder;
 import com.google.protobuf.util.JsonFormat;
 import io.grpc.Status;
+import java.sql.SQLTransactionRollbackException;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.dao.DataAccessException;
 import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -339,7 +341,23 @@ public class AbstractCDSProcessingBBUtils {
                 return true;
             } catch (MismatchingMessageCorrelationException e) {
                 return false;
+            } catch (DataAccessException e) {
+                if (isRetryableException(e)) {
+                    logger.warn("Retryable exception during message correlation, will retry", e);
+                    return false;
+                }
+                throw e;
             }
+        }
+
+        private boolean isRetryableException(Throwable t) {
+            while (t != null) {
+                if (t instanceof SQLTransactionRollbackException) {
+                    return true;
+                }
+                t = t.getCause();
+            }
+            return false;
         }
 
         private void closeClient() {
