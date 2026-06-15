@@ -5,6 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (c) 2020 Nokia
+ * Modifications Copyright (c) 2026 Deutsche Telekom.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +26,17 @@ package org.onap.so.client.aai.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 import org.onap.aai.domain.yang.RouteTargets;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
@@ -740,5 +747,104 @@ public class AAIObjectMapperTest {
         org.onap.aai.domain.yang.NetworkPolicy actualNetworkPolicy = aaiObjectMapper.mapNetworkPolicy(networkPolicy);
 
         assertThat(actualNetworkPolicy).usingRecursiveComparison().isEqualTo(expectedNetworkPolicy);
+    }
+
+    @Test
+    public void mapServiceInstanceConcurrencyTest() throws Exception {
+        AAIObjectMapper mapper = new AAIObjectMapper();
+        int threadCount = 10;
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch startLatch = new CountDownLatch(1);
+        AtomicInteger failures = new AtomicInteger(0);
+        AtomicInteger successes = new AtomicInteger(0);
+
+        List<Future<?>> futures = new ArrayList<>();
+        for (int i = 0; i < threadCount; i++) {
+            futures.add(executor.submit(() -> {
+                try {
+                    startLatch.await();
+                    ServiceInstance serviceInstance = new ServiceInstance();
+                    serviceInstance.setServiceInstanceId("SI-" + Thread.currentThread().getId());
+                    serviceInstance.setServiceInstanceName("test-name");
+                    serviceInstance.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
+                    ModelInfoServiceInstance modelInfo = new ModelInfoServiceInstance();
+                    modelInfo.setServiceType("type");
+                    modelInfo.setServiceRole("role");
+                    modelInfo.setServiceFunction("function");
+                    modelInfo.setModelInvariantUuid("inv-uuid");
+                    modelInfo.setModelUuid("model-uuid");
+                    modelInfo.setEnvironmentContext("env");
+                    modelInfo.setWorkloadContext("workload");
+                    serviceInstance.setModelInfoServiceInstance(modelInfo);
+
+                    org.onap.aai.domain.yang.ServiceInstance result = mapper.mapServiceInstance(serviceInstance);
+                    assertEquals("type", result.getServiceType());
+                    assertEquals("role", result.getServiceRole());
+                    assertEquals("function", result.getServiceFunction());
+                    assertEquals("inv-uuid", result.getModelInvariantId());
+                    assertEquals("model-uuid", result.getModelVersionId());
+                    successes.incrementAndGet();
+                } catch (Exception e) {
+                    failures.incrementAndGet();
+                }
+            }));
+        }
+
+        startLatch.countDown();
+        for (Future<?> f : futures) {
+            f.get();
+        }
+        executor.shutdown();
+
+        assertEquals("Concurrent mapServiceInstance calls should not fail", 0, failures.get());
+        assertEquals(threadCount, successes.get());
+    }
+
+    @Test
+    public void mapVnfConcurrencyTest() throws Exception {
+        AAIObjectMapper mapper = new AAIObjectMapper();
+        int threadCount = 10;
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch startLatch = new CountDownLatch(1);
+        AtomicInteger failures = new AtomicInteger(0);
+        AtomicInteger successes = new AtomicInteger(0);
+
+        List<Future<?>> futures = new ArrayList<>();
+        for (int i = 0; i < threadCount; i++) {
+            futures.add(executor.submit(() -> {
+                try {
+                    startLatch.await();
+                    GenericVnf vnf = new GenericVnf();
+                    vnf.setVnfId("vnf-" + Thread.currentThread().getId());
+                    vnf.setVnfName("test-vnf");
+                    vnf.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
+                    ModelInfoGenericVnf modelInfo = new ModelInfoGenericVnf();
+                    modelInfo.setModelCustomizationUuid("cust-uuid");
+                    modelInfo.setModelInvariantUuid("inv-uuid");
+                    modelInfo.setModelUuid("model-uuid");
+                    modelInfo.setNfRole("nf-role");
+                    modelInfo.setNfType("nf-type");
+                    modelInfo.setNfFunction("nf-function");
+                    modelInfo.setNfNamingCode("nf-code");
+                    vnf.setModelInfoGenericVnf(modelInfo);
+
+                    org.onap.aai.domain.yang.GenericVnf result = mapper.mapVnf(vnf);
+                    assertEquals("cust-uuid", result.getModelCustomizationId());
+                    assertEquals("nf-role", result.getNfRole());
+                    successes.incrementAndGet();
+                } catch (Exception e) {
+                    failures.incrementAndGet();
+                }
+            }));
+        }
+
+        startLatch.countDown();
+        for (Future<?> f : futures) {
+            f.get();
+        }
+        executor.shutdown();
+
+        assertEquals("Concurrent mapVnf calls should not fail", 0, failures.get());
+        assertEquals(threadCount, successes.get());
     }
 }

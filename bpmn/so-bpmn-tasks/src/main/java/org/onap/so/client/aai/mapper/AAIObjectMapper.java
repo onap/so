@@ -5,13 +5,14 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (c) 2020 Nokia
+ * Modifications Copyright (c) 2026 Deutsche Telekom.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,22 +55,145 @@ import org.springframework.stereotype.Component;
 public class AAIObjectMapper {
     private final ModelMapper modelMapper = new ModelMapper();
 
-    public org.onap.aai.domain.yang.ServiceInstance mapServiceInstance(ServiceInstance serviceInstance) {
-        if (modelMapper.getTypeMap(ServiceInstance.class, org.onap.aai.domain.yang.ServiceInstance.class) == null) {
-            modelMapper.addMappings(new PropertyMap<ServiceInstance, org.onap.aai.domain.yang.ServiceInstance>() {
+    private final Converter<List<Subnet>, org.onap.aai.domain.yang.Subnets> convertSubnets =
+            new Converter<List<Subnet>, org.onap.aai.domain.yang.Subnets>() {
                 @Override
-                protected void configure() {
-                    map().setServiceType(source.getModelInfoServiceInstance().getServiceType());
-                    map().setServiceRole(source.getModelInfoServiceInstance().getServiceRole());
-                    map().setServiceFunction(source.getModelInfoServiceInstance().getServiceFunction());
-                    map().setModelInvariantId(source.getModelInfoServiceInstance().getModelInvariantUuid());
-                    map().setModelVersionId(source.getModelInfoServiceInstance().getModelUuid());
-                    map().setEnvironmentContext(source.getModelInfoServiceInstance().getEnvironmentContext());
-                    map().setWorkloadContext(source.getModelInfoServiceInstance().getWorkloadContext());
+                public org.onap.aai.domain.yang.Subnets convert(
+                        MappingContext<List<Subnet>, org.onap.aai.domain.yang.Subnets> context) {
+                    return mapToAAISubNets(context.getSource());
                 }
-            });
-        }
+            };
 
+    private final Converter<List<CtagAssignment>, org.onap.aai.domain.yang.CtagAssignments> convertCtagAssignments =
+            new Converter<List<CtagAssignment>, org.onap.aai.domain.yang.CtagAssignments>() {
+                @Override
+                public org.onap.aai.domain.yang.CtagAssignments convert(
+                        MappingContext<List<CtagAssignment>, org.onap.aai.domain.yang.CtagAssignments> context) {
+                    return mapToAAICtagAssignmentList(context.getSource());
+                }
+            };
+
+    private final Converter<List<SegmentationAssignment>, org.onap.aai.domain.yang.SegmentationAssignments> convertSegmentationAssignments =
+            new Converter<List<SegmentationAssignment>, org.onap.aai.domain.yang.SegmentationAssignments>() {
+                @Override
+                public org.onap.aai.domain.yang.SegmentationAssignments convert(
+                        MappingContext<List<SegmentationAssignment>, org.onap.aai.domain.yang.SegmentationAssignments> context) {
+                    return mapToAAISegmentationAssignmentList(context.getSource());
+                }
+            };
+
+    public AAIObjectMapper() {
+        modelMapper.addMappings(new PropertyMap<ServiceInstance, org.onap.aai.domain.yang.ServiceInstance>() {
+            @Override
+            protected void configure() {
+                map().setServiceType(source.getModelInfoServiceInstance().getServiceType());
+                map().setServiceRole(source.getModelInfoServiceInstance().getServiceRole());
+                map().setServiceFunction(source.getModelInfoServiceInstance().getServiceFunction());
+                map().setModelInvariantId(source.getModelInfoServiceInstance().getModelInvariantUuid());
+                map().setModelVersionId(source.getModelInfoServiceInstance().getModelUuid());
+                map().setEnvironmentContext(source.getModelInfoServiceInstance().getEnvironmentContext());
+                map().setWorkloadContext(source.getModelInfoServiceInstance().getWorkloadContext());
+            }
+        });
+
+        modelMapper.addMappings(new PropertyMap<GenericVnf, org.onap.aai.domain.yang.GenericVnf>() {
+            @Override
+            protected void configure() {
+                map().setModelCustomizationId(source.getModelInfoGenericVnf().getModelCustomizationUuid());
+                map().setModelInvariantId(source.getModelInfoGenericVnf().getModelInvariantUuid());
+                map().setModelVersionId(source.getModelInfoGenericVnf().getModelUuid());
+                map().setNfRole(source.getModelInfoGenericVnf().getNfRole());
+                map().setNfType(source.getModelInfoGenericVnf().getNfType());
+                map().setNfFunction(source.getModelInfoGenericVnf().getNfFunction());
+                map().setNfNamingCode(source.getModelInfoGenericVnf().getNfNamingCode());
+            }
+        });
+
+        modelMapper.addMappings(new PropertyMap<Pnf, org.onap.aai.domain.yang.Pnf>() {
+            @Override
+            protected void configure() {
+                map().setModelCustomizationId(source.getModelInfoPnf().getModelCustomizationUuid());
+                map().setModelInvariantId(source.getModelInfoPnf().getModelInvariantUuid());
+                map().setModelVersionId(source.getModelInfoPnf().getModelUuid());
+                map().setNfType(source.getModelInfoPnf().getNfType());
+                map().setInMaint(source.isInMaint());
+            }
+        });
+
+        modelMapper.addMappings(new PropertyMap<VfModule, org.onap.aai.domain.yang.VfModule>() {
+            @Override
+            protected void configure() {
+                map().setModelCustomizationId(source.getModelInfoVfModule().getModelCustomizationUUID());
+                map().setModelInvariantId(source.getModelInfoVfModule().getModelInvariantUUID());
+                map().setModelVersionId(source.getModelInfoVfModule().getModelUUID());
+                map().setPersonaModelVersion(source.getModelInfoVfModule().getModelInvariantUUID());
+                map().setIsBaseVfModule(source.getModelInfoVfModule().getIsBaseBoolean());
+            }
+        });
+
+        modelMapper.addMappings(new PropertyMap<VolumeGroup, org.onap.aai.domain.yang.VolumeGroup>() {
+            @Override
+            protected void configure() {
+                map().setModelCustomizationId(source.getModelInfoVfModule().getModelCustomizationUUID());
+                map().setVfModuleModelCustomizationId(source.getModelInfoVfModule().getModelCustomizationUUID());
+            }
+        });
+
+        modelMapper.addMappings(new PropertyMap<L3Network, org.onap.aai.domain.yang.L3Network>() {
+            @Override
+            protected void configure() {
+                map().setModelCustomizationId(source.getModelInfoNetwork().getModelCustomizationUUID());
+                map().setModelInvariantId(source.getModelInfoNetwork().getModelInvariantUUID());
+                map().setModelVersionId(source.getModelInfoNetwork().getModelUUID());
+                map().setNetworkType(source.getModelInfoNetwork().getNetworkType());
+                map().setNetworkRole(source.getModelInfoNetwork().getNetworkRole());
+                map().setNetworkTechnology(source.getModelInfoNetwork().getNetworkTechnology());
+                modelMapper.addConverter(convertSubnets);
+                modelMapper.addConverter(convertCtagAssignments);
+                modelMapper.addConverter(convertSegmentationAssignments);
+            }
+        });
+
+        modelMapper.addMappings(new PropertyMap<InstanceGroup, org.onap.aai.domain.yang.InstanceGroup>() {
+            @Override
+            protected void configure() {
+                map().setInstanceGroupRole(source.getModelInfoInstanceGroup().getInstanceGroupRole());
+                map().setModelInvariantId(source.getModelInfoInstanceGroup().getModelInvariantUUID());
+                map().setModelVersionId(source.getModelInfoInstanceGroup().getModelUUID());
+                map().setInstanceGroupType(source.getModelInfoInstanceGroup().getType());
+                map().setDescription(source.getModelInfoInstanceGroup().getDescription());
+                map().setInstanceGroupFunction(source.getModelInfoInstanceGroup().getFunction());
+            }
+        });
+
+        modelMapper.addMappings(new PropertyMap<Configuration, org.onap.aai.domain.yang.Configuration>() {
+            @Override
+            protected void configure() {
+                map().setModelCustomizationId(source.getModelInfoConfiguration().getModelCustomizationId());
+                map().setModelVersionId(source.getModelInfoConfiguration().getModelVersionId());
+                map().setModelInvariantId(source.getModelInfoConfiguration().getModelInvariantId());
+                map().setConfigurationType(source.getModelInfoConfiguration().getConfigurationType());
+                map().setConfigurationSubType(source.getModelInfoConfiguration().getConfigurationRole());
+                map().setConfigPolicyName(source.getModelInfoConfiguration().getPolicyName());
+                skip().setConfigurationRole(null);
+            }
+        });
+
+        modelMapper.addMappings(new PropertyMap<Collection, org.onap.aai.domain.yang.Collection>() {
+            @Override
+            protected void configure() {
+                map().setModelInvariantId(source.getModelInfoCollection().getModelInvariantUUID());
+                map().setModelVersionId(source.getModelInfoCollection().getModelVersionId());
+                map().setCollectionCustomizationId(source.getModelInfoCollection().getModelCustomizationUUID());
+                map().setCollectionFunction(source.getModelInfoCollection().getCollectionFunction());
+                map().setCollectionRole(source.getModelInfoCollection().getCollectionRole());
+                map().setCollectionType(source.getModelInfoCollection().getCollectionType());
+                map().setCollectionName(source.getName());
+            }
+        });
+    }
+
+    public org.onap.aai.domain.yang.ServiceInstance mapServiceInstance(ServiceInstance serviceInstance) {
         return modelMapper.map(serviceInstance, org.onap.aai.domain.yang.ServiceInstance.class);
     }
 
@@ -87,139 +211,32 @@ public class AAIObjectMapper {
     }
 
     public org.onap.aai.domain.yang.GenericVnf mapVnf(GenericVnf vnf) {
-        if (modelMapper.getTypeMap(GenericVnf.class, org.onap.aai.domain.yang.GenericVnf.class) == null) {
-            modelMapper.addMappings(new PropertyMap<GenericVnf, org.onap.aai.domain.yang.GenericVnf>() {
-                @Override
-                protected void configure() {
-                    map().setModelCustomizationId(source.getModelInfoGenericVnf().getModelCustomizationUuid());
-                    map().setModelInvariantId(source.getModelInfoGenericVnf().getModelInvariantUuid());
-                    map().setModelVersionId(source.getModelInfoGenericVnf().getModelUuid());
-                    map().setNfRole(source.getModelInfoGenericVnf().getNfRole());
-                    map().setNfType(source.getModelInfoGenericVnf().getNfType());
-                    map().setNfFunction(source.getModelInfoGenericVnf().getNfFunction());
-                    map().setNfNamingCode(source.getModelInfoGenericVnf().getNfNamingCode());
-                }
-            });
-        }
-
         return modelMapper.map(vnf, org.onap.aai.domain.yang.GenericVnf.class);
     }
 
     public org.onap.aai.domain.yang.Pnf mapPnf(Pnf pnf) {
-        if (modelMapper.getTypeMap(Pnf.class, org.onap.aai.domain.yang.Pnf.class) == null) {
-            modelMapper.addMappings(new PropertyMap<Pnf, org.onap.aai.domain.yang.Pnf>() {
-                @Override
-                protected void configure() {
-                    map().setModelCustomizationId(source.getModelInfoPnf().getModelCustomizationUuid());
-                    map().setModelInvariantId(source.getModelInfoPnf().getModelInvariantUuid());
-                    map().setModelVersionId(source.getModelInfoPnf().getModelUuid());
-                    map().setNfType(source.getModelInfoPnf().getNfType());
-                    map().setInMaint(source.isInMaint());
-                }
-            });
-        }
-
         return modelMapper.map(pnf, org.onap.aai.domain.yang.Pnf.class);
     }
 
     public org.onap.aai.domain.yang.VfModule mapVfModule(VfModule vfModule) {
-        if (modelMapper.getTypeMap(VfModule.class, org.onap.aai.domain.yang.VfModule.class) == null) {
-            modelMapper.addMappings(new PropertyMap<VfModule, org.onap.aai.domain.yang.VfModule>() {
-                @Override
-                protected void configure() {
-                    map().setModelCustomizationId(source.getModelInfoVfModule().getModelCustomizationUUID());
-                    map().setModelInvariantId(source.getModelInfoVfModule().getModelInvariantUUID());
-                    map().setModelVersionId(source.getModelInfoVfModule().getModelUUID());
-                    map().setPersonaModelVersion(source.getModelInfoVfModule().getModelInvariantUUID());
-                    map().setIsBaseVfModule(source.getModelInfoVfModule().getIsBaseBoolean());
-
-                }
-            });
-        }
-
         return modelMapper.map(vfModule, org.onap.aai.domain.yang.VfModule.class);
     }
 
     public org.onap.aai.domain.yang.VolumeGroup mapVolumeGroup(VolumeGroup volumeGroup) {
-        if (modelMapper.getTypeMap(VolumeGroup.class, org.onap.aai.domain.yang.VolumeGroup.class) == null) {
-            modelMapper.addMappings(new PropertyMap<VolumeGroup, org.onap.aai.domain.yang.VolumeGroup>() {
-                @Override
-                protected void configure() {
-                    map().setModelCustomizationId(source.getModelInfoVfModule().getModelCustomizationUUID());
-                    map().setVfModuleModelCustomizationId(source.getModelInfoVfModule().getModelCustomizationUUID());
-                }
-            });
-        }
         return modelMapper.map(volumeGroup, org.onap.aai.domain.yang.VolumeGroup.class);
     }
 
     public org.onap.aai.domain.yang.L3Network mapNetwork(L3Network l3Network) {
-        if (modelMapper.getTypeMap(L3Network.class, org.onap.aai.domain.yang.L3Network.class) == null) {
-            modelMapper.addMappings(new PropertyMap<L3Network, org.onap.aai.domain.yang.L3Network>() {
-                @Override
-                protected void configure() {
-                    map().setModelCustomizationId(source.getModelInfoNetwork().getModelCustomizationUUID());
-                    map().setModelInvariantId(source.getModelInfoNetwork().getModelInvariantUUID());
-                    map().setModelVersionId(source.getModelInfoNetwork().getModelUUID());
-                    map().setNetworkType(source.getModelInfoNetwork().getNetworkType());
-                    map().setNetworkRole(source.getModelInfoNetwork().getNetworkRole());
-                    map().setNetworkTechnology(source.getModelInfoNetwork().getNetworkTechnology());
-                    modelMapper.addConverter(convertSubnets);
-                    modelMapper.addConverter(convertCtagAssignments);
-                    modelMapper.addConverter(convertSegmentationAssignments);
-                }
-            });
-        }
         return modelMapper.map(l3Network, org.onap.aai.domain.yang.L3Network.class);
     }
 
     public org.onap.aai.domain.yang.InstanceGroup mapInstanceGroup(InstanceGroup instanceGroup) {
-        if (modelMapper.getTypeMap(InstanceGroup.class, org.onap.aai.domain.yang.InstanceGroup.class) == null) {
-            modelMapper.addMappings(new PropertyMap<InstanceGroup, org.onap.aai.domain.yang.InstanceGroup>() {
-                @Override
-                protected void configure() {
-                    map().setInstanceGroupRole(source.getModelInfoInstanceGroup().getInstanceGroupRole());
-                    map().setModelInvariantId(source.getModelInfoInstanceGroup().getModelInvariantUUID());
-                    map().setModelVersionId(source.getModelInfoInstanceGroup().getModelUUID());
-                    map().setInstanceGroupType(source.getModelInfoInstanceGroup().getType());
-                    map().setDescription(source.getModelInfoInstanceGroup().getDescription());
-                    map().setInstanceGroupFunction(source.getModelInfoInstanceGroup().getFunction());
-                }
-            });
-        }
         return modelMapper.map(instanceGroup, org.onap.aai.domain.yang.InstanceGroup.class);
     }
 
     public org.onap.aai.domain.yang.Customer mapCustomer(Customer customer) {
         return modelMapper.map(customer, org.onap.aai.domain.yang.Customer.class);
     }
-
-    private Converter<List<Subnet>, org.onap.aai.domain.yang.Subnets> convertSubnets =
-            new Converter<List<Subnet>, org.onap.aai.domain.yang.Subnets>() {
-                @Override
-                public org.onap.aai.domain.yang.Subnets convert(
-                        MappingContext<List<Subnet>, org.onap.aai.domain.yang.Subnets> context) {
-                    return mapToAAISubNets(context.getSource());
-                }
-            };
-
-    private Converter<List<CtagAssignment>, org.onap.aai.domain.yang.CtagAssignments> convertCtagAssignments =
-            new Converter<List<CtagAssignment>, org.onap.aai.domain.yang.CtagAssignments>() {
-                @Override
-                public org.onap.aai.domain.yang.CtagAssignments convert(
-                        MappingContext<List<CtagAssignment>, org.onap.aai.domain.yang.CtagAssignments> context) {
-                    return mapToAAICtagAssignmentList(context.getSource());
-                }
-            };
-
-    private Converter<List<SegmentationAssignment>, org.onap.aai.domain.yang.SegmentationAssignments> convertSegmentationAssignments =
-            new Converter<List<SegmentationAssignment>, org.onap.aai.domain.yang.SegmentationAssignments>() {
-                @Override
-                public org.onap.aai.domain.yang.SegmentationAssignments convert(
-                        MappingContext<List<SegmentationAssignment>, org.onap.aai.domain.yang.SegmentationAssignments> context) {
-                    return mapToAAISegmentationAssignmentList(context.getSource());
-                }
-            };
 
     public org.onap.aai.domain.yang.Subnets mapToAAISubNets(List<Subnet> subnetList) {
         org.onap.aai.domain.yang.Subnets subnets = null;
@@ -293,38 +310,10 @@ public class AAIObjectMapper {
     }
 
     public org.onap.aai.domain.yang.Configuration mapConfiguration(Configuration configuration) {
-        if (null == modelMapper.getTypeMap(Configuration.class, org.onap.aai.domain.yang.Configuration.class)) {
-            modelMapper.addMappings(new PropertyMap<Configuration, org.onap.aai.domain.yang.Configuration>() {
-                @Override
-                protected void configure() {
-                    map().setModelCustomizationId(source.getModelInfoConfiguration().getModelCustomizationId());
-                    map().setModelVersionId(source.getModelInfoConfiguration().getModelVersionId());
-                    map().setModelInvariantId(source.getModelInfoConfiguration().getModelInvariantId());
-                    map().setConfigurationType(source.getModelInfoConfiguration().getConfigurationType());
-                    map().setConfigurationSubType(source.getModelInfoConfiguration().getConfigurationRole());
-                    map().setConfigPolicyName(source.getModelInfoConfiguration().getPolicyName());
-                    skip().setConfigurationRole(null);
-                }
-            });
-        }
         return modelMapper.map(configuration, org.onap.aai.domain.yang.Configuration.class);
     }
 
     public org.onap.aai.domain.yang.Collection mapCollection(Collection networkCollection) {
-        if (modelMapper.getTypeMap(Collection.class, org.onap.aai.domain.yang.Collection.class) == null) {
-            modelMapper.addMappings(new PropertyMap<Collection, org.onap.aai.domain.yang.Collection>() {
-                @Override
-                protected void configure() {
-                    map().setModelInvariantId(source.getModelInfoCollection().getModelInvariantUUID());
-                    map().setModelVersionId(source.getModelInfoCollection().getModelVersionId());
-                    map().setCollectionCustomizationId(source.getModelInfoCollection().getModelCustomizationUUID());
-                    map().setCollectionFunction(source.getModelInfoCollection().getCollectionFunction());
-                    map().setCollectionRole(source.getModelInfoCollection().getCollectionRole());
-                    map().setCollectionType(source.getModelInfoCollection().getCollectionType());
-                    map().setCollectionName(source.getName());
-                }
-            });
-        }
         return modelMapper.map(networkCollection, org.onap.aai.domain.yang.Collection.class);
     }
 
