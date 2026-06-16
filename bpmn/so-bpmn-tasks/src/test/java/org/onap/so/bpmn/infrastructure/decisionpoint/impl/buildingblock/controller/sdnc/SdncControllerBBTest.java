@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
-import org.onap.so.client.appc.ApplicationControllerAction;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -42,9 +41,6 @@ public class SdncControllerBBTest {
 
     @MockBean
     private ControllerContext controllerContext;
-
-    @MockBean
-    protected ApplicationControllerAction client;
 
     @Before
     public void setUp() {

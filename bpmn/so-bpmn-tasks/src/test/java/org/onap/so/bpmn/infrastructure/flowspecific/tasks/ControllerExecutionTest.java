@@ -54,7 +54,7 @@ public class ControllerExecutionTest extends BaseTaskTest {
     private static final String TEST_SCOPE = "vfModule";
     private static final String TEST_BBNAME = "ConfigurationScaleOut";
     private static final String TEST_ACTION = "configScaleOut";
-    private static final String TEST_CONTROLLER_ACTOR = "APPC";
+    private static final String TEST_CONTROLLER_ACTOR = "CDS";
 
     private BuildingBlock buildingBlock = new BuildingBlock();
     VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
