@@ -26,8 +26,7 @@ public enum SoSubsystems implements Subsystem {
     CATALOGDB("CatalogDb Adapter"),
     OPENSTACK("Openstack Adapter"),
     REQUESTDB("RequestDB Adapter"),
-    SDNC("SDNC Adapter"),
-    SOAPPCORCHESTRATOR("SO APPC Orchestrator");
+    SDNC("SDNC Adapter");
 
     private String subsystem;
 
