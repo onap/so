@@ -1,0 +1,5 @@
+---
+distribution_type: 'maven'
+version: '1.19.1'
+project: 'so'
+log_dir: 'so-maven-stage-master/1438/'

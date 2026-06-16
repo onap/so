@@ -9,6 +9,47 @@ Service Orchestrator Release Notes
 
 The SO provides the highest level of service orchestration in the ONAP architecture.
 
+Version: 1.19.1
+---------------
+
+:Release Date: 2026-06-16
+
+SO Release Image Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ - so-api-handler-infra **1.19.1**
+
+ - so-bpmn-infra **1.19.1**
+
+ - so-catalog-db-adapter **1.19.1**
+
+ - so-openstack-adapter **1.19.1**
+
+ - so-request-db-adapter **1.19.1**
+
+ - so-sdc-controller **1.19.1**
+
+ - so-sdnc-adapter **1.19.1**
+
+ - so-appc-orchestrator **1.19.1**
+
+ - so-simulator **1.19.1**
+
+
+Release Purpose
+~~~~~~~~~~~~~~~
+SO T-Series Maintenance Release.
+
+**Changes**
+
+*  fix thread-safety race condition in AAIObjectMapper
+*  change MaxRAMPercentage from 75% to 50%
+*  fix basic_vm_macro callback race condition
+*  retry CDS message correlation on DB deadlock
+
+**********************************************************************************************************
+
+
 Version: 1.19.0
 ---------------
 
