@@ -84,7 +84,7 @@ public class ControllerExecution {
                 PnfResourceCustomization pnfResourceCustomization =
                         catalogDbClient.getPnfResourceCustomizationByModelCustomizationUUID(pnfModelUUID);
 
-                controllerActor = Optional.ofNullable(pnfResourceCustomization.getControllerActor()).orElse("APPC");
+                controllerActor = Optional.ofNullable(pnfResourceCustomization.getControllerActor()).orElse("CDS");
                 execution.setVariable(MSO_REQUEST_ID,
                         execution.getGeneralBuildingBlock().getRequestContext().getMsoRequestId());
                 execution.setVariable(PRC_BLUEPRINT_VERSION, pnfResourceCustomization.getBlueprintVersion());
@@ -108,7 +108,7 @@ public class ControllerExecution {
                 VnfResourceCustomization vnfResourceCustomization =
                         catalogDbClient.getVnfResourceCustomizationByModelCustomizationUUID(modelUuid);
 
-                controllerActor = Optional.ofNullable(vnfResourceCustomization.getControllerActor()).orElse("APPC");
+                controllerActor = Optional.ofNullable(vnfResourceCustomization.getControllerActor()).orElse("CDS");
             }
 
             execution.setVariable(SCOPE, scope);

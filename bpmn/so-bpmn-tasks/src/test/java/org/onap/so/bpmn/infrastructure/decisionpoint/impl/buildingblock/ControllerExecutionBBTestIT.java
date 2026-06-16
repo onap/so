@@ -21,10 +21,6 @@ package org.onap.so.bpmn.infrastructure.decisionpoint.impl.buildingblock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.MODEL_UUID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.MSO_REQUEST_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
@@ -35,20 +31,15 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PRC_INSTANCE_NAME;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.SERVICE_INSTANCE_ID;
 import com.google.protobuf.Struct;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.onap.appc.client.lcm.model.Action;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.CommonHeader;
 import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceInput;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.GrpcNettyServer;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
-import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,15 +54,12 @@ public class ControllerExecutionBBTestIT extends BaseIntegrationTest {
     @Autowired
     private GrpcNettyServer grpcNettyServer;
 
-    private GenericVnf genericVnf;
-
     private static String TEST_MODEL_UUID = "6bc0b04d-1873-4721-b53d-6615225b2a28";
     private static String TEST_SERVICE_INSTANCE_ID = "test_service_id";
     private static String TEST_PROCESS_KEY = "processKey1";
     private static String TEST_MSO_REQUEST_ID = "ff874603-4222-11e7-9252-005056850d2e";
 
     private static String TEST_CDS_ACTION = "config-assign";
-    private static String TEST_APPC_ACTION = "HealthCheck";
 
     private static String TEST_PNF_RESOURCE_INSTANCE_NAME = "PNF_demo_resource";
     private static String TEST_PNF_CORRELATION_ID = "PNFDemo";
@@ -106,45 +94,6 @@ public class ControllerExecutionBBTestIT extends BaseIntegrationTest {
             e.printStackTrace();
             fail("ConfigAssign request exception", e);
         }
-    }
-
-    @Test
-    @Ignore
-    // TODO: re-activate this test case after the SDNC controller is fully implemented.
-    public void testExecution_sdncUpgradeHealthCheck_actionExecuted() {
-        configureSdncUpgrade();
-        controllerExecutionBB.execute(execution);
-
-        verify(appCClient, times(1)).runAppCCommand(eq(Action.UpgradePreCheck), eq(TEST_MSO_REQUEST_ID), eq(null),
-                any(Optional.class), any(HashMap.class), eq("sdnc"));
-    }
-
-    private void configureSdncUpgrade() {
-        execution.setVariable("actor", "sdnc");
-        execution.setVariable("action", "UpgradePreCheck");
-        execution.setVariable("payload", "{ \n" + "   \"action\":[ \n" + "      { \n"
-                + "         \"UpgradePreCheck\":{ \n" + "            \"payload\":{ \n"
-                + "               \"pnf-flag\":\"true\",\n" + "               \"pnf-name\":\"5gDU0001\",\n"
-                + "               \"pnfId\":\"5gDU0001\",\n"
-                + "               \"ipaddress-v4-oam\":\"192.168.35.83\",\n"
-                + "               \"oldSwVersion\":\"v1\",\n" + "               \"targetSwVersion\":\"v2\",\n"
-                + "               \"ruleName\":\"r001\",\n" + "               \"Id\":\"10\",\n"
-                + "               \"additionalData\":\"{}\"\n" + "            }\n" + "         }\n" + "      },\n"
-                + "      { \n" + "         \"UpgradeSoftware\":{ \n" + "            \"payload\":{ \n"
-                + "               \"pnf-flag\":\"true\",\n" + "               \"pnfId\":\"5gDU0001\",\n"
-                + "               \"ipaddress-v4-oam\":\"192.168.35.83\",\n"
-                + "               \"swToBeDownloaded\":[ \n" + "                  { \n"
-                + "                     \"swLocation\":\"http://192.168.35.96:10080/ran_du_pkg1-v2.zip\",\n"
-                + "                     \"swFileSize\":353,\n" + "                     \"swFileCompression\":\"ZIP\",\n"
-                + "                     \"swFileFormat\":\"zip\"\n" + "                  }\n" + "               ]\n"
-                + "            }\n" + "         }\n" + "      }\n" + "   ]\n" + "}");
-
-        setServiceInstance();
-        genericVnf = setGenericVnf();
-
-        RequestContext requestContext = setRequestContext();
-        requestContext.setMsoRequestId(TEST_MSO_REQUEST_ID);
-        gBBInput.setRequestContext(requestContext);
     }
 
     private void configureCdsConfigAssign() {

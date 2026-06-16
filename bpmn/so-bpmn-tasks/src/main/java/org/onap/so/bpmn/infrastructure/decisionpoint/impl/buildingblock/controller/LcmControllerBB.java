@@ -24,7 +24,6 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerRunnable;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.controller.ControllerPreparable;
-import org.onap.so.client.appc.ApplicationControllerAction;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +42,6 @@ public abstract class LcmControllerBB implements ControllerRunnable<BuildingBloc
     @Autowired(required = false)
     protected List<ControllerPreparable<BuildingBlockExecution>> prepareList;
 
-    @Autowired
-    protected ApplicationControllerAction client;
-
     @Override
     public void prepare(ControllerContext<BuildingBlockExecution> context) {
         prepareList.stream().filter(prepare -> prepare.understand(context))
@@ -58,7 +54,7 @@ public abstract class LcmControllerBB implements ControllerRunnable<BuildingBloc
     }
 
     /**
-     * This method is used to execute the LCM action by calling LCM client, appc Client or SDNC client.
+     * This method is used to execute the LCM action by calling an LCM client.
      *
      * @return error code
      */

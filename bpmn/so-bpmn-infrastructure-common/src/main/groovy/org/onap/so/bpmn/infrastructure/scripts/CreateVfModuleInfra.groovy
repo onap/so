@@ -26,7 +26,6 @@ import org.onap.so.logger.LoggingAnchor
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.v12.GenericVnf;
-import org.onap.appc.client.lcm.model.Action
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -229,13 +228,6 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			def newVfModuleId = UUID.randomUUID().toString()
 			execution.setVariable("newVfModuleId", newVfModuleId)
 			execution.setVariable(prefix + 'vfModuleId', newVfModuleId)
-			execution.setVariable('actionHealthCheck', Action.HealthCheck)
-			execution.setVariable('actionConfigScaleOut', Action.ConfigScaleOut)
-			execution.setVariable('controllerType', "APPC")
-			def controllerType = execution.getVariable('controllerType')
-			execution.setVariable(prefix + 'controllerType', controllerType)
-			execution.setVariable('healthCheckIndex0', 0)
-
 			logger.debug('RequestInfo: ' + execution.getVariable("CVFMI_requestInfo"))			
 			
 			logger.debug('rollbackEnabled: ' + execution.getVariable("CVFMI_rollbackEnabled"))
@@ -307,69 +299,6 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
 		}
-	}
-
-	/**
-	 * Query AAI for vnf orchestration status to determine if health check and config scaling should be run
-	 */
-	public void queryAAIForVnfOrchestrationStatus(DelegateExecution execution) {
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		def vnfId = execution.getVariable("CVFMI_vnfId")
-		execution.setVariable("runHealthCheck", false);
-		execution.setVariable("runConfigScaleOut", false);
-		AAICreateResources aaiCreateResources = new AAICreateResources();
-		Optional<GenericVnf> vnf = aaiCreateResources.getVnfInstance(vnfId);
-		if(vnf.isPresent()){
-			def vnfOrchestrationStatus = vnf.get().getOrchestrationStatus();
-			if("active".equalsIgnoreCase(vnfOrchestrationStatus)){
-				execution.setVariable("runHealthCheck", false);
-				execution.setVariable("runConfigScaleOut", true);
-			}
-		}
-	}
-	
-	/**
-	 * Retrieve data for ConfigScaleOut from SDNC topology
-	 */
-	
-	public void retreiveConfigScaleOutData(DelegateExecution execution){
-		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		def vfModuleId = execution.getVariable("CVFMI_vfModuleId")
-		String ipAddress = "";
-		String oamIpAddress = "";
-		String vnfHostIpAddress = "";
-
-		String vnfGetSDNC = execution.getVariable("DCVFM_getSDNCAdapterResponse");
-
-		String data = utils.getNodeXml(vnfGetSDNC, "response-data")
-		data = data.replaceAll("&lt;", "<")
-		data = data.replaceAll("&gt;", ">")
-
-		InputSource source = new InputSource(new StringReader(data));
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		docFactory.setNamespaceAware(true)
-		DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
-		Document responseXml = docBuilder.parse(source)
-
-		NodeList paramsList = responseXml.getElementsByTagNameNS("*", "vnf-parameters")
-		for (int z = 0; z < paramsList.getLength(); z++) {
-			Node node = paramsList.item(z)
-			Element eElement = (Element) node
-			String vnfParameterName = utils.getElementText(eElement, "vnf-parameter-name")
-			String vnfParameterValue = utils.getElementText(eElement, "vnf-parameter-value")
-			if (vnfParameterName.equals("vlb_private_ip_1")) {
-				vnfHostIpAddress = vnfParameterValue
-			}
-			else if (vnfParameterName.equals("vdns_private_ip_0")) {
-				ipAddress = vnfParameterValue
-			}
-			else if (vnfParameterName.equals("vdns_private_ip_1")) {			
-				oamIpAddress = vnfParameterValue
-			}
-		}
-
-		String payload = "{\"request-parameters\":{\"vnf-host-ip-address\":\"" + vnfHostIpAddress + "\",\"vf-module-id\":\"" + vfModuleId + "\"},\"configuration-parameters\":{\"ip-addr\":\"" + ipAddress +"\", \"oam-ip-addr\":\""+ oamIpAddress +"\",\"enabled\":\"true\"}}"
-		execution.setVariable("payload", payload);
 	}
 
 	/**
