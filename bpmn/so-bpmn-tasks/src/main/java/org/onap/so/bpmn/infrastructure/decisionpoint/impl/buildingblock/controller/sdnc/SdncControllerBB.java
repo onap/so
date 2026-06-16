@@ -55,11 +55,6 @@ public class SdncControllerBB extends LcmControllerBB {
 
     /**
      * This method is left empty intentionally. If you are planning to use the SDNC Controller, please implement here.
-     *
-     * You can use the Appc Client proxy, like, {@ref ApplicationControllerAction}
-     * {@ref ApplicationControllerOrchestrator} {@ref ApplicationControllerClient}
-     *
-     * Or create your own SDNC Client proxy.
      */
     @Override
     protected int callLcmClient(ControllerContext<BuildingBlockExecution> context) {

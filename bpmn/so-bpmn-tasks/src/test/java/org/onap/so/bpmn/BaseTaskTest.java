@@ -34,7 +34,6 @@ import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.client.adapter.network.mapper.NetworkAdapterObjectMapper;
-import org.onap.so.client.appc.ApplicationControllerAction;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.namingservice.NamingRequestObject;
 import org.onap.so.client.orchestration.AAICollectionResources;
@@ -119,9 +118,6 @@ public abstract class BaseTaskTest extends TestDataSetup {
 
     @Mock
     protected NamingServiceResources namingServiceResources;
-
-    @Mock
-    protected ApplicationControllerAction appCClient;
 
     @Mock
     protected CatalogDbClient catalogDbClient;
