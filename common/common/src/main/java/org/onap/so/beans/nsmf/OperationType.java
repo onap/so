@@ -43,7 +43,6 @@ public enum OperationType {
 
     private String type;
 
-
     OperationType(String type) {
         this.type = type;
     }

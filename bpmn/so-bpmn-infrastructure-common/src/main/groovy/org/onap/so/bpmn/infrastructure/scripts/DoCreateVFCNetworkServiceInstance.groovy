@@ -43,7 +43,7 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 
 import org.onap.logging.filter.base.ONAPComponents;
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 
 /**
  * This groovy class supports the <class>DoCreateVFCNetworkServiceInstance.bpmn</class> process.

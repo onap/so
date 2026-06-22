@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-
 @JsonInclude(Include.NON_DEFAULT)
 public class RequestProcessingData {
 
@@ -58,6 +57,5 @@ public class RequestProcessingData {
         return new ToStringBuilder(this).append("groupingId", groupingId).append("tag", tag)
                 .append("dataPairs", dataPairs).toString();
     }
-
 
 }

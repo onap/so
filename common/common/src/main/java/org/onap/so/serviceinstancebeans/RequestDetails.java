@@ -60,7 +60,6 @@ public class RequestDetails implements Serializable {
     @JsonProperty("configurationParameters")
     protected List<Map<String, String>> configurationParameters = new ArrayList<>();
 
-
     /**
      * Gets the value of the serviceInfo property.
      *
