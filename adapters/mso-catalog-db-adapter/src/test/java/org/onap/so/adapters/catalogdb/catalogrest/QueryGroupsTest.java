@@ -62,7 +62,6 @@ public class QueryGroupsTest {
         vnfcInstanceGroupCustomization.setVnfcCustomizations(Arrays.asList(vnfcCustomization));
         vnfcInstanceGroupCustomization.setInstanceGroup(vfcInstanceGroup);
 
-
         vfcInstanceGroup.setVnfcInstanceGroupCustomizations(Arrays.asList(vnfcInstanceGroupCustomization));
         return Arrays.asList(vnfcInstanceGroupCustomization);
     }

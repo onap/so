@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,19 +35,19 @@ import org.slf4j.LoggerFactory;
 public class QueryServiceNetworks extends CatalogQuery {
     protected static Logger logger = LoggerFactory.getLogger(QueryServiceNetworks.class);
     private List<NetworkResourceCustomization> serviceNetworks;
-    private static final String TEMPLATE =
-            "\t{\n" + "\t\t\"modelInfo\"                : {\n" + "\t\t\t\"modelName\"              : <MODEL_NAME>,\n"
-                    + "\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"
-                    + "\t\t\t\"modelInvariantUuid\"     : <MODEL_INVARIANT_ID>,\n"
-                    + "\t\t\t\"modelVersion\"           : <MODEL_VERSION>,\n"
-                    + "\t\t\t\"modelCustomizationUuid\" : <MODEL_CUSTOMIZATION_UUID>,\n"
-                    + "\t\t\t\"modelInstanceName\"      : <MODEL_INSTANCE_NAME>\n" + "\t},\n"
-                    + "\t\t\"toscaNodeType\"            : <TOSCA_NODE_TYPE>,\n"
-                    + "\t\t\"networkType\"              : <NETWORK_TYPE>,\n"
-                    + "\t\t\"networkTechnology\"        : <NETWORK_TECHNOLOGY>,\n"
-                    + "\t\t\"resourceInput\"            : <RESOURCE_INPUT>,\n"
-                    + "\t\t\"networkRole\"              : <NETWORK_ROLE>,\n"
-                    + "\t\t\"networkScope\"             : <NETWORK_SCOPE>\n" + "\t}";
+    private static final String TEMPLATE = "\t{\n" + "\t\t\"modelInfo\"                : {\n"
+            + "\t\t\t\"modelName\"              : <MODEL_NAME>,\n"
+            + "\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"
+            + "\t\t\t\"modelInvariantUuid\"     : <MODEL_INVARIANT_ID>,\n"
+            + "\t\t\t\"modelVersion\"           : <MODEL_VERSION>,\n"
+            + "\t\t\t\"modelCustomizationUuid\" : <MODEL_CUSTOMIZATION_UUID>,\n"
+            + "\t\t\t\"modelInstanceName\"      : <MODEL_INSTANCE_NAME>\n" + "\t},\n"
+            + "\t\t\"toscaNodeType\"            : <TOSCA_NODE_TYPE>,\n"
+            + "\t\t\"networkType\"              : <NETWORK_TYPE>,\n"
+            + "\t\t\"networkTechnology\"        : <NETWORK_TECHNOLOGY>,\n"
+            + "\t\t\"resourceInput\"            : <RESOURCE_INPUT>,\n"
+            + "\t\t\"networkRole\"              : <NETWORK_ROLE>,\n"
+            + "\t\t\"networkScope\"             : <NETWORK_SCOPE>\n" + "\t}";
 
     public QueryServiceNetworks() {
         super();

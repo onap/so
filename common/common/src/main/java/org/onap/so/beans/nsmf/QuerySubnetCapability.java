@@ -20,7 +20,6 @@
 
 package org.onap.so.beans.nsmf;
 
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;

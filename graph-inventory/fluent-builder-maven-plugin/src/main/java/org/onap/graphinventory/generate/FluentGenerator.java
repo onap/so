@@ -14,7 +14,6 @@ import javax.lang.model.element.Modifier;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.maven.plugin.logging.Log;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.CaseFormat;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
@@ -45,7 +44,7 @@ public class FluentGenerator {
     public FluentGenerator(Log log, String location, String destinationClasspath, String swaggerLocation,
             String builderName, String singularBuilderClass, String pluralBuilderClass, String topLevelBuilderClass,
             String baseBuilderClass, String singularClass, String pluralClass, String nameClass,
-            String singleFragmentClass, String pluralFragmentClass) throws JsonProcessingException {
+            String singleFragmentClass, String pluralFragmentClass) throws IOException {
 
         this.location = location;
         this.CLASSPATH = destinationClasspath;

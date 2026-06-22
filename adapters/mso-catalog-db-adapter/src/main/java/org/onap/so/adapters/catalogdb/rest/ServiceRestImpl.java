@@ -22,12 +22,12 @@ package org.onap.so.adapters.catalogdb.rest;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.rest.catalog.beans.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-
 @OpenAPIDefinition(info = @Info(title = "/v1", description = "model"))
 @Path("/v1/services")
 @Component
@@ -55,10 +54,9 @@ public class ServiceRestImpl {
     @Autowired
     private ServiceMapper serviceMapper;
 
-
     @GET
     @Path("/{modelUUID}")
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
     @Transactional(readOnly = true)
     public Service findService(@PathParam("modelUUID") String modelUUID, @QueryParam("depth") int depth) {
         org.onap.so.db.catalog.beans.Service service = serviceRepo.findOneByModelUUID(modelUUID);
@@ -69,14 +67,12 @@ public class ServiceRestImpl {
     }
 
     @GET
-    @Operation(description = "Find Service Models", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
-    @Produces({MediaType.APPLICATION_JSON})
+    @Operation(description = "Find Service Models", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
+    @Produces({ MediaType.APPLICATION_JSON })
     @Transactional(readOnly = true)
     public List<Service> queryServices(
             @Parameter(description = "modelName", required = false) @QueryParam("modelName") String modelName,
-            @Parameter(description = "distributionStatus",
-                    required = false) @QueryParam("distributionStatus") String distributionStatus,
+            @Parameter(description = "distributionStatus", required = false) @QueryParam("distributionStatus") String distributionStatus,
             @Parameter(description = "depth", required = false) @QueryParam("depth") int depth) {
         List<Service> services = new ArrayList<>();
         List<org.onap.so.db.catalog.beans.Service> serviceFromDB;

@@ -21,21 +21,17 @@
 package org.onap.so.configuration;
 
 import java.util.concurrent.TimeUnit;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.NoConnectionReuseStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
-/**
- * Allow user to configure {@link org.apache.http.client.HttpClient}
- *
- * @author waqas.ikram@est.tech
- */
 @Configuration
 public class HttpComponentsClientConfiguration {
 
@@ -53,24 +49,27 @@ public class HttpComponentsClientConfiguration {
 
     @Bean
     public CloseableHttpClient httpClient() {
-        return HttpClientBuilder.create().setConnectionManager(poolingHttpClientConnectionManager())
-                .setMaxConnPerRoute(clientConnectionConfiguration.getMaxConnectionsPerRoute())
-                .setMaxConnTotal(clientConnectionConfiguration.getMaxConnections())
-                .setDefaultRequestConfig(requestConfig()).setConnectionReuseStrategy(NoConnectionReuseStrategy.INSTANCE)
-                .evictExpiredConnections().evictIdleConnections(
-                        clientConnectionConfiguration.getEvictIdleConnectionsTimeInSec(), TimeUnit.SECONDS)
+        return HttpClients.custom().setConnectionManager(poolingHttpClientConnectionManager())
+                .setDefaultRequestConfig(requestConfig()).evictExpiredConnections().evictIdleConnections(TimeValue
+                        .of(clientConnectionConfiguration.getEvictIdleConnectionsTimeInSec(), TimeUnit.SECONDS))
                 .build();
     }
 
     @Bean
     public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
-        return new PoolingHttpClientConnectionManager(clientConnectionConfiguration.getTimeToLiveInMins(),
-                TimeUnit.MINUTES);
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+        cm.setMaxTotal(clientConnectionConfiguration.getMaxConnections());
+        cm.setDefaultMaxPerRoute(clientConnectionConfiguration.getMaxConnectionsPerRoute());
+        return cm;
     }
 
     @Bean
     public RequestConfig requestConfig() {
-        return RequestConfig.custom().setSocketTimeout(clientConnectionConfiguration.getSocketTimeOutInMiliSeconds())
-                .setConnectTimeout(clientConnectionConfiguration.getConnectionTimeOutInMilliSeconds()).build();
+        return RequestConfig.custom()
+                .setResponseTimeout(
+                        Timeout.ofMilliseconds(clientConnectionConfiguration.getSocketTimeOutInMiliSeconds()))
+                .setConnectionRequestTimeout(
+                        Timeout.ofMilliseconds(clientConnectionConfiguration.getConnectionTimeOutInMilliSeconds()))
+                .build();
     }
 }

@@ -20,7 +20,7 @@
 
 package org.onap.so.adapters.catalogdb;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,9 +41,9 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory",
-        basePackages = {"org.onap.so.db.catalog.data.repository"})
-@Profile({"!test"})
+@EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory", basePackages = {
+        "org.onap.so.db.catalog.data.repository" })
+@Profile({ "!test" })
 public class CatalogDBConfig {
 
     @Autowired(required = false)

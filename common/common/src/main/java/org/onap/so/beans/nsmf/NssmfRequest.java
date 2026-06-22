@@ -61,9 +61,7 @@ public class NssmfRequest implements Serializable {
         this.sST = serviceInfo.getSST();
     }
 
-
 }
-
 
 /**
  * { "name": "eMBB-001", "modelInvariantUuid": "NSST-C-001-HDBNJ-NSSMF-01-A-ZX", "modelUuid":

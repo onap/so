@@ -26,7 +26,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-
 @JsonInclude(Include.NON_DEFAULT)
 public class Request {
 
@@ -43,7 +42,6 @@ public class Request {
     protected RequestStatus requestStatus;
     protected List<RequestProcessingData> requestProcessingData;
     protected List<CloudRequestData> cloudRequestData = new ArrayList<>();
-
 
     public String getRequestId() {
         return requestId;
@@ -132,7 +130,6 @@ public class Request {
     public void setRequestProcessingData(List<RequestProcessingData> requestProcessingData) {
         this.requestProcessingData = requestProcessingData;
     }
-
 
     public List<CloudRequestData> getCloudRequestData() {
         return cloudRequestData;

@@ -65,17 +65,14 @@ public class QueryResourceRecipe extends CatalogQuery {
                 : String.valueOf(resourceRecipe.getId()));
         valueMap.put("action", null == resourceRecipe || null == resourceRecipe.getAction() ? StringUtils.EMPTY
                 : resourceRecipe.getAction());
-        valueMap.put("orchestrationUri",
-                null == resourceRecipe || null == resourceRecipe.getOrchestrationUri() ? StringUtils.EMPTY
-                        : resourceRecipe.getOrchestrationUri());
-        valueMap.put("recipeTimeout",
-                null == resourceRecipe || null == resourceRecipe.getRecipeTimeout() ? StringUtils.EMPTY
-                        : String.valueOf(resourceRecipe.getRecipeTimeout()));
+        valueMap.put("orchestrationUri", null == resourceRecipe || null == resourceRecipe.getOrchestrationUri()
+                ? StringUtils.EMPTY : resourceRecipe.getOrchestrationUri());
+        valueMap.put("recipeTimeout", null == resourceRecipe || null == resourceRecipe.getRecipeTimeout()
+                ? StringUtils.EMPTY : String.valueOf(resourceRecipe.getRecipeTimeout()));
         valueMap.put("paramXSD", null == resourceRecipe || null == resourceRecipe.getParamXsd() ? StringUtils.EMPTY
                 : resourceRecipe.getParamXsd());
-        valueMap.put("description",
-                null == resourceRecipe || null == resourceRecipe.getDescription() ? StringUtils.EMPTY
-                        : resourceRecipe.getDescription());
+        valueMap.put("description", null == resourceRecipe || null == resourceRecipe.getDescription()
+                ? StringUtils.EMPTY : resourceRecipe.getDescription());
         String jsonStr = "";
         try {
             jsonStr = mapper.writeValueAsString(valueMap);

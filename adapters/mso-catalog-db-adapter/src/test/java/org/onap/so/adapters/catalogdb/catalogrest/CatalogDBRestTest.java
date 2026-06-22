@@ -27,8 +27,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.json.JSONException;
 import org.junit.Test;
 import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
@@ -45,15 +45,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
     private static final String ECOMP_MSO_CATALOG_V2_VF_MODULES = "/ecomp/mso/catalog/v2/vfModules";
 
     private static final String SERVICE_RECIPE = "/serviceRecipe";
 
-    private static final String ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES =
-            "/ecomp/mso/catalog/v2/serviceAllottedResources";
+    private static final String ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES = "/ecomp/mso/catalog/v2/serviceAllottedResources";
 
     private static final String ECOMP_MSO_CATALOG_V2_RESOURCE_RECEIPE = "/ecomp/mso/catalog/v2/resourceRecipe";
 
@@ -69,26 +67,19 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
     HttpHeaders headers = new HttpHeaders();
 
-    private final String expectedServiceResourceResponsev2 =
-            "{\r\n\"serviceResources\": {\r\n\"modelInfo\": {\r\n\"modelName\": \"MSOTADevInfra_vSAMP10a_Service\",\r\n\"modelUuid\": \"5df8b6de-2083-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"9647dfc4-2083-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2.0\"\r\n},\r\n\"serviceType\": \"NA\",\r\n\"serviceRole\": \"NA\",\r\n\"environmentContext\": \"Luna\",\r\n\"workloadContext\": \"Oxygen\",\r\n\"serviceVnfs\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002672\",\r\n\"modelInstanceName\": \"vSAMP10a 2\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002672\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002672\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}\r\n],\r\n\"serviceNetworks\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"CONTRAIL30_GNDIRECT\",\r\n\"modelUuid\": \"10b36f65-f4e6-4be6-ae49-9596dc1c47fc\",\r\n\"modelInvariantUuid\": \"ce4ff476-9641-4e60-b4d5-b4abbec1271d\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"3bdbb104-476c-483e-9f8b-c095b3d308ac\",\r\n\"modelInstanceName\": \"CONTRAIL30_GNDIRECT 9\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"networkType\": \"\",\r\n\"networkTechnology\": \"\",\r\n\"networkRole\": \"\",\r\n\"networkScope\": \"\"\r\n}\r\n],\r\n\"serviceAllottedResources\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"Tunnel_Xconn\",\r\n\"modelUuid\": \"f6b7d4c6-e8a4-46e2-81bc-31cad5072842\",\r\n\"modelInvariantUuid\": \"b7a1b78e-6b6b-4b36-9698-8c9530da14af\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"367a8ba9-057a-4506-b106-fbae818597c6\",\r\n\"modelInstanceName\": \"Sec_Tunnel_Xconn 11\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"allottedResourceType\": \"\",\r\n\"allottedResourceRole\": null,\r\n\"providingServiceModelName\": null,\r\n\"providingServiceModelInvariantUuid\": null,\r\n\"providingServiceModelUuid\": null,\r\n\"nfFunction\": null,\r\n\"nfType\": null,\r\n\"nfRole\": null,\r\n\"nfNamingCode\": null\r\n}\r\n]\r\n}\r\n}";
+    private final String expectedServiceResourceResponsev2 = "{\r\n\"serviceResources\": {\r\n\"modelInfo\": {\r\n\"modelName\": \"MSOTADevInfra_vSAMP10a_Service\",\r\n\"modelUuid\": \"5df8b6de-2083-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"9647dfc4-2083-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2.0\"\r\n},\r\n\"serviceType\": \"NA\",\r\n\"serviceRole\": \"NA\",\r\n\"environmentContext\": \"Luna\",\r\n\"workloadContext\": \"Oxygen\",\r\n\"serviceVnfs\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002672\",\r\n\"modelInstanceName\": \"vSAMP10a 2\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002672\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002672\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}\r\n],\r\n\"serviceNetworks\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"CONTRAIL30_GNDIRECT\",\r\n\"modelUuid\": \"10b36f65-f4e6-4be6-ae49-9596dc1c47fc\",\r\n\"modelInvariantUuid\": \"ce4ff476-9641-4e60-b4d5-b4abbec1271d\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"3bdbb104-476c-483e-9f8b-c095b3d308ac\",\r\n\"modelInstanceName\": \"CONTRAIL30_GNDIRECT 9\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"networkType\": \"\",\r\n\"networkTechnology\": \"\",\r\n\"networkRole\": \"\",\r\n\"networkScope\": \"\"\r\n}\r\n],\r\n\"serviceAllottedResources\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"Tunnel_Xconn\",\r\n\"modelUuid\": \"f6b7d4c6-e8a4-46e2-81bc-31cad5072842\",\r\n\"modelInvariantUuid\": \"b7a1b78e-6b6b-4b36-9698-8c9530da14af\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"367a8ba9-057a-4506-b106-fbae818597c6\",\r\n\"modelInstanceName\": \"Sec_Tunnel_Xconn 11\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"allottedResourceType\": \"\",\r\n\"allottedResourceRole\": null,\r\n\"providingServiceModelName\": null,\r\n\"providingServiceModelInvariantUuid\": null,\r\n\"providingServiceModelUuid\": null,\r\n\"nfFunction\": null,\r\n\"nfType\": null,\r\n\"nfRole\": null,\r\n\"nfNamingCode\": null\r\n}\r\n]\r\n}\r\n}";
 
-    private final String expectedServiceVnfResponse =
-            "{\r\n\"serviceVnfs\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002671\",\r\n\"modelInstanceName\": \"vSAMP10a 1\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}\r\n]\r\n}";
+    private final String expectedServiceVnfResponse = "{\r\n\"serviceVnfs\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002671\",\r\n\"modelInstanceName\": \"vSAMP10a 1\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}\r\n]\r\n}";
 
-    private final String expectedServiceVnfResponseV3 =
-            "{\r\n\"serviceVnfs\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002672\",\r\n\"modelInstanceName\": \"vSAMP10a 2\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002672\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002672\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}\r\n]\r\n}";
+    private final String expectedServiceVnfResponseV3 = "{\r\n\"serviceVnfs\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002672\",\r\n\"modelInstanceName\": \"vSAMP10a 2\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002672\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002672\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002672\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}\r\n]\r\n}";
 
-    private final String expectedServiceNetworkResourceResponse =
-            "{\r\n\"serviceNetworks\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"CONTRAIL30_GNDIRECT\",\r\n\"modelUuid\": \"10b36f65-f4e6-4be6-ae49-9596dc1c47fc\",\r\n\"modelInvariantUuid\": \"ce4ff476-9641-4e60-b4d5-b4abbec1271d\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"3bdbb104-476c-483e-9f8b-c095b3d308ac\",\r\n\"modelInstanceName\": \"CONTRAIL30_GNDIRECT 9\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"networkType\": \"\",\r\n\"networkTechnology\": \"\",\r\n\"networkRole\": \"\",\r\n\"networkScope\": \"\"\r\n}\r\n]\r\n}";
+    private final String expectedServiceNetworkResourceResponse = "{\r\n\"serviceNetworks\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"CONTRAIL30_GNDIRECT\",\r\n\"modelUuid\": \"10b36f65-f4e6-4be6-ae49-9596dc1c47fc\",\r\n\"modelInvariantUuid\": \"ce4ff476-9641-4e60-b4d5-b4abbec1271d\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"3bdbb104-476c-483e-9f8b-c095b3d308ac\",\r\n\"modelInstanceName\": \"CONTRAIL30_GNDIRECT 9\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"networkType\": \"\",\r\n\"networkTechnology\": \"\",\r\n\"networkRole\": \"\",\r\n\"networkScope\": \"\"\r\n}\r\n]\r\n}";
 
-    private final String badQueryParamResponse =
-            "{\"messageId\":null,\"message\":\"no matching parameters\",\"category\":\"INTERNAL\",\"rolledBack\":false}\"";
+    private final String badQueryParamResponse = "{\"messageId\":null,\"message\":\"no matching parameters\",\"category\":\"INTERNAL\",\"rolledBack\":false}\"";
 
-    private final String expectedAllottedResponse =
-            "{\r\n\"serviceAllottedResources\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"Tunnel_Xconn\",\r\n\"modelUuid\": \"f6b7d4c6-e8a4-46e2-81bc-31cad5072842\",\r\n\"modelInvariantUuid\": \"b7a1b78e-6b6b-4b36-9698-8c9530da14af\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"367a8ba9-057a-4506-b106-fbae818597c6\",\r\n\"modelInstanceName\": \"Sec_Tunnel_Xconn 11\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"allottedResourceType\": \"\",\r\n\"allottedResourceRole\": null,\r\n\"providingServiceModelName\": null,\r\n\"providingServiceModelInvariantUuid\": null,\r\n\"providingServiceModelUuid\": null,\r\n\"nfFunction\": null,\r\n\"nfType\": null,\r\n\"nfRole\": null,\r\n\"nfNamingCode\": null\r\n}\r\n]\r\n}";
+    private final String expectedAllottedResponse = "{\r\n\"serviceAllottedResources\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"Tunnel_Xconn\",\r\n\"modelUuid\": \"f6b7d4c6-e8a4-46e2-81bc-31cad5072842\",\r\n\"modelInvariantUuid\": \"b7a1b78e-6b6b-4b36-9698-8c9530da14af\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"367a8ba9-057a-4506-b106-fbae818597c6\",\r\n\"modelInstanceName\": \"Sec_Tunnel_Xconn 11\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"allottedResourceType\": \"\",\r\n\"allottedResourceRole\": null,\r\n\"providingServiceModelName\": null,\r\n\"providingServiceModelInvariantUuid\": null,\r\n\"providingServiceModelUuid\": null,\r\n\"nfFunction\": null,\r\n\"nfType\": null,\r\n\"nfRole\": null,\r\n\"nfNamingCode\": null\r\n}\r\n]\r\n}";
 
-    private final String expectedFilteredServiceResourceResponse =
-            "{\r\n\"serviceResources\": {\r\n\"modelInfo\": {\r\n\"modelName\": \"MSOTADevInfra_vSAMP10a_Service\",\r\n\"modelUuid\": \"5df8b6de-2083-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"9647dfc4-2083-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"1.0\"\r\n},\r\n\"serviceType\": \"NA\",\r\n\"serviceRole\": \"NA\",\r\n\"environmentContext\": \"Luna\",\r\n\"workloadContext\": \"Oxygen\",\r\n\"serviceVnfs\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002671\",\r\n\"modelInstanceName\": \"vSAMP10a 1\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}\r\n],\r\n\"serviceNetworks\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"CONTRAIL30_GNDIRECT\",\r\n\"modelUuid\": \"10b36f65-f4e6-4be6-ae49-9596dc1c47fc\",\r\n\"modelInvariantUuid\": \"ce4ff476-9641-4e60-b4d5-b4abbec1271d\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"3bdbb104-476c-483e-9f8b-c095b3d308ac\",\r\n\"modelInstanceName\": \"CONTRAIL30_GNDIRECT 9\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"networkType\": \"\",\r\n\"networkTechnology\": \"\",\r\n\"networkRole\": \"\",\r\n\"networkScope\": \"\"\r\n}\r\n],\r\n\"serviceAllottedResources\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"Tunnel_Xconn\",\r\n\"modelUuid\": \"f6b7d4c6-e8a4-46e2-81bc-31cad5072842\",\r\n\"modelInvariantUuid\": \"b7a1b78e-6b6b-4b36-9698-8c9530da14af\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"367a8ba9-057a-4506-b106-fbae818597c6\",\r\n\"modelInstanceName\": \"Sec_Tunnel_Xconn 11\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"allottedResourceType\": \"\",\r\n\"allottedResourceRole\": null,\r\n\"providingServiceModelName\": null,\r\n\"providingServiceModelInvariantUuid\": null,\r\n\"providingServiceModelUuid\": null,\r\n\"nfFunction\": null,\r\n\"nfType\": null,\r\n\"nfRole\": null,\r\n\"nfNamingCode\": null\r\n}\r\n]\r\n}\r\n}";
+    private final String expectedFilteredServiceResourceResponse = "{\r\n\"serviceResources\": {\r\n\"modelInfo\": {\r\n\"modelName\": \"MSOTADevInfra_vSAMP10a_Service\",\r\n\"modelUuid\": \"5df8b6de-2083-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"9647dfc4-2083-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"1.0\"\r\n},\r\n\"serviceType\": \"NA\",\r\n\"serviceRole\": \"NA\",\r\n\"environmentContext\": \"Luna\",\r\n\"workloadContext\": \"Oxygen\",\r\n\"serviceVnfs\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002671\",\r\n\"modelInstanceName\": \"vSAMP10a 1\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}\r\n],\r\n\"serviceNetworks\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"CONTRAIL30_GNDIRECT\",\r\n\"modelUuid\": \"10b36f65-f4e6-4be6-ae49-9596dc1c47fc\",\r\n\"modelInvariantUuid\": \"ce4ff476-9641-4e60-b4d5-b4abbec1271d\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"3bdbb104-476c-483e-9f8b-c095b3d308ac\",\r\n\"modelInstanceName\": \"CONTRAIL30_GNDIRECT 9\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"networkType\": \"\",\r\n\"networkTechnology\": \"\",\r\n\"networkRole\": \"\",\r\n\"networkScope\": \"\"\r\n}\r\n],\r\n\"serviceAllottedResources\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"Tunnel_Xconn\",\r\n\"modelUuid\": \"f6b7d4c6-e8a4-46e2-81bc-31cad5072842\",\r\n\"modelInvariantUuid\": \"b7a1b78e-6b6b-4b36-9698-8c9530da14af\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"367a8ba9-057a-4506-b106-fbae818597c6\",\r\n\"modelInstanceName\": \"Sec_Tunnel_Xconn 11\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"allottedResourceType\": \"\",\r\n\"allottedResourceRole\": null,\r\n\"providingServiceModelName\": null,\r\n\"providingServiceModelInvariantUuid\": null,\r\n\"providingServiceModelUuid\": null,\r\n\"nfFunction\": null,\r\n\"nfType\": null,\r\n\"nfRole\": null,\r\n\"nfNamingCode\": null\r\n}\r\n]\r\n}\r\n}";
 
     private final String serviceUUID = "5df8b6de-2083-11e7-93ae-92361f002671";
 
@@ -103,8 +94,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(createURLWithPort("/manage/health"), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/manage/health"), HttpMethod.GET,
+                entity, String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
@@ -116,12 +107,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
-                        .queryParam("serviceModelUuid", serviceUUID);
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
+                .queryParam("serviceModelUuid", serviceUUID);
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(getJson("ExpectedServiceResourceEscaped.json"), response.getBody().toString(),
@@ -133,12 +124,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
-                        .queryParam("serviceModelUuid", serviceUUID).queryParam("filter", "resourceInput");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
+                .queryParam("serviceModelUuid", serviceUUID).queryParam("filter", "resourceInput");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedFilteredServiceResourceResponse, response.getBody().toString(),
@@ -149,13 +140,13 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
     public void testGetServiceInvariantUUIDAndVersion() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
-                        .queryParam("serviceModelInvariantUuid", "9647dfc4-2083-11e7-93ae-92361f002671")
-                        .queryParam("serviceModelVersion", "1.0").queryParam("filter", "resourceInput");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
+                .queryParam("serviceModelInvariantUuid", "9647dfc4-2083-11e7-93ae-92361f002671")
+                .queryParam("serviceModelVersion", "1.0").queryParam("filter", "resourceInput");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedFilteredServiceResourceResponse, response.getBody().toString(),
@@ -166,12 +157,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
     public void testGetServiceInvariantUUID() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
-                        .queryParam("serviceModelInvariantUuid", "9647dfc4-2083-11e7-93ae-92361f002671");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
+                .queryParam("serviceModelInvariantUuid", "9647dfc4-2083-11e7-93ae-92361f002671");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceResourceResponsev2, response.getBody().toString(), false);
@@ -181,13 +172,14 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
     public void testGetServiceInvariantUUIDEmtpyModelVer() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
-                        .queryParam("serviceModelInvariantUuid", "9647dfc4-2083-11e7-93ae-92361f002671")
-                        .queryParam("serviceModelVersion", "");;
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
+                .queryParam("serviceModelInvariantUuid", "9647dfc4-2083-11e7-93ae-92361f002671")
+                .queryParam("serviceModelVersion", "");
+        ;
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceResourceResponsev2, response.getBody().toString(), false);
@@ -198,12 +190,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
         String expectedResponse = "\"serviceResources\": null";
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
-                        .queryParam("serviceModelUuid", "5df8b6de-2083-11e7-93");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
+                .queryParam("serviceModelUuid", "5df8b6de-2083-11e7-93");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedResponse, response.getBody().toString(), false);
@@ -213,12 +205,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
     public void testGetServiceBadQueryParams() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
-                        .queryParam("BadQueryParam", "5df8b6de-2083-11e7-93");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES))
+                .queryParam("BadQueryParam", "5df8b6de-2083-11e7-93");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(badQueryParamResponse, response.getBody().toString(), false);
@@ -230,21 +222,18 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
     public void testGetVNFResourcesByCustomizationUUID() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
-        String expectedResponse =
-                "{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002671\",\r\n\"modelInstanceName\": \"vSAMP10a 1\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}";
+        String expectedResponse = "{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10a\",\r\n\"modelUuid\": \"ff2ae348-214a-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"2fff5b20-214b-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"68dc9a92-214c-11e7-93ae-92361f002671\",\r\n\"modelInstanceName\": \"vSAMP10a 1\"\r\n},\r\n\"toscaNodeType\": \"VF\",\r\n\"nfFunction\": \"vSAMP\",\r\n\"nfType\": \"vSAMP\",\r\n\"nfRole\": \"vSAMP\",\r\n\"nfNamingCode\": \"vSAMP\",\r\n\"multiStageDesign\": null,\r\n\"vfModules\": [\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n},\r\n{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::PCM::module-1\",\r\n\"modelUuid\": \"066de97e-253e-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"64efd51a-2544-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"b4ea86b4-253f-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": false,\r\n\"vfModuleLabel\": \"PCM\",\r\n\"initialCount\": 0,\r\n\"hasVolumeGroup\": false\r\n}\r\n]\r\n}";
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(
                         createURLWithPort("/ecomp/mso/catalog/v2/vnfResources/68dc9a92-214c-11e7-93ae-92361f002671"))
                 .queryParam("filter", "resourceInput");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedResponse, response.getBody().toString(), false);
     }
-
-
 
     @Test
     public void testGetVNFResources404() throws JSONException {
@@ -254,8 +243,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort("/ecomp/mso/catalog/v2/vnfResources/68dc-11e7-93ae-92361f002671"));
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
 
@@ -266,13 +255,13 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
-                        .queryParam("vnfModelCustomizationUuid", "68dc9a92-214c-11e7-93ae-92361f002671")
-                        .queryParam("filter", "resourceInput");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
+                .queryParam("vnfModelCustomizationUuid", "68dc9a92-214c-11e7-93ae-92361f002671")
+                .queryParam("filter", "resourceInput");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceVnfResponse, response.getBody().toString(), false);
@@ -283,12 +272,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
-                        .queryParam("serviceModelUuid", serviceUUID).queryParam("filter", "resourceInput");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
+                .queryParam("serviceModelUuid", serviceUUID).queryParam("filter", "resourceInput");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceVnfResponse, response.getBody().toString(), false);
@@ -299,13 +288,13 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
-                        .queryParam("serviceModelInvariantUuid", "9647dfc4-2083-11e7-93ae-92361f002671")
-                        .queryParam("serviceModelVersion", "1.0").queryParam("filter", "resourceInput");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
+                .queryParam("serviceModelInvariantUuid", "9647dfc4-2083-11e7-93ae-92361f002671")
+                .queryParam("serviceModelVersion", "1.0").queryParam("filter", "resourceInput");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceVnfResponse, response.getBody().toString(), false);
@@ -316,30 +305,29 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
-                        .queryParam("serviceModelInvariantUuid", "9647dfc4-2083-11e7-93ae-92361f002671")
-                        .queryParam("serviceModelVersion", "");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
+                .queryParam("serviceModelInvariantUuid", "9647dfc4-2083-11e7-93ae-92361f002671")
+                .queryParam("serviceModelVersion", "");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceVnfResponseV3, response.getBody().toString(), false);
     }
-
 
     @Test
     public void testGetServiceVNFResourcesByServiceModelInvariantUUID() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
-                        .queryParam("serviceModelInvariantUuid", "9647dfc4-2083-11e7-93ae-92361f002671");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
+                .queryParam("serviceModelInvariantUuid", "9647dfc4-2083-11e7-93ae-92361f002671");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceVnfResponseV3, response.getBody().toString(), false);
@@ -350,12 +338,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
-                        .queryParam("serviceModelName", "MSOTADevInfra_vSAMP10a_Service");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
+                .queryParam("serviceModelName", "MSOTADevInfra_vSAMP10a_Service");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceVnfResponseV3, response.getBody().toString(), false);
@@ -370,8 +358,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
                 .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
                 .queryParam("serviceModelName", "MSOTADevInfra_vSAMP10a_Service").queryParam("serviceModelVersion", "");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceVnfResponseV3, response.getBody().toString(), false);
@@ -382,13 +370,13 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
-                        .queryParam("serviceModelName", "MSOTADevInfra_vSAMP10a_Service")
-                        .queryParam("serviceModelVersion", "1.0").queryParam("filter", "resourceInput");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
+                .queryParam("serviceModelName", "MSOTADevInfra_vSAMP10a_Service")
+                .queryParam("serviceModelVersion", "1.0").queryParam("filter", "resourceInput");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceVnfResponse, response.getBody().toString(), false);
@@ -399,36 +387,32 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
-                        .queryParam("serviceModelName", "BADNAME").queryParam("serviceModelVersion", "1.0");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
+                .queryParam("serviceModelName", "BADNAME").queryParam("serviceModelVersion", "1.0");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
 
     }
-
 
     @Test
     public void testSerfviceVNFBadParams() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
-                        .queryParam("BadParamName", "BADNAME");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_VNFS))
+                .queryParam("BadParamName", "BADNAME");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(badQueryParamResponse, response.getBody().toString(), false);
 
-
     }
-
-
 
     /* Network Resources Endpoint */
 
@@ -436,19 +420,16 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
     public void testGetNetworkResourcesByCustomizationUUID() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
-        String expectedResponse =
-                "{\r\n\"modelInfo\": {\r\n\"modelName\": \"CONTRAIL30_GNDIRECT\",\r\n\"modelUuid\": \"10b36f65-f4e6-4be6-ae49-9596dc1c47fc\",\r\n\"modelInvariantUuid\": \"ce4ff476-9641-4e60-b4d5-b4abbec1271d\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"3bdbb104-476c-483e-9f8b-c095b3d308ac\",\r\n\"modelInstanceName\": \"CONTRAIL30_GNDIRECT 9\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"networkType\": \"\",\r\n\"networkTechnology\": \"\",\r\n\"networkRole\": \"\",\r\n\"networkScope\": \"\"\r\n}";
+        String expectedResponse = "{\r\n\"modelInfo\": {\r\n\"modelName\": \"CONTRAIL30_GNDIRECT\",\r\n\"modelUuid\": \"10b36f65-f4e6-4be6-ae49-9596dc1c47fc\",\r\n\"modelInvariantUuid\": \"ce4ff476-9641-4e60-b4d5-b4abbec1271d\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"3bdbb104-476c-483e-9f8b-c095b3d308ac\",\r\n\"modelInstanceName\": \"CONTRAIL30_GNDIRECT 9\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"networkType\": \"\",\r\n\"networkTechnology\": \"\",\r\n\"networkRole\": \"\",\r\n\"networkScope\": \"\"\r\n}";
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
                 createURLWithPort("/ecomp/mso/catalog/v2/networkResources/3bdbb104-476c-483e-9f8b-c095b3d308ac"));
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedResponse, response.getBody().toString(), false);
     }
-
-
 
     @Test
     public void testGetNetworkResources404() throws JSONException {
@@ -458,8 +439,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort("/ecomp/mso/catalog/v2/networkResources/3bdbb104-4asdf"));
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
 
@@ -472,12 +453,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
-                        .queryParam("serviceModelName", "PROVIDER NETWORK").queryParam("serviceModelVersion", "2.0");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
+                .queryParam("serviceModelName", "PROVIDER NETWORK").queryParam("serviceModelVersion", "2.0");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(badQueryParamResponse, response.getBody().toString(), false);
@@ -488,12 +469,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
-                        .queryParam("serviceModelUuid", serviceUUID);
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
+                .queryParam("serviceModelUuid", serviceUUID);
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceNetworkResourceResponse, response.getBody().toString(), false);
@@ -504,12 +485,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
-                        .queryParam("serviceModelUuid", "doesNotExist");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
+                .queryParam("serviceModelUuid", "doesNotExist");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
 
@@ -520,12 +501,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
-                        .queryParam("networkModelCustomizationUuid", "06b8966e-097c-4d63-afda-e0d");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
+                .queryParam("networkModelCustomizationUuid", "06b8966e-097c-4d63-afda-e0d");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
 
@@ -536,12 +517,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
-                        .queryParam("serviceModelInvariantUuid", serviceInvariantUUID);
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
+                .queryParam("serviceModelInvariantUuid", serviceInvariantUUID);
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceNetworkResourceResponse, response.getBody().toString(), false);
@@ -556,8 +537,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
                 .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
                 .queryParam("serviceModelInvariantUuid", serviceInvariantUUID).queryParam("serviceModelVersion", "2.0");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceNetworkResourceResponse, response.getBody().toString(), false);
@@ -571,25 +552,24 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
                 .queryParam("serviceModelInvariantUuid", serviceInvariantUUID).queryParam("serviceModelVersion", "");
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceNetworkResourceResponse, response.getBody().toString(), false);
     }
-
 
     @Test
     public void testGetServiceNetworkResourcesByNetworkCustomizationUUID() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
-                        .queryParam("networkModelCustomizationUuid", "3bdbb104-476c-483e-9f8b-c095b3d308ac");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
+                .queryParam("networkModelCustomizationUuid", "3bdbb104-476c-483e-9f8b-c095b3d308ac");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceNetworkResourceResponse, response.getBody().toString(), false);
@@ -600,12 +580,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
-                        .queryParam("networkModelName", "CONTRAIL30_GNDIRECT");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_NETWORKS))
+                .queryParam("networkModelName", "CONTRAIL30_GNDIRECT");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedServiceNetworkResourceResponse, response.getBody().toString(), false);
@@ -617,32 +597,29 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
     public void testGetAllottedResourcesByCustomizationUUID() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
-        String expectedResponse =
-                "{\r\n\"modelInfo\": {\r\n\"modelName\": \"Tunnel_Xconn\",\r\n\"modelUuid\": \"f6b7d4c6-e8a4-46e2-81bc-31cad5072842\",\r\n\"modelInvariantUuid\": \"b7a1b78e-6b6b-4b36-9698-8c9530da14af\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"367a8ba9-057a-4506-b106-fbae818597c6\",\r\n\"modelInstanceName\": \"Sec_Tunnel_Xconn 11\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"allottedResourceType\": \"\",\r\n\"allottedResourceRole\": null,\r\n\"providingServiceModelName\": null,\r\n\"providingServiceModelInvariantUuid\": null,\r\n\"providingServiceModelUuid\": null,\r\n\"nfFunction\": null,\r\n\"nfType\": null,\r\n\"nfRole\": null,\r\n\"nfNamingCode\": null\r\n}";
+        String expectedResponse = "{\r\n\"modelInfo\": {\r\n\"modelName\": \"Tunnel_Xconn\",\r\n\"modelUuid\": \"f6b7d4c6-e8a4-46e2-81bc-31cad5072842\",\r\n\"modelInvariantUuid\": \"b7a1b78e-6b6b-4b36-9698-8c9530da14af\",\r\n\"modelVersion\": \"1.0\",\r\n\"modelCustomizationUuid\": \"367a8ba9-057a-4506-b106-fbae818597c6\",\r\n\"modelInstanceName\": \"Sec_Tunnel_Xconn 11\"\r\n},\r\n\"toscaNodeType\": \"\",\r\n\"allottedResourceType\": \"\",\r\n\"allottedResourceRole\": null,\r\n\"providingServiceModelName\": null,\r\n\"providingServiceModelInvariantUuid\": null,\r\n\"providingServiceModelUuid\": null,\r\n\"nfFunction\": null,\r\n\"nfType\": null,\r\n\"nfRole\": null,\r\n\"nfNamingCode\": null\r\n}";
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
                 createURLWithPort("/ecomp/mso/catalog/v2/allottedResources/367a8ba9-057a-4506-b106-fbae818597c6"));
 
-
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedResponse, response.getBody().toString(), false);
     }
-
 
     @Test
     public void testGetAllottedResourcesByServiceModelUuuid() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES))
-                        .queryParam("serviceModelUuid", serviceUUID);
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES))
+                .queryParam("serviceModelUuid", serviceUUID);
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedAllottedResponse, response.getBody().toString(), false);
@@ -650,18 +627,17 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
     @Test
     public void testResourceReceipe() throws JSONException {
-        String expectedResourceRecipe =
-                "{\"orchestrationUri\":\"/mso/async/services/CreateSDNCNetworkResource\",\"action\":\"createInstance\",\"description\":\"sotnvpnattachmentvF\",\"id\":\"1\",\"recipeTimeout\":\"180\",\"paramXSD\":\"\"}";
+        String expectedResourceRecipe = "{\"orchestrationUri\":\"/mso/async/services/CreateSDNCNetworkResource\",\"action\":\"createInstance\",\"description\":\"sotnvpnattachmentvF\",\"id\":\"1\",\"recipeTimeout\":\"180\",\"paramXSD\":\"\"}";
 
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_RESOURCE_RECEIPE))
-                        .queryParam("resourceModelUuid", arResourceUUID).queryParam("action", "createInstance");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_RESOURCE_RECEIPE))
+                .queryParam("resourceModelUuid", arResourceUUID).queryParam("action", "createInstance");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedResourceRecipe, response.getBody().toString(), false);
@@ -673,12 +649,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_RESOURCE_RECEIPE))
-                        .queryParam("resourceModelUuid", arResourceUUID).queryParam("action", "invalid_action");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_RESOURCE_RECEIPE))
+                .queryParam("resourceModelUuid", arResourceUUID).queryParam("action", "invalid_action");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
     }
@@ -688,12 +664,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES))
-                        .queryParam("serviceModelInvariantUuid", serviceInvariantUUID);
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES))
+                .queryParam("serviceModelInvariantUuid", serviceInvariantUUID);
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedAllottedResponse, response.getBody().toString(), false);
@@ -708,8 +684,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
                 .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES))
                 .queryParam("serviceModelInvariantUuid", serviceInvariantUUID).queryParam("serviceModelVersion", "1.0");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedAllottedResponse, response.getBody().toString(), false);
@@ -724,8 +700,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
                 .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES))
                 .queryParam("serviceModelInvariantUuid", serviceInvariantUUID).queryParam("serviceModelVersion", "1.0");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedAllottedResponse, response.getBody().toString(), false);
@@ -736,29 +712,28 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES))
-                        .queryParam("arModelCustomizationUuid", "367a8ba9-057a-4506-b106-fbae818597c6");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES))
+                .queryParam("arModelCustomizationUuid", "367a8ba9-057a-4506-b106-fbae818597c6");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedAllottedResponse, response.getBody().toString(), false);
     }
-
 
     @Test
     public void testGetAllottedResourcesResourcesNonExistResource() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES))
-                        .queryParam("arModelCustomizationUuid", "NOTEXIST");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_SERVICE_ALLOTTED_RESOURCES))
+                .queryParam("arModelCustomizationUuid", "NOTEXIST");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
 
@@ -771,12 +746,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_VF_MODULES))
-                        .queryParam("vfModuleModelName", "NEUTRON_BASIC");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_VF_MODULES))
+                .queryParam("vfModuleModelName", "NEUTRON_BASIC");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
 
@@ -786,14 +761,13 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
     public void testGetVFModulesByVfModuleModelName() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
-        String expectedResponse =
-                "{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n}";
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_VF_MODULES))
-                        .queryParam("vfModuleModelName", "vSAMP10aDEV::base::module-0");
+        String expectedResponse = "{\r\n\"modelInfo\": {\r\n\"modelName\": \"vSAMP10aDEV::base::module-0\",\r\n\"modelUuid\": \"20c4431c-246d-11e7-93ae-92361f002671\",\r\n\"modelInvariantUuid\": \"78ca26d0-246d-11e7-93ae-92361f002671\",\r\n\"modelVersion\": \"2\",\r\n\"modelCustomizationUuid\": \"cb82ffd8-252a-11e7-93ae-92361f002671\"\r\n},\r\n\"isBase\": true,\r\n\"vfModuleLabel\": \"base\",\r\n\"initialCount\": 1,\r\n\"hasVolumeGroup\": false\r\n}";
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_VF_MODULES))
+                .queryParam("vfModuleModelName", "vSAMP10aDEV::base::module-0");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedResponse, response.getBody().toString(), false);
@@ -809,8 +783,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_V2_VF_MODULES)).queryParam("ADASD", "NEUTRON_BASIC");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(badQueryParamResponse, response.getBody(), false);
@@ -829,8 +803,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(SERVICE_RECIPE));
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity,
+                String.class);
 
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatusCode().value());
     }
@@ -843,8 +817,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_PROCESSING_FLAGS)).pathSegment("TESTFLAG");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         ObjectMapper mapper = new ObjectMapper();
@@ -861,17 +835,18 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         headers.set("Accept", MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_PROCESSING_FLAGS));
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_PROCESSING_FLAGS));
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         ObjectMapper mapper = new ObjectMapper();
 
-        List<ProcessingFlags> processingFlagsResponse =
-                mapper.readValue(response.getBody(), new TypeReference<List<ProcessingFlags>>() {});
+        List<ProcessingFlags> processingFlagsResponse = mapper.readValue(response.getBody(),
+                new TypeReference<List<ProcessingFlags>>() {
+                });
 
         boolean testFlagFound = false;
         for (int i = 0; i < processingFlagsResponse.size(); i++) {
@@ -895,8 +870,8 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort(ECOMP_MSO_CATALOG_PROCESSING_FLAGS)).pathSegment("TESTFLAG");
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.PUT, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.PUT, entity,
+                String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }

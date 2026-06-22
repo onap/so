@@ -23,7 +23,7 @@ package org.onap.so.adapters.catalogdb.catalogrest;
 import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,16 +36,16 @@ public class QueryServiceProxyCustomization extends CatalogQuery {
 
     private List<ServiceProxyResourceCustomization> serviceProxyResourceCustomizationList;
 
-    private static final String TEMPLATE =
-            "\t{\n" + "\t\t\"modelInfo\"                : {\n" + "\t\t\t\"modelName\"              : <MODEL_NAME>,\n"
-                    + "\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"
-                    + "\t\t\t\"modelInvariantUuid\"     : <MODEL_INVARIANT_UUID>,\n"
-                    + "\t\t\t\"modelVersion\"           : <MODEL_VERSION>,\n"
-                    + "\t\t\t\"modelCustomizationUuid\" : <MODEL_CUSTOMIZATION_UUID>,\n"
-                    + "\t\t\t\"modelInstanceName\"      : <MODEL_INSTANCE_NAME>\n" + "\t},\n"
-                    + "\t\t\"toscaNodeType\"            : <TOSCA_NODE_TYPE>,\n"
-                    + "\t\t\"description\"            : <DESCRIPTION>,\n"
-                    + "\t\t\"sourceModelUuid\"            : <SOURCE_SERVICE_MODEL_UUID>\n" + "\t}";
+    private static final String TEMPLATE = "\t{\n" + "\t\t\"modelInfo\"                : {\n"
+            + "\t\t\t\"modelName\"              : <MODEL_NAME>,\n"
+            + "\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"
+            + "\t\t\t\"modelInvariantUuid\"     : <MODEL_INVARIANT_UUID>,\n"
+            + "\t\t\t\"modelVersion\"           : <MODEL_VERSION>,\n"
+            + "\t\t\t\"modelCustomizationUuid\" : <MODEL_CUSTOMIZATION_UUID>,\n"
+            + "\t\t\t\"modelInstanceName\"      : <MODEL_INSTANCE_NAME>\n" + "\t},\n"
+            + "\t\t\"toscaNodeType\"            : <TOSCA_NODE_TYPE>,\n"
+            + "\t\t\"description\"            : <DESCRIPTION>,\n"
+            + "\t\t\"sourceModelUuid\"            : <SOURCE_SERVICE_MODEL_UUID>\n" + "\t}";
 
     public QueryServiceProxyCustomization() {
         super();

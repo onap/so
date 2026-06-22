@@ -33,7 +33,6 @@ import org.onap.so.client.policy.PolicyRestProperties;
 
 public class PolicyRestPropertiesImpl implements PolicyRestProperties {
 
-
     final Map<Object, Object> props;
 
     public PolicyRestPropertiesImpl() {

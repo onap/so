@@ -44,8 +44,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -120,7 +120,7 @@ public class ServiceInstancesTest extends BaseTest {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests/.*")).willReturn(aResponse()
+        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests.*")).willReturn(aResponse()
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
         Mockito.doReturn(null).when(requestsDbClient).getInfraActiveRequestbyRequestId(Mockito.any());
     }
@@ -932,6 +932,12 @@ public class ServiceInstancesTest extends BaseTest {
         wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests/v1/getInfraActiveRequests.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("infra/VnfLookup.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests/checkInstanceNameDuplicate"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/WorkflowActionBB"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -969,6 +975,8 @@ public class ServiceInstancesTest extends BaseTest {
 
     @Test
     public void replaceVnfRecreateInstance() throws IOException {
+        Mockito.doReturn(null).when(requestsDbClient).checkInstanceNameDuplicate(Mockito.any(), Mockito.any(),
+                Mockito.any());
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/RecreateInfraVce"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
@@ -2590,7 +2598,7 @@ public class ServiceInstancesTest extends BaseTest {
         serviceRecipe.setRecipeTimeout(180);
         Service defaultService = new Service();
         defaultService.setModelUUID("d88da85c-d9e8-4f73-b837-3a72a431622a");
-        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests/"))
+        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
         wireMockServer.stubFor(get(urlMatching(".*/service/.*"))
@@ -2614,7 +2622,7 @@ public class ServiceInstancesTest extends BaseTest {
 
     @Test
     public void createPortConfigurationSaveError() throws IOException {
-        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests/"))
+        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
         wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/ALaCarteOrchestrator"))
@@ -2634,7 +2642,7 @@ public class ServiceInstancesTest extends BaseTest {
 
     @Test
     public void createPortConfigDbUpdateError() throws IOException {
-        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests/"))
+        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
 

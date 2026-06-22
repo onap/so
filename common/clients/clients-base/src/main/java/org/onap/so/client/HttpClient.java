@@ -22,7 +22,7 @@ package org.onap.so.client;
 
 import java.net.URL;
 import java.util.Optional;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.javatuples.Pair;
 import org.onap.logging.filter.base.ONAPComponentsList;
 import org.slf4j.Logger;

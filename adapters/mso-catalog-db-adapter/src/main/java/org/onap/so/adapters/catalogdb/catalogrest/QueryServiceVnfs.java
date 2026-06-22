@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
@@ -128,8 +128,8 @@ public class QueryServiceVnfs extends CatalogQuery {
             String subitem = new QueryVfModule(vrNull ? null : o.getVfModuleCustomizations()).JSON2(true, true);
             valueMap.put("_VFMODULES_", subitem.replaceAll("(?m)^", "\t\t"));
 
-            List<VnfcInstanceGroupCustomization> vnfcInstanceGroupCustomizations =
-                    o.getVnfcInstanceGroupCustomizations();
+            List<VnfcInstanceGroupCustomization> vnfcInstanceGroupCustomizations = o
+                    .getVnfcInstanceGroupCustomizations();
 
             String grpSubItem = new QueryGroups(vrNull ? null : vnfcInstanceGroupCustomizations).JSON2(true, true);
             valueMap.put("_GROUPS_", grpSubItem.replaceAll("(?m)^", "\t\t"));

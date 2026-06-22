@@ -71,8 +71,7 @@ public class ServiceMapperTest {
     }
 
     private org.onap.so.db.catalog.beans.VnfResourceCustomization getTestVnfCustomization() {
-        org.onap.so.db.catalog.beans.VnfResourceCustomization test =
-                new org.onap.so.db.catalog.beans.VnfResourceCustomization();
+        org.onap.so.db.catalog.beans.VnfResourceCustomization test = new org.onap.so.db.catalog.beans.VnfResourceCustomization();
         test.setId(1);
         test.setAvailabilityZoneMaxCount(11);
         test.setMaxInstances(3);

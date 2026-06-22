@@ -31,8 +31,8 @@ public class CatalogQueryExceptionTest {
         assertNotNull(messageCatalogQueryException.getMessage());
         assertEquals("TestMessage", messageCatalogQueryException.getMessage());
 
-        CatalogQueryException paramsCatalogQueryException =
-                new CatalogQueryException("TestMessage", CatalogQueryExceptionCategory.INTERNAL, true, "messageID");
+        CatalogQueryException paramsCatalogQueryException = new CatalogQueryException("TestMessage",
+                CatalogQueryExceptionCategory.INTERNAL, true, "messageID");
         assertParams(paramsCatalogQueryException);
 
         CatalogQueryException defaultCatalogQueryException = new CatalogQueryException();

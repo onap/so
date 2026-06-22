@@ -21,7 +21,7 @@
 package org.onap.so.bpmn.infrastructure.adapter.cnfm.tasks;
 
 import static org.junit.Assert.assertNotNull;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

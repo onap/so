@@ -82,12 +82,12 @@ public abstract class CatalogQuery {
 
     public String toJsonString(String version, boolean isArray) {
         switch (version) {
-            case "v1":
-                return smartToJSON();
-            case "v2":
-                return JSON2(isArray, !IS_EMBED);
-            default:
-                return "invalid version: " + version;
+        case "v1":
+            return smartToJSON();
+        case "v2":
+            return JSON2(isArray, !IS_EMBED);
+        default:
+            return "invalid version: " + version;
         }
     }
 

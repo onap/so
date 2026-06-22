@@ -85,8 +85,7 @@ public class QueryResourceRecipeTest {
         QueryResourceRecipe networkQueryRR = new QueryResourceRecipe(new NetworkRecipe());
         QueryResourceRecipe arQueryRR = new QueryResourceRecipe(new ArRecipe());
 
-        String expected =
-                "{\"orchestrationUri\":\"\",\"action\":\"\",\"description\":\"\",\"id\":\"\",\"recipeTimeout\":\"\",\"paramXSD\":\"\"}";
+        String expected = "{\"orchestrationUri\":\"\",\"action\":\"\",\"description\":\"\",\"id\":\"\",\"recipeTimeout\":\"\",\"paramXSD\":\"\"}";
         assertEquals(expected, vnfQueryRR.JSON2(false, false));
         assertEquals(expected, networkQueryRR.JSON2(false, false));
         assertEquals(expected, arQueryRR.JSON2(false, false));

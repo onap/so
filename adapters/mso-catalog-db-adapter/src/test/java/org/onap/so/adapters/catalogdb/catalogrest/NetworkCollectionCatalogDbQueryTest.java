@@ -27,7 +27,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import java.util.List;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
@@ -42,7 +42,7 @@ import org.onap.so.db.catalog.client.CatalogDbClientPortChanger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 
 public class NetworkCollectionCatalogDbQueryTest extends CatalogDbAdapterBaseTest {
 
@@ -90,8 +90,8 @@ public class NetworkCollectionCatalogDbQueryTest extends CatalogDbAdapterBaseTes
                                 logger.debug("Found a network collection");
                                 instanceGroup = crc.getCollectionResource().getInstanceGroup();
                                 collectionInstanceGroupList = instanceGroup.getCollectionInstanceGroupCustomizations();
-                                CollectionNetworkResourceCustomization collectionNetworkCust =
-                                        instanceGroup.getCollectionNetworkResourceCustomizations().get(0);
+                                CollectionNetworkResourceCustomization collectionNetworkCust = instanceGroup
+                                        .getCollectionNetworkResourceCustomizations().get(0);
                                 logger.debug("Found Collection Network Resource Customization: {}",
                                         collectionNetworkCust.getModelCustomizationUUID());
                             } else {
@@ -140,8 +140,8 @@ public class NetworkCollectionCatalogDbQueryTest extends CatalogDbAdapterBaseTes
     @Test
     public void CollectionNetworkResourceCustomizationTest() {
         String modelCustId = "1a61be4b-3378-4c9a-91c8-c919519b2d01";
-        CollectionNetworkResourceCustomization collectionNetworkCust =
-                client.getCollectionNetworkResourceCustomizationByID(modelCustId);
+        CollectionNetworkResourceCustomization collectionNetworkCust = client
+                .getCollectionNetworkResourceCustomizationByID(modelCustId);
         assertNotNull(collectionNetworkCust);
         logger.debug(collectionNetworkCust.getModelCustomizationUUID());
     }
@@ -152,8 +152,8 @@ public class NetworkCollectionCatalogDbQueryTest extends CatalogDbAdapterBaseTes
         String vfId = "cb82ffd8-252a-11e7-93ae-92361f002671";
         String vnfId = "68dc9a92-214c-11e7-93ae-92361f002671";
 
-        CvnfcConfigurationCustomization fabricConfig =
-                client.getCvnfcCustomization(serviceUUID, vnfId, vfId, "dadc2c8c-2bab-11e9-b210-d663bd873d95");
+        CvnfcConfigurationCustomization fabricConfig = client.getCvnfcCustomization(serviceUUID, vnfId, vfId,
+                "dadc2c8c-2bab-11e9-b210-d663bd873d95");
         assertEquals("386c9aa7-9318-48ee-a6d1-1bf0f85de385", fabricConfig.getModelCustomizationUUID());
     }
 

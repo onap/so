@@ -3,6 +3,7 @@ package org.onap.so.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -15,8 +16,13 @@ public class CorsBasicHttpSecurityConfigurer implements HttpSecurityConfigurer {
 
     @Override
     public void configure(final HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
-                .antMatchers("/**").fullyAuthenticated().and().httpBasic();
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(new AntPathRequestMatcher("/manage/health"),
+                                new AntPathRequestMatcher("/manage/info"))
+                        .permitAll().requestMatchers(new AntPathRequestMatcher("/**")).fullyAuthenticated())
+                .httpBasic(httpBasic -> {
+                });
     }
 
     @Bean

@@ -22,7 +22,7 @@
 
 package org.onap.so.client.dmaapproperties;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import org.onap.so.client.avpn.dmaap.beans.AVPNDmaapBean;
 import org.onap.so.client.avpn.dmaap.beans.AsyncRequestStatus;
 import org.onap.so.client.avpn.dmaap.beans.InstanceReferences;

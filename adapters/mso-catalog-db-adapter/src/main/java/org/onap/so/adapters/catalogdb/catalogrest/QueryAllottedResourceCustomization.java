@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,24 +33,24 @@ import org.slf4j.LoggerFactory;
 public class QueryAllottedResourceCustomization extends CatalogQuery {
     protected static Logger logger = LoggerFactory.getLogger(QueryAllottedResourceCustomization.class);
     private List<AllottedResourceCustomization> allottedResourceCustomization;
-    private static final String TEMPLATE =
-            "\t{\n" + "\t\t\"modelInfo\"       : {\n" + "\t\t\t\"modelName\"              : <MODEL_NAME>,\n"
-                    + "\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"
-                    + "\t\t\t\"modelInvariantUuid\"     : <MODEL_INVARIANT_ID>,\n"
-                    + "\t\t\t\"modelVersion\"           : <MODEL_VERSION>,\n"
-                    + "\t\t\t\"modelCustomizationUuid\" : <MODEL_CUSTOMIZATION_UUID>,\n"
-                    + "\t\t\t\"modelInstanceName\"      : <MODEL_INSTANCE_NAME>\n" + "\t\t},\n"
-                    + "\t\t\"toscaNodeType\"                      : <TOSCA_NODE_TYPE>,\n"
-                    + "\t\t\"allottedResourceType\"               : <ALLOTTED_RESOURCE_TYPE>,\n"
-                    + "\t\t\"allottedResourceRole\"               : <ALLOTTED_RESOURCE_ROLE>,\n"
-                    + "\t\t\"providingServiceModelName\"          : <PROVIDING_SERVICE_MODEL_NAME>,\n"
-                    + "\t\t\"providingServiceModelInvariantUuid\" : <PROVIDING_SERVICE_MODEL_INVARIANT_UUID>,\n"
-                    + "\t\t\"providingServiceModelUuid\"          : <PROVIDING_SERVICE_MODEL_UUID>,\n"
-                    + "\t\t\"nfFunction\"                         : <NF_FUNCTION>,\n"
-                    + "\t\t\"nfType\"                             : <NF_TYPE>,\n"
-                    + "\t\t\"nfRole\"                             : <NF_ROLE>,\n"
-                    + "\t\t\"nfNamingCode\"                       : <NF_NAMING_CODE>,\n"
-                    + "\t\t\"resourceInput\"                      : <RESOURCE_INPUT>\n" + "\t}";
+    private static final String TEMPLATE = "\t{\n" + "\t\t\"modelInfo\"       : {\n"
+            + "\t\t\t\"modelName\"              : <MODEL_NAME>,\n"
+            + "\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"
+            + "\t\t\t\"modelInvariantUuid\"     : <MODEL_INVARIANT_ID>,\n"
+            + "\t\t\t\"modelVersion\"           : <MODEL_VERSION>,\n"
+            + "\t\t\t\"modelCustomizationUuid\" : <MODEL_CUSTOMIZATION_UUID>,\n"
+            + "\t\t\t\"modelInstanceName\"      : <MODEL_INSTANCE_NAME>\n" + "\t\t},\n"
+            + "\t\t\"toscaNodeType\"                      : <TOSCA_NODE_TYPE>,\n"
+            + "\t\t\"allottedResourceType\"               : <ALLOTTED_RESOURCE_TYPE>,\n"
+            + "\t\t\"allottedResourceRole\"               : <ALLOTTED_RESOURCE_ROLE>,\n"
+            + "\t\t\"providingServiceModelName\"          : <PROVIDING_SERVICE_MODEL_NAME>,\n"
+            + "\t\t\"providingServiceModelInvariantUuid\" : <PROVIDING_SERVICE_MODEL_INVARIANT_UUID>,\n"
+            + "\t\t\"providingServiceModelUuid\"          : <PROVIDING_SERVICE_MODEL_UUID>,\n"
+            + "\t\t\"nfFunction\"                         : <NF_FUNCTION>,\n"
+            + "\t\t\"nfType\"                             : <NF_TYPE>,\n"
+            + "\t\t\"nfRole\"                             : <NF_ROLE>,\n"
+            + "\t\t\"nfNamingCode\"                       : <NF_NAMING_CODE>,\n"
+            + "\t\t\"resourceInput\"                      : <RESOURCE_INPUT>\n" + "\t}";
 
     public QueryAllottedResourceCustomization() {
         super();

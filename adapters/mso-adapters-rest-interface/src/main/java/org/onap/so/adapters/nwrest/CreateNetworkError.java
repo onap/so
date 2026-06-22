@@ -22,7 +22,7 @@ package org.onap.so.adapters.nwrest;
 
 
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 
 @XmlRootElement(name = "createNetworkError")

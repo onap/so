@@ -24,19 +24,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.onap.so.db.catalog.beans.VnfcCustomization;
 
 @XmlRootElement(name = "vnfcs")
 public class QueryVnfcs extends CatalogQuery {
     private List<VnfcCustomization> vnfcCustomizations;
-    private static final String TEMPLATE =
-            "\t{\n" + "\t\t\"modelInfo\"               : { \n" + "\t\t\t\"modelName\"              : <MODEL_NAME>,\n"
-                    + "\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"
-                    + "\t\t\t\"modelInvariantUuid\"     : <MODEL_INVARIANT_ID>,\n"
-                    + "\t\t\t\"modelVersion\"           : <MODEL_VERSION>,\n"
-                    + "\t\t\t\"modelCustomizationUuid\" : <MODEL_CUSTOMIZATION_UUID>\n" + "\t\t},\n"
-                    + "\t\t\"resourceInput\"            : <RESOURCE_INPUT>\n" + "\t}";
+    private static final String TEMPLATE = "\t{\n" + "\t\t\"modelInfo\"               : { \n"
+            + "\t\t\t\"modelName\"              : <MODEL_NAME>,\n"
+            + "\t\t\t\"modelUuid\"              : <MODEL_UUID>,\n"
+            + "\t\t\t\"modelInvariantUuid\"     : <MODEL_INVARIANT_ID>,\n"
+            + "\t\t\t\"modelVersion\"           : <MODEL_VERSION>,\n"
+            + "\t\t\t\"modelCustomizationUuid\" : <MODEL_CUSTOMIZATION_UUID>\n" + "\t\t},\n"
+            + "\t\t\"resourceInput\"            : <RESOURCE_INPUT>\n" + "\t}";
 
     public QueryVnfcs() {
         super();

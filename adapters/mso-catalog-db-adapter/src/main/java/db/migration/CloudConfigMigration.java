@@ -155,9 +155,8 @@ public class CloudConfigMigration implements CustomTaskChange {
 
     private void migrateCloudIdentity(Collection<CloudIdentity> entities, Connection connection) throws SQLException {
         logger.debug("Starting migration for CloudConfig-->IdentityService");
-        String insert =
-                "INSERT INTO `identity_services` (`ID`, `IDENTITY_URL`, `MSO_ID`, `MSO_PASS`, `ADMIN_TENANT`, `MEMBER_ROLE`, `TENANT_METADATA`, `IDENTITY_SERVER_TYPE`, `IDENTITY_AUTHENTICATION_TYPE`, `LAST_UPDATED_BY`, `PROJECT_DOMAIN_NAME`, `USER_DOMAIN_NAME`) "
-                        + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?);";
+        String insert = "INSERT INTO `identity_services` (`ID`, `IDENTITY_URL`, `MSO_ID`, `MSO_PASS`, `ADMIN_TENANT`, `MEMBER_ROLE`, `TENANT_METADATA`, `IDENTITY_SERVER_TYPE`, `IDENTITY_AUTHENTICATION_TYPE`, `LAST_UPDATED_BY`, `PROJECT_DOMAIN_NAME`, `USER_DOMAIN_NAME`) "
+                + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?);";
 
         try (Statement stmt = connection.createStatement();
                 PreparedStatement ps = connection.prepareStatement(insert)) {
@@ -176,14 +175,10 @@ public class CloudConfigMigration implements CustomTaskChange {
                         ps.setString(5, cloudIdentity.getAdminTenant());
                         ps.setString(6, cloudIdentity.getMemberRole());
                         ps.setBoolean(7, cloudIdentity.getTenantMetadata());
-                        ps.setString(8,
-                                cloudIdentity.getIdentityServerType() != null
-                                        ? cloudIdentity.getIdentityServerType().name()
-                                        : null);
-                        ps.setString(9,
-                                cloudIdentity.getIdentityAuthenticationType() != null
-                                        ? cloudIdentity.getIdentityAuthenticationType().name()
-                                        : null);
+                        ps.setString(8, cloudIdentity.getIdentityServerType() != null
+                                ? cloudIdentity.getIdentityServerType().name() : null);
+                        ps.setString(9, cloudIdentity.getIdentityAuthenticationType() != null
+                                ? cloudIdentity.getIdentityAuthenticationType().name() : null);
                         ps.setString(10, MIGRATION);
                         ps.setString(11, cloudIdentity.getProjectDomainName());
                         ps.setString(12, cloudIdentity.getUserDomainName());
@@ -196,15 +191,14 @@ public class CloudConfigMigration implements CustomTaskChange {
 
     private void migrateCloudSite(Collection<CloudSite> entities, Connection connection) throws SQLException {
         logger.debug("Starting migration for CloudConfig-->CloudSite");
-        String insert =
-                "INSERT INTO `cloud_sites` (`ID`, `REGION_ID`, `IDENTITY_SERVICE_ID`, `CLOUD_VERSION`, `CLLI`, `CLOUDIFY_ID`, `PLATFORM`, `ORCHESTRATOR`, `LAST_UPDATED_BY`) "
-                        + "VALUES (?,?,?,?,?,?,?,?,?);";
+        String insert = "INSERT INTO `cloud_sites` (`ID`, `REGION_ID`, `IDENTITY_SERVICE_ID`, `CLOUD_VERSION`, `CLLI`, `CLOUDIFY_ID`, `PLATFORM`, `ORCHESTRATOR`, `LAST_UPDATED_BY`) "
+                + "VALUES (?,?,?,?,?,?,?,?,?);";
 
         try (Statement stmt = connection.createStatement();
                 PreparedStatement ps = connection.prepareStatement(insert)) {
             for (CloudSite cloudSite : entities) {
-                try (ResultSet rows =
-                        stmt.executeQuery("Select count(1) from cloud_sites where id='" + cloudSite.getId() + "'")) {
+                try (ResultSet rows = stmt
+                        .executeQuery("Select count(1) from cloud_sites where id='" + cloudSite.getId() + "'")) {
                     int count = 0;
                     while (rows.next()) {
                         count = rows.getInt(1);
@@ -228,9 +222,8 @@ public class CloudConfigMigration implements CustomTaskChange {
 
     private void migrateCloudifyManagers(Collection<CloudifyManager> entities, Connection connection)
             throws SQLException {
-        String insert =
-                "INSERT INTO `cloudify_managers` (`ID`, `CLOUDIFY_URL`, `USERNAME`, `PASSWORD`, `VERSION`, `LAST_UPDATED_BY`)"
-                        + " VALUES (?,?,?,?,?,?);";
+        String insert = "INSERT INTO `cloudify_managers` (`ID`, `CLOUDIFY_URL`, `USERNAME`, `PASSWORD`, `VERSION`, `LAST_UPDATED_BY`)"
+                + " VALUES (?,?,?,?,?,?);";
 
         try (Statement stmt = connection.createStatement();
                 PreparedStatement ps = connection.prepareStatement(insert)) {

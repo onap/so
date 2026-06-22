@@ -20,7 +20,6 @@
 
 package org.onap.so.adapters.catalogdb;
 
-
 import org.onap.logging.filter.spring.LoggingInterceptor;
 import org.onap.logging.filter.spring.StatusLoggingInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +27,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.MappedInterceptor;
 
 @Configuration
-@ComponentScan(basePackages = {"org.onap.logging.filter"})
-public class WebMvcConfig extends WebMvcConfigurerAdapter {
+@ComponentScan(basePackages = { "org.onap.logging.filter" })
+@SuppressWarnings("deprecation")
+public class WebMvcConfig implements WebMvcConfigurer {
 
     @Value("${logging.request-status.exclusions:}")
     private String[] excludedPaths = new String[0];
+
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+        configurer.setUseTrailingSlashMatch(true);
+    }
 
     @Autowired
     private LoggingInterceptor loggingInterceptor;
@@ -47,14 +53,14 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Bean
     public MappedInterceptor mappedLoggingInterceptor() {
         return excludedPaths != null && excludedPaths.length > 0
-                ? new MappedInterceptor(new String[] {"/**"}, excludedPaths, loggingInterceptor)
-                : new MappedInterceptor(new String[] {"/**"}, loggingInterceptor);
+                ? new MappedInterceptor(new String[] { "/**" }, excludedPaths, loggingInterceptor)
+                : new MappedInterceptor(new String[] { "/**" }, loggingInterceptor);
     }
 
     @Bean
     public MappedInterceptor mappedStatusLoggingInterceptor() {
         return excludedPaths != null && excludedPaths.length > 0
-                ? new MappedInterceptor(new String[] {"/**"}, excludedPaths, statusLoggingInterceptor)
-                : new MappedInterceptor(new String[] {"/**"}, statusLoggingInterceptor);
+                ? new MappedInterceptor(new String[] { "/**" }, excludedPaths, statusLoggingInterceptor)
+                : new MappedInterceptor(new String[] { "/**" }, statusLoggingInterceptor);
     }
 }

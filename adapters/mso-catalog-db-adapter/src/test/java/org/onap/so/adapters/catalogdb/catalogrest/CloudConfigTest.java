@@ -22,16 +22,16 @@ package org.onap.so.adapters.catalogdb.catalogrest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import javax.transaction.Transactional;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.junit.Test;
 import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
 import org.onap.so.db.catalog.beans.AuthenticationType;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.ServerType;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -74,17 +74,17 @@ public class CloudConfigTest extends CatalogDbAdapterBaseTest {
         String uri = "/cloudSite";
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://localhost:" + port + uri);
         HttpEntity<CloudSite> request = new HttpEntity<CloudSite>(cloudSite, headers);
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.POST, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, request,
+                String.class);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatusCode().value());
 
         builder = UriComponentsBuilder.fromHttpUrl("http://localhost:" + port + uri + "/" + cloudSite.getId());
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-        ResponseEntity<CloudSite> actualCloudSite =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, CloudSite.class);
+        ResponseEntity<CloudSite> actualCloudSite = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                CloudSite.class);
         builder = UriComponentsBuilder.fromHttpUrl("http://localhost:" + port + uri);
-        ResponseEntity<String> cloudSiteString =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> cloudSiteString = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity,
+                String.class);
         System.out.println(cloudSiteString.getBody());
         assertEquals(Response.Status.OK.getStatusCode(), actualCloudSite.getStatusCode().value());
         assertThat(actualCloudSite.getBody()).usingRecursiveComparison()

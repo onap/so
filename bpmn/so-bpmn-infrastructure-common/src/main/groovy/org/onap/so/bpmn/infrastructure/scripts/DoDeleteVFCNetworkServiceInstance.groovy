@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory
 import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.so.bpmn.core.UrnPropertiesReader
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 /**
  * This groovy class supports the <class>DoDeleteVFCNetworkServiceInstance.bpmn</class> process.
  * flow for E2E ServiceInstance Delete

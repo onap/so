@@ -24,12 +24,13 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.SocketUtils;
+import java.io.IOException;
+import java.net.ServerSocket;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CatalogDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -46,7 +47,12 @@ public class CatalogDbAdapterBaseTest {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        int port = SocketUtils.findAvailableTcpPort();
+        int port;
+        try (ServerSocket socket = new ServerSocket(0)) {
+            port = socket.getLocalPort();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         registry.add("spring.datasource.url", () -> String.format("jdbc:mariadb://localhost:%s/catalogdb", port));
         registry.add("spring.liquibase.url", () -> String.format("jdbc:mariadb://localhost:%s/catalogdb", port));
         registry.add("mariaDB4j.port", () -> port);

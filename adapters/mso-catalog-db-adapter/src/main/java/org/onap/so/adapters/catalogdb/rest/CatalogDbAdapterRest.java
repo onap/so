@@ -22,20 +22,18 @@
 
 package org.onap.so.adapters.catalogdb.rest;
 
-
-
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.GenericEntity;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.onap.so.adapters.catalogdb.catalogrest.CatalogQuery;
@@ -81,7 +79,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Path("/{version: v[0-9]+}")
 @Component
@@ -143,7 +140,7 @@ public class CatalogDbAdapterRest {
     @GET
     @Path("vnfResources/{vnfModelCustomizationUuid}")
     @Transactional(readOnly = true)
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response serviceVnfs(@PathParam("version") String version,
             @PathParam("vnfModelCustomizationUuid") String vnfUuid, @QueryParam("filter") String filter) {
         return serviceVnfsImpl(version, !IS_ARRAY, vnfUuid, null, null, null, null, filter);
@@ -151,7 +148,7 @@ public class CatalogDbAdapterRest {
 
     @GET
     @Path("serviceVnfs")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Transactional(readOnly = true)
     public Response serviceVnfs(@PathParam("version") String version,
             @QueryParam("vnfModelCustomizationUuid") String vnfUuid, @QueryParam("serviceModelUuid") String smUuid,
@@ -207,13 +204,14 @@ public class CatalogDbAdapterRest {
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {
+                    }).build();
         }
     }
 
     @GET
     @Path("networkResources/{networkModelCustomizationUuid}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Transactional(readOnly = true)
     public Response serviceNetworks(@PathParam("version") String version,
             @PathParam("networkModelCustomizationUuid") String nUuid) {
@@ -222,7 +220,7 @@ public class CatalogDbAdapterRest {
 
     @GET
     @Path("serviceNetworks")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Transactional(readOnly = true)
     public Response serviceNetworks(@PathParam("version") String version,
             @QueryParam("networkModelCustomizationUuid") String networkModelCustomizationUuid,
@@ -252,8 +250,8 @@ public class CatalogDbAdapterRest {
                 ret = networkCustomizationRepo.findByModelCustomizationUUID(networkModelCustomizationUuid);
             } else if (networkType != null && !"".equals(networkType)) {
                 uuid = networkType;
-                NetworkResource networkResources =
-                        networkResourceRepo.findFirstByModelNameOrderByModelVersionDesc(networkType);
+                NetworkResource networkResources = networkResourceRepo
+                        .findFirstByModelNameOrderByModelVersionDesc(networkType);
                 if (networkResources != null)
                     ret = networkResources.getNetworkResourceCustomization();
             } else if (serviceModelInvariantUuid != null && !"".equals(serviceModelInvariantUuid)) {
@@ -287,13 +285,14 @@ public class CatalogDbAdapterRest {
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {
+                    }).build();
         }
     }
 
     @GET
     @Path("serviceResources")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Transactional(readOnly = true)
     public Response serviceResources(@PathParam("version") String version,
             @QueryParam("serviceModelUuid") String modelUUID,
@@ -355,14 +354,14 @@ public class CatalogDbAdapterRest {
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {
+                    }).build();
         }
     }
 
-
     @GET
     @Path("allottedResources/{arModelCustomizationUuid}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Transactional(readOnly = true)
     public Response serviceAllottedResources(@PathParam("version") String version,
             @PathParam("arModelCustomizationUuid") String aUuid) {
@@ -371,7 +370,7 @@ public class CatalogDbAdapterRest {
 
     @GET
     @Path("serviceAllottedResources")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Transactional(readOnly = true)
     public Response serviceAllottedResources(@PathParam("version") String version,
             @QueryParam("serviceModelUuid") String smUuid, @QueryParam("serviceModelInvariantUuid") String smiUuid,
@@ -421,13 +420,14 @@ public class CatalogDbAdapterRest {
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {
+                    }).build();
         }
     }
 
     @GET
     @Path("vfModules")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Transactional(readOnly = true)
     public Response vfModules(@QueryParam("vfModuleModelName") String vfModuleModelName) {
         QueryVfModule qryResp;
@@ -458,20 +458,22 @@ public class CatalogDbAdapterRest {
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {
+                    }).build();
         }
     }
 
     /**
      * Get the tosca csar info from catalog <br>
      * 
-     * @param smUuid service model uuid
+     * @param smUuid
+     *            service model uuid
      * @return the tosca csar information of the serivce.
      * @since ONAP Beijing Release
      */
     @GET
     @Path("serviceToscaCsar")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response serviceToscaCsar(@QueryParam("serviceModelUuid") String smUuid) {
         int respStatus = HttpStatus.SC_OK;
         String entity = "";
@@ -503,20 +505,22 @@ public class CatalogDbAdapterRest {
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {
+                    }).build();
         }
     }
 
     /**
      * Get the resource recipe info from catalog <br>
      * 
-     * @param rmUuid resource model uuid
+     * @param rmUuid
+     *            resource model uuid
      * @return the recipe information of the resource.
      * @since ONAP Beijing Release
      */
     @GET
     @Path("resourceRecipe")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response resourceRecipe(@QueryParam("resourceModelUuid") String rmUuid,
             @QueryParam("action") String action) {
         int respStatus = HttpStatus.SC_OK;
@@ -537,7 +541,6 @@ public class CatalogDbAdapterRest {
                         recipe = vnfRecipeRepo.findFirstVnfRecipeByNfRoleAndAction("NS_DEFAULT", action);
                     }
                 }
-
 
                 if (null == recipe) {
                     NetworkResource nResource = networkResourceRepo.findResourceByModelUUID(rmUuid);
@@ -586,13 +589,14 @@ public class CatalogDbAdapterRest {
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {
+                    }).build();
         }
     }
 
     @GET
     @Path("processingFlags/{flag}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Transactional(readOnly = true)
     public Response getProcessingFlags(@PathParam("flag") String flag) {
         return getProcessingFlagsImpl(flag);
@@ -619,13 +623,14 @@ public class CatalogDbAdapterRest {
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {
+                    }).build();
         }
     }
 
     @PUT
     @Path("processingFlags/{flag}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Transactional
     public Response updateProcessingFlagsValue(@PathParam("flag") String flag, ProcessingFlags updatedProcessingFlag) {
         return updateProcessingFlagsValueImpl(flag, updatedProcessingFlag);
@@ -661,7 +666,8 @@ public class CatalogDbAdapterRest {
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {
+                    }).build();
         }
 
         return Response.status(HttpStatus.SC_NOT_FOUND).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -670,7 +676,7 @@ public class CatalogDbAdapterRest {
 
     @GET
     @Path("processingFlags")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Transactional(readOnly = true)
     public Response getAllProcessingFlags() {
         return getAllProcessingFlagsImpl();
@@ -696,7 +702,8 @@ public class CatalogDbAdapterRest {
             CatalogQueryException excResp = new CatalogQueryException(e.getMessage(),
                     CatalogQueryExceptionCategory.INTERNAL, Boolean.FALSE, null);
             return Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                    .entity(new GenericEntity<CatalogQueryException>(excResp) {}).build();
+                    .entity(new GenericEntity<CatalogQueryException>(excResp) {
+                    }).build();
         }
     }
 }

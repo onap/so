@@ -22,8 +22,8 @@ package org.onap.so.asdc;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.PostConstruct;
-import javax.ws.rs.ApplicationPath;
+import jakarta.annotation.PostConstruct;
+import jakarta.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.onap.so.asdc.client.test.rest.ASDCRestInterface;
 import org.slf4j.Logger;

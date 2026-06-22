@@ -27,7 +27,7 @@ import org.onap.so.client.HttpClientFactory
 import org.onap.logging.filter.base.ErrorCode
 
 import java.text.SimpleDateFormat
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 import java.net.URLEncoder
 
 import org.apache.commons.codec.binary.Base64

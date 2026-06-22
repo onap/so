@@ -4,13 +4,11 @@ import static org.junit.Assert.assertEquals;
 import org.json.JSONException;
 import org.junit.Test;
 
-
 public class QueryServiceVnfTest extends QueryServiceVnfs {
 
     private QueryServiceVnfs queryServiceVnf = new QueryServiceVnfs();
 
-    private final String invalidJSON =
-            "\"{\\\\\\\"nf_function\\\\\\\":\\\\\\\"DO_STUFF\\\\\\\",\\\"_image_name\\\\\\\":\\\\\\\"test_image\\\"";
+    private final String invalidJSON = "\"{\\\\\\\"nf_function\\\\\\\":\\\\\\\"DO_STUFF\\\\\\\",\\\"_image_name\\\\\\\":\\\\\\\"test_image\\\"";
 
     private final String validJSON = "\"{\"nf_function\":\"DO_STUFF\",\"image_name\":\"test_image\"}";
 
@@ -31,6 +29,5 @@ public class QueryServiceVnfTest extends QueryServiceVnfs {
         boolean isValidJson = queryServiceVnf.isJSONValid(null);
         assertEquals(false, isValidJson);
     }
-
 
 }

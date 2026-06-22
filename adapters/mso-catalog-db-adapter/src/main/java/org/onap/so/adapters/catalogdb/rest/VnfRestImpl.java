@@ -22,15 +22,15 @@ package org.onap.so.adapters.catalogdb.rest;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
@@ -64,10 +64,9 @@ public class VnfRestImpl {
     private VnfCustomizationRepository vnfCustRepo;
 
     @GET
-    @Operation(description = "Find a VNF model contained within a service", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Vnf.class)))))
+    @Operation(description = "Find a VNF model contained within a service", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Vnf.class)))))
     @Path("/{modelCustomizationUUID}")
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
     @Transactional(readOnly = true)
     public Vnf findService(@PathParam("modelUUID") String serviceModelUUID,
             @PathParam("modelCustomizationUUID") String modelCustomizationUUID, @QueryParam("depth") int depth) {
@@ -88,10 +87,9 @@ public class VnfRestImpl {
     }
 
     @PUT
-    @Operation(description = "Update a VNF model contained within a service", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Vnf.class)))))
+    @Operation(description = "Update a VNF model contained within a service", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Vnf.class)))))
     @Path("/{modelCustomizationUUID}")
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
     @Transactional
     public Response findService(@PathParam("modelUUID") String serviceModelUUID,
             @PathParam("modelCustomizationUUID") String modelCustomizationUUID, Vnf vnf) {
@@ -111,4 +109,3 @@ public class VnfRestImpl {
     }
 
 }
-

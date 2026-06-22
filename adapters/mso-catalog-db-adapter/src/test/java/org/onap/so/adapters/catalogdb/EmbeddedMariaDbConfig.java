@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Profile;
 import javax.sql.DataSource;
 
 @Configuration
-@Profile({"test", "local"})
+@Profile({ "test", "local" })
 public class EmbeddedMariaDbConfig {
 
     @Bean
@@ -51,9 +51,8 @@ public class EmbeddedMariaDbConfig {
         DBConfigurationBuilder config = mariaDB4jSpringService.getConfiguration();
 
         // Create database via JDBC to avoid dependency on the mariadb CLI client binary
-        try (java.sql.Connection conn =
-                java.sql.DriverManager.getConnection(config.getURL(""), datasourceUsername, datasourcePassword);
-                java.sql.Statement stmt = conn.createStatement()) {
+        try (java.sql.Connection conn = java.sql.DriverManager.getConnection(config.getURL(""), datasourceUsername,
+                datasourcePassword); java.sql.Statement stmt = conn.createStatement()) {
             stmt.execute("CREATE DATABASE IF NOT EXISTS `" + databaseName + "`");
         }
 
