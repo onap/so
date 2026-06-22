@@ -36,7 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.onap.so.client.HttpClientFactory
 import org.onap.logging.filter.base.ErrorCode
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 
 import org.onap.so.bpmn.infrastructure.vfcmodel.ScaleResource
 import org.onap.so.client.HttpClient

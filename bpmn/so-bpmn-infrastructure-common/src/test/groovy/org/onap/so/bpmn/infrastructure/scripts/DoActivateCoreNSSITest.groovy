@@ -43,7 +43,7 @@ import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
 import static org.mockito.ArgumentMatchers.eq
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 
 class DoActivateCoreNSSITest extends MsoGroovyTest {
 

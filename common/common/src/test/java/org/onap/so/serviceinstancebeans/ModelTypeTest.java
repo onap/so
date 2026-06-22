@@ -26,8 +26,6 @@ import org.junit.Test;
 
 public class ModelTypeTest {
 
-
-
     @Test
     public void reflectionTest() {
         TestServiceInstanceBean a = new TestServiceInstanceBean();

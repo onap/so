@@ -31,7 +31,7 @@ import org.onap.so.client.HttpClientFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 
 /***
  * Utilities for accessing Catalog DB Adapter to retrieve Networks, VNF/VFModules, AllottedResources and complete ServiceResources information

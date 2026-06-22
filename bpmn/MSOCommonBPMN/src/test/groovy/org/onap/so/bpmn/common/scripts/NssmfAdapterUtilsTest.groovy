@@ -34,7 +34,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull

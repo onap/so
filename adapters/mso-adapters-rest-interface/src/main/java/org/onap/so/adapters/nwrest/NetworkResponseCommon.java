@@ -26,8 +26,8 @@ package org.onap.so.adapters.nwrest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;

@@ -19,16 +19,15 @@
  */
 package org.onap.so.security;
 
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * @author Waqas Ikram (waqas.ikram@est.tech)
- *
- */
 @Slf4j
 @Component("basic")
 public class SoBasicHttpSecurityConfigurer implements HttpSecurityConfigurer {
@@ -38,16 +37,26 @@ public class SoBasicHttpSecurityConfigurer implements HttpSecurityConfigurer {
 
     private static final String[] unauthenticatedEndpoints = new String[] {"/manage/health", "/manage/info", "/error"};
 
+    private static RequestMatcher[] antMatchers(String... patterns) {
+        return Arrays.stream(patterns).map(AntPathRequestMatcher::new).toArray(RequestMatcher[]::new);
+    }
+
     @Override
     public void configure(final HttpSecurity http) throws Exception {
         if (soUserCredentialConfiguration.getRbacEnabled()) {
             String roles = StringUtils.collectionToDelimitedString(soUserCredentialConfiguration.getRoles(), ",");
-            http.csrf().disable().authorizeRequests().antMatchers(unauthenticatedEndpoints).permitAll()
-                    .antMatchers("/**").hasAnyRole(roles).and().httpBasic();
+            http.csrf(csrf -> csrf.disable())
+                    .authorizeHttpRequests(authorize -> authorize.requestMatchers(antMatchers(unauthenticatedEndpoints))
+                            .permitAll().requestMatchers(antMatchers("/**")).hasAnyRole(roles.split(",")))
+                    .httpBasic(httpBasic -> {
+                    });
         } else {
             log.debug("Not configuring RBAC for the app.");
-            http.csrf().disable().authorizeRequests().antMatchers(unauthenticatedEndpoints).permitAll()
-                    .antMatchers("/**").authenticated().and().httpBasic();
+            http.csrf(csrf -> csrf.disable())
+                    .authorizeHttpRequests(authorize -> authorize.requestMatchers(antMatchers(unauthenticatedEndpoints))
+                            .permitAll().requestMatchers(antMatchers("/**")).authenticated())
+                    .httpBasic(httpBasic -> {
+                    });
         }
     }
 

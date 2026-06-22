@@ -20,7 +20,6 @@
 
 package org.onap.so.rest.exceptions;
 
-
 public class HttpResouceNotFoundException extends RuntimeException {
 
     private static final long serialVersionUID = 9007892558312387355L;

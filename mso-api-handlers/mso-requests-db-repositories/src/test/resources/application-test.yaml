@@ -16,6 +16,9 @@ mso:
 
 # H2
 spring:
+  sql:
+    init:
+      continue-on-error: true
   sleuth:
     enabled: false
   datasource:
@@ -33,7 +36,7 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
+        dialect: org.hibernate.dialect.MySQLDialect
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
         enable-lazy-load-no-trans: true
 

@@ -22,7 +22,6 @@ package org.onap.so.serviceinstancebeans;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-
 public class RequestList {
 
     protected Request request;

@@ -24,7 +24,9 @@ import org.onap.so.db.catalog.beans.PnfResource;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.exceptions.NoEntityFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class PnfCustomizationRepositoryTest extends BaseTest {
 
     @Autowired

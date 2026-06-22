@@ -45,7 +45,7 @@ import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 
 
 public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{

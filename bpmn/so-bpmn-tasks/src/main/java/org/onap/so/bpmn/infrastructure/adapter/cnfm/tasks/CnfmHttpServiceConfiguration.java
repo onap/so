@@ -20,7 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.cnfm.tasks;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.configuration.HttpComponentsClientConfiguration;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;

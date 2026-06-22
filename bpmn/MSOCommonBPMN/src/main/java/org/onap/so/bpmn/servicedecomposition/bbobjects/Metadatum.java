@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 
 public class Metadatum implements Serializable, ShallowCopy<Metadatum> {
 

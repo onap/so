@@ -28,7 +28,7 @@ import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetAllottedResource
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPatchAllottedResource
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutAllottedResource
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutAllottedResource_500
-import javax.ws.rs.core.UriBuilder
+import jakarta.ws.rs.core.UriBuilder
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.*

@@ -24,7 +24,7 @@ package org.onap.so.apihandlerinfra.tenantisolation.process;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.NotFoundException;
+import jakarta.ws.rs.NotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.onap.aai.domain.yang.OperationalEnvironment;

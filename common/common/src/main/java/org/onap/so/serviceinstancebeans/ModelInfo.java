@@ -25,7 +25,6 @@
 // Generated on: 2016.03.30 at 02:48:23 PM CDT
 //
 
-
 package org.onap.so.serviceinstancebeans;
 
 import java.io.Serializable;
@@ -189,6 +188,5 @@ public class ModelInfo implements Serializable {
                 + ", modelUuid=" + modelUuid + ", modelInvariantUuid=" + modelInvariantUuid + ", modelInstanceName="
                 + modelInstanceName + "]";
     }
-
 
 }

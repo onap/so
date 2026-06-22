@@ -64,23 +64,24 @@
     <snapshotNexusPath>content/repositories/snapshots/</snapshotNexusPath>
     <publicNexusPath>content/repositories/public/</publicNexusPath>
     <siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
-    <cxf.version>3.4.10</cxf.version>
-    <jax.ws.rs>2.1</jax.ws.rs>
-    <springboot.version>2.7.18</springboot.version>
-    <spring-cloud.version>2021.0.9</spring-cloud.version>
-    <camunda.version>7.17.0</camunda.version>
+    <cxf.version>4.0.5</cxf.version>
+    <jax.ws.rs>2.1.1</jax.ws.rs>
+    <jakarta.ws.rs.version>4.0.0</jakarta.ws.rs.version>
+    <springboot.version>3.0.13</springboot.version>
+    <spring-cloud.version>2022.0.5</spring-cloud.version>
+    <camunda.version>7.20.0</camunda.version>
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>0.33.0</io.fabric8.version>
     <bowman.client.version>0.10.0</bowman.client.version>
     <so-etsi-sol003-adapter-version>1.9.0-SNAPSHOT</so-etsi-sol003-adapter-version>
-    <onap-logging-version>1.6.9</onap-logging-version>
+    <onap-logging-version>1.7.0-SNAPSHOT</onap-logging-version>
     <jackson.version>2.14.3</jackson.version>
-    <grpc.version>1.29.0</grpc.version>
-    <logback.version>1.2.11</logback.version>
-    <kafka-clients.version>3.3.2</kafka-clients.version>
-    <aai-schema.version>1.12.10</aai-schema.version>
-    <junit-jupiter.version>5.8.2</junit-jupiter.version>
+    <grpc.version>1.58.0</grpc.version>
+    <logback.version>1.4.14</logback.version>
+    <kafka-clients.version>3.4.1</kafka-clients.version>
+    <aai-schema.version>1.14.0</aai-schema.version>
+    <junit-jupiter.version>5.9.3</junit-jupiter.version>
     <surefire.forkCount>1</surefire.forkCount>
     <surefire.threadCount>1</surefire.threadCount>
   </properties>
@@ -746,8 +747,7 @@
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-jaxb-annotations</artifactId>
-      <version>${jackson.version}</version>
+      <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -760,28 +760,26 @@
       <version>${jackson.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.jaxrs</groupId>
-      <artifactId>jackson-jaxrs-base</artifactId>
-      <version>${jackson.version}</version>
+      <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+      <artifactId>jackson-jakarta-rs-base</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.jaxrs</groupId>
-      <artifactId>jackson-jaxrs-json-provider</artifactId>
-      <version>${jackson.version}</version>
+      <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+      <artifactId>jackson-jakarta-rs-json-provider</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.ws.rs</groupId>
-      <artifactId>javax.ws.rs-api</artifactId>
-      <version>${jax.ws.rs}</version>
+      <groupId>jakarta.ws.rs</groupId>
+      <artifactId>jakarta.ws.rs-api</artifactId>
+      <version>${jakarta.ws.rs.version}</version>
     </dependency>
     <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.inject</groupId>
-      <artifactId>javax.inject</artifactId>
-      <version>1</version>
+      <groupId>jakarta.inject</groupId>
+      <artifactId>jakarta.inject-api</artifactId>
+      <version>2.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
@@ -808,15 +806,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.github.tomakehurst</groupId>
-      <artifactId>wiremock-jre8-standalone</artifactId>
-      <version>2.35.0</version>
+      <groupId>org.wiremock</groupId>
+      <artifactId>wiremock-standalone</artifactId>
+      <version>3.3.1</version>
       <scope>test</scope>
       <exclusions>
-        <exclusion>
-          <groupId>org.mortbay.jetty</groupId>
-          <artifactId>jetty</artifactId>
-        </exclusion>
         <exclusion>
           <groupId>com.google.guava</groupId>
           <artifactId>guava</artifactId>
@@ -832,26 +826,6 @@
         <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-databind</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.httpcomponents</groupId>
-          <artifactId>httpclient</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.skyscreamer</groupId>
-          <artifactId>jsonassert</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xmlunit</groupId>
-          <artifactId>xmlunit</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.jayway.jsonpath</groupId>
-          <artifactId>json-path</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>net.sf.jopt-simple</groupId>
-          <artifactId>jopt-simple</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -881,6 +855,11 @@
   </dependencies>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-runtime</artifactId>
+        <version>4.10.1</version>
+      </dependency>
       <dependency>
         <groupId>org.onap.logging-analytics</groupId>
         <artifactId>logging-slf4j</artifactId>
@@ -940,12 +919,69 @@
       <dependency>
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
-        <version>1.31</version>
+        <version>2.0</version>
       </dependency>
+      <dependency>
+        <groupId>jakarta.interceptor</groupId>
+        <artifactId>jakarta.interceptor-api</artifactId>
+        <version>2.2.0</version>
+      </dependency>
+      <!-- Transitional: modules not yet migrated still reference javax artifacts -->
       <dependency>
         <groupId>javax.interceptor</groupId>
         <artifactId>javax.interceptor-api</artifactId>
         <version>1.2.2</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.xml.ws</groupId>
+        <artifactId>jakarta.xml.ws-api</artifactId>
+        <version>4.0.3</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>6.1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.annotation</groupId>
+        <artifactId>jakarta.annotation-api</artifactId>
+        <version>3.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-jaxrs2</artifactId>
+        <version>2.2.19</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-sleuth</artifactId>
+        <version>3.1.11</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+        <version>3.1.11</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-xml</artifactId>
+        <version>3.0.21</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-json</artifactId>
+        <version>3.0.21</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-jsr223</artifactId>
+        <version>3.0.21</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-test</artifactId>
+        <version>3.0.21</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -991,67 +1027,31 @@
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-client</artifactId>
         <version>${cxf.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.jboss.spec.javax.rmi</groupId>
-            <artifactId>jboss-rmi-api_1.0_spec</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-bindings-soap</artifactId>
         <version>${cxf.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.jboss.spec.javax.rmi</groupId>
-            <artifactId>jboss-rmi-api_1.0_spec</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-http</artifactId>
         <version>${cxf.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.jboss.spec.javax.rmi</groupId>
-            <artifactId>jboss-rmi-api_1.0_spec</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
         <version>${cxf.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.jboss.spec.javax.rmi</groupId>
-            <artifactId>jboss-rmi-api_1.0_spec</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-spring-boot-starter-jaxrs</artifactId>
         <version>${cxf.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.jboss.spec.javax.rmi</groupId>
-            <artifactId>jboss-rmi-api_1.0_spec</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-service-description-openapi-v3</artifactId>
         <version>${cxf.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.jboss.spec.javax.rmi</groupId>
-            <artifactId>jboss-rmi-api_1.0_spec</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>ch.vorburger.mariaDB4j</groupId>
@@ -1062,7 +1062,7 @@
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-contract-wiremock</artifactId>
-        <version>3.1.10</version>
+        <version>4.0.5</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -1085,7 +1085,7 @@
       <dependency>
         <groupId>org.glassfish.jersey.core</groupId>
         <artifactId>jersey-common</artifactId>
-        <version>2.35</version>
+        <version>3.1.5</version>
       </dependency>
       <dependency>
         <groupId>com.h2database</groupId>
@@ -1093,10 +1093,9 @@
         <version>2.3.232</version>
       </dependency>
       <dependency>
-        <!-- Remove this dependency once the project is migrated to Java 17 -->
         <groupId>org.mariadb.jdbc</groupId>
         <artifactId>mariadb-java-client</artifactId>
-        <version>2.7.7</version>
+        <version>3.1.4</version>
       </dependency>
       <dependency>
         <groupId>org.camunda.bpm</groupId>
@@ -1111,8 +1110,8 @@
       </dependency>
       <dependency>
         <groupId>io.swagger.core.v3</groupId>
-        <artifactId>swagger-jaxrs2</artifactId>
-        <version>2.1.13</version>
+        <artifactId>swagger-jaxrs2-jakarta</artifactId>
+        <version>2.2.19</version>
       </dependency>
       <dependency>
         <groupId>org.camunda.bpm</groupId>

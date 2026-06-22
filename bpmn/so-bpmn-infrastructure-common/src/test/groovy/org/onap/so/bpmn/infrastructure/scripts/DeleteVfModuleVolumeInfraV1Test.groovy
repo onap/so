@@ -43,7 +43,7 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryUriComputationException
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 
 import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.doNothing
