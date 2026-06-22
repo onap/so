@@ -37,6 +37,9 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <compilerId>groovy-eclipse-compiler</compilerId>
+          <release combine.self="override" />
+          <source>15</source>
+          <target>15</target>
         </configuration>
         <dependencies>
           <dependency>
@@ -200,9 +203,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>javax.ws.rs</groupId>
-      <artifactId>javax.ws.rs-api</artifactId>
-      <version>${jax.ws.rs}</version>
+      <groupId>jakarta.ws.rs</groupId>
+      <artifactId>jakarta.ws.rs-api</artifactId>
+      <version>${jakarta.ws.rs.version}</version>
     </dependency>
     <dependency>
       <groupId>org.camunda.spin</groupId>
@@ -225,8 +228,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onap.msb.java-sdk</groupId>

@@ -20,7 +20,6 @@ public enum OrchestrationStatusEnum {
 
     private String value;
 
-
     OrchestrationStatusEnum(String value) {
         this.value = value;
     }

@@ -36,14 +36,11 @@ import com.openpojo.validation.rule.impl.SerializableMustHaveSerialVersionUIDRul
 import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
 
-
 public class BeansTest {
 
     private PojoClassFilter filterTestClasses = new FilterTestClasses();
 
     private PojoClassFilter enumFilter = new FilterEnum();
-
-
 
     @Test
     public void pojoStructure() {
@@ -58,10 +55,7 @@ public class BeansTest {
                 .with(new NoStaticExceptFinalRule()).with(new SerializableMustHaveSerialVersionUIDRule())
                 .with(new NoPublicFieldsExceptStaticFinalRule()).with(new SetterTester()).with(new GetterTester())
 
-
-
                 .build();
-
 
         validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, enumFilter,
                 new FilterNonConcrete());

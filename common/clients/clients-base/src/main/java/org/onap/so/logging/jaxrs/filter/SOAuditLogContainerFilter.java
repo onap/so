@@ -1,10 +1,10 @@
 package org.onap.so.logging.jaxrs.filter;
 
-import javax.annotation.Priority;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.PreMatching;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.annotation.Priority;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerResponseContext;
+import jakarta.ws.rs.container.PreMatching;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.onap.logging.filter.base.AuditLogContainerFilter;
 import org.onap.logging.filter.base.Constants;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;

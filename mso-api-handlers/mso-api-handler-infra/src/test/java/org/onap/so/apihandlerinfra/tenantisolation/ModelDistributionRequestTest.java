@@ -28,9 +28,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import java.io.IOException;
-import javax.inject.Provider;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Provider;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Rule;
@@ -125,7 +125,7 @@ public class ModelDistributionRequestTest extends BaseTest {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path));
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.PATCH, entity, String.class);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
 
     }
 

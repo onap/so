@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationModule;
 
 @Component
 public class JettisonStyleMapperProvider extends CommonObjectMapperProvider {
@@ -34,7 +34,7 @@ public class JettisonStyleMapperProvider extends CommonObjectMapperProvider {
     public JettisonStyleMapperProvider() {
 
         mapper = new ObjectMapper();
-        JaxbAnnotationModule jaxbModule = new JaxbAnnotationModule();
+        JakartaXmlBindAnnotationModule jaxbModule = new JakartaXmlBindAnnotationModule();
         mapper.setSerializationInclusion(Include.NON_NULL);
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
         mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);

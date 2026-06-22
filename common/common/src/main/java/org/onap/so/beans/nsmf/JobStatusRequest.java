@@ -51,7 +51,6 @@ public class JobStatusRequest {
         this.nssiId = nssiId;
     }
 
-
     public String getResponseId() {
         return responseId;
     }

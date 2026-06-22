@@ -21,8 +21,8 @@
 package org.onap.so.client;
 
 import java.util.Optional;
-import javax.annotation.Priority;
-import javax.ws.rs.ext.Provider;
+import jakarta.annotation.Priority;
+import jakarta.ws.rs.ext.Provider;
 
 @Provider
 @Priority(Integer.MIN_VALUE)
@@ -32,6 +32,5 @@ public class ResponseExceptionMapperImpl extends ResponseExceptionMapper {
     public Optional<String> extractMessage(String entity) {
         return Optional.of(entity);
     }
-
 
 }

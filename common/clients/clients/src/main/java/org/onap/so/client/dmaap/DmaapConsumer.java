@@ -125,6 +125,4 @@ public abstract class DmaapConsumer extends DmaapClient {
         return MAX_ELAPSED_TIME;
     }
 
-
-
 }

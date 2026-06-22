@@ -48,11 +48,11 @@ import org.slf4j.LoggerFactory
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 
 import java.util.UUID;
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
-import javax.ws.rs.core.MediaType
+import jakarta.ws.rs.core.MediaType
 import org.apache.commons.codec.binary.Base64
 import org.onap.logging.filter.base.ONAPComponents;
 

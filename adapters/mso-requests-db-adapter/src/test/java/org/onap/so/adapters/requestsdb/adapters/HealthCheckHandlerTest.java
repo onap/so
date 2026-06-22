@@ -21,12 +21,12 @@
 package org.onap.so.adapters.requestsdb.adapters;
 
 import static org.junit.Assert.assertEquals;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import org.json.JSONException;
 import org.junit.Test;
 import org.onap.so.adapters.requestsdb.RequestsAdapterBase;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;

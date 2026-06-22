@@ -27,17 +27,17 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.transaction.Transactional;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandlerinfra.HealthCheckConfig.Endpoint;
 import org.onap.so.logger.LoggingAnchor;
@@ -177,7 +177,7 @@ public class GlobalHealthcheckHandler {
 
     protected HealthCheckStatus processResponseFromSubsystem(ResponseEntity<SubsystemHealthcheckResponse> result,
             Endpoint endpoint) {
-        if (result == null || result.getStatusCodeValue() != HttpStatus.SC_OK) {
+        if (result == null || result.getStatusCode().value() != HttpStatus.SC_OK) {
             logger.error(String.format("Globalhealthcheck: checking subsystem: %s failed ! result object is: %s",
                     endpoint.getSubsystem(), result == null ? "NULL" : result));
             return HealthCheckStatus.DOWN;

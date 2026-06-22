@@ -20,7 +20,7 @@
 
 package org.onap.aaiclient.client.aai;
 
-import javax.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedHashMap;
 import org.javatuples.Pair;
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper;
 import org.onap.aaiclient.client.aai.entities.uri.AAIFluentTypeReverseLookup;

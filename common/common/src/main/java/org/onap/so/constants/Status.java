@@ -20,7 +20,6 @@
 
 package org.onap.so.constants;
 
-
 /*
  * Enum for Status values returned by API Handler to Tail-F
  */

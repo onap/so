@@ -22,9 +22,9 @@
 
 package org.onap.so.adapters.sdnc.impl;
 
-import javax.annotation.PostConstruct;
-import javax.jws.WebService;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.PostConstruct;
+import jakarta.jws.WebService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.adapters.sdnc.SDNCAdapterPortType;
 import org.onap.so.adapters.sdnc.SDNCAdapterRequest;

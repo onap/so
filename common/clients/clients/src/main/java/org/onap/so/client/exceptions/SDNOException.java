@@ -20,7 +20,6 @@
 
 package org.onap.so.client.exceptions;
 
-
 public class SDNOException extends Exception {
 
     private static final long serialVersionUID = 6189163383568887383L;

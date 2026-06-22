@@ -47,5 +47,4 @@ public abstract class DmaapPublisher extends DmaapClient {
         // publisher.close(seconds, TimeUnit.SECONDS);
     }
 
-
 }

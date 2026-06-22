@@ -12,8 +12,8 @@
   <name>common</name>
   <description>MSO Common classes:- Logger</description>
   <properties>
-    <tomcat-catalina-version>9.0.105</tomcat-catalina-version>
-    <logback.version>1.2.13</logback.version>
+    <tomcat-catalina-version>10.1.18</tomcat-catalina-version>
+    <logback.version>1.4.14</logback.version>
   </properties>
   <dependencies>
     <dependency>
@@ -48,7 +48,7 @@
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
+      <groupId>org.hibernate.orm</groupId>
       <artifactId>hibernate-core</artifactId>
     </dependency>
     <dependency>
@@ -135,8 +135,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
