@@ -20,7 +20,7 @@
 package org.onap.so.client;
 
 import java.net.URL;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import org.onap.logging.filter.base.ONAPComponentsList;
 
 public class HttpClientFactory {

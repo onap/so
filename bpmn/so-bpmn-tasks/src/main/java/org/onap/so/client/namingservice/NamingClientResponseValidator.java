@@ -60,7 +60,7 @@ public class NamingClientResponseValidator {
             throw new BadResponseException(NO_RESPONSE_FROM_NAMING_SERVICE);
         }
 
-        int responseCode = response.getStatusCodeValue();
+        int responseCode = response.getStatusCode().value();
         String generatedName = "";
         NameGenResponse responseBody = response.getBody();
         if (responseBody == null) {
@@ -112,7 +112,7 @@ public class NamingClientResponseValidator {
             throw new BadResponseException(NO_RESPONSE_FROM_NAMING_SERVICE);
         }
 
-        int responseCode = response.getStatusCodeValue();
+        int responseCode = response.getStatusCode().value();
         String responseMessage = "";
         NameGenDeleteResponse responseBody = response.getBody();
         if (responseBody == null) {

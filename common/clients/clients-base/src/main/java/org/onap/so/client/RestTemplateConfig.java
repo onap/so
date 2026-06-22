@@ -45,8 +45,8 @@ public class RestTemplateConfig {
     @Primary
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         final RestTemplate restTemplate = builder.build();
-        restTemplate
-                .setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
+        restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(
+                httpComponentsClientConfiguration.httpComponentsClientHttpRequestFactory()));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());
         restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));
         return restTemplate;

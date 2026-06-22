@@ -23,13 +23,13 @@ package org.onap.aaiclient.client.aai;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
+import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationIntrospector;
 
 public class AAIQueryObjectMapperProvider extends AAICommonObjectMapperProvider {
 
     public AAIQueryObjectMapperProvider() {
         super();
-        AnnotationIntrospector aiJaxb = new JaxbAnnotationIntrospector(TypeFactory.defaultInstance());
+        AnnotationIntrospector aiJaxb = new JakartaXmlBindAnnotationIntrospector(TypeFactory.defaultInstance());
         AnnotationIntrospector aiJackson = new JacksonAnnotationIntrospector();
         // first Jaxb, second Jackson annotations
         mapper.setAnnotationIntrospector(AnnotationIntrospector.pair(aiJaxb, aiJackson));

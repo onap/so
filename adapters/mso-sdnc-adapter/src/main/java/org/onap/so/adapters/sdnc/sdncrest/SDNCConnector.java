@@ -30,7 +30,7 @@ import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.XMLConstants;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;

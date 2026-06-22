@@ -34,7 +34,7 @@ spring:
   jpa:
       show-sql: true
       hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
+        dialect: org.hibernate.dialect.MySQLDialect
         ddl-auto: validate
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
         enable-lazy-load-no-trans: true
@@ -43,23 +43,19 @@ spring:
       fail-on-empty-beans: false
   main:
     allow-bean-definition-overriding: true
-  sleuth:
+  tracing:
     enabled: ${TRACING_ENABLED:false}
-    messaging:
-      jms:
-        enabled: false
-    trace-id128: true
-    sampler:
+    sampling:
       probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
-    supports-join: false
-    web:
-      skip-pattern: /actuator/health/*
-  zipkin:
-    base-url: ${TRACING_COLLECTOR_URL:http://jaeger-collector.istio-system:9411}
-
-
+    propagation:
+      type:
+        - w3c
+        - b3
 #Actuator
 management:
+  zipkin:
+    tracing:
+      endpoint: ${TRACING_COLLECTOR_URL:http://jaeger-collector.istio-system:9411}/api/v2/spans
   endpoints:
     web:
       base-path: /manage

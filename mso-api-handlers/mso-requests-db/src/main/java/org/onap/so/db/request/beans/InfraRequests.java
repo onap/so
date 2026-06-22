@@ -22,22 +22,17 @@ package org.onap.so.db.request.beans;
 
 import java.net.URI;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.onap.so.requestsdb.TimestampXMLAdapter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -161,10 +156,6 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String workflowName;
     @Column(name = "OPERATION_NAME", length = 200)
     private String operationName;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "SO_REQUEST_ID", referencedColumnName = "REQUEST_ID", updatable = false)
-    private List<CloudApiRequests> cloudApiRequests = new ArrayList<>();
 
     public URI getRequestURI() {
         return URI.create(this.requestId);
@@ -444,13 +435,9 @@ public abstract class InfraRequests implements java.io.Serializable {
         return requestAction;
     }
 
-    public List<CloudApiRequests> getCloudApiRequests() {
-        return cloudApiRequests;
-    }
+    public abstract List<CloudApiRequests> getCloudApiRequests();
 
-    public void setCloudApiRequests(List<CloudApiRequests> cloudApiRequests) {
-        this.cloudApiRequests = cloudApiRequests;
-    }
+    public abstract void setCloudApiRequests(List<CloudApiRequests> cloudApiRequests);
 
     public void setRequestAction(String requestAction) {
         this.requestAction = requestAction;

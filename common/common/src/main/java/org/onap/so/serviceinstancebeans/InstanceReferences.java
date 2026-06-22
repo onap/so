@@ -41,7 +41,6 @@ public class InstanceReferences {
     protected String instanceGroupId;
     protected String instanceGroupName;
 
-
     public String getServiceInstanceId() {
         return serviceInstanceId;
     }

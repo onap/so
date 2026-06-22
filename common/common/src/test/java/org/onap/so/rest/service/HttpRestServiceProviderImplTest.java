@@ -43,7 +43,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-
 /**
  * @author waqas.ikram@est.tech
  */
@@ -127,7 +126,7 @@ public class HttpRestServiceProviderImplTest {
         final HttpRestServiceProvider objUnderTest = new HttpRestServiceProviderImpl(mockRestTemplate);
 
         when(mockRestTemplate.exchange(eq(DUMMY_URL), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
-                .thenThrow(HttpClientErrorException.class);
+                .thenThrow(new HttpClientErrorException(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR));
 
         objUnderTest.get(DUMMY_URL, String.class);
     }
@@ -216,7 +215,6 @@ public class HttpRestServiceProviderImplTest {
                 eq(String.class));
     }
 
-
     @Test
     public void test_post_returnOptionalPresentIfResponseIsNotOKAndHasBody() {
 
@@ -250,7 +248,7 @@ public class HttpRestServiceProviderImplTest {
         final HttpRestServiceProvider objUnderTest = new HttpRestServiceProviderImpl(mockRestTemplate);
 
         when(mockRestTemplate.exchange(eq(DUMMY_URL), eq(HttpMethod.POST), any(HttpEntity.class), eq(String.class)))
-                .thenThrow(HttpClientErrorException.class);
+                .thenThrow(new HttpClientErrorException(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR));
 
         objUnderTest.post(BODY, DUMMY_URL, String.class);
     }

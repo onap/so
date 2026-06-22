@@ -33,7 +33,6 @@ public class PropertiesBean {
     private String topic;
     private String timeout;
 
-
     public PropertiesBean(Properties properties) {
         this.withAuth(properties.getProperty("auth")).withKey(properties.getProperty("key"))
                 .withTopic(properties.getProperty("topic")).withEnvironment(properties.getProperty("environment"))
@@ -145,7 +144,5 @@ public class PropertiesBean {
         this.timeout = timeout;
         return this;
     }
-
-
 
 }

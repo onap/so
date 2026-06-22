@@ -115,5 +115,4 @@ public class CloudConfiguration implements Serializable {
                 .append("lcpCloudRegionId", getLcpCloudRegionId()).toString();
     }
 
-
 }

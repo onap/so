@@ -31,8 +31,8 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Rule;
@@ -63,7 +63,7 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
 
     @Before
     public void init() {
-        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests"))
                 .withRequestBody(containing("{\"requestId\":\"" + requestId
                         + "\",\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -129,7 +129,7 @@ public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
         wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + requestId))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests"))
                 .withRequestBody(containing("{\"requestId\":\"" + requestId
                         + "\",\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)

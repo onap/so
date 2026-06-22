@@ -26,7 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +51,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
     @Before
     public void setupTestClass() {
         wireMockServer.stubFor(post(urlPathEqualTo(getTestUrl(""))).willReturn(
-                aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                aResponse().withHeader(jakarta.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_CREATED)));
     }
 
@@ -69,7 +69,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
 
         String body = response.getBody();
         assertTrue(body.contains("Mapping of request to JSON object failed."));
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
     }
 
     @Test
@@ -85,7 +85,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
                 restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
         String body = response.getBody();
         assertTrue(body.contains("No valid requestDetails is specified"));
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
     }
 
     @Test
@@ -101,7 +101,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
                 restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
         String body = response.getBody();
         assertTrue(body.contains("No valid source is specified"));
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
     }
 
     @Test
@@ -117,13 +117,13 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
                 restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
         String body = response.getBody();
         assertTrue(body.contains("No valid requestorId is specified"));
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
     }
 
     @Test
     public void testGetInfraActiveRequestNull() {
         wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl("request-id-null-check"))).willReturn(
-                aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                aResponse().withHeader(jakarta.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
@@ -136,14 +136,14 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
                 restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
         String body = response.getBody();
         assertTrue(body.contains("Orchestration RequestId request-id-null-check is not found in DB"));
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
 
     }
 
     @Test
     public void testUnlock() {
         wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl("requestIdtestUnlock"))).willReturn(
-                aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                aResponse().withHeader(jakarta.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(String.format(getResponseTemplate, "requestIdtestUnlock", "IN_PROGRESS"))
                         .withStatus(HttpStatus.SC_OK)));
         headers.set("Accept", MediaType.APPLICATION_JSON);
@@ -156,13 +156,13 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
 
-        assertEquals(204, response.getStatusCodeValue());
+        assertEquals(204, response.getStatusCode().value());
     }
 
     @Test
     public void testUnlockComplete() {
         wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl("requestIdtestUnlockComplete"))).willReturn(
-                aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                aResponse().withHeader(jakarta.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(String.format(getResponseTemplate, "requestIdtestUnlockComplete", "COMPLETE"))
                         .withStatus(HttpStatus.SC_OK)));
 
@@ -178,13 +178,13 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
         String body = response.getBody().toString();
         assertTrue(body.contains(
                 "Orchestration RequestId requestIdtestUnlockComplete has a status of COMPLETE and can not be unlocked"));
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
     }
 
     @Test
     public void testGetOperationalEnvFilter() {
         wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl("not-there"))).willReturn(
-                aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                aResponse().withHeader(jakarta.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
@@ -199,14 +199,14 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
 
         // 204s cannot have a body
         // assertTrue(response.getBody().contains("Orchestration RequestId not-there is not found in DB"));
-        assertEquals(204, response.getStatusCodeValue());
+        assertEquals(204, response.getStatusCode().value());
     }
 
     @Test
     public void testGetOperationalEnvSuccess() {
         wireMockServer
                 .stubFor(get(urlPathEqualTo(getTestUrl("90c56827-1c78-4827-bc4d-6afcdb37a51f"))).willReturn(
-                        aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        aResponse().withHeader(jakarta.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(String.format(getResponseTemplateNoBody,
                                         "90c56827-1c78-4827-bc4d-6afcdb37a51f", "COMPLETE"))
                                 .withStatus(HttpStatus.SC_OK)));
@@ -222,7 +222,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
@@ -234,14 +234,14 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
     public void testGetOperationalEnvFilterSuccess() {
         wireMockServer
                 .stubFor(get(urlPathEqualTo(getTestUrl("requestIdtestGetOperationalEnvFilterSuccess"))).willReturn(
-                        aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        aResponse().withHeader(jakarta.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                                 .withBody(String.format(getResponseTemplate,
                                         "requestIdtestGetOperationalEnvFilterSuccess", "COMPLETE"))
                                 .withStatus(HttpStatus.SC_OK)));
 
         wireMockServer.stubFor(
                 post(urlPathEqualTo(getTestUrl("getCloudOrchestrationFiltersFromInfraActive"))).willReturn(aResponse()
-                        .withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withHeader(jakarta.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(
                                 "{\"requestId\":\"getCloudOrchestrationFiltersFromInfraActive\", \"operationalEnvironmentName\":\"myVnfOpEnv\"}")
                         .withBody("[" + String.format(getResponseTemplateNoBody,
@@ -259,7 +259,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
@@ -288,7 +288,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
 
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
-        assertEquals(500, response.getStatusCodeValue());
+        assertEquals(500, response.getStatusCode().value());
     }
 
     @Test
@@ -314,7 +314,7 @@ public class CloudResourcesOrchestrationTest extends BaseTest {
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
 
 
-        assertEquals(500, response.getStatusCodeValue());
+        assertEquals(500, response.getStatusCode().value());
         assertTrue(response.getBody().toString().contains("No valid operationalEnvironmentName value is specified"));
     }
 

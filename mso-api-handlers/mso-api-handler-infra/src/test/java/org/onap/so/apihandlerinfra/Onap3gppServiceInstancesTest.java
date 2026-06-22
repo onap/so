@@ -34,8 +34,8 @@ import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,7 +80,7 @@ public class Onap3gppServiceInstancesTest extends BaseTest {
         wireMockServer.stubFor(get(urlPathEqualTo("/serviceRecipe/search/findFirstByServiceModelUUIDAndAction"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(MAPPER.writeValueAsString(serviceRecipe)).withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests/.*")).willReturn(aResponse()
+        wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests.*")).willReturn(aResponse()
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
         Mockito.doReturn(null).when(requestsDbClient).getInfraActiveRequestbyRequestId(Mockito.any());
     }
