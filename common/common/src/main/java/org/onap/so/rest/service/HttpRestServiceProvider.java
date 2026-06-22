@@ -128,5 +128,4 @@ public interface HttpRestServiceProvider {
      */
     public <T> ResponseEntity<T> deleteHttpRequest(final String url, final Class<T> clazz);
 
-
 }

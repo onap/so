@@ -24,8 +24,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.javatuples.Pair;
 import org.junit.Test;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
@@ -37,7 +37,6 @@ public class DMaaPRestClientTest {
     private final String contentType = "application/json";
     private final String auth = "";
     private final String key = "";
-
 
     @Test
     public void headerMapTest() {

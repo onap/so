@@ -39,5 +39,4 @@ public class ServiceInstancesResponse {
         return new ToStringBuilder(this).append("requestReferences", requestReferences).toString();
     }
 
-
 }

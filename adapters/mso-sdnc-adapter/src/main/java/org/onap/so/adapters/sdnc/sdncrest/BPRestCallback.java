@@ -25,7 +25,7 @@
 package org.onap.so.adapters.sdnc.sdncrest;
 
 import java.net.URI;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.logging.filter.base.ErrorCode;
@@ -147,7 +147,7 @@ public class BPRestCallback {
         }
     }
 
-    private void logResponseError(HttpStatus statusCode) {
+    private void logResponseError(org.springframework.http.HttpStatusCode statusCode) {
         String msg = "Received error response to callback request: " + statusCode;
         logger.error(LoggingAnchor.FOUR, MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA,
                 ErrorCode.BusinessProcessError.getValue(), msg);

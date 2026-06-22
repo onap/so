@@ -22,7 +22,7 @@ package org.onap.so.adapters.requestsdb.application;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 import org.apache.cxf.Bus;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.openapi.OpenApiFeature;

@@ -1,7 +1,7 @@
 package org.onap.so.adapters.requestsdb;
 
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;

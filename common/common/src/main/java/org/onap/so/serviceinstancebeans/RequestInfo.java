@@ -26,7 +26,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
-
 @JsonRootName(value = "requestInfo")
 @JsonInclude(Include.NON_DEFAULT)
 public class RequestInfo implements Serializable {
@@ -228,6 +227,5 @@ public class RequestInfo implements Serializable {
                 + ", instanceName=" + instanceName + ", suppressRollback=" + suppressRollback + ", requestorId="
                 + requestorId + ", applicationId=" + applicationId + "]";
     }
-
 
 }

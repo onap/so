@@ -23,7 +23,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.apache.cxf.common.util.CollectionUtils.isEmpty
-import javax.ws.rs.core.UriBuilder
+import jakarta.ws.rs.core.UriBuilder
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.GenericVnf

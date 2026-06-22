@@ -43,8 +43,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import com.fasterxml.jackson.databind.ObjectMapper
 
-import javax.ws.rs.NotFoundException
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.NotFoundException
+import jakarta.ws.rs.core.Response
 
 import static org.apache.commons.lang3.StringUtils.isBlank
 

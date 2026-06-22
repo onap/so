@@ -46,7 +46,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-
 public class PolicyClientImpl implements PolicyClient {
 
     private static Logger logger = LoggerFactory.getLogger(PolicyClientImpl.class);

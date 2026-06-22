@@ -170,5 +170,4 @@ public class RequestParameters implements Serializable {
         this.retainAssignments = retainAssignments;
     }
 
-
 }

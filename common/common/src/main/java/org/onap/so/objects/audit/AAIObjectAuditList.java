@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-
 public class AAIObjectAuditList implements Serializable {
 
     /**
@@ -45,11 +44,9 @@ public class AAIObjectAuditList implements Serializable {
         return auditList;
     }
 
-
     public String getAuditType() {
         return auditType;
     }
-
 
     public void setAuditType(String auditType) {
         this.auditType = auditType;

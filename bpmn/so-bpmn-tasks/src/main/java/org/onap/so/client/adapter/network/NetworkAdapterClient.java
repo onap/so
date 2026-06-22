@@ -20,7 +20,7 @@
 
 package org.onap.so.client.adapter.network;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;

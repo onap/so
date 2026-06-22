@@ -40,13 +40,11 @@ public enum ModelType {
     vpnBinding("vpnBinding"),
     cnf("cnf");
 
-
     final String name;
 
     private ModelType(String name) {
         this.name = name;
     }
-
 
     public <T> T getId(Object obj) {
         return this.get(obj, "Id");
