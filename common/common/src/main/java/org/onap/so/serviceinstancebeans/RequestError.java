@@ -25,13 +25,12 @@
 // Generated on: 2016.04.07 at 08:25:52 AM CDT
 //
 
-
 package org.onap.so.serviceinstancebeans;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -39,7 +38,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-
 
 /**
  * <p>
@@ -66,7 +64,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {"policyException", "serviceException"})
+@XmlType(name = "", propOrder = { "policyException", "serviceException" })
 @XmlRootElement(name = "requestError")
 @JsonTypeName("requestError")
 @JsonTypeInfo(include = As.WRAPPER_OBJECT, use = Id.NAME)
@@ -89,7 +87,8 @@ public class RequestError {
     /**
      * Sets the value of the policyException property.
      * 
-     * @param value allowed object is {@link PolicyException }
+     * @param value
+     *            allowed object is {@link PolicyException }
      * 
      */
     public void setPolicyException(PolicyException value) {
@@ -109,7 +108,8 @@ public class RequestError {
     /**
      * Sets the value of the serviceException property.
      * 
-     * @param value allowed object is {@link ServiceException }
+     * @param value
+     *            allowed object is {@link ServiceException }
      * 
      */
     public void setServiceException(ServiceException value) {

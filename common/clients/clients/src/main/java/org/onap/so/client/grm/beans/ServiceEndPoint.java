@@ -31,9 +31,9 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName(value = "serviceEndPoint")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonPropertyOrder({"name", "version", "hostAddress", "listenPort", "latitude", "longitude", "registrationTime",
+@JsonPropertyOrder({ "name", "version", "hostAddress", "listenPort", "latitude", "longitude", "registrationTime",
         "expirationTime", "contextPath", "routeOffer", "statusInfo", "eventStatusInfo", "validatorStatusInfo",
-        "operationalInfo", "protocol", "properties", "disableType"})
+        "operationalInfo", "protocol", "properties", "disableType" })
 public class ServiceEndPoint implements Serializable {
 
     private static final long serialVersionUID = -1594441352549128491L;

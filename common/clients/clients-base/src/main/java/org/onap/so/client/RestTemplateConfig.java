@@ -55,10 +55,10 @@ public class RestTemplateConfig {
     @Bean
     @Qualifier(CONFIGURABLE_REST_TEMPLATE)
     public RestTemplate configurableRestTemplate() {
-        final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
-                httpComponentsClientConfiguration.httpComponentsClientHttpRequestFactory();
-        final RestTemplate restTemplate =
-                new RestTemplate(new BufferingClientHttpRequestFactory(clientHttpRequestFactory));
+        final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = httpComponentsClientConfiguration
+                .httpComponentsClientHttpRequestFactory();
+        final RestTemplate restTemplate = new RestTemplate(
+                new BufferingClientHttpRequestFactory(clientHttpRequestFactory));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());
         restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));
         return restTemplate;

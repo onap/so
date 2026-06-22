@@ -19,7 +19,7 @@
  */
 package org.onap.so.bpmn.common.scripts
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 
 import org.apache.commons.lang3.StringUtils
 import org.camunda.bpm.engine.delegate.DelegateExecution

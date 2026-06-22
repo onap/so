@@ -21,17 +21,17 @@
 package org.onap.so.client;
 
 import java.util.Optional;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotAcceptableException;
-import javax.ws.rs.NotAllowedException;
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.NotSupportedException;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.InternalServerErrorException;
+import jakarta.ws.rs.NotAcceptableException;
+import jakarta.ws.rs.NotAllowedException;
+import jakarta.ws.rs.NotAuthorizedException;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.NotSupportedException;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,38 +61,38 @@ public abstract class ResponseExceptionMapper {
             Response.Status status = Response.Status.fromStatusCode(response.getStatus());
             WebApplicationException webAppException;
             switch (status) {
-                case BAD_REQUEST:
-                    webAppException = new BadRequestException(message);
-                    break;
-                case UNAUTHORIZED:
-                    webAppException = new NotAuthorizedException(message);
-                    break;
-                case FORBIDDEN:
-                    webAppException = new ForbiddenException(message);
-                    break;
-                case NOT_FOUND:
-                    webAppException = new NotFoundException(message);
-                    break;
-                case METHOD_NOT_ALLOWED:
-                    webAppException = new NotAllowedException(message);
-                    break;
-                case NOT_ACCEPTABLE:
-                    webAppException = new NotAcceptableException(message);
-                    break;
-                case PRECONDITION_FAILED:
-                    webAppException = new PreconditionFailedException(message);
-                    break;
-                case UNSUPPORTED_MEDIA_TYPE:
-                    webAppException = new NotSupportedException(message);
-                    break;
-                case INTERNAL_SERVER_ERROR:
-                    webAppException = new InternalServerErrorException(message);
-                    break;
-                case SERVICE_UNAVAILABLE:
-                    webAppException = new WebApplicationException(message);
-                    break;
-                default:
-                    webAppException = new WebApplicationException(message);
+            case BAD_REQUEST:
+                webAppException = new BadRequestException(message);
+                break;
+            case UNAUTHORIZED:
+                webAppException = new NotAuthorizedException(message);
+                break;
+            case FORBIDDEN:
+                webAppException = new ForbiddenException(message);
+                break;
+            case NOT_FOUND:
+                webAppException = new NotFoundException(message);
+                break;
+            case METHOD_NOT_ALLOWED:
+                webAppException = new NotAllowedException(message);
+                break;
+            case NOT_ACCEPTABLE:
+                webAppException = new NotAcceptableException(message);
+                break;
+            case PRECONDITION_FAILED:
+                webAppException = new PreconditionFailedException(message);
+                break;
+            case UNSUPPORTED_MEDIA_TYPE:
+                webAppException = new NotSupportedException(message);
+                break;
+            case INTERNAL_SERVER_ERROR:
+                webAppException = new InternalServerErrorException(message);
+                break;
+            case SERVICE_UNAVAILABLE:
+                webAppException = new WebApplicationException(message);
+                break;
+            default:
+                webAppException = new WebApplicationException(message);
             }
             throw webAppException;
         }

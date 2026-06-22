@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -40,7 +40,6 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import lombok.SneakyThrows;
-
 
 @ActiveProfiles("basic")
 @RunWith(SpringRunner.class)
@@ -73,8 +72,8 @@ public class AuthenticationTest {
         headers.setBasicAuth(USERNAME, PASSWORD);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(new URI(baseUrl + "/"), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(new URI(baseUrl + "/"), HttpMethod.GET, entity,
+                String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
@@ -88,8 +87,8 @@ public class AuthenticationTest {
         headers.set("X-ECOMP-InstanceID", "test");
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(new URI(baseUrl + "/"), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(new URI(baseUrl + "/"), HttpMethod.GET, entity,
+                String.class);
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 
@@ -103,8 +102,8 @@ public class AuthenticationTest {
         headers.set("X-ECOMP-InstanceID", "test");
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(new URI(baseUrl + "/manage/health"), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(new URI(baseUrl + "/manage/health"), HttpMethod.GET,
+                entity, String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

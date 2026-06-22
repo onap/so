@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"plmnId", "snssai"})
+@JsonPropertyOrder({ "plmnId", "snssai" })
 public class PlmnInfo {
 
     @JsonProperty("plmnId")

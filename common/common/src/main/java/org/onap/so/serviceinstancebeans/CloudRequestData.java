@@ -18,7 +18,6 @@
  * ============LICENSE_END=========================================================
  */
 
-
 package org.onap.so.serviceinstancebeans;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -28,7 +27,8 @@ public class CloudRequestData {
     Object cloudRequest;
     String cloudIdentifier;
 
-    public CloudRequestData() {}
+    public CloudRequestData() {
+    }
 
     public CloudRequestData(Object cloudRequest, String cloudIdentifier) {
         this.cloudRequest = cloudRequest;

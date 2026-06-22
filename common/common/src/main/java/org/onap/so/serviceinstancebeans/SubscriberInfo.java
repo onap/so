@@ -49,7 +49,8 @@ public class SubscriberInfo implements Serializable {
     /**
      * Sets the value of the globalSubscriberId property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *            allowed object is {@link String }
      *
      */
     public void setGlobalSubscriberId(String value) {
@@ -69,7 +70,8 @@ public class SubscriberInfo implements Serializable {
     /**
      * Sets the value of the subscriberName property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *            allowed object is {@link String }
      *
      */
     public void setSubscriberName(String value) {

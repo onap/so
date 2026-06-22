@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"message"})
+@JsonPropertyOrder({ "message" })
 public class ExceptionResponse {
     @JsonProperty("message")
     private String message;

@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName(value = "serviceEndPoint")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"name", "version"})
+@JsonPropertyOrder({ "name", "version" })
 public class ServiceEndPointLookup implements Serializable {
 
     private static final long serialVersionUID = 8867758152519088615L;

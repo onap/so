@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"sliceProfileId", "plmnInfoList", "RANSliceSubnetProfile"})
+@JsonPropertyOrder({ "sliceProfileId", "plmnInfoList", "RANSliceSubnetProfile" })
 public class SliceProfile {
 
     @JsonProperty("sliceProfileId")

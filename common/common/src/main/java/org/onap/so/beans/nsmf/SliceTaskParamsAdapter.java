@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.io.Serializable;
 import java.util.Map;
 
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -71,8 +70,10 @@ public class SliceTaskParamsAdapter implements Serializable {
     /**
      * change T t to {@link Map}
      *
-     * @param t input
-     * @param <T> Object
+     * @param t
+     *            input
+     * @param <T>
+     *            Object
      * @return {@link Map}
      */
     private <T> Map<String, Object> bean2Map(T t) {
@@ -108,8 +109,10 @@ public class SliceTaskParamsAdapter implements Serializable {
     /**
      * replace of slice profile
      *
-     * @param paramMap params map
-     * @param header starts of key
+     * @param paramMap
+     *            params map
+     * @param header
+     *            starts of key
      * @return Map
      */
     private Map<String, Object> replaceHeader(Map<String, String> paramMap, String header) {

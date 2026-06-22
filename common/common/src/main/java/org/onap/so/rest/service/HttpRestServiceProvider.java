@@ -32,8 +32,10 @@ public interface HttpRestServiceProvider {
     /**
      * Execute the HTTP GET to the given URI template
      *
-     * @param url the URL
-     * @param clazz the type of the return value
+     * @param url
+     *            the URL
+     * @param clazz
+     *            the type of the return value
      * @return Returns the body of this entity.
      */
     <T> Optional<T> get(final String url, final Class<T> clazz);
@@ -41,9 +43,12 @@ public interface HttpRestServiceProvider {
     /**
      * Execute the HTTP GET to the given URI template
      * 
-     * @param url the URL
-     * @param headers request headers
-     * @param clazz the type of the return value
+     * @param url
+     *            the URL
+     * @param headers
+     *            request headers
+     * @param clazz
+     *            the type of the return value
      * @return Returns the body of this entity.
      */
     <T> Optional<T> get(final String url, final HttpHeaders headers, final Class<T> clazz);
@@ -51,8 +56,10 @@ public interface HttpRestServiceProvider {
     /**
      * Execute the HTTP GET to the given URI template
      *
-     * @param url the URL
-     * @param clazz the type of the return value
+     * @param url
+     *            the URL
+     * @param clazz
+     *            the type of the return value
      * @return Returns the {@link ResponseEntity}.
      */
     <T> ResponseEntity<T> getHttpResponse(final String url, final Class<T> clazz);
@@ -60,9 +67,12 @@ public interface HttpRestServiceProvider {
     /**
      * Execute the HTTP GET to the given URI template
      *
-     * @param url the URL
-     * @param headers request headers
-     * @param clazz the type of the return value
+     * @param url
+     *            the URL
+     * @param headers
+     *            request headers
+     * @param clazz
+     *            the type of the return value
      * @return Returns the {@link ResponseEntity}.
      */
     <T> ResponseEntity<T> getHttpResponse(final String url, final HttpHeaders headers, final Class<T> clazz);
@@ -70,9 +80,12 @@ public interface HttpRestServiceProvider {
     /**
      * Execute the HTTP POST to the given URI template
      *
-     * @param object the entity (i.e. body) to write to the request
-     * @param url the URL
-     * @param clazz the type of the return value
+     * @param object
+     *            the entity (i.e. body) to write to the request
+     * @param url
+     *            the URL
+     * @param clazz
+     *            the type of the return value
      * @return Returns the body of this entity.
      */
     <T> Optional<T> post(final Object object, final String url, final Class<T> clazz);
@@ -80,9 +93,12 @@ public interface HttpRestServiceProvider {
     /**
      * Execute the HTTP POST to the given URI template
      *
-     * @param object the entity (i.e. body) to write to the request
-     * @param url the URL
-     * @param clazz the type of the return value
+     * @param object
+     *            the entity (i.e. body) to write to the request
+     * @param url
+     *            the URL
+     * @param clazz
+     *            the type of the return value
      * @return Returns the {@link ResponseEntity}.
      */
     <T> ResponseEntity<T> postHttpRequest(final Object object, final String url, final Class<T> clazz);
@@ -90,10 +106,14 @@ public interface HttpRestServiceProvider {
     /**
      * Execute the HTTP POST to the given URI template
      *
-     * @param object the entity (i.e. body) to write to the request
-     * @param url the URL
-     * @param clazz the type of the return value
-     * @param headers request headers
+     * @param object
+     *            the entity (i.e. body) to write to the request
+     * @param url
+     *            the URL
+     * @param clazz
+     *            the type of the return value
+     * @param headers
+     *            request headers
      * @return Returns the {@link ResponseEntity}.
      */
     <T> ResponseEntity<T> postHttpRequest(final Object object, final String url, final HttpHeaders headers,
@@ -102,9 +122,12 @@ public interface HttpRestServiceProvider {
     /**
      * Execute the HTTP PUT to the given URI template
      *
-     * @param object the entity (i.e. body) to write to the request
-     * @param url the URL
-     * @param clazz the type of the return value
+     * @param object
+     *            the entity (i.e. body) to write to the request
+     * @param url
+     *            the URL
+     * @param clazz
+     *            the type of the return value
      * @return Returns the body of this entity.
      */
     <T> Optional<T> put(final Object object, final String url, final Class<T> clazz);
@@ -112,9 +135,12 @@ public interface HttpRestServiceProvider {
     /**
      * Execute the HTTP PUT to the given URI template
      *
-     * @param object the entity (i.e. body) to write to the request
-     * @param url the URL
-     * @param clazz the type of the return value
+     * @param object
+     *            the entity (i.e. body) to write to the request
+     * @param url
+     *            the URL
+     * @param clazz
+     *            the type of the return value
      * @return Returns the {@link ResponseEntity}.
      */
     <T> ResponseEntity<T> putHttpRequest(final Object object, final String url, final Class<T> clazz);
@@ -122,11 +148,12 @@ public interface HttpRestServiceProvider {
     /**
      * Execute the HTTP DELETE to the given URI template
      *
-     * @param url the URL
-     * @param clazz the type of the return value
+     * @param url
+     *            the URL
+     * @param clazz
+     *            the type of the return value
      * @return Returns the {@link ResponseEntity}.
      */
     public <T> ResponseEntity<T> deleteHttpRequest(final String url, final Class<T> clazz);
-
 
 }

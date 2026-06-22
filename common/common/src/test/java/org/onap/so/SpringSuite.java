@@ -27,8 +27,8 @@ import com.googlecode.junittoolbox.SuiteClasses;
 import com.googlecode.junittoolbox.WildcardPatternSuite;
 
 @RunWith(WildcardPatternSuite.class)
-@IncludeCategories({SpringAware.class})
-@SuiteClasses({"**/*Test.class"})
+@IncludeCategories({ SpringAware.class })
+@SuiteClasses({ "**/*Test.class" })
 public class SpringSuite {
 
 }

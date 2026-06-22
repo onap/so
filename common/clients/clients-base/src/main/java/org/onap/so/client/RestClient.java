@@ -33,18 +33,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.client.ResponseProcessingException;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Invocation.Builder;
+import jakarta.ws.rs.client.ResponseProcessingException;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.UriBuilder;
 import org.javatuples.Pair;
 import org.onap.logging.filter.base.MDCSetup;
 import org.onap.logging.filter.base.ONAPComponentsList;
@@ -52,10 +52,9 @@ import org.onap.logging.filter.base.PayloadLoggingClientFilter;
 import org.onap.so.logging.jaxrs.filter.SOMetricLogClientFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
-
 
 public abstract class RestClient {
     private static final String APPLICATION_MERGE_PATCH_JSON = "application/merge-patch+json";
@@ -170,8 +169,10 @@ public abstract class RestClient {
     /**
      * Adds a basic authentication header to the request.
      *
-     * @param auth the plaintext credentials (user:password)
-     * @param key unused, kept for API compatibility
+     * @param auth
+     *            the plaintext credentials (user:password)
+     * @param key
+     *            unused, kept for API compatibility
      */
     protected void addBasicAuthHeader(String auth, String key) {
         String authHeaderValue = "Basic " + Base64.getEncoder().encodeToString(auth.getBytes());
@@ -313,9 +314,9 @@ public abstract class RestClient {
 
         Predicate<Throwable> pred = items.stream().reduce(Predicate::or).orElse(x -> false);
 
-        RetryPolicy<Object> policy =
-                new RetryPolicy<>().handleIf(pred).withDelay(Duration.ofMillis(this.props.getDelayBetweenRetries()))
-                        .withMaxRetries(this.props.getRetries());
+        RetryPolicy<Object> policy = new RetryPolicy<>().handleIf(pred)
+                .withDelay(Duration.ofMillis(this.props.getDelayBetweenRetries()))
+                .withMaxRetries(this.props.getRetries());
 
         return Failsafe.with(policy).get(() -> buildRequest(method, entity));
     }

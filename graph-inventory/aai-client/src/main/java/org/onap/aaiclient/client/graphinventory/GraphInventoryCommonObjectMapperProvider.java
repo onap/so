@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
+import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationIntrospector;
 
 public class GraphInventoryCommonObjectMapperProvider extends CommonObjectMapperProvider {
 
@@ -43,7 +43,7 @@ public class GraphInventoryCommonObjectMapperProvider extends CommonObjectMapper
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        AnnotationIntrospector aiJaxb = new JaxbAnnotationIntrospector(TypeFactory.defaultInstance());
+        AnnotationIntrospector aiJaxb = new JakartaXmlBindAnnotationIntrospector(TypeFactory.defaultInstance());
         AnnotationIntrospector aiJackson = new JacksonAnnotationIntrospector();
         // first Jaxb, second Jackson annotations
         mapper.setAnnotationIntrospector(AnnotationIntrospector.pair(aiJaxb, aiJackson));

@@ -22,7 +22,7 @@ package org.onap.so.adapters.requestsdb.exceptions;
 
 
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 import org.onap.so.exceptions.MSOException;
 import org.onap.logging.filter.base.ErrorCode;
 

@@ -47,7 +47,8 @@ public class NssmfRequest implements Serializable {
 
     private Object additionalProperties;
 
-    public NssmfRequest() {}
+    public NssmfRequest() {
+    }
 
     public NssmfRequest(ServiceInfo serviceInfo, NetworkType networkType, Object additionalProperties) {
         this.modelInvariantUuid = serviceInfo.getServiceInvariantUuid();
@@ -61,9 +62,7 @@ public class NssmfRequest implements Serializable {
         this.sST = serviceInfo.getSST();
     }
 
-
 }
-
 
 /**
  * { "name": "eMBB-001", "modelInvariantUuid": "NSST-C-001-HDBNJ-NSSMF-01-A-ZX", "modelUuid":

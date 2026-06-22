@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"service-profile"})
+@JsonPropertyOrder({ "service-profile" })
 public class ServiceProfile implements Serializable {
 
     @JsonProperty("service-profile")

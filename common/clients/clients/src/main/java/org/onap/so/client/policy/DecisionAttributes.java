@@ -20,14 +20,12 @@
 
 package org.onap.so.client.policy;
 
-
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"ServiceType", "VNFType", "BB_ID", "WorkStep", "ErrorCode"})
+@JsonPropertyOrder({ "ServiceType", "VNFType", "BB_ID", "WorkStep", "ErrorCode" })
 public class DecisionAttributes {
 
     @JsonProperty("ServiceType")

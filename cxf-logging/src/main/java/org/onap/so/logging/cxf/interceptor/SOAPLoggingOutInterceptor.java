@@ -20,7 +20,6 @@
 
 package org.onap.so.logging.cxf.interceptor;
 
-
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor;
 import org.apache.cxf.interceptor.Fault;
@@ -32,15 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-
-
 public class SOAPLoggingOutInterceptor extends AbstractSoapInterceptor {
 
     private static final String _500 = "500";
 
     protected static Logger logger = LoggerFactory.getLogger(SOAPLoggingOutInterceptor.class);
-
-
 
     public SOAPLoggingOutInterceptor() {
         super(Phase.WRITE);

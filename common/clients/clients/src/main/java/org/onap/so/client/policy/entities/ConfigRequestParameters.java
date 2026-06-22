@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"configAttributes", "configName", "ecompName", "onapName", "policyName", "requestID", "unique"})
+@JsonPropertyOrder({ "configAttributes", "configName", "ecompName", "onapName", "policyName", "requestID", "unique" })
 public class ConfigRequestParameters {
 
     @JsonProperty("configAttributes")

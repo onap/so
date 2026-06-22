@@ -24,7 +24,8 @@ public class BadResponseException extends Exception {
 
     String responseCode;
 
-    public BadResponseException() {}
+    public BadResponseException() {
+    }
 
     public BadResponseException(String message) {
         super(message);

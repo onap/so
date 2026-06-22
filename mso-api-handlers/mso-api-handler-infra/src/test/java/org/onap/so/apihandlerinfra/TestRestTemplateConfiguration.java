@@ -20,9 +20,9 @@
 
 package org.onap.so.apihandlerinfra;
 
-import org.apache.http.impl.NoConnectionReuseStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,11 +31,6 @@ import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * Test-only configuration that modifies the primary {@link RestTemplate} after all beans are created. Replaces the
- * default Apache HttpClient (which uses connection pooling) with one that disables connection reuse, preventing
- * {@code NoHttpResponseException} caused by stale pooled connections to the embedded WireMock server.
- */
 @Configuration
 @Profile("test")
 public class TestRestTemplateConfiguration {
@@ -43,8 +38,10 @@ public class TestRestTemplateConfiguration {
     @Bean
     public SmartInitializingSingleton disableRestTemplateConnectionReuse(RestTemplate restTemplate) {
         return () -> {
-            CloseableHttpClient httpClient =
-                    HttpClientBuilder.create().setConnectionReuseStrategy(NoConnectionReuseStrategy.INSTANCE).build();
+            CloseableHttpClient httpClient = HttpClients.custom()
+                    .setConnectionManager(PoolingHttpClientConnectionManagerBuilder.create()
+                            .setMaxConnPerRoute(1).setMaxConnTotal(1).build())
+                    .build();
             HttpComponentsClientHttpRequestFactory requestFactory =
                     new HttpComponentsClientHttpRequestFactory(httpClient);
             restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(requestFactory));

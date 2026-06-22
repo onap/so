@@ -47,7 +47,6 @@ public class KafkaConsumerImpl extends KafkaClient {
         setProperties(bootstrapServers);
     }
 
-
     public List<String> get(String topic, String consumerGroup, String consumerId) {
         logger.info("consuming message from kafka topic: {}", topic);
         this.properties.put("group.id", consumerGroup);

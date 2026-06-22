@@ -1,6 +1,5 @@
 package org.onap.so.client;
 
-
 import java.util.concurrent.TimeUnit;
 import javax.cache.configuration.Factory;
 import javax.cache.expiry.Duration;

@@ -22,7 +22,8 @@ package org.onap.so.client.exception;
 
 public class MapperException extends Exception {
 
-    public MapperException() {}
+    public MapperException() {
+    }
 
     public MapperException(String message) {
         super(message);

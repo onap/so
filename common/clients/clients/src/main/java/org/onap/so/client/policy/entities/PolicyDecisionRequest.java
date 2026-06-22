@@ -20,13 +20,12 @@
 
 package org.onap.so.client.policy.entities;
 
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"decisionAttributes", "ecompcomponentName"})
+@JsonPropertyOrder({ "decisionAttributes", "ecompcomponentName" })
 public class PolicyDecisionRequest {
 
     @JsonProperty("decisionAttributes")

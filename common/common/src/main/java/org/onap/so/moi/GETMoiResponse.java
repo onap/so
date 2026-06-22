@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"id", "operationalState", "administrativeState", "attributes"})
+@JsonPropertyOrder({ "id", "operationalState", "administrativeState", "attributes" })
 public class GETMoiResponse {
 
     @JsonProperty("id")

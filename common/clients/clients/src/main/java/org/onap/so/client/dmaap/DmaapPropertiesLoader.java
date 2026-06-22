@@ -24,15 +24,15 @@ import java.util.ServiceLoader;
 
 public class DmaapPropertiesLoader {
     /* required to make ServiceLoader thread safe */
-    private static final ThreadLocal<ServiceLoader<DmaapProperties>> services =
-            new ThreadLocal<ServiceLoader<DmaapProperties>>() {
-                @Override
-                protected ServiceLoader<DmaapProperties> initialValue() {
-                    return ServiceLoader.load(DmaapProperties.class);
-                }
-            };
+    private static final ThreadLocal<ServiceLoader<DmaapProperties>> services = new ThreadLocal<ServiceLoader<DmaapProperties>>() {
+        @Override
+        protected ServiceLoader<DmaapProperties> initialValue() {
+            return ServiceLoader.load(DmaapProperties.class);
+        }
+    };
 
-    private DmaapPropertiesLoader() {}
+    private DmaapPropertiesLoader() {
+    }
 
     private static class Helper {
         private static final DmaapPropertiesLoader INSTANCE = new DmaapPropertiesLoader();

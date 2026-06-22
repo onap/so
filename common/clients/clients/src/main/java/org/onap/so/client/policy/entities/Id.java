@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"integral", "valueType"})
+@JsonPropertyOrder({ "integral", "valueType" })
 public class Id {
 
     @JsonProperty("integral")

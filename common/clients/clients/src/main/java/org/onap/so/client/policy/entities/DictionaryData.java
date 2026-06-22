@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"id", "bbid", "workstep", "treatments"})
+@JsonPropertyOrder({ "id", "bbid", "workstep", "treatments" })
 public class DictionaryData {
 
     @JsonProperty("id")

@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonPropertyOrder({"serviceEndPoint", "env"})
+@JsonPropertyOrder({ "serviceEndPoint", "env" })
 public class ServiceEndPointLookupRequest {
 
     @JsonProperty("serviceEndPoint")

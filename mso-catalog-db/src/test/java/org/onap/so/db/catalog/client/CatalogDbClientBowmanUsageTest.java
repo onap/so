@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verify;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

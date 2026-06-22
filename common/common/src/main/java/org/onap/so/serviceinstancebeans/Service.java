@@ -48,7 +48,6 @@ public class Service implements Serializable {
     @JsonProperty("processingPriority")
     protected Integer processingPriority = 0;
 
-
     public ModelInfo getModelInfo() {
         return modelInfo;
     }
@@ -96,7 +95,6 @@ public class Service implements Serializable {
     public void setProcessingPriority(Integer processingPriority) {
         this.processingPriority = processingPriority;
     }
-
 
     @Override
     public String toString() {

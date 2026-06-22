@@ -26,15 +26,15 @@ import java.util.ServiceLoader;
 public class RestPropertiesLoader {
 
     /* required to make ServiceLoader thread safe */
-    private static final ThreadLocal<ServiceLoader<RestProperties>> services =
-            new ThreadLocal<ServiceLoader<RestProperties>>() {
-                @Override
-                protected ServiceLoader<RestProperties> initialValue() {
-                    return ServiceLoader.load(RestProperties.class);
-                }
-            };
+    private static final ThreadLocal<ServiceLoader<RestProperties>> services = new ThreadLocal<ServiceLoader<RestProperties>>() {
+        @Override
+        protected ServiceLoader<RestProperties> initialValue() {
+            return ServiceLoader.load(RestProperties.class);
+        }
+    };
 
-    private RestPropertiesLoader() {}
+    private RestPropertiesLoader() {
+    }
 
     private static class Helper {
         private static final RestPropertiesLoader INSTANCE = new RestPropertiesLoader();

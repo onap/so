@@ -26,7 +26,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
-
 @JsonRootName(value = "requestInfo")
 @JsonInclude(Include.NON_DEFAULT)
 public class RequestInfo implements Serializable {
@@ -72,7 +71,8 @@ public class RequestInfo implements Serializable {
     /**
      * Sets the value of the callbackUrl property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *            allowed object is {@link String }
      *
      */
     public void setCallbackUrl(String value) {
@@ -92,7 +92,8 @@ public class RequestInfo implements Serializable {
     /**
      * Sets the value of the correlator property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *            allowed object is {@link String }
      *
      */
     public void setCorrelator(String value) {
@@ -112,7 +113,8 @@ public class RequestInfo implements Serializable {
     /**
      * Sets the value of the orderNumber property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *            allowed object is {@link String }
      *
      */
     public void setOrderNumber(String value) {
@@ -132,7 +134,8 @@ public class RequestInfo implements Serializable {
     /**
      * Sets the value of the orderVersion property.
      *
-     * @param value allowed object is {@link Integer }
+     * @param value
+     *            allowed object is {@link Integer }
      *
      */
     public void setOrderVersion(Integer value) {
@@ -152,7 +155,8 @@ public class RequestInfo implements Serializable {
     /**
      * Sets the value of the source property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *            allowed object is {@link String }
      *
      */
     public void setSource(String value) {
@@ -228,6 +232,5 @@ public class RequestInfo implements Serializable {
                 + ", instanceName=" + instanceName + ", suppressRollback=" + suppressRollback + ", requestorId="
                 + requestorId + ", applicationId=" + applicationId + "]";
     }
-
 
 }

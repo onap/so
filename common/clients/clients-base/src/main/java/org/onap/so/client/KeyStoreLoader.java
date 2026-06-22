@@ -31,8 +31,8 @@ public abstract class KeyStoreLoader {
     static public KeyStore getKeyStore() {
         KeyStore ks = null;
         final char[] password = getSSlKeyStorePassword().toCharArray();
-        try (FileInputStream fis =
-                new FileInputStream(Paths.get(System.getProperty(SSL_KEY_STORE_KEY)).normalize().toString())) {
+        try (FileInputStream fis = new FileInputStream(
+                Paths.get(System.getProperty(SSL_KEY_STORE_KEY)).normalize().toString())) {
             ks = KeyStore.getInstance(KeyStore.getDefaultType());
             ks.load(fis, password);
         } catch (final Exception e) {

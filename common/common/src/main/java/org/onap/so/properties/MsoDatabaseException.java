@@ -20,7 +20,6 @@
 
 package org.onap.so.properties;
 
-
 /**
  * Exception during artifact installation.
  */
@@ -32,8 +31,10 @@ public class MsoDatabaseException extends RuntimeException {
     private static final long serialVersionUID = -7048331652191419371L;
 
     /**
-     * @param message The message to dump
-     * @param cause The Throwable cause object
+     * @param message
+     *            The message to dump
+     * @param cause
+     *            The Throwable cause object
      */
     public MsoDatabaseException(final String message) {
         super(message);
@@ -41,8 +42,10 @@ public class MsoDatabaseException extends RuntimeException {
     }
 
     /**
-     * @param message The message to dump
-     * @param cause The Throwable cause object
+     * @param message
+     *            The message to dump
+     * @param cause
+     *            The Throwable cause object
      */
     public MsoDatabaseException(final String message, final Throwable cause) {
         super(message, cause);

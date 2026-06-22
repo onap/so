@@ -60,7 +60,6 @@ public class RequestDetails implements Serializable {
     @JsonProperty("configurationParameters")
     protected List<Map<String, String>> configurationParameters = new ArrayList<>();
 
-
     /**
      * Gets the value of the serviceInfo property.
      *
@@ -74,7 +73,8 @@ public class RequestDetails implements Serializable {
     /**
      * Sets the value of the serviceInfo property.
      *
-     * @param value allowed object is {@link ModelInfo }
+     * @param value
+     *            allowed object is {@link ModelInfo }
      *
      */
     public void setModelInfo(ModelInfo value) {
@@ -94,7 +94,8 @@ public class RequestDetails implements Serializable {
     /**
      * Sets the value of the requestInfo property.
      *
-     * @param value allowed object is {@link RequestInfo }
+     * @param value
+     *            allowed object is {@link RequestInfo }
      *
      */
     public void setRequestInfo(RequestInfo value) {
@@ -114,7 +115,8 @@ public class RequestDetails implements Serializable {
     /**
      * Sets the value of the subscriberInfo property.
      *
-     * @param value allowed object is {@link SubscriberInfo }
+     * @param value
+     *            allowed object is {@link SubscriberInfo }
      *
      */
     public void setSubscriberInfo(SubscriberInfo value) {
@@ -134,7 +136,8 @@ public class RequestDetails implements Serializable {
     /**
      * Sets the value of the cloudConfiguration property.
      *
-     * @param value allowed object is {@link CloudConfiguration }
+     * @param value
+     *            allowed object is {@link CloudConfiguration }
      *
      */
     public void setCloudConfiguration(CloudConfiguration value) {
@@ -154,7 +157,8 @@ public class RequestDetails implements Serializable {
     /**
      * Sets the value of the requestParameters property.
      *
-     * @param value allowed object is {@link RequestParameters }
+     * @param value
+     *            allowed object is {@link RequestParameters }
      *
      */
     public void setRequestParameters(RequestParameters value) {
@@ -182,7 +186,8 @@ public class RequestDetails implements Serializable {
     /**
      * Sets the value of the project property.
      *
-     * @param value allowed object is {@link Project }
+     * @param value
+     *            allowed object is {@link Project }
      *
      */
     public void setProject(Project value) {
@@ -202,7 +207,8 @@ public class RequestDetails implements Serializable {
     /**
      * Sets the value of the owningEntity property.
      *
-     * @param value allowed object is {@link OwningEntity }
+     * @param value
+     *            allowed object is {@link OwningEntity }
      *
      */
     public void setOwningEntity(OwningEntity value) {
@@ -222,7 +228,8 @@ public class RequestDetails implements Serializable {
     /**
      * Sets the value of the platform property.
      *
-     * @param value allowed object is {@link Platform }
+     * @param value
+     *            allowed object is {@link Platform }
      *
      */
     public void setPlatform(Platform value) {
@@ -242,7 +249,8 @@ public class RequestDetails implements Serializable {
     /**
      * Sets the value of the lineOfBusiness property.
      *
-     * @param value allowed object is {@link LineOfBusiness }
+     * @param value
+     *            allowed object is {@link LineOfBusiness }
      *
      */
     public void setLineOfBusiness(LineOfBusiness value) {

@@ -25,8 +25,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.UriBuilder;
 import org.onap.so.client.RestClient;
 import org.onap.so.client.dmaap.Consumer;
 
@@ -52,7 +52,8 @@ public class RestConsumer implements Consumer {
     @Override
     public Iterable<String> fetch() {
 
-        return client.get(new GenericType<List<String>>() {}).orElse(new ArrayList<>());
+        return client.get(new GenericType<List<String>>() {
+        }).orElse(new ArrayList<>());
     }
 
 }

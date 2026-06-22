@@ -10,13 +10,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 @Component("cors")
-@Profile({"cors"})
+@Profile({ "cors" })
 public class CorsBasicHttpSecurityConfigurer implements HttpSecurityConfigurer {
 
     @Override
     public void configure(final HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
-                .antMatchers("/**").fullyAuthenticated().and().httpBasic();
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/manage/health", "/manage/info")
+                        .permitAll().requestMatchers("/**").fullyAuthenticated())
+                .httpBasic(httpBasic -> {
+                });
     }
 
     @Bean

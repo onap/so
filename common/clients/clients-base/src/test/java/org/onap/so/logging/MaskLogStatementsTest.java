@@ -20,8 +20,8 @@ public class MaskLogStatementsTest {
 
     @Test
     public void verifyOpenStackPayload() throws IOException {
-        String payload =
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/logging/openstack-payload.json")));
+        String payload = new String(
+                Files.readAllBytes(Paths.get("src/test/resources/__files/logging/openstack-payload.json")));
 
         ILoggingEvent event = makeLoggingEvent(payload);
 

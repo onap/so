@@ -25,10 +25,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * @author Waqas Ikram (waqas.ikram@est.tech)
- *
- */
 @Slf4j
 @Component("basic")
 public class SoBasicHttpSecurityConfigurer implements HttpSecurityConfigurer {
@@ -36,18 +32,24 @@ public class SoBasicHttpSecurityConfigurer implements HttpSecurityConfigurer {
     @Autowired
     private SoUserCredentialConfiguration soUserCredentialConfiguration;
 
-    private static final String[] unauthenticatedEndpoints = new String[] {"/manage/health", "/manage/info", "/error"};
+    private static final String[] unauthenticatedEndpoints = new String[] { "/manage/health", "/manage/info",
+            "/error" };
 
     @Override
     public void configure(final HttpSecurity http) throws Exception {
         if (soUserCredentialConfiguration.getRbacEnabled()) {
             String roles = StringUtils.collectionToDelimitedString(soUserCredentialConfiguration.getRoles(), ",");
-            http.csrf().disable().authorizeRequests().antMatchers(unauthenticatedEndpoints).permitAll()
-                    .antMatchers("/**").hasAnyRole(roles).and().httpBasic();
+            http.csrf(csrf -> csrf.disable())
+                    .authorizeHttpRequests(authorize -> authorize.requestMatchers(unauthenticatedEndpoints).permitAll()
+                            .requestMatchers("/**").hasAnyRole(roles.split(",")))
+                    .httpBasic(httpBasic -> {
+                    });
         } else {
             log.debug("Not configuring RBAC for the app.");
-            http.csrf().disable().authorizeRequests().antMatchers(unauthenticatedEndpoints).permitAll()
-                    .antMatchers("/**").authenticated().and().httpBasic();
+            http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers(unauthenticatedEndpoints).permitAll().requestMatchers("/**").authenticated())
+                    .httpBasic(httpBasic -> {
+                    });
         }
     }
 

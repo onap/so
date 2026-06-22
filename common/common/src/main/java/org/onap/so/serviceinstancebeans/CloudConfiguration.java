@@ -57,7 +57,8 @@ public class CloudConfiguration implements Serializable {
     /**
      * Sets the value of the aicNodeClli property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *            allowed object is {@link String }
      *
      */
     public void setAicNodeClli(String value) {
@@ -77,7 +78,8 @@ public class CloudConfiguration implements Serializable {
     /**
      * Sets the value of the tenantId property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *            allowed object is {@link String }
      *
      */
     public void setTenantId(String value) {
@@ -114,6 +116,5 @@ public class CloudConfiguration implements Serializable {
                 .append("tenantName", getTenantName()).append("cloudOwner", getCloudOwner())
                 .append("lcpCloudRegionId", getLcpCloudRegionId()).toString();
     }
-
 
 }

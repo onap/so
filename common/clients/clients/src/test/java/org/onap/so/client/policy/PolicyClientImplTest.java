@@ -34,8 +34,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.javatuples.Pair;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -152,8 +152,8 @@ public class PolicyClientImplTest {
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false);
         Config expected = mapper.readValue(new File(RESOURCE_PATH + "configJson.json"), Config.class);
-        PolicyConfig[] returnedPolicyConfigList =
-                mapper.readValue(new File(RESOURCE_PATH + "policyConfig.json"), PolicyConfig[].class);
+        PolicyConfig[] returnedPolicyConfigList = mapper.readValue(new File(RESOURCE_PATH + "policyConfig.json"),
+                PolicyConfig[].class);
         String configJson = returnedPolicyConfigList[0].getConfig();
         Config actual = client.getConfigFromStringJson(configJson);
 
@@ -166,8 +166,8 @@ public class PolicyClientImplTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false);
-        PolicyConfig[] returnedPolicyConfigList =
-                mapper.readValue(new File(RESOURCE_PATH + "policyConfig.json"), PolicyConfig[].class);
+        PolicyConfig[] returnedPolicyConfigList = mapper.readValue(new File(RESOURCE_PATH + "policyConfig.json"),
+                PolicyConfig[].class);
         Config expected = mapper.readValue(new File(RESOURCE_PATH + "configJson.json"), Config.class);
 
         PolicyRestClient mockedClient = Mockito.mock(PolicyRestClient.class);

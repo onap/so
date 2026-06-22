@@ -44,8 +44,8 @@ public abstract class DmaapConsumer extends DmaapClient {
         try {
             while (this.continuePolling()) {
                 if (stopwatch.elapsed(TimeUnit.MILLISECONDS) >= this.getMaximumElapsedTime()) {
-                    final String message =
-                            "exceeded maximum retries on " + this.getRequestId() + " on " + this.getTopic();
+                    final String message = "exceeded maximum retries on " + this.getRequestId() + " on "
+                            + this.getTopic();
                     logger.error(message);
                     throw new ExceededMaximumPollingTime(message);
                 }
@@ -124,7 +124,5 @@ public abstract class DmaapConsumer extends DmaapClient {
     public int getMaximumElapsedTime() {
         return MAX_ELAPSED_TIME;
     }
-
-
 
 }

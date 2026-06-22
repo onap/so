@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonPropertyOrder({"createdBy", "updatedBy", "createdTimestamp", "updatedTimestamp"})
+@JsonPropertyOrder({ "createdBy", "updatedBy", "createdTimestamp", "updatedTimestamp" })
 public class OperationalInfo implements Serializable {
 
     /**

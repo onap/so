@@ -26,8 +26,8 @@ import static org.mockito.Mockito.when;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Base64;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,8 +74,8 @@ public class AdapterRestClientTest {
         // given
         when(adapterRestPropertiesMock.getAuth()).thenReturn("");
         when(adapterRestPropertiesMock.getKey()).thenReturn("");
-        AdapterRestClient testedObject =
-                new AdapterRestClient(adapterRestPropertiesMock, new URI(""), "accept", "contentType");
+        AdapterRestClient testedObject = new AdapterRestClient(adapterRestPropertiesMock, new URI(""), "accept",
+                "contentType");
         // when
         testedObject.initializeHeaderMap(headerMap);
         // then

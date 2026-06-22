@@ -32,8 +32,8 @@ public class HttpComponentsClientConfigurationTest {
     @Test
     public void test_httpComponentsClientHttpRequestFactory_HttpComponentsClientHttpRequestFactoryNotNull() {
         final HttpClientConnectionConfiguration clientConnectionConfiguration = new HttpClientConnectionConfiguration();
-        final HttpComponentsClientConfiguration objUnderTest =
-                new HttpComponentsClientConfiguration(clientConnectionConfiguration);
+        final HttpComponentsClientConfiguration objUnderTest = new HttpComponentsClientConfiguration(
+                clientConnectionConfiguration);
 
         final HttpComponentsClientHttpRequestFactory factory = objUnderTest.httpComponentsClientHttpRequestFactory();
         assertNotNull(factory);

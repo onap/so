@@ -31,10 +31,11 @@ import com.openpojo.validation.rule.Rule;
 
 public class CustomSetterMustExistRule implements Rule {
 
-    private Matcher[] excludeMatchers = new Matcher[] {not(anything())};
-    private Matcher<PojoField>[] includeMatchers = new Matcher[] {anything()};
+    private Matcher[] excludeMatchers = new Matcher[] { not(anything()) };
+    private Matcher<PojoField>[] includeMatchers = new Matcher[] { anything() };
 
-    public CustomSetterMustExistRule() {}
+    public CustomSetterMustExistRule() {
+    }
 
     @Override
     public void evaluate(final PojoClass pojoClass) {

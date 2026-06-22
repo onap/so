@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"sliceProfileList"})
+@JsonPropertyOrder({ "sliceProfileList" })
 public class Attributes {
 
     @JsonProperty("sliceProfileList")

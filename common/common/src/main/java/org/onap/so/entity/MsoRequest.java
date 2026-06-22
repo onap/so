@@ -20,7 +20,6 @@
 
 package org.onap.so.entity;
 
-
 import java.io.Serializable;
 
 /**

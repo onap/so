@@ -55,7 +55,6 @@ public class ServiceInstanceBeansTest {
         assertEquals("{\"cloudOwner\":\"CloudOwner\",\"lcpCloudRegionId\":\"myRegionId\"}",
                 mapper.writeValueAsString(cloudConfiguration));
 
-
     }
 
     private void test(String pojoPackage) {

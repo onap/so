@@ -27,7 +27,7 @@ package org.onap.so.apihandler.common;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.camundabeans.CamundaBooleanInput;
@@ -290,7 +290,8 @@ public class CamundaClient {
         }
         BPMNFailureException bpmnException =
                 new BPMNFailureException.Builder(message, responseHandler.setStatus(e.getStatusCode().value()),
-                        ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, e.getStatusCode()).build();
+                        ErrorNumbers.SVC_DETAILED_SERVICE_ERROR,
+                        org.springframework.http.HttpStatus.resolve(e.getStatusCode().value())).build();
         return bpmnException;
     }
 

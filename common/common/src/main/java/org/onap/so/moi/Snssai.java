@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"sst", "sd"})
+@JsonPropertyOrder({ "sst", "sd" })
 public class Snssai {
 
     @JsonProperty("sst")

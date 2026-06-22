@@ -21,13 +21,13 @@
 package org.onap.so.moi;
 
 import com.fasterxml.jackson.annotation.*;
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"coverageAreaTAList", "dLLatency", "uLLatency", "resourceSharingLevel", "serviceType",
-        "maxNumberofUEs"})
+@JsonPropertyOrder({ "coverageAreaTAList", "dLLatency", "uLLatency", "resourceSharingLevel", "serviceType",
+        "maxNumberofUEs" })
 @Generated("jsonschema2pojo")
 public class RANSliceSubnetProfile {
 

@@ -22,8 +22,8 @@ package org.onap.so.client;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.javatuples.Pair;
 
 public interface RestProperties {
@@ -67,7 +67,8 @@ public interface RestProperties {
     }
 
     public default CacheProperties getCacheProperties() {
-        return new CacheProperties() {};
+        return new CacheProperties() {
+        };
     }
 
     public default MultivaluedMap<String, Pair<String, String>> additionalHeaders() {

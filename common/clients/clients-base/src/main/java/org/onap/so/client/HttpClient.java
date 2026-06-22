@@ -22,7 +22,7 @@ package org.onap.so.client;
 
 import java.net.URL;
 import java.util.Optional;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import org.javatuples.Pair;
 import org.onap.logging.filter.base.ONAPComponentsList;
 import org.slf4j.Logger;
@@ -49,7 +49,8 @@ public class HttpClient extends RestClient {
     }
 
     @Override
-    protected void initializeHeaderMap(MultivaluedMap<String, Pair<String, String>> headerMap) {}
+    protected void initializeHeaderMap(MultivaluedMap<String, Pair<String, String>> headerMap) {
+    }
 
     @Override
     protected Optional<ResponseExceptionMapper> addResponseExceptionMapper() {
@@ -59,8 +60,10 @@ public class HttpClient extends RestClient {
     /**
      * Adds a basic authentication header to the request.
      *
-     * @param auth the plaintext credentials (user:password)
-     * @param key unused, kept for API compatibility
+     * @param auth
+     *            the plaintext credentials (user:password)
+     * @param key
+     *            unused, kept for API compatibility
      */
     @Override
     public void addBasicAuthHeader(String auth, String key) {
@@ -74,7 +77,8 @@ public class HttpClient extends RestClient {
     /**
      * Adds an additional header to the header map
      *
-     * @param encoded basic auth value
+     * @param encoded
+     *            basic auth value
      */
     public void addAdditionalHeader(String name, String value) {
         try {

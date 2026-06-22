@@ -25,16 +25,14 @@
 // Generated on: 2016.03.30 at 02:48:23 PM CDT
 //
 
-
 package org.onap.so.serviceinstancebeans;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonRootName;
-
 
 /**
  * <p>
@@ -59,6 +57,5 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName(value = "serviceException")
 @JsonInclude(Include.NON_EMPTY)
 public class ServiceException extends ExceptionType {
-
 
 }

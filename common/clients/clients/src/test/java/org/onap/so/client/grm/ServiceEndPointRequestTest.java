@@ -38,12 +38,11 @@ public class ServiceEndPointRequestTest {
     @Test
     public void testMarshall() throws Exception {
 
-        String expected =
-                "{\"serviceEndPoint\":{\"name\":\"TEST.ECOMP_PSL.Inventory\",\"version\":{\"major\":1,\"minor\":0,\"patch\":\"0\"},"
-                        + "\"hostAddress\":\"127.0.0.1\",\"listenPort\":\"8080\",\"latitude\":\"37.7022\",\"longitude\":\"121.9358\","
-                        + "\"contextPath\":\"/\",\"routeOffer\":\"TEST\",\"operationalInfo\":{\"createdBy\":\"edge\",\"updatedBy\":\"edge\"},"
-                        + "\"properties\":[{\"name\":\"Environment\",\"value\":\"TEST\"},{\"name\":\"cpfrun_cluster_name\","
-                        + "\"value\":\"testcase_cluster_no_cluster\"}]},\"env\":\"DEV\"}";
+        String expected = "{\"serviceEndPoint\":{\"name\":\"TEST.ECOMP_PSL.Inventory\",\"version\":{\"major\":1,\"minor\":0,\"patch\":\"0\"},"
+                + "\"hostAddress\":\"127.0.0.1\",\"listenPort\":\"8080\",\"latitude\":\"37.7022\",\"longitude\":\"121.9358\","
+                + "\"contextPath\":\"/\",\"routeOffer\":\"TEST\",\"operationalInfo\":{\"createdBy\":\"edge\",\"updatedBy\":\"edge\"},"
+                + "\"properties\":[{\"name\":\"Environment\",\"value\":\"TEST\"},{\"name\":\"cpfrun_cluster_name\","
+                + "\"value\":\"testcase_cluster_no_cluster\"}]},\"env\":\"DEV\"}";
 
         Version ver = new Version();
         ver.setMajor(1);

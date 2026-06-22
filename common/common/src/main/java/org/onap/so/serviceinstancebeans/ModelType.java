@@ -27,26 +27,16 @@ import com.google.common.base.CaseFormat;
  * Enum for Model Type values returned by API Handler to BPMN
  */
 public enum ModelType {
-    service("serviceInstance"),
-    vnf("vnf"),
-    vfModule("vfModule"),
-    volumeGroup("volumeGroup"),
-    network("network"),
-    configuration("configuration"),
-    connectionPoint("connectionPoint"),
-    pnf("pnf"),
-    networkInstanceGroup("networkInstanceGroup"),
-    instanceGroup("instanceGroup"),
-    vpnBinding("vpnBinding"),
-    cnf("cnf");
-
+    service("serviceInstance"), vnf("vnf"), vfModule("vfModule"), volumeGroup("volumeGroup"), network(
+            "network"), configuration("configuration"), connectionPoint("connectionPoint"), pnf(
+                    "pnf"), networkInstanceGroup("networkInstanceGroup"), instanceGroup(
+                            "instanceGroup"), vpnBinding("vpnBinding"), cnf("cnf");
 
     final String name;
 
     private ModelType(String name) {
         this.name = name;
     }
-
 
     public <T> T getId(Object obj) {
         return this.get(obj, "Id");

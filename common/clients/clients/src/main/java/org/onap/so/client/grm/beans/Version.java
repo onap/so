@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonPropertyOrder({"major", "minor", "patch"})
+@JsonPropertyOrder({ "major", "minor", "patch" })
 public class Version implements Serializable {
 
     /**

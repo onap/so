@@ -83,8 +83,8 @@ public class BaseClient<I, O> {
                 .setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());
         restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));
-        ResponseEntity<O> responseEntity =
-                restTemplate.exchange(getTargetUrl(), method, requestEntity, typeRef, uriVariables);
+        ResponseEntity<O> responseEntity = restTemplate.exchange(getTargetUrl(), method, requestEntity, typeRef,
+                uriVariables);
         return responseEntity.getBody();
     }
 

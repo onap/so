@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonPropertyOrder({"status", "statusReasonCode", "statusReasonDescription", "statusCheckTime"})
+@JsonPropertyOrder({ "status", "statusReasonCode", "statusReasonDescription", "statusCheckTime" })
 public class Status implements Serializable {
 
     /**
