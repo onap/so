@@ -42,6 +42,9 @@ import org.openstack4j.core.transport.Config;
 import org.openstack4j.core.transport.HttpMethod;
 import org.openstack4j.core.transport.HttpRequest;
 import org.openstack4j.core.transport.HttpResponse;
+import org.openstack4j.model.ModelEntity;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class HttpClientExecutorServiceTest {
@@ -217,5 +220,73 @@ public class HttpClientExecutorServiceTest {
                 .method(HttpMethod.GET).build();
 
         executor.execute(request);
+    }
+
+    @Test
+    public void testExecutePostRequestWithModelEntity() throws IOException {
+        wireMock.stubFor(post(urlPathEqualTo("/v3/auth/tokens"))
+                .willReturn(aResponse().withStatus(201).withHeader("Content-Type", "application/json")
+                        .withHeader("X-Subject-Token", "token-xyz").withBody("{\"token\":{}}")));
+
+        HttpClientExecutorService executor = new HttpClientExecutorService();
+        TestAuthEntity entity = new TestAuthEntity("testuser", "testpass");
+
+        HttpRequest<String> request = HttpRequest.builder(String.class).endpoint("http://localhost:8089")
+                .path("/v3/auth/tokens").method(HttpMethod.POST).entity(entity).build();
+
+        HttpResponse response = executor.execute(request);
+
+        assertNotNull(response);
+        assertEquals(201, response.getStatus());
+        assertEquals("token-xyz", response.header("X-Subject-Token"));
+        response.close();
+
+        wireMock.verify(postRequestedFor(urlPathEqualTo("/v3/auth/tokens")).withRequestBody(containing("\"auth\""))
+                .withRequestBody(containing("testuser")));
+    }
+
+    @Test
+    public void testExecutePostRequestWithModelEntityNoRootName() throws IOException {
+        wireMock.stubFor(post(urlPathEqualTo("/v3/resources")).willReturn(aResponse().withStatus(201)
+                .withHeader("Content-Type", "application/json").withBody("{\"id\":\"new-123\"}")));
+
+        HttpClientExecutorService executor = new HttpClientExecutorService();
+        SimpleEntity entity = new SimpleEntity("test-value");
+
+        HttpRequest<String> request = HttpRequest.builder(String.class).endpoint("http://localhost:8089")
+                .path("/v3/resources").method(HttpMethod.POST).entity(entity).build();
+
+        HttpResponse response = executor.execute(request);
+
+        assertNotNull(response);
+        assertEquals(201, response.getStatus());
+        response.close();
+
+        wireMock.verify(postRequestedFor(urlPathEqualTo("/v3/resources"))
+                .withRequestBody(containing("\"field\" : \"test-value\"")));
+    }
+
+    @JsonRootName("auth")
+    static class TestAuthEntity implements ModelEntity {
+        private static final long serialVersionUID = 1L;
+        @JsonProperty
+        String username;
+        @JsonProperty
+        String password;
+
+        TestAuthEntity(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+    }
+
+    static class SimpleEntity implements ModelEntity {
+        private static final long serialVersionUID = 1L;
+        @JsonProperty
+        String field;
+
+        SimpleEntity(String field) {
+            this.field = field;
+        }
     }
 }

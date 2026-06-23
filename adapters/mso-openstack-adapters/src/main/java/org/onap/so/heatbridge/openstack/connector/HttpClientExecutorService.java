@@ -20,6 +20,7 @@
 package org.onap.so.heatbridge.openstack.connector;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.Map;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPatch;
@@ -35,6 +37,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -43,8 +46,10 @@ import org.openstack4j.core.transport.HttpExecutorService;
 import org.openstack4j.core.transport.HttpMethod;
 import org.openstack4j.core.transport.HttpRequest;
 import org.openstack4j.core.transport.HttpResponse;
+import org.openstack4j.core.transport.ObjectMapperSingleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class HttpClientExecutorService implements HttpExecutorService {
 
@@ -122,12 +127,29 @@ public class HttpClientExecutorService implements HttpExecutorService {
     }
 
     private <R> void applyBody(HttpRequestBase httpRequest, HttpRequest<R> request) {
-        if (request.hasJson() && httpRequest instanceof org.apache.http.client.methods.HttpEntityEnclosingRequestBase) {
-            org.apache.http.client.methods.HttpEntityEnclosingRequestBase entityRequest =
-                    (org.apache.http.client.methods.HttpEntityEnclosingRequestBase) httpRequest;
-            ContentType contentType =
-                    request.getContentType() != null ? ContentType.parse(request.getContentType().toString())
-                            : ContentType.APPLICATION_JSON;
+        if (!(httpRequest instanceof HttpEntityEnclosingRequestBase)) {
+            return;
+        }
+        HttpEntityEnclosingRequestBase entityRequest = (HttpEntityEnclosingRequestBase) httpRequest;
+        ContentType contentType = request.getContentType() != null ? ContentType.parse(request.getContentType())
+                : ContentType.APPLICATION_JSON;
+
+        if (request.getEntity() != null) {
+            Object entity = request.getEntity();
+            if (entity instanceof InputStream) {
+                ContentType streamContentType =
+                        request.getContentType() != null ? ContentType.parse(request.getContentType())
+                                : ContentType.APPLICATION_OCTET_STREAM;
+                entityRequest.setEntity(new InputStreamEntity((InputStream) entity, streamContentType));
+            } else {
+                try {
+                    String json = ObjectMapperSingleton.getContext(entity.getClass()).writeValueAsString(entity);
+                    entityRequest.setEntity(new StringEntity(json, contentType));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException("Failed to serialize request entity", e);
+                }
+            }
+        } else if (request.hasJson()) {
             entityRequest.setEntity(new StringEntity(request.getJson(), contentType));
         }
     }
