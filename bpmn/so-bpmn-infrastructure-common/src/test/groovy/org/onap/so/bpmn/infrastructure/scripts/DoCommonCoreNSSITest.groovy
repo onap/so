@@ -45,7 +45,7 @@ import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
 import org.onap.so.serviceinstancebeans.RequestDetails
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 import java.time.Instant
 
 import static org.junit.Assert.assertNotNull

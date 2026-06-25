@@ -64,5 +64,4 @@ public class RequestReferences {
                 .append("requestSelfLink", requestSelfLink).toString();
     }
 
-
 }

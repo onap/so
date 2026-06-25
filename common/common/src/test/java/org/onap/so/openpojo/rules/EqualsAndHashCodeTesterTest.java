@@ -26,12 +26,11 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.util.Objects;
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import org.junit.Before;
 import org.junit.Test;
 
 public class EqualsAndHashCodeTesterTest {
-
 
     private EqualsAndHashCodeTester tester;
 

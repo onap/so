@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -40,7 +40,7 @@ import org.onap.so.db.request.data.controller.InstanceNameDuplicateCheckRequest;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -136,7 +136,7 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort("/infraActiveRequests"));
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
-        assertEquals(201, response.getStatusCodeValue());
+        assertEquals(201, response.getStatusCode().value());
     }
 
 
@@ -157,7 +157,7 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
                 HttpMethod.POST, entity, new ParameterizedTypeReference<List<InfraActiveRequests>>() {});
 
         List<InfraActiveRequests> iarr = response.getBody();
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
 
         assertTrue(iarr.size() == 1);
         infraActiveRequestsResponse = iarr.get(0);
@@ -189,7 +189,7 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
 
         List<InfraActiveRequests> iarr = response.getBody();
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
 
         assertTrue(iarr.size() == 1);
         infraActiveRequestsResponse = iarr.get(0);
@@ -210,7 +210,7 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
 
         infraActiveRequestsResponse = response.getBody();
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
 
         verifyInfraActiveRequests();
     }
@@ -232,7 +232,7 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
 
         infraActiveRequestsResponse = response.getBody();
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
 
         verifyInfraActiveRequests();
     }
@@ -256,7 +256,7 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
 
         infraActiveRequestsResponse = response.getBody();
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
 
         verifyInfraActiveRequests();
     }
@@ -275,7 +275,7 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
         ResponseEntity<InfraActiveRequests> response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST,
                 entityList, new ParameterizedTypeReference<InfraActiveRequests>() {});
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(null, response.getBody());
     }
 
@@ -298,7 +298,7 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
 
         infraActiveRequestsResponse = response.getBody();
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(null, response.getBody());
     }
 
@@ -325,7 +325,7 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
 
         List<InfraActiveRequests> responseList = response.getBody();
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
 
         for (InfraActiveRequests result : responseList) {
             if (result.getRequestId().equals(request.getRequestId())) {

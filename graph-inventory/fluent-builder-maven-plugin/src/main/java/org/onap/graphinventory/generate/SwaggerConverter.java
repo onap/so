@@ -1,5 +1,6 @@
 package org.onap.graphinventory.generate;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -13,13 +14,16 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import org.apache.maven.plugin.logging.Log;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.SerializableParameter;
-import io.swagger.parser.SwaggerParser;
+import io.swagger.parser.util.SwaggerDeserializer;
 
 public class SwaggerConverter {
 
@@ -30,11 +34,20 @@ public class SwaggerConverter {
         this.log = log;
     }
 
-    public Map<String, ObjectType> getDoc(String swaggerLocation) throws JsonProcessingException {
+    public Map<String, ObjectType> getDoc(String swaggerLocation) throws IOException {
 
 
         swaggerLocation = processLocation(swaggerLocation);
-        Swagger swagger = new SwaggerParser().read(swaggerLocation);
+        LoaderOptions loaderOptions = new LoaderOptions();
+        loaderOptions.setCodePointLimit(Integer.MAX_VALUE);
+        Yaml yaml = new Yaml(new SafeConstructor(loaderOptions));
+        Object yamlObj;
+        try (FileReader reader = new FileReader(swaggerLocation)) {
+            yamlObj = yaml.load(reader);
+        }
+        JsonNode rootNode = mapper.convertValue(yamlObj, JsonNode.class);
+        SwaggerDeserializer deserializer = new SwaggerDeserializer();
+        Swagger swagger = deserializer.deserialize(rootNode).getSwagger();
 
         Map<String, Path> paths = swagger.getPaths().entrySet().stream()
                 .filter(item -> !item.getKey().endsWith("/relationship-list/relationship"))

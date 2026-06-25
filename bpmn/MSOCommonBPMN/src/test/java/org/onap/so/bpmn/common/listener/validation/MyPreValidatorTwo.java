@@ -22,7 +22,7 @@ package org.onap.so.bpmn.common.listener.validation;
 
 import java.util.Collections;
 import java.util.Optional;
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.springframework.stereotype.Component;
 

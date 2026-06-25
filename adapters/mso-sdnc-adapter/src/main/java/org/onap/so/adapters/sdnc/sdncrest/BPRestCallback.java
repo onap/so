@@ -25,7 +25,15 @@
 package org.onap.so.adapters.sdnc.sdncrest;
 
 import java.net.URI;
-import javax.xml.bind.DatatypeConverter;
+import java.util.concurrent.TimeUnit;
+import jakarta.xml.bind.DatatypeConverter;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.core5.http.io.SocketConfig;
+import org.apache.hc.core5.util.Timeout;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.logging.filter.base.ErrorCode;
@@ -147,18 +155,28 @@ public class BPRestCallback {
         }
     }
 
-    private void logResponseError(HttpStatus statusCode) {
+    private void logResponseError(org.springframework.http.HttpStatusCode statusCode) {
         String msg = "Received error response to callback request: " + statusCode;
         logger.error(LoggingAnchor.FOUR, MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA,
                 ErrorCode.BusinessProcessError.getValue(), msg);
     }
 
     protected RestTemplate setRestTemplate(int timeout) {
+        SocketConfig socketConfig =
+                SocketConfig.custom().setSoTimeout(Timeout.of(timeout, TimeUnit.MILLISECONDS)).build();
+
+        HttpClientConnectionManager connectionManager =
+                PoolingHttpClientConnectionManagerBuilder.create().setDefaultSocketConfig(socketConfig).build();
+
+        HttpClient httpClient = HttpClients.custom().setConnectionManager(connectionManager)
+                .setDefaultRequestConfig(
+                        RequestConfig.custom().setConnectTimeout(Timeout.of(timeout, TimeUnit.MILLISECONDS))
+                                .setConnectionRequestTimeout(Timeout.of(timeout, TimeUnit.MILLISECONDS))
+                                .setResponseTimeout(Timeout.of(timeout, TimeUnit.MILLISECONDS)).build())
+                .build();
+
         RestTemplate restTemplate = new RestTemplate();
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setConnectionRequestTimeout(timeout);
-        factory.setReadTimeout(timeout);
-        factory.setConnectTimeout(timeout);
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(factory));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());
         restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));

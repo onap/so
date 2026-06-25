@@ -22,7 +22,7 @@ package org.onap.so.adapters.nwrest;
 
 
 
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 

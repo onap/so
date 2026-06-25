@@ -37,7 +37,6 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class HttpClientTest {
 
-
     private final HttpClientFactory httpClientFactory = new HttpClientFactory();
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort().dynamicHttpsPort());

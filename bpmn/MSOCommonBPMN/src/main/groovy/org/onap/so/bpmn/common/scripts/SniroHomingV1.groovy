@@ -47,7 +47,7 @@ import static org.onap.so.bpmn.common.scripts.GenericUtils.*;
 
 import java.net.URL
 
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

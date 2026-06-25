@@ -30,12 +30,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import org.mockito.ArgumentMatchers;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -84,9 +84,9 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest {
 
     @Before
     public void init() {
-        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/")).willReturn(aResponse()
+        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus")).willReturn(aResponse()
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/")).willReturn(aResponse()
+        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus")).willReturn(aResponse()
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
         wireMockServer.stubFor(
                 get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findAllByOperationalEnvIdAndRequestId"))
@@ -149,6 +149,7 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest {
         wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString())
                         .withStatus(HttpStatus.SC_ACCEPTED)));
+        doNothing().when(requestsDbClient).save(ArgumentMatchers.<Object>any());
         activateVnf.execute(requestId, request);
     }
 
@@ -173,7 +174,7 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest {
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString())
                         .withStatus(HttpStatus.SC_ACCEPTED)));
 
-        doNothing().when(requestsDbClient).save(any());
+        doNothing().when(requestsDbClient).save(ArgumentMatchers.<Object>any());
 
         assertDoesNotThrow(() -> activateVnf.processActivateSDCRequest(requestId, operationalEnvironmentId,
                 serviceModelVersionIdList, workloadContext, vnfOperationalEnvironmentId));
@@ -209,10 +210,12 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest {
         wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withBody(jsonErrorResponse.toString()).withStatus(HttpStatus.SC_CONFLICT)));
-        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests"))
                 .withRequestBody(containing("operationalEnvId\":\"1dfe7154-eae0-44f2-8e7a-8e5e7882e55d\""))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
+
+        doNothing().when(requestsDbClient).save(ArgumentMatchers.<Object>any());
 
         thrown.expect(ValidateException.class);
 

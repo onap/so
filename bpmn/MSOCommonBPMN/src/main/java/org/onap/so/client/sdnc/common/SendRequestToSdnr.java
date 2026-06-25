@@ -21,7 +21,7 @@
 package org.onap.so.client.sdnc.common;
 
 import static org.onap.so.bpmn.common.scripts.GenericUtils.isBlank;
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;

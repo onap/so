@@ -47,6 +47,4 @@ public class RelatedInstanceList implements Serializable {
         return "RelatedInstanceList [relatedInstance=" + relatedInstance + "]";
     }
 
-
-
 }

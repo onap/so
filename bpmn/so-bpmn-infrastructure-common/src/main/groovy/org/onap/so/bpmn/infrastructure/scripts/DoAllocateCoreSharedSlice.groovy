@@ -21,8 +21,8 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.apache.commons.lang3.StringUtils.isBlank
-import javax.ws.rs.NotFoundException
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.NotFoundException
+import jakarta.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.GenericVnf

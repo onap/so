@@ -42,7 +42,6 @@ public class RelatedInstance implements Serializable {
     @JsonProperty("instanceDirection")
     protected InstanceDirection instanceDirection;
 
-
     public String getInstanceName() {
         return instanceName;
     }
