@@ -23,7 +23,7 @@ package org.onap.so.db.catalog.beans;
 import com.openpojo.business.annotation.BusinessKey;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 

@@ -42,7 +42,8 @@ public class CamundaClientErrorHandler implements ResponseErrorHandler {
 
     @Override
     public boolean hasError(ClientHttpResponse response) throws IOException {
-        HttpStatus.Series series = response.getStatusCode().series();
+        int statusValue = response.getStatusCode().value();
+        HttpStatus.Series series = HttpStatus.Series.resolve(statusValue);
         return (HttpStatus.Series.CLIENT_ERROR.equals(series) || HttpStatus.Series.SERVER_ERROR.equals(series));
     }
 

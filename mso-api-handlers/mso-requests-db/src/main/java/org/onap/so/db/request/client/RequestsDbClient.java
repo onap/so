@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.annotation.PostConstruct;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.db.request.beans.ArchivedInfraRequests;
@@ -86,7 +86,7 @@ public class RequestsDbClient {
 
     private String checkVnfIdStatus = "/infraActiveRequests/checkVnfIdStatus/";
 
-    private String infraActiveRequestURI = "/infraActiveRequests/";
+    private String infraActiveRequestURI = "/infraActiveRequests";
 
     private String checkInstanceNameDuplicate = "/infraActiveRequests/checkInstanceNameDuplicate";
 
@@ -289,14 +289,14 @@ public class RequestsDbClient {
     // TODO really this should be called save as its doing a put
     public void updateInfraActiveRequests(InfraActiveRequests request) {
         HttpHeaders headers = getHttpHeaders();
-        URI uri = getUri(infraActiveRequestURI + request.getRequestId());
+        URI uri = getUri(infraActiveRequestURI + "/" + request.getRequestId());
         HttpEntity<InfraActiveRequests> entity = new HttpEntity<>(request, headers);
         restTemplate.put(uri, entity);
     }
 
     public void patchInfraActiveRequests(InfraActiveRequests request) {
         HttpHeaders headers = getHttpHeaders();
-        URI uri = getUri(infraActiveRequestURI + request.getRequestId());
+        URI uri = getUri(infraActiveRequestURI + "/" + request.getRequestId());
         HttpEntity<InfraActiveRequests> entity = new HttpEntity<>(request, headers);
         restTemplate.exchange(uri, HttpMethod.PATCH, entity, String.class);
     }
@@ -488,16 +488,16 @@ public class RequestsDbClient {
         private static final Map<Class<?>, String> classURLMap = new HashMap<>();
 
         ClassURLMapper() {
-            classURLMap.put(ArchivedInfraRequests.class, "/archivedInfraRequests/");
-            classURLMap.put(InfraActiveRequests.class, "/infraActiveRequests/");
-            classURLMap.put(OperationalEnvDistributionStatus.class, "/operationalEnvDistributionStatus/");
-            classURLMap.put(OperationalEnvServiceModelStatus.class, "/operationalEnvServiceModelStatus/");
-            classURLMap.put(OperationStatus.class, "/operationStatus/");
-            classURLMap.put(ResourceOperationStatus.class, "/resourceOperationStatus/");
-            classURLMap.put(SiteStatus.class, "/siteStatus/");
-            classURLMap.put(WatchdogComponentDistributionStatus.class, "/watchdogComponentDistributionStatus/");
-            classURLMap.put(WatchdogDistributionStatus.class, "/watchdogDistributionStatus/");
-            classURLMap.put(WatchdogServiceModVerIdLookup.class, "/watchdogServiceModVerIdLookup/");
+            classURLMap.put(ArchivedInfraRequests.class, "/archivedInfraRequests");
+            classURLMap.put(InfraActiveRequests.class, "/infraActiveRequests");
+            classURLMap.put(OperationalEnvDistributionStatus.class, "/operationalEnvDistributionStatus");
+            classURLMap.put(OperationalEnvServiceModelStatus.class, "/operationalEnvServiceModelStatus");
+            classURLMap.put(OperationStatus.class, "/operationStatus");
+            classURLMap.put(ResourceOperationStatus.class, "/resourceOperationStatus");
+            classURLMap.put(SiteStatus.class, "/siteStatus");
+            classURLMap.put(WatchdogComponentDistributionStatus.class, "/watchdogComponentDistributionStatus");
+            classURLMap.put(WatchdogDistributionStatus.class, "/watchdogDistributionStatus");
+            classURLMap.put(WatchdogServiceModVerIdLookup.class, "/watchdogServiceModVerIdLookup");
         }
 
         <T> String getURI(Class<T> className) {

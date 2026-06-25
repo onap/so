@@ -20,7 +20,6 @@
 
 package org.onap.so.properties;
 
-
 /**
  * Exception during artifact installation.
  */

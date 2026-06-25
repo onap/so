@@ -20,9 +20,12 @@
 
 package org.onap.so.db.request.beans;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
@@ -30,6 +33,19 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class ArchivedInfraRequests extends InfraRequests {
 
     private static final long serialVersionUID = 7132783898142451603L;
+
+    @Transient
+    private List<CloudApiRequests> cloudApiRequests = new ArrayList<>();
+
+    @Override
+    public List<CloudApiRequests> getCloudApiRequests() {
+        return cloudApiRequests;
+    }
+
+    @Override
+    public void setCloudApiRequests(List<CloudApiRequests> cloudApiRequests) {
+        this.cloudApiRequests = cloudApiRequests;
+    }
 
     public ArchivedInfraRequests() {}
 

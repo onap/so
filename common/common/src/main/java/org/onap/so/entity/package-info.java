@@ -23,4 +23,3 @@
  */
 
 package org.onap.so.entity;
-

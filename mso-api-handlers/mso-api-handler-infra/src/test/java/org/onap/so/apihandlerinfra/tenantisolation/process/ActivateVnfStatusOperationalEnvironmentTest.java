@@ -32,8 +32,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.junit.Ignore;
@@ -223,12 +223,12 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest {
         wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + requestIdOrig))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/")).withRequestBody(equalTo(
+        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus")).withRequestBody(equalTo(
                 "{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"recoveryAction\":\"RETRY\",\"retryCount\":0,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"vnfOperationalEnvId\":\"VNF_operationalEnvironmentId\"}"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/")).withRequestBody(equalTo(
+        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus")).withRequestBody(equalTo(
                 "{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"distributionIdErrorReason\":\"\",\"createTime\":null,\"modifyTime\":null}"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
@@ -296,15 +296,15 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest {
         wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/" + sdcDistributionId))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(distributionDb)).withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/")).withRequestBody(equalTo(
+        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus")).withRequestBody(equalTo(
                 "{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_ERROR\",\"distributionIdErrorReason\":\"Unable to process.\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/")).willReturn(aResponse()
+        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus")).willReturn(aResponse()
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/")).withRequestBody(equalTo(
+        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus")).withRequestBody(equalTo(
                 "{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"SENT\",\"recoveryAction\":\"RETRY\",\"retryCount\":2,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"vnfOperationalEnvId\":\"VNF_operationalEnvironmentId\"}"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
@@ -375,7 +375,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest {
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString())
                         .withStatus(HttpStatus.SC_ACCEPTED)));
 
-        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/")).withRequestBody(equalTo(
+        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus")).withRequestBody(equalTo(
                 "{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"SENT\",\"recoveryAction\":\"RETRY\",\"retryCount\":2,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
@@ -453,7 +453,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest {
         wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + requestIdOrig))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests"))
                 .withRequestBody(containing("operationalEnvId\":\"VNF_operationalEnvironmentId\""))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
@@ -525,12 +525,12 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest {
         wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + requestIdOrig))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/")).withRequestBody(equalTo(
+        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus")).withRequestBody(equalTo(
                 "{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"recoveryAction\":\"SKIP\",\"retryCount\":0,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"vnfOperationalEnvId\":\"VNF_operationalEnvironmentId\"}"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/")).withRequestBody(equalTo(
+        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus")).withRequestBody(equalTo(
                 "{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"distributionIdErrorReason\":\"\",\"createTime\":null,\"modifyTime\":null}"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
@@ -593,12 +593,12 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest {
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/")).withRequestBody(containing(
+        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus")).withRequestBody(containing(
                 "{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_ERROR\""))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/")).withRequestBody(containing(
+        wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus")).withRequestBody(containing(
                 "{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_ERROR\""))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));

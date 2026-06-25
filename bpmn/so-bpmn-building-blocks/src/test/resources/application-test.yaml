@@ -193,7 +193,7 @@ spring:
       ddl-auto: none
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       enable-lazy-load-no-trans: true
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database-platform: org.hibernate.dialect.MySQLDialect
 
 mariaDB4j:
   dataDir:
@@ -204,6 +204,11 @@ camunda:
     metrics:
       enabled: false
       db-reporter-activate: false
+    database:
+      jdbc-batch-processing: false
+    generic-properties:
+      properties:
+        enforce-history-time-to-live: false
     application:
       delete-upon-undeploy: false
       scan-for-process-definitions: true

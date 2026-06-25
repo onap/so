@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import org.json.JSONException;
 import org.junit.Test;
 
-
 public class QueryServiceVnfTest extends QueryServiceVnfs {
 
     private QueryServiceVnfs queryServiceVnf = new QueryServiceVnfs();
@@ -31,6 +30,5 @@ public class QueryServiceVnfTest extends QueryServiceVnfs {
         boolean isValidJson = queryServiceVnf.isJSONValid(null);
         assertEquals(false, isValidJson);
     }
-
 
 }

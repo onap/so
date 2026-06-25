@@ -23,7 +23,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.apache.commons.lang3.StringUtils.*
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray
 import org.json.JSONObject

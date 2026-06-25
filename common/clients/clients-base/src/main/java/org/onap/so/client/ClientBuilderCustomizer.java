@@ -20,7 +20,7 @@
 
 package org.onap.so.client;
 
-import javax.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.ClientBuilder;
 
 /**
  * Allows customization of the JAX-RS {@link ClientBuilder} used by {@link RestClient}.

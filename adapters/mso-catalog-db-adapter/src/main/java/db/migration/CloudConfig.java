@@ -45,7 +45,6 @@ public class CloudConfig {
     @JsonProperty("cloudify_managers")
     private Map<String, CloudifyManager> cloudifyManagers = new HashMap<>();
 
-
     public Map<String, CloudIdentity> getIdentityServices() {
         return identityServices;
     }

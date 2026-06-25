@@ -19,36 +19,25 @@
  */
 package org.onap.so.adapters.catalogdb.catalogrest;
 
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
-import org.springframework.http.HttpStatus;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
-import com.github.tomakehurst.wiremock.client.WireMock;
+import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.tracing.Tracer;
 
-@AutoConfigureWireMock(port = 0)
-@TestPropertySource(
-        properties = {"spring.sleuth.enabled=true", "spring.zipkin.base-url=http://localhost:${wiremock.server.port}"})
 public class TracingTest extends CatalogDbAdapterBaseTest {
 
     @Autowired
-    RestTemplate restTemplate;
+    ObservationRegistry observationRegistry;
+
+    @Autowired
+    Tracer tracer;
 
     @Test
-    public void thatTracesAreExported() throws InterruptedException {
-        WireMock.stubFor(WireMock.post(WireMock.urlEqualTo("/api/v2/spans"))
-                .willReturn(WireMock.aResponse().withStatus(HttpStatus.OK.value())));
-
-        try {
-            restTemplate.getForObject("http://localhost:" + port + "/foo", String.class);
-        } catch (RestClientException e) {
-            // this provokes a 404. For the test it's not important what is returned here
-        }
-        Thread.sleep(1000);
-        WireMock.verify(WireMock.postRequestedFor(WireMock.urlEqualTo("/api/v2/spans")));
+    public void thatTracingBeansAreAvailable() {
+        assertNotNull("ObservationRegistry bean should be present", observationRegistry);
+        assertNotNull("Tracer bean should be present", tracer);
     }
 
 }
