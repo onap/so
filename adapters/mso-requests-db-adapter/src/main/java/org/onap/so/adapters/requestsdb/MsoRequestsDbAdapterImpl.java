@@ -25,8 +25,8 @@ package org.onap.so.adapters.requestsdb;
 
 import java.sql.Timestamp;
 import java.util.List;
-import javax.jws.WebService;
-import javax.transaction.Transactional;
+import jakarta.jws.WebService;
+import jakarta.transaction.Transactional;
 import org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationStatus;

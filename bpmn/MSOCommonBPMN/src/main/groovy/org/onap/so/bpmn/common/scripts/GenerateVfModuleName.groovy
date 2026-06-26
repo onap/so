@@ -29,8 +29,8 @@ import org.onap.logging.filter.base.ErrorCode
 
 import java.io.Serializable;
 
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.springframework.web.util.UriUtils

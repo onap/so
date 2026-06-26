@@ -4,8 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.core.UriBuilder;
-import javax.xml.bind.DatatypeConverter;
+import java.util.concurrent.TimeUnit;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.xml.bind.DatatypeConverter;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.core5.http.io.SocketConfig;
+import org.apache.hc.core5.util.Timeout;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricActivityInstanceEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
 import org.json.JSONObject;
@@ -217,11 +225,21 @@ public class CamundaRequestHandler {
             timeout = Integer.parseInt(env.getProperty(TIMEOUT_PROPERTY, TIMEOUT));
         }
 
+        SocketConfig socketConfig =
+                SocketConfig.custom().setSoTimeout(Timeout.of(timeout, TimeUnit.MILLISECONDS)).build();
+
+        HttpClientConnectionManager connectionManager =
+                PoolingHttpClientConnectionManagerBuilder.create().setDefaultSocketConfig(socketConfig).build();
+
+        HttpClient httpClient = HttpClients.custom().setConnectionManager(connectionManager)
+                .setDefaultRequestConfig(
+                        RequestConfig.custom().setConnectTimeout(Timeout.of(timeout, TimeUnit.MILLISECONDS))
+                                .setConnectionRequestTimeout(Timeout.of(timeout, TimeUnit.MILLISECONDS))
+                                .setResponseTimeout(Timeout.of(timeout, TimeUnit.MILLISECONDS)).build())
+                .build();
+
         RestTemplate restTemplate = new RestTemplate();
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setConnectionRequestTimeout(timeout);
-        factory.setReadTimeout(timeout);
-        factory.setConnectTimeout(timeout);
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(factory));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());
         restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));

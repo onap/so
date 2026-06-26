@@ -47,7 +47,7 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.constants.Defaults
 
-import javax.ws.rs.core.UriBuilder
+import jakarta.ws.rs.core.UriBuilder
 
 import static org.mockito.Mockito.*
 

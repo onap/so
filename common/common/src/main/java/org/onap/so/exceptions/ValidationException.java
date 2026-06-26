@@ -20,7 +20,6 @@
 
 package org.onap.so.exceptions;
 
-
 public class ValidationException extends Exception {
 
     /**

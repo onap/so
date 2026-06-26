@@ -70,7 +70,7 @@ public class InformKafkaClientTest {
         // then
         assertThat(kafkaClientTest.getPnfCorrelationId()).isEqualTo("testPnfCorrelationId");
         InOrder inOrder = inOrder(messageCorrelationBuilder);
-        inOrder.verify(messageCorrelationBuilder).processInstanceBusinessKey("testBusinessKey");
+        inOrder.verify(messageCorrelationBuilder).processInstanceId("testProcessInstanceId");
         inOrder.verify(messageCorrelationBuilder).correlateWithResult();
     }
 
@@ -78,14 +78,14 @@ public class InformKafkaClientTest {
         DelegateExecution delegateExecution = mock(DelegateExecution.class);
         when(delegateExecution.getVariable(eq(ExecutionVariableNames.PNF_CORRELATION_ID)))
                 .thenReturn("testPnfCorrelationId");
-        when(delegateExecution.getProcessBusinessKey()).thenReturn("testBusinessKey");
+        when(delegateExecution.getProcessInstanceId()).thenReturn("testProcessInstanceId");
         ProcessEngineServices processEngineServices = mock(ProcessEngineServices.class);
         when(delegateExecution.getProcessEngineServices()).thenReturn(processEngineServices);
         RuntimeService runtimeService = mock(RuntimeService.class);
         when(processEngineServices.getRuntimeService()).thenReturn(runtimeService);
         messageCorrelationBuilder = mock(MessageCorrelationBuilder.class);
         when(runtimeService.createMessageCorrelation(any())).thenReturn(messageCorrelationBuilder);
-        when(messageCorrelationBuilder.processInstanceBusinessKey(any())).thenReturn(messageCorrelationBuilder);
+        when(messageCorrelationBuilder.processInstanceId(any())).thenReturn(messageCorrelationBuilder);
         return delegateExecution;
     }
 }

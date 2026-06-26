@@ -73,7 +73,11 @@
       <groupId>io.grpc</groupId>
       <artifactId>grpc-testing</artifactId>
       <scope>test</scope>
-      <version>1.25.0</version>
+    </dependency>
+    <dependency>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-inprocess</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

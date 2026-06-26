@@ -27,8 +27,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.json.JSONException;
 import org.junit.Test;
 import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
@@ -44,7 +44,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
@@ -244,8 +243,6 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         JSONAssert.assertEquals(expectedResponse, response.getBody().toString(), false);
     }
 
-
-
     @Test
     public void testGetVNFResources404() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
@@ -328,7 +325,6 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         JSONAssert.assertEquals(expectedServiceVnfResponseV3, response.getBody().toString(), false);
     }
 
-
     @Test
     public void testGetServiceVNFResourcesByServiceModelInvariantUUID() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
@@ -410,7 +406,6 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
     }
 
-
     @Test
     public void testSerfviceVNFBadParams() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
@@ -425,10 +420,7 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(badQueryParamResponse, response.getBody().toString(), false);
 
-
     }
-
-
 
     /* Network Resources Endpoint */
 
@@ -447,8 +439,6 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedResponse, response.getBody().toString(), false);
     }
-
-
 
     @Test
     public void testGetNetworkResources404() throws JSONException {
@@ -578,7 +568,6 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         JSONAssert.assertEquals(expectedServiceNetworkResourceResponse, response.getBody().toString(), false);
     }
 
-
     @Test
     public void testGetServiceNetworkResourcesByNetworkCustomizationUUID() throws JSONException {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
@@ -623,14 +612,12 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
                 createURLWithPort("/ecomp/mso/catalog/v2/allottedResources/367a8ba9-057a-4506-b106-fbae818597c6"));
 
-
         ResponseEntity<String> response =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedResponse, response.getBody().toString(), false);
     }
-
 
     @Test
     public void testGetAllottedResourcesByServiceModelUuuid() throws JSONException {
@@ -746,7 +733,6 @@ public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         JSONAssert.assertEquals(expectedAllottedResponse, response.getBody().toString(), false);
     }
-
 
     @Test
     public void testGetAllottedResourcesResourcesNonExistResource() throws JSONException {

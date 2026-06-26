@@ -20,11 +20,10 @@
 
 package org.onap.so.logging.cxf.interceptor;
 
-
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor;
 import org.apache.cxf.interceptor.Fault;
@@ -36,7 +35,6 @@ import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
 
 public class SOAPLoggingInInterceptor extends AbstractSoapInterceptor {
 
@@ -52,7 +50,6 @@ public class SOAPLoggingInInterceptor extends AbstractSoapInterceptor {
             MDCSetup mdcSetup = new MDCSetup();
             Map<String, List<String>> headers = (Map<String, List<String>>) message.get(Message.PROTOCOL_HEADERS);
             HttpServletRequest request = (HttpServletRequest) message.get(AbstractHTTPDestination.HTTP_REQUEST);
-            request.getRemoteAddr();
 
             setRequestId(headers);
             setInvocationId(headers);

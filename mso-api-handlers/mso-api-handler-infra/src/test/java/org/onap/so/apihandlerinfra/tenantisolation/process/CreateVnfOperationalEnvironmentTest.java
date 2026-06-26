@@ -33,8 +33,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -150,7 +150,7 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest {
         iar.setRequestStatus("PENDING");
         iar.setRequestAction("UNKNOWN");
         ObjectMapper mapper = new ObjectMapper();
-        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests"))
                 .withRequestBody(containing("{\"requestId\":\"" + requestId
                         + "\",\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
@@ -188,7 +188,7 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest {
         iar.setRequestStatus("PENDING");
         iar.setRequestAction("UNKNOWN");
         ObjectMapper mapper = new ObjectMapper();
-        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests"))
                 .withRequestBody(containing("{\"requestId\":\"" + requestId
                         + "\",\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)

@@ -22,9 +22,9 @@ package org.onap.so.apihandlerinfra.exceptions;
 
 
 import static org.junit.Assert.assertEquals;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.Marshaller;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.Marshaller;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;

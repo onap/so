@@ -23,7 +23,7 @@
 package org.onap.so.asdc;
 
 import java.security.SecureRandom;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 import org.onap.so.asdc.client.ASDCController;
 import org.onap.so.asdc.client.exceptions.ASDCControllerException;
 import org.onap.logging.filter.base.ErrorCode;

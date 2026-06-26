@@ -20,15 +20,14 @@
 
 package org.onap.so.logging.jaxrs.filter;
 
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientResponseContext;
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.client.ClientResponseContext;
 import org.onap.logging.filter.base.MetricLogClientFilter;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.logger.MdcConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
 
 public class SOMetricLogClientFilter extends MetricLogClientFilter {
 

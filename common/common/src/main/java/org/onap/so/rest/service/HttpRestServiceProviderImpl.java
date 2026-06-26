@@ -147,9 +147,9 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
 
         } catch (final HttpStatusCodeException httpStatusCodeException) {
             final String message = "Unable to invoke HTTP " + httpMethod + " using url: " + url + ", Response: "
-                    + httpStatusCodeException.getRawStatusCode();
+                    + httpStatusCodeException.getStatusCode().value();
             LOGGER.error(message, httpStatusCodeException);
-            final int rawStatusCode = httpStatusCodeException.getRawStatusCode();
+            final int rawStatusCode = httpStatusCodeException.getStatusCode().value();
             if (rawStatusCode == HttpStatus.BAD_REQUEST.value()) {
                 throw new InvalidRestRequestException("No result found for given url: " + url);
             } else if (rawStatusCode == HttpStatus.NOT_FOUND.value()) {
@@ -173,9 +173,9 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
 
         } catch (final HttpStatusCodeException httpStatusCodeException) {
             final String message = "Unable to invoke HTTP " + HttpMethod.DELETE + " using url: " + url + ", Response: "
-                    + httpStatusCodeException.getRawStatusCode();
+                    + httpStatusCodeException.getStatusCode().value();
             LOGGER.error(message, httpStatusCodeException);
-            final int rawStatusCode = httpStatusCodeException.getRawStatusCode();
+            final int rawStatusCode = httpStatusCodeException.getStatusCode().value();
             if (rawStatusCode == HttpStatus.BAD_REQUEST.value()) {
                 throw new InvalidRestRequestException("No result found for given url: " + url);
             } else if (rawStatusCode == HttpStatus.NOT_FOUND.value()) {

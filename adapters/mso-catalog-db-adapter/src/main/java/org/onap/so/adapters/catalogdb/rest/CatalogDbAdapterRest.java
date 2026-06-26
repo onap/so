@@ -22,20 +22,18 @@
 
 package org.onap.so.adapters.catalogdb.rest;
 
-
-
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.GenericEntity;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.onap.so.adapters.catalogdb.catalogrest.CatalogQuery;
@@ -81,7 +79,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Path("/{version: v[0-9]+}")
 @Component
@@ -359,7 +356,6 @@ public class CatalogDbAdapterRest {
         }
     }
 
-
     @GET
     @Path("allottedResources/{arModelCustomizationUuid}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -537,7 +533,6 @@ public class CatalogDbAdapterRest {
                         recipe = vnfRecipeRepo.findFirstVnfRecipeByNfRoleAndAction("NS_DEFAULT", action);
                     }
                 }
-
 
                 if (null == recipe) {
                     NetworkResource nResource = networkResourceRepo.findResourceByModelUUID(rmUuid);

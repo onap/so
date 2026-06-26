@@ -21,7 +21,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 import static org.apache.commons.lang3.StringUtils.isBlank
 
-import javax.ws.rs.NotFoundException
+import jakarta.ws.rs.NotFoundException
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution

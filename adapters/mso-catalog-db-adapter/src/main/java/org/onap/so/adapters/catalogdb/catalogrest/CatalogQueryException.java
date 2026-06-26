@@ -21,7 +21,7 @@
 package org.onap.so.adapters.catalogdb.catalogrest;
 
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "catalogQueryException")
 public class CatalogQueryException extends CatalogQueryExceptionCommon implements Serializable {
@@ -68,6 +68,5 @@ public class CatalogQueryException extends CatalogQueryExceptionCommon implement
     public void setRolledBack(Boolean rolledBack) {
         this.rolledBack = rolledBack;
     }
-
 
 }

@@ -31,8 +31,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.util.UUID;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.onap.so.apihandler.common.ErrorNumbers;
@@ -94,7 +94,7 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest {
         wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/123"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/")).withRequestBody(containing(
+        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests")).withRequestBody(containing(
                 "{\"requestId\":\"123\",\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL, operationalEnvironmentId - operationalEnvId; Success Message: SUCCESSFULLY Created ECOMP OperationalEnvironment.\",\"progress\":100"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_OK)));
@@ -125,7 +125,7 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest {
         wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + uuid))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests"))
                 .withRequestBody(containing("{\"requestId\":\"" + uuid
                         + "\",\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE, operationalEnvironmentId - operationalEnvId; Error message:"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)

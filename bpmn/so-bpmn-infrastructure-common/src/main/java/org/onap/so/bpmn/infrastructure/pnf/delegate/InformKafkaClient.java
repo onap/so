@@ -36,8 +36,9 @@ public class InformKafkaClient implements JavaDelegate {
     public void execute(DelegateExecution execution) {
         String pnfCorrelationId = (String) execution.getVariable(ExecutionVariableNames.PNF_CORRELATION_ID);
         RuntimeService runtimeService = execution.getProcessEngineServices().getRuntimeService();
+        String processInstanceId = execution.getProcessInstanceId();
         kafkaClient.registerForUpdate(pnfCorrelationId, () -> runtimeService.createMessageCorrelation("WorkflowMessage")
-                .processInstanceBusinessKey(execution.getProcessBusinessKey()).correlateWithResult());
+                .processInstanceId(processInstanceId).correlateWithResult());
     }
 
     @Autowired

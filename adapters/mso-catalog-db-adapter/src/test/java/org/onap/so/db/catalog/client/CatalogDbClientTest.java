@@ -20,7 +20,6 @@
 
 package org.onap.so.db.catalog.client;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -59,7 +58,7 @@ import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.web.client.RestTemplate;
 
 public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
@@ -134,7 +133,6 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         CloudifyManager cloudifyManager = client.getCloudifyManager(UUID.randomUUID().toString());
         assertNull(cloudifyManager);
     }
-
 
     @Test
     public void testGetCloudSiteByClliAndAicVersionHappyPath() {
@@ -352,7 +350,6 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         assertEquals("/mso/async/services/WorkflowActionBB", vnfComponentsRecipe.getOrchestrationUri());
 
     }
-
 
     @Test
     public void testGetFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndActionNotFound() {
@@ -709,7 +706,6 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         assertEquals("nfRole", vnf.getNfRole());
         assertEquals("nfType", vnf.getNfType());
 
-
     }
 
     @Test
@@ -789,6 +785,5 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         List<BuildingBlockRollback> rollbackEntries = client.getBuildingBlockRollbackEntries();
         assertTrue(rollbackEntries.size() > 1);
     }
-
 
 }
