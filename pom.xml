@@ -66,7 +66,7 @@
     <siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
     <cxf.version>4.0.5</cxf.version>
     <jax.ws.rs>2.1.1</jax.ws.rs>
-    <jakarta.ws.rs.version>4.0.0</jakarta.ws.rs.version>
+    <jakarta.ws.rs.version>3.1.0</jakarta.ws.rs.version>
     <springboot.version>3.0.13</springboot.version>
     <spring-cloud.version>2022.0.5</spring-cloud.version>
     <camunda.version>7.20.0</camunda.version>
@@ -962,11 +962,6 @@
         <groupId>jakarta.xml.ws</groupId>
         <artifactId>jakarta.xml.ws-api</artifactId>
         <version>4.0.3</version>
-      </dependency>
-      <dependency>
-        <groupId>jakarta.servlet</groupId>
-        <artifactId>jakarta.servlet-api</artifactId>
-        <version>6.1.0</version>
       </dependency>
       <dependency>
         <groupId>jakarta.annotation</groupId>

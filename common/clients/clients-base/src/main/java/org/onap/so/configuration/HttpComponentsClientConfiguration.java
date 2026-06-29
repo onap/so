@@ -68,6 +68,8 @@ public class HttpComponentsClientConfiguration {
         return RequestConfig.custom()
                 .setResponseTimeout(
                         Timeout.ofMilliseconds(clientConnectionConfiguration.getSocketTimeOutInMiliSeconds()))
+                .setConnectTimeout(
+                        Timeout.ofMilliseconds(clientConnectionConfiguration.getConnectionTimeOutInMilliSeconds()))
                 .setConnectionRequestTimeout(
                         Timeout.ofMilliseconds(clientConnectionConfiguration.getConnectionTimeOutInMilliSeconds()))
                 .build();

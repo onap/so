@@ -323,7 +323,9 @@ public class CacheControlFeature implements Feature, Closeable {
             return java.util.Collections.emptyList();
         }
 
-        @Override
+        // Not annotated with @Override: getMatchedResourceTemplate() was added to UriInfo in JAX-RS 4.0
+        // (jakarta.ws.rs-api 4.0.0). SO targets the Spring Boot 3.0 baseline (JAX-RS 3.1.0), where this
+        // method does not exist on the interface, so an @Override here would not compile.
         public String getMatchedResourceTemplate() {
             return null;
         }
