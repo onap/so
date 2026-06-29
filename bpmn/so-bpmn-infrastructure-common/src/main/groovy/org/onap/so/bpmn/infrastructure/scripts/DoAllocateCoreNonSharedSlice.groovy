@@ -26,7 +26,6 @@ import groovy.json.JsonOutput
 
 import static org.hamcrest.CoreMatchers.instanceOf
 
-import javax.json.JsonArray
 import jakarta.ws.rs.core.Response
 import org.apache.commons.collections.map.HashedMap
 import org.apache.commons.lang.StringEscapeUtils

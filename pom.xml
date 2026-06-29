@@ -952,26 +952,10 @@
         <artifactId>jakarta.interceptor-api</artifactId>
         <version>2.2.0</version>
       </dependency>
-      <!-- Transitional: modules not yet migrated still reference javax artifacts -->
-      <dependency>
-        <groupId>javax.interceptor</groupId>
-        <artifactId>javax.interceptor-api</artifactId>
-        <version>1.2.2</version>
-      </dependency>
       <dependency>
         <groupId>jakarta.xml.ws</groupId>
         <artifactId>jakarta.xml.ws-api</artifactId>
         <version>4.0.3</version>
-      </dependency>
-      <dependency>
-        <groupId>jakarta.annotation</groupId>
-        <artifactId>jakarta.annotation-api</artifactId>
-        <version>3.0.0</version>
-      </dependency>
-      <dependency>
-        <groupId>io.swagger.core.v3</groupId>
-        <artifactId>swagger-jaxrs2</artifactId>
-        <version>2.2.19</version>
       </dependency>
       <dependency>
         <groupId>io.micrometer</groupId>
