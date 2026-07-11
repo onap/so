@@ -40,7 +40,6 @@ import org.onap.so.asdc.activity.DeployActivitySpecs;
 import org.onap.so.asdc.client.exceptions.ASDCControllerException;
 import org.onap.so.asdc.installer.IVfResourceInstaller;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
-import org.onap.so.asdc.tenantIsolation.DistributionStatus;
 import org.onap.so.asdc.tenantIsolation.WatchdogDistribution;
 import org.onap.so.asdc.util.ASDCNotificationLogging;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;
@@ -60,10 +59,9 @@ public class ASDCController {
     protected static final Logger logger = LoggerFactory.getLogger(ASDCController.class);
     protected boolean isAsdcClientAutoManaged = false;
     protected String controllerName;
-    protected int nbOfNotificationsOngoing = 0;
 
     private static final String UNKNOWN = "Unknown";
-    private ASDCControllerStatus controllerStatus = ASDCControllerStatus.STOPPED;
+    private final ControllerState state = new ControllerState();
 
     @Autowired
     private ToscaResourceInstaller toscaInstaller;
@@ -91,6 +89,9 @@ public class ASDCController {
 
     @Autowired
     private ResourceInstaller resourceInstaller;
+
+    @Autowired
+    private WatchdogStatusWaiter watchdogWaiter;
 
     private IDistributionClient distributionClient;
 
@@ -125,7 +126,7 @@ public class ASDCController {
     }
 
     public int getNbOfNotificationsOngoing() {
-        return nbOfNotificationsOngoing;
+        return state.getNbOfNotificationsOngoing();
     }
 
     public IDistributionClient getDistributionClient() {
@@ -137,35 +138,11 @@ public class ASDCController {
     }
 
     protected void changeControllerStatus(ASDCControllerStatus newControllerStatus) {
-        switch (newControllerStatus) {
-
-            case BUSY:
-                ++this.nbOfNotificationsOngoing;
-                this.controllerStatus = newControllerStatus;
-                break;
-
-            case IDLE:
-                changeOnStatusIDLE(newControllerStatus);
-
-                break;
-            default:
-                this.controllerStatus = newControllerStatus;
-                break;
-
-        }
-    }
-
-    private void changeOnStatusIDLE(ASDCControllerStatus newControllerStatus) {
-        if (this.nbOfNotificationsOngoing > 1) {
-            --this.nbOfNotificationsOngoing;
-        } else {
-            this.nbOfNotificationsOngoing = 0;
-            this.controllerStatus = newControllerStatus;
-        }
+        state.changeControllerStatus(newControllerStatus);
     }
 
     public ASDCControllerStatus getControllerStatus() {
-        return this.controllerStatus;
+        return state.getControllerStatus();
     }
 
     public String getControllerName() {
@@ -228,7 +205,7 @@ public class ASDCController {
      * @return true if controller is stopped
      */
     public boolean isStopped() {
-        return this.getControllerStatus() == ASDCControllerStatus.STOPPED;
+        return state.isStopped();
     }
 
     /**
@@ -259,7 +236,7 @@ public class ASDCController {
      * @return true if controller is currently processing notification
      */
     public boolean isBusy() {
-        return this.getControllerStatus() == ASDCControllerStatus.BUSY;
+        return state.isBusy();
     }
 
     public void treatNotification(INotificationData iNotif) {
@@ -289,51 +266,13 @@ public class ASDCController {
             resourceInstaller.processResourceNotification(distributionClient, iNotif);
 
             // ********************************************************************************************************
-            // Start Watchdog loop and wait for all components to complete before reporting final status back.
-            // **If timer expires first then we will report a Distribution Error back to ASDC
+            // Wait for all components to complete before reporting final status back.
+            // **If the timer expires first then we will report a Distribution Error back to ASDC
             // ********************************************************************************************************
-            long initialStartTime = System.currentTimeMillis();
-            boolean componentsComplete = false;
-            String distributionStatus = null;
-            String watchdogError = null;
-            String overallStatus = null;
-            int watchDogTimeout = asdcConfig.getWatchDogTimeout() * 1000;
-            boolean isDeploySuccess = false;
-
-            while (!componentsComplete && (System.currentTimeMillis() - initialStartTime) < watchDogTimeout) {
-
-                try {
-                    distributionStatus = wd.getOverallDistributionStatus(iNotif.getDistributionID());
-                    Thread.sleep(watchDogTimeout / 10);
-                } catch (Exception e) {
-                    logger.debug("Exception in Watchdog Loop {}", e.getMessage());
-                    Thread.sleep(watchDogTimeout / 10);
-                }
-
-                if (distributionStatus != null
-                        && !distributionStatus.equalsIgnoreCase(DistributionStatus.INCOMPLETE.name())) {
-
-                    if (distributionStatus.equalsIgnoreCase(DistributionStatus.SUCCESS.name())) {
-                        isDeploySuccess = true;
-                        overallStatus = DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK.name();
-                    } else {
-                        overallStatus = DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name();
-                    }
-                    componentsComplete = true;
-                }
-            }
-
-            if (!componentsComplete) {
-                logger.debug("Timeout of {} seconds was reached before all components reported status",
-                        watchDogTimeout);
-                watchdogError = "Timeout occurred while waiting for all components to report status";
-                overallStatus = DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name();
-            }
-
-            if (distributionStatus == null) {
-                overallStatus = DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name();
-                logger.debug("DistributionStatus is null for DistributionId: {}", iNotif.getDistributionID());
-            }
+            WatchdogStatusResult watchdogResult = watchdogWaiter.waitForComponents(iNotif.getDistributionID());
+            String overallStatus = watchdogResult.getOverallStatus();
+            String watchdogError = watchdogResult.getWatchdogError();
+            boolean isDeploySuccess = watchdogResult.isDeploySuccess();
 
             try {
                 wd.executePatchAAI(iNotif.getDistributionID(), iNotif.getServiceInvariantUUID(), overallStatus);
