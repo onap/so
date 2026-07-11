@@ -26,7 +26,14 @@
 package org.onap.so.asdc.client;
 
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.sdc.api.IDistributionClient;
@@ -61,6 +68,27 @@ public class ASDCController {
 
     private static final String UNKNOWN = "Unknown";
     private final ControllerState state = new ControllerState();
+
+    // Runs phase 2 (watchdog wait + final status) off the Kafka poll thread; blocking that thread past
+    // max.poll.interval.ms evicts the consumer and triggers a redelivery storm. CallerRunsPolicy keeps every
+    // BUSY paired with an IDLE (rejected task runs inline) so the controller can't leak into permanently-BUSY.
+    private Executor watchdogExecutor = defaultWatchdogExecutor();
+
+    private static Executor defaultWatchdogExecutor() {
+        AtomicInteger threadCounter = new AtomicInteger();
+        ThreadPoolExecutor executor =
+                new ThreadPoolExecutor(2, 5, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(100), runnable -> {
+                    Thread thread = new Thread(runnable, "asdc-watchdog-" + threadCounter.incrementAndGet());
+                    thread.setDaemon(true);
+                    return thread;
+                });
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        return executor;
+    }
+
+    void setWatchdogExecutor(Executor watchdogExecutor) {
+        this.watchdogExecutor = watchdogExecutor;
+    }
 
     @Autowired
     private ToscaResourceInstaller toscaInstaller;
@@ -242,28 +270,21 @@ public class ASDCController {
         }
         logger.info(LoggingAnchor.FOUR, MessageEnum.ASDC_RECEIVE_CALLBACK_NOTIF.toString(), noOfArtifacts,
                 iNotif.getServiceUUID(), "ASDC");
+
+        // Phase 1 (poll thread): download + install, then return fast so the Kafka offset commits.
+        changeControllerStatus(ASDCControllerStatus.BUSY);
         try {
             putRequestIdIntoMdc(iNotif);
             logger.debug(ASDCNotificationLogging.dumpASDCNotification(iNotif));
             logger.info(LoggingAnchor.FOUR, MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF.toString(), iNotif.getServiceUUID(),
                     "ASDC", "treatNotification");
 
-            changeControllerStatus(ASDCControllerStatus.BUSY);
             Optional<String> notificationMessage = jsonMapper.toJson(iNotif);
             toscaInstaller.processWatchdog(iNotif.getDistributionID(), iNotif.getServiceUUID(), notificationMessage,
                     asdcConfig.getConsumerID());
 
             // Process only the Resource artifacts in MSO
             resourceInstaller.processResourceNotification(distributionClient, iNotif);
-
-            // ********************************************************************************************************
-            // Wait for all components to complete before reporting final status back.
-            // **If the timer expires first then we will report a Distribution Error back to ASDC
-            // ********************************************************************************************************
-            WatchdogStatusResult watchdogResult = watchdogWaiter.waitForComponents(iNotif.getDistributionID());
-            String watchdogError = updateAaiAndCatalogStatus(iNotif, watchdogResult.getOverallStatus(),
-                    watchdogResult.getWatchdogError());
-            reportFinalDistributionStatus(iNotif, watchdogResult.isDeploySuccess(), watchdogError);
 
         } catch (ObjectOptimisticLockingFailureException e) {
 
@@ -274,11 +295,42 @@ public class ASDCController {
             logger.error(LoggingAnchor.FIVE, MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
                     "Database concurrency exception: ", "ASDC", "treatNotification",
                     ErrorCode.BusinessProcessError.getValue(), "RuntimeException in treatNotification", e);
+            changeControllerStatus(ASDCControllerStatus.IDLE);
+            return;
 
+        } catch (Exception e) {
+            handleNotificationFailure(iNotif, e);
+            changeControllerStatus(ASDCControllerStatus.IDLE);
+            return;
+        }
+
+        // Phase 2 (watchdog executor): wait for components + report final status, off the poll thread.
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        try {
+            watchdogExecutor.execute(() -> finalizeDistribution(iNotif, mdcContext));
+        } catch (RejectedExecutionException e) {
+            // Pool shut down / saturated past CallerRunsPolicy: run inline so BUSY is still paired with IDLE.
+            logger.warn("Watchdog executor rejected task for DistributionId: {}, running inline",
+                    iNotif.getDistributionID());
+            finalizeDistribution(iNotif, mdcContext);
+        }
+    }
+
+    // Phase 2, on the watchdog executor: wait, report final status, and always pair the poll-thread BUSY with IDLE.
+    void finalizeDistribution(INotificationData iNotif, Map<String, String> mdcContext) {
+        if (mdcContext != null) {
+            MDC.setContextMap(mdcContext);
+        }
+        try {
+            WatchdogStatusResult watchdogResult = watchdogWaiter.waitForComponents(iNotif.getDistributionID());
+            String watchdogError = updateAaiAndCatalogStatus(iNotif, watchdogResult.getOverallStatus(),
+                    watchdogResult.getWatchdogError());
+            reportFinalDistributionStatus(iNotif, watchdogResult.isDeploySuccess(), watchdogError);
         } catch (Exception e) {
             handleNotificationFailure(iNotif, e);
         } finally {
             changeControllerStatus(ASDCControllerStatus.IDLE);
+            MDC.clear();
         }
     }
 

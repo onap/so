@@ -126,6 +126,8 @@ public class ASDCControllerITTest extends BaseTest {
         distributionClient = new DistributionClientEmulator();
         distributionClient.setResourcePath("src/test/resources");
         asdcController.setDistributionClient(distributionClient);
+        // Run phase 2 inline so the DB assertions below and the closeASDC() teardown are deterministic.
+        asdcController.setWatchdogExecutor(Runnable::run);
         try {
             asdcController.initASDC();
         } catch (ASDCControllerException e) {

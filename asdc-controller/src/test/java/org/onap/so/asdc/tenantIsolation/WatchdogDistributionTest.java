@@ -131,6 +131,11 @@ public class WatchdogDistributionTest extends BaseTest {
     }
 
     @Test
+    public void updateCatalogDBStatus_unknownModelUUID_doesNotThrow() {
+        watchdogDistribution.updateCatalogDBStatus("no-such-model-uuid", DistributionStatus.SUCCESS.toString());
+    }
+
+    @Test
     public void getSetAaiClientTest() {
         aaiResourceClient = watchdogDistribution.getAaiClient();
         watchdogDistribution.setAaiClient(aaiResourceClient);

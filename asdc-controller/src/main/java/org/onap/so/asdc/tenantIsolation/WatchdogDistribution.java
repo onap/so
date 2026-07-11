@@ -203,6 +203,11 @@ public class WatchdogDistribution {
     public void updateCatalogDBStatus(String serviceModelVersionId, String status) {
         try {
             Service foundService = serviceRepo.findOneByModelUUID(serviceModelVersionId);
+            if (foundService == null) {
+                logger.warn("No catalog Service found for modelUUID: {}, skipping distribution status update",
+                        serviceModelVersionId);
+                return;
+            }
             foundService.setDistrobutionStatus(status);
             serviceRepo.save(foundService);
         } catch (Exception e) {
