@@ -38,7 +38,6 @@ import org.onap.sdc.utils.DistributionActionResultEnum;
 import org.onap.sdc.utils.DistributionStatusEnum;
 import org.onap.so.asdc.activity.DeployActivitySpecs;
 import org.onap.so.asdc.client.exceptions.ASDCControllerException;
-import org.onap.so.asdc.installer.IVfResourceInstaller;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
 import org.onap.so.asdc.tenantIsolation.WatchdogDistribution;
 import org.onap.so.asdc.util.ASDCNotificationLogging;
@@ -109,11 +108,6 @@ public class ASDCController {
     public ASDCController(String controllerConfigName) {
         isAsdcClientAutoManaged = true;
         this.controllerName = controllerConfigName;
-    }
-
-    public ASDCController(String controllerConfigName, IDistributionClient asdcClient,
-            IVfResourceInstaller resourceinstaller) {
-        distributionClient = asdcClient;
     }
 
     public ASDCController(String controllerConfigName, IDistributionClient asdcClient) {
@@ -249,15 +243,12 @@ public class ASDCController {
         logger.info(LoggingAnchor.FOUR, MessageEnum.ASDC_RECEIVE_CALLBACK_NOTIF.toString(), noOfArtifacts,
                 iNotif.getServiceUUID(), "ASDC");
         try {
-
-            if (iNotif.getDistributionID() != null && !iNotif.getDistributionID().isEmpty()) {
-                MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, iNotif.getDistributionID());
-            }
+            putRequestIdIntoMdc(iNotif);
             logger.debug(ASDCNotificationLogging.dumpASDCNotification(iNotif));
             logger.info(LoggingAnchor.FOUR, MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF.toString(), iNotif.getServiceUUID(),
                     "ASDC", "treatNotification");
 
-            this.changeControllerStatus(ASDCControllerStatus.BUSY);
+            changeControllerStatus(ASDCControllerStatus.BUSY);
             Optional<String> notificationMessage = jsonMapper.toJson(iNotif);
             toscaInstaller.processWatchdog(iNotif.getDistributionID(), iNotif.getServiceUUID(), notificationMessage,
                     asdcConfig.getConsumerID());
@@ -270,36 +261,9 @@ public class ASDCController {
             // **If the timer expires first then we will report a Distribution Error back to ASDC
             // ********************************************************************************************************
             WatchdogStatusResult watchdogResult = watchdogWaiter.waitForComponents(iNotif.getDistributionID());
-            String overallStatus = watchdogResult.getOverallStatus();
-            String watchdogError = watchdogResult.getWatchdogError();
-            boolean isDeploySuccess = watchdogResult.isDeploySuccess();
-
-            try {
-                wd.executePatchAAI(iNotif.getDistributionID(), iNotif.getServiceInvariantUUID(), overallStatus);
-                logger.debug("A&AI Updated succefully with Distribution Status!");
-            } catch (Exception e) {
-                logger.debug("Exception in Watchdog executePatchAAI(): {}", e.getMessage());
-                watchdogError = "Error calling A&AI " + e.getMessage();
-                if (e.getCause() != null) {
-                    logger.debug("Exception caused by: {}", e.getCause().getMessage());
-                }
-            }
-
-            wd.updateCatalogDBStatus(iNotif.getServiceInvariantUUID(), overallStatus);
-
-            if (isDeploySuccess && watchdogError == null) {
-                statusSender.sendFinalDistributionStatus(distributionClient, iNotif.getDistributionID(),
-                        DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK, null);
-                WatchdogDistributionStatus wds = new WatchdogDistributionStatus(iNotif.getDistributionID());
-                wds.setDistributionIdStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK.toString());
-                wdsRepo.save(wds);
-            } else {
-                statusSender.sendFinalDistributionStatus(distributionClient, iNotif.getDistributionID(),
-                        DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR, watchdogError);
-                WatchdogDistributionStatus wds = new WatchdogDistributionStatus(iNotif.getDistributionID());
-                wds.setDistributionIdStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.toString());
-                wdsRepo.save(wds);
-            }
+            String watchdogError = updateAaiAndCatalogStatus(iNotif, watchdogResult.getOverallStatus(),
+                    watchdogResult.getWatchdogError());
+            reportFinalDistributionStatus(iNotif, watchdogResult.isDeploySuccess(), watchdogError);
 
         } catch (ObjectOptimisticLockingFailureException e) {
 
@@ -312,32 +276,70 @@ public class ASDCController {
                     ErrorCode.BusinessProcessError.getValue(), "RuntimeException in treatNotification", e);
 
         } catch (Exception e) {
-            logger.error("", MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
-                    "Unexpected exception caught during the notification processing", "ASDC", "treatNotification",
-                    ErrorCode.SchemaError.getValue(), "RuntimeException in treatNotification", e);
+            handleNotificationFailure(iNotif, e);
+        } finally {
+            changeControllerStatus(ASDCControllerStatus.IDLE);
+        }
+    }
 
-            try {
-                wd.executePatchAAI(iNotif.getDistributionID(), iNotif.getServiceInvariantUUID(),
-                        DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name());
-                logger.debug("A&AI Updated succefully with Distribution Status of {}",
-                        DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name());
-            } catch (Exception aaiException) {
-                logger.debug("Exception in executePatchAAI(): {}", aaiException);
-                if (aaiException.getCause() != null) {
-                    logger.debug("Exception caused by: {}", aaiException.getCause().getMessage());
-                }
+    private void putRequestIdIntoMdc(INotificationData iNotif) {
+        if (iNotif.getDistributionID() != null && !iNotif.getDistributionID().isEmpty()) {
+            MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, iNotif.getDistributionID());
+        }
+    }
+
+    private String updateAaiAndCatalogStatus(INotificationData iNotif, String overallStatus, String watchdogError) {
+        try {
+            wd.executePatchAAI(iNotif.getDistributionID(), iNotif.getServiceInvariantUUID(), overallStatus);
+            logger.debug("A&AI Updated succefully with Distribution Status!");
+        } catch (Exception e) {
+            logger.debug("Exception in Watchdog executePatchAAI(): {}", e.getMessage());
+            watchdogError = "Error calling A&AI " + e.getMessage();
+            if (e.getCause() != null) {
+                logger.debug("Exception caused by: {}", e.getCause().getMessage());
             }
+        }
+        wd.updateCatalogDBStatus(iNotif.getServiceInvariantUUID(), overallStatus);
+        return watchdogError;
+    }
 
+    private void reportFinalDistributionStatus(INotificationData iNotif, boolean isDeploySuccess,
+            String watchdogError) {
+        if (isDeploySuccess && watchdogError == null) {
             statusSender.sendFinalDistributionStatus(distributionClient, iNotif.getDistributionID(),
-                    DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR, e.getMessage());
-
+                    DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK, null);
+            WatchdogDistributionStatus wds = new WatchdogDistributionStatus(iNotif.getDistributionID());
+            wds.setDistributionIdStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK.toString());
+            wdsRepo.save(wds);
+        } else {
+            statusSender.sendFinalDistributionStatus(distributionClient, iNotif.getDistributionID(),
+                    DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR, watchdogError);
             WatchdogDistributionStatus wds = new WatchdogDistributionStatus(iNotif.getDistributionID());
             wds.setDistributionIdStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.toString());
             wdsRepo.save(wds);
-
-        } finally {
-            this.changeControllerStatus(ASDCControllerStatus.IDLE);
         }
+    }
+
+    private void handleNotificationFailure(INotificationData iNotif, Exception e) {
+        logger.error(LoggingAnchor.FIVE, MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
+                "Unexpected exception caught during the notification processing", "ASDC", "treatNotification",
+                ErrorCode.SchemaError.getValue(), "RuntimeException in treatNotification", e);
+        try {
+            wd.executePatchAAI(iNotif.getDistributionID(), iNotif.getServiceInvariantUUID(),
+                    DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name());
+            logger.debug("A&AI Updated succefully with Distribution Status of {}",
+                    DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name());
+        } catch (Exception aaiException) {
+            logger.debug("Exception in executePatchAAI(): {}", aaiException);
+            if (aaiException.getCause() != null) {
+                logger.debug("Exception caused by: {}", aaiException.getCause().getMessage());
+            }
+        }
+        statusSender.sendFinalDistributionStatus(distributionClient, iNotif.getDistributionID(),
+                DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR, e.getMessage());
+        WatchdogDistributionStatus wds = new WatchdogDistributionStatus(iNotif.getDistributionID());
+        wds.setDistributionIdStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.toString());
+        wdsRepo.save(wds);
     }
 
 
