@@ -525,6 +525,26 @@
               <fail>true</fail>
             </configuration>
           </execution>
+          <execution>
+            <!-- Surfaces dependency-convergence drift: an explicit pin resolving a
+                 managed dependency below the version something else requests (the
+                 class of split that produced duplicate kafka-clients / jersey /
+                 reflections versions across module images). Reported as a warning,
+                 not enforced (fail=false): several pre-existing gaps remain across
+                 the reactor (guava, jackson-jakarta-rs, tomcat, and the
+                 Spring-Boot-3.5.5 so-simulator island) whose convergence is out of
+                 scope for this change. Flip to fail=true once those are closed. -->
+            <id>enforce-upper-bound-deps</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireUpperBoundDeps />
+              </rules>
+              <fail>false</fail>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>

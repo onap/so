@@ -1,12 +1,12 @@
 package org.onap.so.simulator.scenarios.sdnc.grapi;
 
-import org.springframework.core.io.ClassPathResource;
+import org.citrusframework.spi.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
-import org.citrusframework.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
 
 @Scenario("SDNC-GRAPI-QueryVFModule-Macro1")
 @RequestMapping(
@@ -15,14 +15,14 @@ import org.citrusframework.simulator.scenario.ScenarioDesigner;
 public class QueryVFModuleGR_Macro1 extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario.http().receive().get();
+    public void run(ScenarioRunner scenario) {
+        scenario.$(scenario.http().receive().get());
 
 
         scenario.variable("vfModuleName", "macro_module_1");
 
-        scenario.http().send().response(HttpStatus.OK).header("ContentType", "application/json")
-                .payload(new ClassPathResource("sdnc/gr-api/SDNC_Query_VfModule.json"));
+        scenario.$(scenario.http().send().response(HttpStatus.OK).message().contentType("application/json")
+                .body(Resources.fromClasspath("sdnc/gr-api/SDNC_Query_VfModule.json")));
 
 
     }

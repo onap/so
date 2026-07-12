@@ -26,9 +26,9 @@ public class DefaultScenario extends AbstractSimulatorScenario {
 
     @Override
     public void run(ScenarioRunner scenario) {
-        scenario.http().receive((builder -> builder.get()));
+        scenario.$(scenario.http().receive().get());
 
-        scenario.http().send((builder -> builder.response(HttpStatus.BAD_REQUEST)));
+        scenario.$(scenario.http().send().response(HttpStatus.BAD_REQUEST));
 
     }
 }

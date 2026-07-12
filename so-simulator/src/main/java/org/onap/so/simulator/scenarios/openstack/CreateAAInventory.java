@@ -10,8 +10,8 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
-import com.consol.citrus.actions.AbstractTestAction;
-import com.consol.citrus.context.TestContext;
+import org.citrusframework.actions.AbstractTestAction;
+import org.citrusframework.context.TestContext;
 
 public class CreateAAInventory extends AbstractTestAction {
 
