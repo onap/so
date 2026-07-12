@@ -162,7 +162,7 @@
       <artifactId>cxf-rt-rs-service-description-openapi-v3</artifactId>
     </dependency>
     <dependency>
-      <groupId>janino</groupId>
+      <groupId>org.codehaus.janino</groupId>
       <artifactId>janino</artifactId>
     </dependency>
     <dependency>

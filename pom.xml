@@ -80,7 +80,7 @@
     <grpc.version>1.58.0</grpc.version>
     <slf4j.version>2.0.9</slf4j.version>
     <logback.version>1.4.14</logback.version>
-    <kafka-clients.version>3.4.1</kafka-clients.version>
+    <kafka.version>3.4.1</kafka.version>
     <aai-schema.version>1.14.0</aai-schema.version>
     <junit-jupiter.version>5.9.3</junit-jupiter.version>
     <surefire.forkCount>1</surefire.forkCount>
@@ -1083,14 +1083,14 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>janino</groupId>
-        <artifactId>janino</artifactId>
-        <version>2.5.15</version>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>0.10.2</version>
       </dependency>
       <dependency>
-        <groupId>org.glassfish.jersey.core</groupId>
-        <artifactId>jersey-common</artifactId>
-        <version>3.1.5</version>
+        <groupId>org.apache.kafka</groupId>
+        <artifactId>kafka-clients</artifactId>
+        <version>${kafka.version}</version>
       </dependency>
       <dependency>
         <groupId>com.h2database</groupId>
