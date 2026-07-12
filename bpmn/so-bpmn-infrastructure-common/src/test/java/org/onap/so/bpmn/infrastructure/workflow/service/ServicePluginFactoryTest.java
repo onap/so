@@ -20,7 +20,7 @@
 package org.onap.so.bpmn.infrastructure.workflow.service;
 
 import static org.mockito.Mockito.doReturn;
-import org.apache.commons.lang.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

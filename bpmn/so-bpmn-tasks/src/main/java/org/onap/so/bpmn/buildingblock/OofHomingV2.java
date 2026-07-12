@@ -20,8 +20,8 @@
 
 package org.onap.so.bpmn.buildingblock;
 
-import org.apache.commons.lang.SerializationUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import java.util.ArrayList;
 import org.json.JSONArray;
@@ -162,7 +162,7 @@ public class OofHomingV2 {
         } catch (Exception e) {
             logger.debug("{}{}", ERROR_WHILE_PREPARING_OOF_REQUEST, e.getStackTrace());
             exceptionUtil.buildAndThrowWorkflowException(execution, INTERNAL, "Internal Error - occurred while "
-                    + "preparing oof request: " + e + "   Stack:" + ExceptionUtils.getFullStackTrace(e));
+                    + "preparing oof request: " + e + "   Stack:" + ExceptionUtils.getStackTrace(e));
         }
     }
 

@@ -25,7 +25,7 @@ package org.onap.so.bpmn.common.scripts
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import jakarta.ws.rs.NotFoundException
 import jakarta.ws.rs.core.UriBuilder
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.AllottedResource

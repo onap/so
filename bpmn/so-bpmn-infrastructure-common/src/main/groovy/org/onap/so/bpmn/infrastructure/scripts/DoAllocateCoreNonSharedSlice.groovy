@@ -28,7 +28,6 @@ import static org.hamcrest.CoreMatchers.instanceOf
 
 import jakarta.ws.rs.core.Response
 import org.apache.commons.collections.map.HashedMap
-import org.apache.commons.lang.StringEscapeUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.json.JSONArray
