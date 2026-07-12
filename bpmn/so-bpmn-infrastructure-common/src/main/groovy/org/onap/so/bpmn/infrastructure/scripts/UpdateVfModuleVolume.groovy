@@ -22,7 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang.StringUtils.isEmpty
+import static org.apache.commons.lang3.StringUtils.isEmpty
 import org.apache.commons.collections.CollectionUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution

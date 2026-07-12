@@ -18,6 +18,10 @@
         <configuration>
           <compilerId>groovy-eclipse-compiler</compilerId>
           <release combine.self="override" />
+          <!-- Capped at Java 15: groovy-eclipse-batch 3.0.8-01 (the latest release available from the ONAP
+               Nexus on the Groovy 3.0.x line) bundles an Eclipse JDT compiler that cannot emit Java 17
+               bytecode. Raising this to 17 is coupled to the Groovy 3.x -> 4.x migration (SO-4400). The
+               resulting classes still run on the Java 17 runtime; this only affects emitted bytecode level. -->
           <source>15</source>
           <target>15</target>
         </configuration>
@@ -209,11 +213,6 @@
       <groupId>org.onap.so.adapters</groupId>
       <artifactId>mso-adapters-rest-interface</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.6</version>
     </dependency>
     <dependency>
       <groupId>org.glassfish.jersey.core</groupId>
