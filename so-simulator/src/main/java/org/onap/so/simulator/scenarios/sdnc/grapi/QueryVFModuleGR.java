@@ -2,9 +2,9 @@ package org.onap.so.simulator.scenarios.sdnc.grapi;
 
 import org.citrusframework.simulator.scenario.AbstractSimulatorScenario;
 import org.citrusframework.simulator.scenario.Scenario;
-import org.citrusframework.simulator.scenario.ScenarioDesigner;
+import org.citrusframework.simulator.scenario.ScenarioRunner;
 import java.security.SecureRandom;
-import org.springframework.core.io.ClassPathResource;
+import org.citrusframework.spi.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class QueryVFModuleGR extends AbstractSimulatorScenario {
 
     @Override
-    public void run(ScenarioDesigner scenario) {
-        scenario.http().receive().get();
+    public void run(ScenarioRunner scenario) {
+        scenario.$(scenario.http().receive().get());
         int random = (new SecureRandom()).nextInt(50) + 1;
 
         scenario.variable("vfModuleName", "vfModuleName" + random);
 
-        scenario.http().send().response(HttpStatus.OK).header("ContentType", "application/json")
-                .payload(new ClassPathResource("sdnc/gr-api/SDNC_Query_VfModule.json"));
+        scenario.$(scenario.http().send().response(HttpStatus.OK).message().contentType("application/json")
+                .body(Resources.fromClasspath("sdnc/gr-api/SDNC_Query_VfModule.json")));
 
 
     }

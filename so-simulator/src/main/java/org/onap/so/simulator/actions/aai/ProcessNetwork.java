@@ -1,7 +1,7 @@
 package org.onap.so.simulator.actions.aai;
 
-import com.consol.citrus.actions.AbstractTestAction;
-import com.consol.citrus.context.TestContext;
+import org.citrusframework.actions.AbstractTestAction;
+import org.citrusframework.context.TestContext;
 import java.security.SecureRandom;
 import org.onap.aai.domain.yang.L3Network;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;

@@ -19,7 +19,10 @@
  */
 package org.onap.so.simulator;
 
-import static org.junit.Assert.assertTrue;
+import static org.citrusframework.http.actions.HttpActionBuilder.http;
+import org.citrusframework.annotations.CitrusTest;
+import org.citrusframework.http.client.HttpClient;
+import org.citrusframework.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
@@ -28,15 +31,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
-import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.dsl.runner.TestRunner;
-import com.consol.citrus.dsl.runner.TestRunnerBeforeSuiteSupport;
-import com.consol.citrus.dsl.testng.TestNGCitrusTestDesigner;
-import com.consol.citrus.http.client.HttpClient;
 
 @Test
 @ContextConfiguration(classes = org.onap.so.simulator.SimulatorIntegrationTest.EndpointConfig.class)
-public class SimulatorIntegrationTest extends TestNGCitrusTestDesigner {
+public class SimulatorIntegrationTest extends TestNGCitrusSpringSupport {
 
     @Autowired
     @Qualifier("simulatorClient")
@@ -44,21 +42,16 @@ public class SimulatorIntegrationTest extends TestNGCitrusTestDesigner {
 
     @CitrusTest
     public void thatRequestCanBeMade() {
-        http().client(apiClient).send().get("/sim/v1/tenantOne/stacks/network_dummy_id/stackId");
-        http().client(apiClient).receive().response(HttpStatus.OK);
-        assertTrue(true);
+        $(http().client(apiClient).send().get("/sim/v1/tenantOne/stacks/network_dummy_id/stackId"));
+        $(http().client(apiClient).receive().response(HttpStatus.OK));
     }
 
     @Configuration
     public static class EndpointConfig {
         @Bean
-        public TestRunnerBeforeSuiteSupport startEmbeddedSimulator() {
-            return new TestRunnerBeforeSuiteSupport() {
-                @Override
-                public void beforeSuite(TestRunner runner) {
-                    SpringApplication.run(Simulator.class);
-                }
-            };
+        public String startEmbeddedSimulator() {
+            SpringApplication.run(Simulator.class);
+            return "simulator";
         }
     }
 }

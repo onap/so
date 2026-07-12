@@ -16,30 +16,15 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <springboot.version>2.7.18</springboot.version>
-    <spring-cloud.version>2021.0.9</spring-cloud.version>
-    <slf4j.version>1.7.36</slf4j.version>
-    <logback.version>1.2.12</logback.version>
-    <citrus.simulator.version>2.1.1</citrus.simulator.version>
+    <springboot.version>3.5.5</springboot.version>
+    <citrus.simulator.version>3.1.1</citrus.simulator.version>
+    <citrus.core.version>4.8.1</citrus.core.version>
     <junit-jupiter.version>5.6.0</junit-jupiter.version>
+    <!-- Aligned with the Spring Boot 3.5.5 line this standalone module runs on. -->
+    <logback.version>1.5.18</logback.version>
   </properties>
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>${slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>${logback.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-core</artifactId>
-        <version>${logback.version}</version>
-      </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
@@ -47,17 +32,19 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <!-- The root parent pom pins logback to 1.4.14 (Spring Boot 3.0.13 line). This
+           standalone module runs on Spring Boot 3.5.5, whose Citrus 4.8.1 stack calls
+           logback 1.5.x APIs (e.g. StatusPrinter2). Re-assert the matching logback here
+           so the parent's dependencyManagement does not drag it back to 1.4.14. -->
       <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-dependencies</artifactId>
-        <version>${spring-cloud.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>${logback.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.h2database</groupId>
-        <artifactId>h2</artifactId>
-        <version>1.4.200</version>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -95,7 +82,7 @@
     <!-- Citrus Simulator -->
     <dependency>
       <groupId>org.citrusframework</groupId>
-      <artifactId>citrus-simulator-starter</artifactId>
+      <artifactId>citrus-spring-boot-simulator</artifactId>
       <version>${citrus.simulator.version}</version>
     </dependency>
     <dependency>
@@ -122,11 +109,11 @@
       <artifactId>logging-slf4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.consol.citrus</groupId>
+      <groupId>org.citrusframework</groupId>
       <artifactId>citrus-ws</artifactId>
-      <!-- Keep this in line with the citrus-core version that is
-       transitively pulled in by the other citrus dependencies -->
-      <version>3.2.1</version>
+      <!-- Aligned with the Citrus core version pulled in by
+       citrus-spring-boot-simulator ${citrus.simulator.version} -->
+      <version>${citrus.core.version}</version>
     </dependency>
   </dependencies>
 
