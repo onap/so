@@ -2,6 +2,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.junit.Assert.*
 
+import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
 import org.junit.Ignore
@@ -69,10 +70,40 @@ class ModifySliceSubnetTest extends MsoGroovyTest {
 		assertEquals(updateVolumeGroupRequest, true)
 	}
 
-@Ignore
-        @Test
-	public void test() {
-		fail("Not yet implemented")
+	/**
+	 * Exercises the so-far-untested validation branch of preProcessRequest: when the incoming bpmnRequest is missing a
+	 * globalSubscriberId, preProcessRequest must build and throw a WorkflowException (surfaced as a BpmnError) rather
+	 * than continue. This uses only the mockExecution/JsonUtils path and does not require static-mocking
+	 * AnNssmfUtils.getModelUuid (the documented blocker on testPrepareInitOperationStatus).
+	 */
+	@Test
+	void testPreProcessRequestMissingGlobalSubscriberIdThrows() {
+		when(mockExecution.getVariable("bpmnRequest")).thenReturn("""
+        {
+					"serviceInstanceID": "NSSI-C-001-HDBNJ-NSSMF-01-A-ZX",
+					"networkType": "an/cn/tn",
+					"subscriptionServiceType": "5G",
+					"additionalProperties": {
+					"nsiInfo": {
+						"nsiId": "NSI-M-001-HDBNJ-NSMF-01-A-ZX",
+						"nsiName": "eMBB-001"
+					}
+					}
+}
+""".replaceAll("\\s+", ""))
+		when(mockExecution.getVariable("mso-request-id")).thenReturn("edb08d97-e0f9-4c71-840a-72080d7be42e")
+		ModifySliceSubnet sliceSubnet = new ModifySliceSubnet()
+
+		try {
+			sliceSubnet.preProcessRequest(mockExecution)
+			fail("Expected a BpmnError to be thrown for missing globalSubscriberId")
+		} catch (BpmnError e) {
+			assertEquals("500", e.getErrorCode())
+		}
+
+		// The failure must be recorded as a WorkflowException on the execution and must NOT set globalSubscriberId.
+		Mockito.verify(mockExecution).setVariable(eq("WorkflowException"), any())
+		Mockito.verify(mockExecution, never()).setVariable(eq("globalSubscriberId"), any())
 	}
 
 }

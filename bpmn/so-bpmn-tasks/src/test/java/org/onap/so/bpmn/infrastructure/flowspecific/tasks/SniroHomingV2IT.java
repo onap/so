@@ -33,7 +33,6 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.onap.so.BaseIntegrationTest;
@@ -399,9 +398,134 @@ public class SniroHomingV2IT extends BaseIntegrationTest {
     }
 
     @Test
-    @Ignore
     public void testProcessSolution_success_3VpnLink_2Solutions() {
-        // TODO
+        // Three VPN bonding links are pre-populated. Each link (built by beforeVpnBondingLink) carries the same two
+        // service proxies: testProxyId1 (transport) and testProxyId2 (infrastructure). SNIRO returns two placement
+        // solutions, each solving both proxies.
+        //
+        // processPlacementSolution matches the first link whose proxy id equals the placement's serviceResourceId and
+        // then breaks. For the first solution (i==0) it mutates that matched link (links.get(0)); for the second
+        // solution (i>0) it clones the last link and appends it, applying the second solution to that appended clone.
+        // Net effect for 3 links + 2 solutions: the list grows to 4 links, solution 1 lands on links.get(0) and
+        // solution 2 lands on the appended clone at the end of the list.
+        beforeVpnBondingLink("1");
+        beforeVpnBondingLink("2");
+        beforeVpnBondingLink("3");
+
+        JSONObject asyncResponse = new JSONObject();
+        asyncResponse.put("transactionId", "testRequestId").put("requestId", "testRequestId").put("requestState",
+                "completed");
+        JSONArray solution1 = new JSONArray();
+        solution1.put(new JSONObject().put("serviceResourceId", "testProxyId1")
+                .put("solution",
+                        new JSONObject().put("identifierType", "serviceInstanceId").put("identifiers",
+                                new JSONArray().put("testServiceInstanceId1")))
+                .put("assignmentInfo",
+                        new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
+                                .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
+                                .put(new JSONObject().put("key", "vnfHostName").put("value", "testVnfHostName1"))
+                                .put(new JSONObject().put("key", "aicClli").put("value", "testAicClli1"))
+                                .put(new JSONObject().put("key", "aicVersion").put("value", "3"))
+                                .put(new JSONObject().put("key", "vnfId").put("value", "testVnfId1"))
+                                .put(new JSONObject().put("key", "cloudRegionId").put("value", "testSloudRegionId1"))));
+        solution1.put(new JSONObject().put("serviceResourceId", "testProxyId2")
+                .put("solution",
+                        new JSONObject().put("identifierType", "serviceInstanceId").put("identifiers",
+                                new JSONArray().put("testServiceInstanceId2")))
+                .put("assignmentInfo",
+                        new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
+                                .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
+                                .put(new JSONObject().put("key", "primaryPnfName").put("value", "testPrimaryPnfName2"))
+                                .put(new JSONObject().put("key", "aicClli").put("value", "testAicClli2"))
+                                .put(new JSONObject().put("key", "aicVersion").put("value", "3"))
+                                .put(new JSONObject().put("key", "secondaryPnfName").put("value",
+                                        "testSecondaryPnfName2"))
+                                .put(new JSONObject().put("key", "cloudRegionId").put("value", "testSloudRegionId2"))));
+
+        JSONArray solution2 = new JSONArray();
+        solution2.put(new JSONObject().put("serviceResourceId", "testProxyId1")
+                .put("solution",
+                        new JSONObject().put("identifierType", "serviceInstanceId").put("identifiers",
+                                new JSONArray().put("testServiceInstanceId3")))
+                .put("assignmentInfo",
+                        new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
+                                .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
+                                .put(new JSONObject().put("key", "vnfHostName").put("value", "testVnfHostName3"))
+                                .put(new JSONObject().put("key", "aicClli").put("value", "testAicClli3"))
+                                .put(new JSONObject().put("key", "aicVersion").put("value", "3"))
+                                .put(new JSONObject().put("key", "vnfId").put("value", "testVnfId3"))
+                                .put(new JSONObject().put("key", "cloudRegionId").put("value", "testSloudRegionId3"))));
+        solution2.put(new JSONObject().put("serviceResourceId", "testProxyId2")
+                .put("solution",
+                        new JSONObject().put("identifierType", "serviceInstanceId").put("identifiers",
+                                new JSONArray().put("testServiceInstanceId4")))
+                .put("assignmentInfo",
+                        new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
+                                .put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
+                                .put(new JSONObject().put("key", "primaryPnfName").put("value", "testPrimaryPnfName4"))
+                                .put(new JSONObject().put("key", "aicClli").put("value", "testAicClli4"))
+                                .put(new JSONObject().put("key", "aicVersion").put("value", "3"))
+                                .put(new JSONObject().put("key", "secondaryPnfName").put("value",
+                                        "testSecondaryPnfName4"))
+                                .put(new JSONObject().put("key", "cloudRegionId").put("value", "testSloudRegionId4"))));
+
+        asyncResponse.put("solutions",
+                new JSONObject().put("placementSolutions", new JSONArray().put(solution1).put(solution2))
+                        .put("licenseSolutions", new JSONArray()));
+
+        sniroHoming.processSolution(execution, asyncResponse.toString());
+
+        ServiceInstance si =
+                execution.getGeneralBuildingBlock().getCustomer().getServiceSubscription().getServiceInstances().get(0);
+
+        // Started with 3 links; the second solution appends one cloned link.
+        assertFalse(si.getVpnBondingLinks().isEmpty());
+        assertEquals(4, si.getVpnBondingLinks().size());
+
+        // Solution 1 was applied to the first link.
+        VpnBondingLink link = si.getVpnBondingLinks().get(0);
+        assertNotNull(link);
+        assertFalse(link.getServiceProxies().isEmpty());
+
+        assertEquals("testServiceInstanceId1",
+                link.getServiceProxy("testProxyId1").getServiceInstance().getServiceInstanceId());
+        assertNotNull(link.getServiceProxy("testProxyId1").getServiceInstance().getSolutionInfo());
+        assertEquals("testVnfHostName1",
+                link.getServiceProxy("testProxyId1").getServiceInstance().getVnfs().get(0).getVnfName());
+
+        assertEquals("testServiceInstanceId2",
+                link.getServiceProxy("testProxyId2").getServiceInstance().getServiceInstanceId());
+        assertNotNull(link.getServiceProxy("testProxyId2").getServiceInstance().getSolutionInfo());
+        assertFalse(link.getServiceProxy("testProxyId2").getServiceInstance().getPnfs().isEmpty());
+        assertEquals("testPrimaryPnfName2",
+                link.getServiceProxy("testProxyId2").getServiceInstance().getPnfs().get(0).getPnfName());
+        assertEquals("primary", link.getServiceProxy("testProxyId2").getServiceInstance().getPnfs().get(0).getRole());
+        assertEquals("testSecondaryPnfName2",
+                link.getServiceProxy("testProxyId2").getServiceInstance().getPnfs().get(1).getPnfName());
+        assertEquals("secondary", link.getServiceProxy("testProxyId2").getServiceInstance().getPnfs().get(1).getRole());
+
+        // Solution 2 was applied to the appended cloned link at the tail of the list.
+        VpnBondingLink link2 = si.getVpnBondingLinks().get(si.getVpnBondingLinks().size() - 1);
+        assertNotNull(link2);
+        assertFalse(link2.getServiceProxies().isEmpty());
+
+        assertEquals("testServiceInstanceId3",
+                link2.getServiceProxy("testProxyId1").getServiceInstance().getServiceInstanceId());
+        assertNotNull(link2.getServiceProxy("testProxyId1").getServiceInstance().getSolutionInfo());
+        assertEquals("testVnfHostName3",
+                link2.getServiceProxy("testProxyId1").getServiceInstance().getVnfs().get(0).getVnfName());
+
+        assertEquals("testServiceInstanceId4",
+                link2.getServiceProxy("testProxyId2").getServiceInstance().getServiceInstanceId());
+        assertNotNull(link2.getServiceProxy("testProxyId2").getServiceInstance().getSolutionInfo());
+        assertFalse(link2.getServiceProxy("testProxyId2").getServiceInstance().getPnfs().isEmpty());
+        assertEquals("testPrimaryPnfName4",
+                link2.getServiceProxy("testProxyId2").getServiceInstance().getPnfs().get(0).getPnfName());
+        assertEquals("primary", link2.getServiceProxy("testProxyId2").getServiceInstance().getPnfs().get(0).getRole());
+        assertEquals("testSecondaryPnfName4",
+                link2.getServiceProxy("testProxyId2").getServiceInstance().getPnfs().get(1).getPnfName());
+        assertEquals("secondary",
+                link2.getServiceProxy("testProxyId2").getServiceInstance().getPnfs().get(1).getRole());
     }
 
     @Test
