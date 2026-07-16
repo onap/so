@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*
 class DoDeleteServiceInstanceTest {
 
     @Captor
-    static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+    static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
     @Before
     void init() throws IOException {

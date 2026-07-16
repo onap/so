@@ -48,7 +48,7 @@ class DeleteSliceServiceTest extends MsoGroovyTest {
     }
 
     @Captor
-    static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+    static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
     @Test
     void testPreProcessRequest(){

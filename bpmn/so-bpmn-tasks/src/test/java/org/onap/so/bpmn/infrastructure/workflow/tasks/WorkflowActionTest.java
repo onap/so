@@ -108,6 +108,7 @@ import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.springframework.core.env.Environment;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class WorkflowActionTest extends BaseTaskTest {
 
@@ -179,7 +180,12 @@ public class WorkflowActionTest extends BaseTaskTest {
         when(bbSetupUtils.getAAIServiceInstanceByName(anyString(), any())).thenReturn(servInstance);
         workflowAction.setBbInputSetupUtils(bbSetupUtils);
         workflowAction.setBbInputSetup(bbInputSetup);
-
+        // Under Mockito 5, @Spy @InjectMocks collaborators are not reliably injected into another
+        // @InjectMocks target (workflowAction), so the macro EBB loaders/builder come up null and
+        // selectExecutionList silently produces no flowsToExecute. Wire them explicitly.
+        ReflectionTestUtils.setField(workflowAction, "serviceEBBLoader", serviceEBBLoader);
+        ReflectionTestUtils.setField(workflowAction, "vnfEBBLoader", vnfEBBLoaderSpy);
+        ReflectionTestUtils.setField(workflowAction, "executeBuildingBlockBuilder", executeBuildingBlockBuilder);
     }
 
     /**

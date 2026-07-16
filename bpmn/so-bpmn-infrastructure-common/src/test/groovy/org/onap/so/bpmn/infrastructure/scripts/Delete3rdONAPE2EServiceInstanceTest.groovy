@@ -46,7 +46,7 @@ class Delete3rdONAPE2EServiceInstanceTest extends MsoGroovyTest {
     }
 
     @Captor
-    static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+    static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
     @Test
     void testCheckLocallCall_externalAPI() {

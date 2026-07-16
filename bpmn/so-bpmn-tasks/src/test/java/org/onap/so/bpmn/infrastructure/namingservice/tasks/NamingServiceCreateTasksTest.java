@@ -48,8 +48,11 @@ public class NamingServiceCreateTasksTest extends BaseTaskTest {
     @InjectMocks
     private NamingServiceCreateTasks namingServiceCreateTasks;
 
+    // Named to match the injectee's field (NamingServiceCreateTasks.bbInputSetupUtils): under Mockito 5,
+    // when multiple @Mock fields share a type (BaseTaskTest also declares a BBInputSetupUtils mock),
+    // @InjectMocks disambiguates by field name and fails hard if none matches (Mockito 4 was lenient).
     @Mock
-    private BBInputSetupUtils MOCK_bbInputSetupUtils;
+    private BBInputSetupUtils bbInputSetupUtils;
 
     private InstanceGroup instanceGroup;
     private ServiceInstance serviceInstance;

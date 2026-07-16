@@ -55,7 +55,7 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
     String sdncTopologyRequest = FileUtil.readResourceFile("__files/DoUpdateVfModule/sdncTopologyRequest.xml")
 
     @Captor
-    static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+    static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
     @Spy
     DoUpdateVfModule doUpdateVfModule

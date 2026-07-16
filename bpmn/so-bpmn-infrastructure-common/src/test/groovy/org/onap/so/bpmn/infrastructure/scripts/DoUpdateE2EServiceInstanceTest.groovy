@@ -45,7 +45,7 @@ class DoUpdateE2EServiceInstanceTest extends MsoGroovyTest{
         super.init("DoUpdateE2EServiceInstance")
     }
     @Captor
-    static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+    static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
     @Test
     public void testPreProcessRequest(){
         mockData()

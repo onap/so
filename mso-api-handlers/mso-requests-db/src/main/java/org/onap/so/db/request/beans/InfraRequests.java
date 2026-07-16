@@ -158,7 +158,9 @@ public abstract class InfraRequests implements java.io.Serializable {
     private String operationName;
 
     public URI getRequestURI() {
-        return URI.create(this.requestId);
+        // Null-safe: Jackson 2.15+ serializes this derived getter even when requestId is null (e.g. a
+        // timeout-response InfraRequests), and URI.create(null) throws NPE. Return null instead.
+        return this.requestId == null ? null : URI.create(this.requestId);
     }
 
     public String getRequestId() {

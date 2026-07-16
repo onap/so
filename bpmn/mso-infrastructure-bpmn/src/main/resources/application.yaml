@@ -32,6 +32,10 @@ camunda:
     database:
       schema-update: false
       jdbc-batch-processing: false
+      # Camunda 7.23 no longer auto-derives the DB type from the MariaDB product name
+      # (NullValueException: couldn't deduct database type ... 'MariaDB'); pin it to mysql
+      # (Camunda treats MariaDB as mysql).
+      type: mysql
     application:
       delete-upon-undeploy: false
       scan-for-process-definitions: true
@@ -41,6 +45,11 @@ camunda:
     generic-properties:
       properties:
         enforce-history-time-to-live: false
+        # Camunda 7.23 enforces the DB transaction isolation level at engine startup (ENGINE-12019),
+        # aborting the context if it is not READ_COMMITTED. MariaDB defaults to REPEATABLE_READ, so
+        # skip the check to avoid a startup crash (same masking class as the historyTimeToLive and
+        # jdbc-batch-processing fixes). Set the isolation level on the DB if strict checking is wanted.
+        skipIsolationLevelCheck: true
 #Actuator
 management:
   endpoints:

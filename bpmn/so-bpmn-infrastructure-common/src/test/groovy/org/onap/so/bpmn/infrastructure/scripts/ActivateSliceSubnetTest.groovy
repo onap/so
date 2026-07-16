@@ -19,7 +19,7 @@ class ActivateSliceSubnetTest extends MsoGroovyTest {
                 client = mock(org.onap.aaiclient.client.aai.AAIResourcesClient.class)
 	}
 	@Captor
-	static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+	static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
 	@Test
 	public void testPreProcessRequest() {

@@ -101,7 +101,6 @@ public class GenericPnfSWUPDownloadTest extends BaseBPMNTest {
 
         mockCatalogDb();
         mockAai();
-        grpcNettyServer.resetList();
 
         final String msoRequestId = UUID.randomUUID().toString();
         executionVariables.put(ExecutionVariableNames.MSO_REQUEST_ID, msoRequestId);
@@ -123,7 +122,7 @@ public class GenericPnfSWUPDownloadTest extends BaseBPMNTest {
                 "ExclusiveGateway_1rj84ne", "ServiceTask_0yavde3", "ExclusiveGateway_1ja7grm", "ServiceTask_1wxo7xz",
                 "ExclusiveGateway_08lusga", "download_EndEvent");
 
-        List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
+        List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessagesForRequestId(msoRequestId);
         assertEquals(3, detailedMessages.size());
         int count = 0;
         try {

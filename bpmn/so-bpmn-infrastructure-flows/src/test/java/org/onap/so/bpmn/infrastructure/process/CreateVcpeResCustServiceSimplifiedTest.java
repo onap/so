@@ -115,8 +115,6 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
         mockAai();
         mockDmaapForPnf();
 
-        grpcNettyServer.resetList();
-
         final String msoRequestId = UUID.randomUUID().toString();
         executionVariables.put("mso-request-id", msoRequestId);
 
@@ -135,7 +133,7 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
                 "Pnf_Con", "setPONR_ScriptTask", "postProcessAndCompletionRequest_ScriptTask",
                 "callCompleteMsoProcess_CallActivity", "ScriptTask_2", "CreateVCPE_EndEvent");
 
-        List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
+        List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessagesForRequestId(msoRequestId);
         assertThat(detailedMessages.size()).isEqualTo(2);
         int count = 0;
         try {

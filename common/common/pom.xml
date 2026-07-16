@@ -12,8 +12,8 @@
   <name>common</name>
   <description>MSO Common classes:- Logger</description>
   <properties>
-    <tomcat-catalina-version>10.1.18</tomcat-catalina-version>
-    <logback.version>1.4.14</logback.version>
+    <!-- Match the Spring Boot 3.5 BOM's managed Tomcat version (tomcat.version). -->
+    <tomcat-catalina-version>10.1.55</tomcat-catalina-version>
   </properties>
   <dependencies>
     <dependency>
@@ -73,6 +73,10 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
+      <!-- tomcat-catalina is not BOM-managed (only tomcat-embed-* is); pin it to match the
+           Boot 3.5 managed Tomcat version so coyote/catalina stay in sync (fixes NoSuchMethodError
+           AbstractProtocol.setMaxQueueSize under Boot 3.5 / Tomcat 10.1.42+). Keep aligned with
+           the spring-boot BOM's tomcat.version on future Boot upgrades. -->
       <version>${tomcat-catalina-version}</version>
     </dependency>
     <dependency>
@@ -151,16 +155,6 @@
         <version>${springboot.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-core</artifactId>
-        <version>${logback.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>${logback.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

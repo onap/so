@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.REQUEST_PAYLOAD;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.onap.so.bpmn.infrastructure.decisionpoint.impl.camunda.controller.common.SoPropertyConstants;
 import org.onap.so.client.sdnc.lcm.beans.payload.ActivateNESwPayload;
@@ -53,7 +53,7 @@ public class SDNCLcmPayloadBuilderTest {
             + "\"postCheckAdditionalData\": \"{}\"," + "\"postCheckPlaybook\": \"postcheck_playbook\"" + "}";
     protected String targetSoftwareVersion = "v2";
 
-    @MockBean
+    @MockitoBean
     private DelegateExecution execution;
 
     public static String getRequestPayload() {

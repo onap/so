@@ -37,8 +37,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 import com.openpojo.business.annotation.BusinessKey;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 import uk.co.blackpepper.bowman.annotation.RemoteResource;
@@ -78,7 +76,6 @@ public class AllottedResource implements Serializable {
     private Date created;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "allottedResource")
-    @NotFound(action = NotFoundAction.IGNORE)
     private Set<AllottedResourceCustomization> allotedResourceCustomization;
 
     @Override

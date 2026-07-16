@@ -69,7 +69,6 @@ public class PnfHealthCheckTest extends BaseBPMNTest {
     @Before
     public void setUp() {
         executionVariables.clear();
-        grpcNettyServer.getDetailedMessages().clear();
 
         requestObject = FileUtil.readResourceFile("request/" + CLASS_NAME + ".json");
         responseObject = FileUtil.readResourceFile("response/" + CLASS_NAME + ".json");
@@ -118,7 +117,7 @@ public class PnfHealthCheckTest extends BaseBPMNTest {
                 "ScriptTask_10klpg9", "ServiceTask_0slpaht", "ExclusiveGateway_0x6h0yi", "ScriptTask_1igtc83",
                 "CallActivity_0o1mi8u", "pnfHealthCheck_endEvent");
 
-        List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
+        List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessagesForRequestId(msoRequestId);
         logger.debug("Size of detailedMessage is {}", detailedMessages.size());
         assertTrue(detailedMessages.size() == 1);
         int count = 0;

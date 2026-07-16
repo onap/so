@@ -55,7 +55,7 @@ import static org.mockito.Mockito.*
 class DoCreateVnfAndModulesTest {
 
 	@Captor
-	static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+	static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
 	@Before
 	void init() throws IOException {

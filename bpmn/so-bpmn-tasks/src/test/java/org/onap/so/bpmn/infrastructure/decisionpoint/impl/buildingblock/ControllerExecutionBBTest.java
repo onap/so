@@ -41,7 +41,7 @@ import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -62,22 +62,22 @@ public class ControllerExecutionBBTest {
     @Autowired
     private ControllerExecutionBB controllerExecutionBB;
 
-    @MockBean
+    @MockitoBean
     private BuildingBlockExecution execution;
 
-    @MockBean
+    @MockitoBean
     private CatalogDbClient client;
 
-    @MockBean
+    @MockitoBean
     private PnfResourceCustomization pnfResourceCustomization;
 
-    @MockBean
+    @MockitoBean
     private VnfResourceCustomization vnfResourceCustomization;
 
-    @MockBean
+    @MockitoBean
     private ControllerSelectionReference controllerSelectionReference;
 
-    @MockBean
+    @MockitoBean
     ExceptionBuilder exceptionBuilder;
 
     @Before

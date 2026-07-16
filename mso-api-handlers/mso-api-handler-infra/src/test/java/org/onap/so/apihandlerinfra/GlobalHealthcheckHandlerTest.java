@@ -35,8 +35,8 @@ import org.mockito.Mockito;
 import org.onap.so.apihandlerinfra.HealthCheckConfig.Endpoint;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -49,18 +49,19 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {GenericStringConverter.class, HealthCheckConverter.class},
+@ContextConfiguration(
+        classes = {GlobalHealthcheckHandler.class, GenericStringConverter.class, HealthCheckConverter.class},
         initializers = {ConfigDataApplicationContextInitializer.class})
 @ActiveProfiles("test")
 @EnableConfigurationProperties({HealthCheckConfig.class})
 public class GlobalHealthcheckHandlerTest {
-    @MockBean
+    @MockitoBean
     private RestTemplate restTemplate;
 
-    @MockBean
+    @MockitoBean
     private ContainerRequestContext requestContext;
 
-    @SpyBean
+    @MockitoSpyBean
     private GlobalHealthcheckHandler globalhealth;
 
     @Test

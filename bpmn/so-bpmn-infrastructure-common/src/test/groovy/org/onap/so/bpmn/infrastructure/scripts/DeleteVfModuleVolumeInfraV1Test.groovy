@@ -58,7 +58,7 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 	DeleteVfModuleVolumeInfraV1 deleteVfModuleVolumeInfraV1 ;
 
 	@Captor
-	static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+	static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
 	@Before
 	void init() throws IOException {

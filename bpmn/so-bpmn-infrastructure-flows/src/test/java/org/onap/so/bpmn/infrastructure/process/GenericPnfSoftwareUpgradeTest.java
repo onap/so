@@ -105,8 +105,6 @@ public class GenericPnfSoftwareUpgradeTest extends BaseBPMNTest {
         mockRequestDb();
         mockAai();
 
-        grpcNettyServer.resetList();
-
         final String msoRequestId = UUID.randomUUID().toString();
         executionVariables.put(ExecutionVariableNames.MSO_REQUEST_ID, msoRequestId);
 
@@ -128,7 +126,7 @@ public class GenericPnfSoftwareUpgradeTest extends BaseBPMNTest {
                 "ExclusiveGateway_0v3l3wv", "ServiceTask_02lxf48", "ExclusiveGateway_0ch3fef", "ServiceTask_0y2uysu",
                 "ExclusiveGateway_1ny9b1z", "ScriptTask_1igtc83", "CallActivity_0o1mi8u", "softwareUpgrade_endEvent");
 
-        List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
+        List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessagesForRequestId(msoRequestId);
         assertEquals(4, detailedMessages.size());
         int count = 0;
         try {

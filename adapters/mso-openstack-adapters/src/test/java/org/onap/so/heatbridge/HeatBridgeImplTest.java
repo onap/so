@@ -43,6 +43,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -65,9 +66,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.L3InterfaceIpv6AddressList;
 import org.onap.aai.domain.yang.LInterface;
@@ -109,7 +108,10 @@ import org.openstack4j.openstack.heat.domain.HeatResource;
 import org.openstack4j.openstack.heat.domain.HeatResource.Resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.onap.so.spring.SpringContextHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -158,14 +160,30 @@ public class HeatBridgeImplTest {
     @Mock
     private AAIResourcesClient aaiResourcesClient;
 
-    @Spy
-    @InjectMocks
-    private HeatBridgeImpl heatbridge = new HeatBridgeImpl(resourcesClient, cloudIdentity, CLOUD_OWNER, REGION_ID,
-            REGION_ID, TENANT_ID, NodeType.GREENFIELD);
+    // Built as a spy in setUp() rather than via @Spy @InjectMocks with an eager field initializer:
+    // under Mockito 5 that combination (the field is pre-instantiated with @Mock constructor args
+    // that are still null at field-init time) can leave a real, unspied instance, causing
+    // NotAMockException on doReturn/doNothing/verify. Constructing the spy after the mocks exist and
+    // injecting the mocked collaborators (as @InjectMocks previously did) guarantees a proper spy.
+    private HeatBridgeImpl heatbridge;
 
     @Before
     public void setUp() {
         when(resourcesClient.beginSingleTransaction()).thenReturn(transaction);
+        // HeatBridgeImpl's field initializer `new AaiHelper()` triggers a ServiceLoader lookup of
+        // RestProperties providers (AaiClientPropertiesImpl), which reads SpringContextHelper's static
+        // ApplicationContext in its constructor. Previously this was dodged because @Spy created the
+        // instance via Objenesis (no constructor); now that we construct it explicitly, seed a mock
+        // context so the provider instantiates instead of NPEing on a null context.
+        ApplicationContext springContext = mock(ApplicationContext.class);
+        when(springContext.getEnvironment()).thenReturn(env);
+        ReflectionTestUtils.setField(SpringContextHelper.class, "context", springContext);
+        heatbridge = spy(new HeatBridgeImpl(resourcesClient, cloudIdentity, CLOUD_OWNER, REGION_ID, REGION_ID,
+                TENANT_ID, NodeType.GREENFIELD));
+        // @InjectMocks previously field-injected the mocked collaborators by name; preserve that so
+        // the env.getProperty(...) and osClient.* stubs in the tests take effect.
+        ReflectionTestUtils.setField(heatbridge, "env", env);
+        ReflectionTestUtils.setField(heatbridge, "osClient", osClient);
     }
 
     @Test

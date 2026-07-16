@@ -65,7 +65,7 @@ class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
     DoCreateVfModuleRollback doCreateVfModuleRollback
 
     @Captor
-    static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+    static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
     @Before
     void init() throws IOException {

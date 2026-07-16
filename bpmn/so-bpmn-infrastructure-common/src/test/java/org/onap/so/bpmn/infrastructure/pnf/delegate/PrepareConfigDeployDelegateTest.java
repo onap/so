@@ -46,7 +46,7 @@ import org.onap.so.client.cds.beans.ConfigDeployPropertiesForPnf;
 import org.onap.so.client.cds.beans.ConfigDeployRequestPnf;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -70,7 +70,7 @@ public class PrepareConfigDeployDelegateTest {
     @Autowired
     private PrepareConfigDeployDelegate prepareConfigDeployDelegate;
 
-    @MockBean
+    @MockitoBean
     private PnfManagement pnfManagement;
 
     private DelegateExecution execution = new DelegateExecutionFake();

@@ -2523,9 +2523,12 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
-        assertEquals(
-                "Unable to check for duplicate instance due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error: [no body]",
-                realResponse.getServiceException().getText());
+        // Spring 6 HttpServerErrorException messages now append the request method and URL
+        // (e.g. `500 Server Error on POST request for "http://.../infraActiveRequests"`); the
+        // port is random per run, so assert the stable prefix and suffix rather than an exact match.
+        assertThat(realResponse.getServiceException().getText()).startsWith(
+                "Unable to check for duplicate instance due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error")
+                .endsWith(": [no body]");
     }
 
     @Test
@@ -2568,9 +2571,12 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
-        assertEquals(
-                "Unable to get process-instance history from Camunda for requestId: f0a35706-efc4-4e27-80ea-a995d7a2a40f due to error: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error: [no body]",
-                realResponse.getServiceException().getText());
+        // Spring 6 HttpServerErrorException messages now append the request method and URL
+        // (e.g. `500 Server Error on GET request for "http://.../history/process-instance"`); the
+        // port is random per run, so assert the stable prefix and suffix rather than an exact match.
+        assertThat(realResponse.getServiceException().getText()).startsWith(
+                "Unable to get process-instance history from Camunda for requestId: f0a35706-efc4-4e27-80ea-a995d7a2a40f due to error: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error")
+                .endsWith(": [no body]");
     }
 
     @Test
@@ -2585,9 +2591,12 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
-        assertEquals(
-                "Unable to check for duplicate instance due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error: [no body]",
-                realResponse.getServiceException().getText());
+        // Spring 6 HttpServerErrorException messages now append the request method and URL
+        // (e.g. `500 Server Error on POST request for "http://.../infraActiveRequests"`); the
+        // port is random per run, so assert the stable prefix and suffix rather than an exact match.
+        assertThat(realResponse.getServiceException().getText()).startsWith(
+                "Unable to check for duplicate instance due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error")
+                .endsWith(": [no body]");
     }
 
     @Test
@@ -2617,9 +2626,12 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
-        assertEquals(
-                "Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error: [no body]",
-                realResponse.getServiceException().getText());
+        // Spring 6 HttpServerErrorException messages now append the request method and URL
+        // (e.g. `500 Server Error on POST request for "http://.../infraActiveRequests"`); the
+        // port is random per run, so assert the stable prefix and suffix rather than an exact match.
+        assertThat(realResponse.getServiceException().getText()).startsWith(
+                "Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error")
+                .endsWith(": [no body]");
     }
 
     @Test
@@ -2637,9 +2649,12 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
-        assertEquals(
-                "Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error: [no body]",
-                realResponse.getServiceException().getText());
+        // Spring 6 HttpServerErrorException messages now append the request method and URL
+        // (e.g. `500 Server Error on POST request for "http://.../infraActiveRequests"`); the
+        // port is random per run, so assert the stable prefix and suffix rather than an exact match.
+        assertThat(realResponse.getServiceException().getText()).startsWith(
+                "Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error")
+                .endsWith(": [no body]");
     }
 
     @Test
@@ -2654,9 +2669,12 @@ public class ServiceInstancesTest extends BaseTest {
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
-        assertEquals(
-                "Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error: [no body]",
-                realResponse.getServiceException().getText());
+        // Spring 6 HttpServerErrorException messages now append the request method and URL
+        // (e.g. `500 Server Error on POST request for "http://.../infraActiveRequests"`); the
+        // port is random per run, so assert the stable prefix and suffix rather than an exact match.
+        assertThat(realResponse.getServiceException().getText()).startsWith(
+                "Unable to save instance to db due to error contacting requestDb: org.springframework.web.client.HttpServerErrorException$InternalServerError: 500 Server Error")
+                .endsWith(": [no body]");
     }
 
     @Test

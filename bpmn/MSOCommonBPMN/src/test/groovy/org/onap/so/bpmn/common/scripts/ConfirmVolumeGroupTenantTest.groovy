@@ -46,7 +46,7 @@ import org.onap.so.constants.Defaults
 class ConfirmVolumeGroupTenantTest extends MsoGroovyTest {
 
     @Captor
-    static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+    static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
     @Before
     public void init(){

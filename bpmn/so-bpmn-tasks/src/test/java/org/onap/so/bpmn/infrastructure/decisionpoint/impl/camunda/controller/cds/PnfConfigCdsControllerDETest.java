@@ -30,7 +30,7 @@ import org.onap.so.bpmn.infrastructure.decisionpoint.api.controller.ControllerPr
 import org.onap.so.client.cds.AbstractCDSProcessingBBUtils;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -42,13 +42,13 @@ public class PnfConfigCdsControllerDETest {
     @Autowired
     private PnfConfigCdsControllerDE pnfConfigCdsControllerDE;
 
-    @MockBean
+    @MockitoBean
     private ControllerContext controllerContext;
 
-    @MockBean
+    @MockitoBean
     private ControllerPreparable<DelegateExecution> preparable;
 
-    @MockBean
+    @MockitoBean
     private AbstractCDSProcessingBBUtils abstractCDSProcessingBBUtils;
 
     @Test

@@ -45,9 +45,14 @@ public class SoBasicHttpSecurityConfigurer implements HttpSecurityConfigurer {
     public void configure(final HttpSecurity http) throws Exception {
         if (soUserCredentialConfiguration.getRbacEnabled()) {
             String roles = StringUtils.collectionToDelimitedString(soUserCredentialConfiguration.getRoles(), ",");
+            // Spring Security 6.5 rejects duplicate roles in authorizeHttpRequests().hasAnyRole(...)
+            // with "duplicate element". getRoles() aggregates roles across all configured users, so
+            // multiple users sharing a role (e.g. several BPEL-Client accounts) would repeat it.
+            // Deduplicate before passing them in.
+            String[] distinctRoles = Arrays.stream(roles.split(",")).distinct().toArray(String[]::new);
             http.csrf(csrf -> csrf.disable())
                     .authorizeHttpRequests(authorize -> authorize.requestMatchers(antMatchers(unauthenticatedEndpoints))
-                            .permitAll().requestMatchers(antMatchers("/**")).hasAnyRole(roles.split(",")))
+                            .permitAll().requestMatchers(antMatchers("/**")).hasAnyRole(distinctRoles))
                     .httpBasic(httpBasic -> {
                     });
         } else {

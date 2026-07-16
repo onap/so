@@ -23,6 +23,8 @@
 package org.onap.so.client.exception;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -66,28 +68,32 @@ public class ExceptionBuilderUnitTest {
 
     @Test
     public void buildAndThrowWorkflowExceptionTest() {
-        String expectedErrorMessage =
-                "Exception in org.onap.so.client.exception.ExceptionBuilderUnitTest.buildAndThrowWorkflowExceptionTest failure message";
-        doNothing().when(exceptionBuilder).buildAndThrowWorkflowException(execution, 7000, expectedErrorMessage,
-                ONAPComponents.SDNC);
+        // The generated message is derived from the current call stack, which under a Mockito spy is
+        // interleaved with framework frames (JUnit/ByteBuddy/invoke) that vary by tooling version.
+        // Assert the stable parts (an "Exception in ..." prefix and the wrapped message) via a matcher
+        // rather than an exact, stack-coupled literal.
+        doNothing().when(exceptionBuilder).buildAndThrowWorkflowException(eq(execution), eq(7000), argThat(
+                (String msg) -> msg != null && msg.startsWith("Exception in ") && msg.endsWith("failure message")),
+                eq(ONAPComponents.SDNC));
 
         exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e, ONAPComponents.SDNC);
 
-        verify(exceptionBuilder, times(1)).buildAndThrowWorkflowException(execution, 7000, expectedErrorMessage,
-                ONAPComponents.SDNC);
+        verify(exceptionBuilder, times(1)).buildAndThrowWorkflowException(eq(execution), eq(7000), argThat(
+                (String msg) -> msg != null && msg.startsWith("Exception in ") && msg.endsWith("failure message")),
+                eq(ONAPComponents.SDNC));
     }
 
     @Test
     public void buildAndThrowWorkflowExceptionBuildingBlockExecutionTest() {
-        String expectedErrorMessage =
-                "Exception in org.onap.so.client.exception.ExceptionBuilderUnitTest.buildAndThrowWorkflowExceptionBuildingBlockExecutionTest failure message";
-        doNothing().when(exceptionBuilder).buildAndThrowWorkflowException(buildingBlockExecution, 7000,
-                expectedErrorMessage, ONAPComponents.SDNC);
+        doNothing().when(exceptionBuilder).buildAndThrowWorkflowException(eq(buildingBlockExecution), eq(7000), argThat(
+                (String msg) -> msg != null && msg.startsWith("Exception in ") && msg.endsWith("failure message")),
+                eq(ONAPComponents.SDNC));
 
         exceptionBuilder.buildAndThrowWorkflowException(buildingBlockExecution, 7000, e, ONAPComponents.SDNC);
 
-        verify(exceptionBuilder, times(1)).buildAndThrowWorkflowException(buildingBlockExecution, 7000,
-                expectedErrorMessage, ONAPComponents.SDNC);
+        verify(exceptionBuilder, times(1)).buildAndThrowWorkflowException(eq(buildingBlockExecution), eq(7000), argThat(
+                (String msg) -> msg != null && msg.startsWith("Exception in ") && msg.endsWith("failure message")),
+                eq(ONAPComponents.SDNC));
     }
 
     @Test

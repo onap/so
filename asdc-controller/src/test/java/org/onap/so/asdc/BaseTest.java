@@ -32,8 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -48,13 +48,13 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 @AutoConfigureWireMock(port = 0)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public abstract class BaseTest {
-    @MockBean
+    @MockitoBean
     protected VfResourceStructure vfResourceStructure;
-    @MockBean
+    @MockitoBean
     protected ToscaResourceStructure toscaResourceStruct;
-    @SpyBean
+    @MockitoSpyBean
     protected WatchdogDistribution watchdogDistributionSpy;
-    @SpyBean
+    @MockitoSpyBean
     protected ToscaResourceInstaller toscaInstaller;
     @Autowired
     protected WireMockServer wireMockServer;

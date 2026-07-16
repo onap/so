@@ -60,8 +60,11 @@ class AbstractServiceTaskProcessorImpl extends  AbstractServiceTaskProcessor{
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class AbstractServiceTaskProcessorTest extends MsoGroovyTest {
 
+	// Object-typed captor: it captures setVariable(String name, Object value) args. Mockito 5 makes
+	// ArgumentCaptor.capture() a type-checked matcher, so an ExecutionEntity-typed captor no longer
+	// matches the String key / WorkflowException value (verify fails "Argument(s) are different").
 	@Captor
-	ArgumentCaptor<ExecutionEntity> captor=  ArgumentCaptor.forClass(ExecutionEntity.class);
+	ArgumentCaptor<Object> captor=  ArgumentCaptor.forClass(Object.class);
 
 	@Test
 	public void testCreateCallbackURL_Success() {

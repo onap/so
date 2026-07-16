@@ -97,12 +97,6 @@ public class ManualTasksTest extends BaseTest {
     @Test
     public void completeTaskMappingError() throws IOException {
         String invalidRequest = "test";
-        RequestError expectedResponse = new RequestError();
-        ServiceException se = new ServiceException();
-        se.setMessageId("SVC0002");
-        se.setText(
-                "Mapping of request to JSON object failed: Unrecognized token \u0027test\u0027: was expecting (JSON String, Number, Array, Object or token \u0027null\u0027, \u0027true\u0027 or \u0027false\u0027)\n at [Source: (String)\"test\"; line: 1, column: 5]");
-        expectedResponse.setServiceException(se);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
@@ -121,7 +115,12 @@ public class ManualTasksTest extends BaseTest {
 
         RequestError realResponse = mapper.readValue(response.getBody(), RequestError.class);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
-        assertThat(realResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
+        assertEquals("SVC0002", realResponse.getServiceException().getMessageId());
+        // Jackson 2.15+ redacts the parse source in error locations (INCLUDE_SOURCE_IN_LOCATION
+        // disabled by default) and reports a different column, so assert only the stable message
+        // prefix before the volatile "at [Source: ...]" location suffix.
+        assertThat(realResponse.getServiceException().getText()).startsWith(
+                "Mapping of request to JSON object failed: Unrecognized token \u0027test\u0027: was expecting (JSON String, Number, Array, Object or token \u0027null\u0027, \u0027true\u0027 or \u0027false\u0027)");
     }
 
     @Test

@@ -41,8 +41,8 @@ import org.onap.so.test.categories.SpringAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
@@ -88,13 +88,13 @@ public abstract class BaseTest extends BuildingBlockTestDataSetup {
     @Value("${wiremock.server.port}")
     protected String wireMockPort;
 
-    @MockBean
+    @MockitoBean
     protected CatalogDbClient MOCK_catalogDbClient;
 
-    @SpyBean
+    @MockitoSpyBean
     protected InjectionHelper MOCK_injectionHelper;
 
-    @SpyBean
+    @MockitoSpyBean
     protected ExceptionBuilder exceptionUtil;
 
     /*
@@ -102,11 +102,11 @@ public abstract class BaseTest extends BuildingBlockTestDataSetup {
      * autowired when being tested themselves....or classes with private methods that must be stubbed during testing
      */
 
-    @SpyBean
+    @MockitoSpyBean
     protected BBInputSetupMapperLayer SPY_bbInputSetupMapperLayer;
-    @SpyBean
+    @MockitoSpyBean
     protected BBInputSetupUtils SPY_bbInputSetupUtils;
-    @SpyBean
+    @MockitoSpyBean
     protected BBInputSetup SPY_bbInputSetup;
 
     /*

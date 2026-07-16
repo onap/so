@@ -30,7 +30,7 @@ import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.controller.ControllerPreparable;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -41,10 +41,10 @@ public class SdncControllerDETest {
     @Autowired
     private SdncControllerDE sdncControllerDE;
 
-    @MockBean
+    @MockitoBean
     private ControllerContext controllerContext;
 
-    @MockBean
+    @MockitoBean
     private ControllerPreparable<DelegateExecution> preparable;
 
     @Before

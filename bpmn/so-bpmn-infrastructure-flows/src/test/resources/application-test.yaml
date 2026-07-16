@@ -198,12 +198,18 @@ mariaDB4j:
   databaseName: camundabpmn
 camunda:
   bpm:
+    database:
+      # Camunda 7.23 no longer auto-derives the DB type from the MariaDB product name; pin to mysql.
+      type: mysql
     metrics:
       enabled: false
       db-reporter-activate: false
     generic-properties:
       properties:
         enforce-history-time-to-live: false
+        # Camunda 7.23 enforces the DB transaction isolation level (ENGINE-12019); MariaDB defaults to
+        # REPEATABLE_READ but Camunda wants READ_COMMITTED. Skip the check against the embedded test DB.
+        skipIsolationLevelCheck: true
     application:
       delete-upon-undeploy: false
       scan-for-process-definitions: true

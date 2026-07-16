@@ -53,8 +53,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpHeaders;
@@ -93,32 +93,32 @@ public abstract class BaseTest extends BuildingBlockTestDataSetup {
     @Value("${mso.catalog.db.spring.endpoint}")
     protected String endpoint;
 
-    @MockBean
+    @MockitoBean
     protected CatalogDbClient MOCK_catalogDbClient;
 
-    @SpyBean
+    @MockitoSpyBean
     protected InjectionHelper MOCK_injectionHelper;
 
-    @SpyBean
+    @MockitoSpyBean
     protected NetworkAdapterObjectMapper MOCK_networkAdapterObjectMapper;
 
-    @SpyBean
+    @MockitoSpyBean
     protected AAIObjectMapper MOCK_aaiObjectMapper;
-    @SpyBean
+    @MockitoSpyBean
     protected NetworkAdapterClientImpl MOCK_networkAdapterClient;
-    @SpyBean
+    @MockitoSpyBean
     protected SDNCClient MOCK_sdncClient;
 
-    @SpyBean
+    @MockitoSpyBean
     protected AAIFlagTasks aaiFlagTasks;
 
-    @SpyBean
+    @MockitoSpyBean
     protected AAIVnfResources aaiVnfResources;
 
-    @SpyBean
+    @MockitoSpyBean
     protected ExceptionBuilder exceptionUtil;
 
-    @SpyBean
+    @MockitoSpyBean
     protected SDNOHealthCheckResources MOCK_sdnoHealthCheckResources;
 
 
@@ -130,19 +130,19 @@ public abstract class BaseTest extends BuildingBlockTestDataSetup {
 
 
 
-    @SpyBean
+    @MockitoSpyBean
     protected BBInputSetupMapperLayer SPY_bbInputSetupMapperLayer;
-    @SpyBean
+    @MockitoSpyBean
     protected BBInputSetupUtils SPY_bbInputSetupUtils;
-    @SpyBean
+    @MockitoSpyBean
     protected BBInputSetup SPY_bbInputSetup;
-    @SpyBean
+    @MockitoSpyBean
     protected SniroHomingV2 sniroHoming;
 
-    @SpyBean
+    @MockitoSpyBean
     protected SniroClient sniroClient;
 
-    @SpyBean
+    @MockitoSpyBean
     protected SDNOHealthCheckTasks sdnoHealthCheckTasks;
 
     /*

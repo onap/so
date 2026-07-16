@@ -67,22 +67,19 @@
     <cxf.version>4.0.5</cxf.version>
     <jax.ws.rs>2.1.1</jax.ws.rs>
     <jakarta.ws.rs.version>3.1.0</jakarta.ws.rs.version>
-    <springboot.version>3.0.13</springboot.version>
-    <spring-cloud.version>2022.0.5</spring-cloud.version>
-    <camunda.version>7.20.0</camunda.version>
+    <springboot.version>3.5.16</springboot.version>
+    <spring-cloud.version>2025.0.2</spring-cloud.version>
+    <camunda.version>7.23.0</camunda.version>
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>0.33.0</io.fabric8.version>
     <bowman.client.version>0.11.0</bowman.client.version>
     <so-etsi-sol003-adapter-version>1.9.0-SNAPSHOT</so-etsi-sol003-adapter-version>
     <onap-logging-version>1.7.0</onap-logging-version>
-    <jackson.version>2.14.3</jackson.version>
     <grpc.version>1.58.0</grpc.version>
-    <slf4j.version>2.0.9</slf4j.version>
-    <logback.version>1.4.14</logback.version>
-    <kafka.version>3.4.1</kafka.version>
+    <httpclient4.version>4.5.14</httpclient4.version>
+    <kafka.version>3.9.2</kafka.version>
     <aai-schema.version>1.14.0</aai-schema.version>
-    <junit-jupiter.version>5.9.3</junit-jupiter.version>
     <surefire.forkCount>1</surefire.forkCount>
     <surefire.threadCount>1</surefire.threadCount>
   </properties>
@@ -636,13 +633,6 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.1.2</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.junit.jupiter</groupId>
-              <artifactId>junit-jupiter-engine</artifactId>
-              <version>${junit-jupiter.version}</version>
-            </dependency>
-          </dependencies>
           <configuration>
             <argLine>
               --add-opens java.base/java.lang=ALL-UNNAMED
@@ -764,7 +754,6 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
@@ -773,12 +762,10 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
@@ -877,26 +864,6 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>${slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jcl-over-slf4j</artifactId>
-        <version>${slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jul-to-slf4j</artifactId>
-        <version>${slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-ext</artifactId>
-        <version>${slf4j.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-runtime</artifactId>
         <version>4.10.1</version>
@@ -922,20 +889,24 @@
         <version>${onap-logging-version}</version>
       </dependency>
       <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-core</artifactId>
-        <version>${logback.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>${logback.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore</artifactId>
         <version>4.4.4</version>
         <scope>compile</scope>
+      </dependency>
+      <!-- Apache HttpClient 4 (HC4) is no longer managed by the Spring Boot 3.5 BOM
+           (httpclient.version was removed; only httpcore 4.4.16 and httpclient5 5.x remain).
+           SO still uses HC4 directly (e.g. asdc-controller BpmnInstaller MultipartEntityBuilder),
+           so pin it centrally at the version the Boot 3.0 BOM previously supplied. -->
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${httpclient4.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpmime</artifactId>
+        <version>${httpclient4.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-codec</groupId>
@@ -976,16 +947,6 @@
         <groupId>jakarta.xml.ws</groupId>
         <artifactId>jakarta.xml.ws-api</artifactId>
         <version>4.0.3</version>
-      </dependency>
-      <dependency>
-        <groupId>io.micrometer</groupId>
-        <artifactId>micrometer-tracing-bridge-brave</artifactId>
-        <version>1.0.12</version>
-      </dependency>
-      <dependency>
-        <groupId>io.zipkin.reporter2</groupId>
-        <artifactId>zipkin-reporter-brave</artifactId>
-        <version>2.16.4</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
@@ -1082,18 +1043,6 @@
         <groupId>ch.vorburger.mariaDB4j</groupId>
         <artifactId>mariaDB4j</artifactId>
         <version>3.1.0</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-contract-wiremock</artifactId>
-        <version>4.0.5</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <version>${junit-jupiter.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>

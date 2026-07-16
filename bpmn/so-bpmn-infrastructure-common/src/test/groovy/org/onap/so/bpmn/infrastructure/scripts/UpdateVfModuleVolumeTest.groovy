@@ -56,7 +56,7 @@ class UpdateVfModuleVolumeTest extends MsoGroovyTest{
 
     def prefix = "UPDVfModVol_"
     @Captor
-    static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+    static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
     @Rule
     public ExpectedException thrown = ExpectedException.none()

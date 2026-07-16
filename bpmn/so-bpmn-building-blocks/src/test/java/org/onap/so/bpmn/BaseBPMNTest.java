@@ -83,7 +83,7 @@ import org.onap.so.client.sdnc.SDNCClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
@@ -107,137 +107,137 @@ public abstract class BaseBPMNTest {
 
     protected HttpHeaders headers = new HttpHeaders();
 
-    @MockBean
+    @MockitoBean
     protected AAIUpdateTasks aaiUpdateTasks;
 
-    @MockBean
+    @MockitoBean
     protected AAICreateTasks aaiCreateTasks;
 
-    @MockBean
+    @MockitoBean
     protected AAIQueryTasks aaiQueryTasks;
 
-    @MockBean
+    @MockitoBean
     protected AAIDeleteTasks aaiDeleteTasks;
 
-    @MockBean
+    @MockitoBean
     protected AAIFlagTasks aaiFlagTasks;
 
 
-    @MockBean
+    @MockitoBean
     protected SDNCActivateTasks sdncActivateTasks;
 
-    @MockBean
+    @MockitoBean
     protected SDNCAssignTasks sdncAssignTasks;
 
-    @MockBean
+    @MockitoBean
     protected SDNCUnassignTasks sdncUnassignTasks;
 
-    @MockBean
+    @MockitoBean
     protected SDNCDeactivateTasks sdncDeactivateTasks;
 
-    @MockBean
+    @MockitoBean
     protected SDNCQueryTasks sdncQueryTasks;
 
-    @MockBean
+    @MockitoBean
     protected SDNCChangeAssignTasks sdncChangeAssignTasks;
 
-    @MockBean
+    @MockitoBean
     protected NetworkAdapterDeleteTasks networkAdapterDeleteTasks;
 
-    @MockBean
+    @MockitoBean
     protected NetworkAdapterUpdateTasks networkAdapterUpdateTasks;
 
-    @MockBean
+    @MockitoBean
     protected VnfAdapterCreateTasks vnfAdapterCreateTasks;
 
-    @MockBean
+    @MockitoBean
     protected NetworkAdapterCreateTasks networkAdapterCreateTasks;
 
-    @MockBean
+    @MockitoBean
     protected CreateNetwork createNetwork;
 
-    @MockBean
+    @MockitoBean
     protected AssignNetworkBBUtils assignNetworkBBUtils;
 
-    @MockBean
+    @MockitoBean
     protected AssignNetwork assignNetwork;
 
-    @MockBean
+    @MockitoBean
     protected CreateNetworkCollection createNetworkCollection;
 
-    @MockBean
+    @MockitoBean
     protected VnfAdapterDeleteTasks vnfAdapterDeleteTasks;
 
-    @MockBean
+    @MockitoBean
     protected AAICommonTasks aaiCommonTasks;
 
-    @MockBean
+    @MockitoBean
     protected ActivateVfModule activateVfModule;
 
-    @MockBean
+    @MockitoBean
     protected AssignVnf assignVnf;
 
-    @MockBean
+    @MockitoBean
     protected UnassignVnf unassignVnf;
 
-    @MockBean
+    @MockitoBean
     protected VnfAdapterImpl vnfAdapterImpl;
 
-    @MockBean
+    @MockitoBean
     protected UnassignNetworkBB unassignNetworkBB;
 
-    @MockBean
+    @MockitoBean
     protected OrchestrationStatusValidator orchestrationStatusValidator;
 
-    @MockBean
+    @MockitoBean
     protected BBInputSetup bbInputSetup;
 
-    @MockBean
+    @MockitoBean
     protected BBInputSetupUtils bbInputSetupUtils;
 
-    @MockBean
+    @MockitoBean
     protected ExecuteBuildingBlockRainyDay executeBuildingBlockRainyDay;
 
-    @MockBean
+    @MockitoBean
     protected WorkflowAction workflowAction;
 
-    @MockBean
+    @MockitoBean
     protected WorkflowActionBBTasks workflowActionBBTasks;
 
-    @MockBean
+    @MockitoBean
     protected FlowCompletionTasks flowCompletionTasks;
 
-    @MockBean
+    @MockitoBean
     protected BuildingBlockValidatorRunner buildingBlockValidatorRunner;
 
-    @MockBean
+    @MockitoBean
     protected SDNOHealthCheckTasks sdnoHealthCheckTasks;
 
-    @MockBean
+    @MockitoBean
     protected SDNCClient sdncClient;
 
-    @MockBean
+    @MockitoBean
     protected HomingV2 homing;
 
-    @MockBean
+    @MockitoBean
     protected NamingServiceDeleteTasks namingServiceDeleteTasks;
 
-    @MockBean
+    @MockitoBean
     protected NamingServiceCreateTasks namingServiceCreateTasks;
 
-    @MockBean
+    @MockitoBean
     protected WorkflowActionBBFailure workflowActionBBFailure;
 
-    @MockBean
+    @MockitoBean
     protected AuditTasks auditTasks;
 
-    @MockBean
+    @MockitoBean
     protected ManualHandlingTasks manualHandlingTasks;
 
-    @MockBean
+    @MockitoBean
     protected ControllerExecutionBB controllerExecutionBB;
 
-    @MockBean
+    @MockitoBean
     protected ControllerExecutionDE controllerExecutionDE;
 
     @LocalServerPort

@@ -100,13 +100,15 @@ class FalloutHandlerTest {
 
         falloutHandler.postProcessResponse(mockExecution)
 
-        // Capture the arguments to setVariable
+        // Capture the arguments to setVariable. captor2 must be Object-typed: postProcessResponse also
+        // calls setSuccessIndicator(), which sets a Boolean value, and under Mockito 5 a String-typed
+        // captor no longer matches that call (so the times(4) count came up one short).
         ArgumentCaptor<String> captor1 = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> captor2 = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Object> captor2 = ArgumentCaptor.forClass(Object.class);
 
         verify(mockExecution, times(4)).setVariable(captor1.capture(), captor2.capture())
-        List<String> arg2List = captor2.getAllValues()
-        String payloadResponseActual = arg2List.get(1)
+        List<Object> arg2List = captor2.getAllValues()
+        String payloadResponseActual = (String) arg2List.get(1)
 
         assertEquals(falloutHandlerResponse.replaceAll("\\s+", ""), payloadResponseActual.replaceAll("\\s+", ""))
 

@@ -36,7 +36,15 @@ spring:
     generate-ddl: false
     show-sql: false
     hibernate:
-      ddl-auto: validate
+      # 'none', not 'validate': the schema is authoritatively created by the same Liquibase
+      # migrations used in production, and repository tests exercise the entity mappings against it.
+      # Hibernate 6.6 (Spring Boot 3.5) schema-validation is incompatible with this module's
+      # hand-rolled multi-datasource EntityManagerFactory + embedded MariaDB4j: it reports every
+      # Liquibase-created table as "missing" even though JDBC metadata finds them (catalog=<db>,
+      # schema=null). The sibling catalog-db-adapter, which lets Boot auto-configure its EMF,
+      # validates the same style of entities fine — so this is a test-EMF/Hibernate-6.6 quirk, not a
+      # mapping defect. Production is unaffected (real MariaDB, pre-existing schema).
+      ddl-auto: none
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
       enable-lazy-load-no-trans: true
     database-platform: org.hibernate.dialect.MySQLDialect

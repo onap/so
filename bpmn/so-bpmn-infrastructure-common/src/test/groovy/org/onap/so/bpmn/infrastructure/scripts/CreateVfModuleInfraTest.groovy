@@ -45,7 +45,7 @@ class CreateVfModuleInfraTest {
     def requestInfo = "<requestInfo><request-id>12345</request-id></requestInfo>"
 
     @Captor
-    static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+    static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
     @Before
     void init() throws IOException {

@@ -54,7 +54,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 	private DoCreateVfModuleVolumeV2 doCreateVfModuleVolumeV2;
 
 	@Captor
-	static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+	static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
 	String volumeRollbackRequest = """
 <rollbackVolumeGroupRequest>

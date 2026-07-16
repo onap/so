@@ -75,4 +75,88 @@
                  stripComments="true"/>
     </changeSet>
 
+    <!-- Upgrade: Camunda engine 7.17 to 7.18 (needed by engine bump 7.20 -> 7.23).
+         Skipped if LAST_UPDATED_ column already exists on ACT_RU_TASK. -->
+    <changeSet id="camunda-engine-7.17-to-7.18" author="so-migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="ACT_RU_TASK" columnName="LAST_UPDATED_"/>
+            </not>
+        </preConditions>
+        <sqlFile path="db/changelog/mariadb_engine_7.17_to_7.18.sql"
+                 relativeToChangelogFile="false"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <!-- Upgrade: Camunda engine 7.18 to 7.19 (schema-log row only, no DDL).
+         Skipped if the 7.19.0 schema-log entry already exists. -->
+    <changeSet id="camunda-engine-7.18-to-7.19" author="so-migration">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM ACT_GE_SCHEMA_LOG WHERE VERSION_ = '7.19.0'
+            </sqlCheck>
+        </preConditions>
+        <sqlFile path="db/changelog/mariadb_engine_7.18_to_7.19.sql"
+                 relativeToChangelogFile="false"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <!-- Upgrade: Camunda engine 7.19 to 7.20 (schema-log row only, no DDL).
+         Skipped if the 7.20.0 schema-log entry already exists. -->
+    <changeSet id="camunda-engine-7.19-to-7.20" author="so-migration">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM ACT_GE_SCHEMA_LOG WHERE VERSION_ = '7.20.0'
+            </sqlCheck>
+        </preConditions>
+        <sqlFile path="db/changelog/mariadb_engine_7.19_to_7.20.sql"
+                 relativeToChangelogFile="false"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <!-- Upgrade: Camunda engine 7.20 to 7.21.
+         Skipped if CREATE_TIME_ column already exists on ACT_RU_EXT_TASK. -->
+    <changeSet id="camunda-engine-7.20-to-7.21" author="so-migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="ACT_RU_EXT_TASK" columnName="CREATE_TIME_"/>
+            </not>
+        </preConditions>
+        <sqlFile path="db/changelog/mariadb_engine_7.20_to_7.21.sql"
+                 relativeToChangelogFile="false"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <!-- Upgrade: Camunda engine 7.21 to 7.22 (adds BATCH_ID_ to ACT_RU_JOB / ACT_HI_JOB_LOG).
+         Skipped if BATCH_ID_ column already exists on ACT_RU_JOB. -->
+    <changeSet id="camunda-engine-7.21-to-7.22" author="so-migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="ACT_RU_JOB" columnName="BATCH_ID_"/>
+            </not>
+        </preConditions>
+        <sqlFile path="db/changelog/mariadb_engine_7.21_to_7.22.sql"
+                 relativeToChangelogFile="false"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <!-- Upgrade: Camunda engine 7.22 to 7.23.
+         Skipped if PROC_DEF_KEY_ column already exists on ACT_RU_EXECUTION. -->
+    <changeSet id="camunda-engine-7.22-to-7.23" author="so-migration">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="ACT_RU_EXECUTION" columnName="PROC_DEF_KEY_"/>
+            </not>
+        </preConditions>
+        <sqlFile path="db/changelog/mariadb_engine_7.22_to_7.23.sql"
+                 relativeToChangelogFile="false"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
 </databaseChangeLog>

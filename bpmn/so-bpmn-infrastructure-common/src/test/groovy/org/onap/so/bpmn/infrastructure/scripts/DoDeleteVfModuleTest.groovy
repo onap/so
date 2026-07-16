@@ -54,7 +54,7 @@ class DoDeleteVfModuleTest extends MsoGroovyTest{
     DoDeleteVfModule doDeleteVfModule
 
     @Captor
-    static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+    static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
     @Before
     public void init() throws IOException {

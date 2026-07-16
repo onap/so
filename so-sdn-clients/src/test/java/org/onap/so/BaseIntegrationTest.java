@@ -25,7 +25,7 @@ import org.onap.so.client.sdnc.SDNCClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -42,7 +42,7 @@ public abstract class BaseIntegrationTest {
     @Value("${wiremock.server.port}")
     protected String wireMockPort;
 
-    @SpyBean
+    @MockitoSpyBean
     protected SDNCClient SPY_sdncClient;
 
     @Autowired

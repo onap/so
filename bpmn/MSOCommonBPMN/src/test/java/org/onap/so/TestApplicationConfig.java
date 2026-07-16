@@ -76,8 +76,6 @@ public class TestApplicationConfig {
         ResponseTransformer[] transformerArray =
                 transformerList.toArray(new ResponseTransformer[transformerList.size()]);
 
-        optionsCustomizer(transformerArray);
-
         return transformerArray;
     }
 

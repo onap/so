@@ -41,6 +41,7 @@ import org.onap.so.bpmn.infrastructure.service.level.impl.ServiceLevelConstants;
 import org.onap.so.bpmn.infrastructure.service.level.impl.ServiceLevelPreparation;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.beans.Workflow;
+import org.springframework.test.util.ReflectionTestUtils;
 
 
 public class ServiceLevelPreparationTest extends BaseTaskTest {
@@ -65,6 +66,9 @@ public class ServiceLevelPreparationTest extends BaseTaskTest {
     @InjectMocks
     private ServiceLevelPreparation serviceLevelPrepare;
 
+    // Mockito creates this spy (no eager initializer — an eager `new` + @InjectMocks yields a
+    // non-spy under Mockito 5, causing NotAMockException). It is NOT auto-injected into the other
+    // @InjectMocks target (serviceLevelPrepare) though, so it is wired in explicitly in @Before.
     @InjectMocks
     @Spy
     private ExceptionBuilder exceptionBuilder;
@@ -75,6 +79,7 @@ public class ServiceLevelPreparationTest extends BaseTaskTest {
 
     @Before
     public void setUpPnfUpgradeTest() {
+        ReflectionTestUtils.setField(serviceLevelPrepare, "exceptionBuilder", exceptionBuilder);
         execution.setVariable(RESOURCE_TYPE, TEST_PNF_SCOPE);
         execution.setVariable(TEST_PROCESS_KEY, PROCESS_KEY_VALUE);
         execution.setVariable(BPMN_REQUEST, "bpmnRequestValue");

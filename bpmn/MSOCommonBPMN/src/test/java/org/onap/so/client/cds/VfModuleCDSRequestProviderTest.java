@@ -22,16 +22,23 @@ package org.onap.so.client.cds;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.util.ReflectionTestUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 public class VfModuleCDSRequestProviderTest extends AbstractVnfCDSRequestProviderTest {
 
@@ -47,6 +54,18 @@ public class VfModuleCDSRequestProviderTest extends AbstractVnfCDSRequestProvide
 
     @InjectMocks
     private VfModuleCDSRequestProvider vfModuleCDSRequestProvider;
+
+    @Before
+    public void injectSpies() {
+        // Under Mockito 5, a field that is both @Spy and @InjectMocks (configureInstanceParamsForVfModule)
+        // is not reliably injected into another @InjectMocks target (vfModuleCDSRequestProvider), nor does
+        // its own @Spy collaborator (extractServiceFromUserParameters) always get injected into it. Wire
+        // the spies explicitly so the objects under test use them.
+        ReflectionTestUtils.setField(configureInstanceParamsForVfModule, "extractServiceFromUserParameters",
+                extractServiceFromUserParameters);
+        ReflectionTestUtils.setField(vfModuleCDSRequestProvider, "configureInstanceParamsForVfModule",
+                configureInstanceParamsForVfModule);
+    }
 
 
     @Test

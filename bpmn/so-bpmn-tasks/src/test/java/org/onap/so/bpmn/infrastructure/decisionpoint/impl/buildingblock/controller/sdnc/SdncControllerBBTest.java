@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
 import org.onap.so.bpmn.infrastructure.decisionpoint.api.ControllerContext;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -39,7 +39,7 @@ public class SdncControllerBBTest {
     @Autowired
     private SdncControllerBB sSdncControllerBB;
 
-    @MockBean
+    @MockitoBean
     private ControllerContext controllerContext;
 
     @Before

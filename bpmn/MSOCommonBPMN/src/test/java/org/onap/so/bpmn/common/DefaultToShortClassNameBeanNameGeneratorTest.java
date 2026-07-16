@@ -23,7 +23,9 @@ package org.onap.so.bpmn.common;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import java.util.Collections;
 import java.util.HashSet;
+import org.springframework.core.annotation.MergedAnnotations;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -53,6 +55,10 @@ public class DefaultToShortClassNameBeanNameGeneratorTest {
         AnnotatedBeanDefinition annotatedBeanDefinition = mock(AnnotatedBeanDefinition.class);
         AnnotationMetadata metadata = mock(AnnotationMetadata.class);
         when(metadata.getAnnotationTypes()).thenReturn(new HashSet<String>());
+        // Spring 6.2's AnnotationBeanNameGenerator.getExplicitBeanName() reads metadata.getAnnotations()
+        // (MergedAnnotations); the mock returns null without this stub, causing an NPE. Provide an empty
+        // MergedAnnotations so the "no explicit name" path is exercised as before.
+        when(metadata.getAnnotations()).thenReturn(MergedAnnotations.of(Collections.emptyList()));
         when(annotatedBeanDefinition.getBeanClassName()).thenReturn("org.onap.so.BeanName");
         when(annotatedBeanDefinition.getMetadata()).thenReturn(metadata);
         String actualBeanName =

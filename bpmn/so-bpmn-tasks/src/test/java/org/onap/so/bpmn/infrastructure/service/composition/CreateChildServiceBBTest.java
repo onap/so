@@ -26,7 +26,7 @@ import org.onap.so.serviceinstancebeans.RequestReferences;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.IOException;
@@ -50,13 +50,13 @@ public class CreateChildServiceBBTest {
     @Autowired
     private CreateChildServiceBB createChildServiceBB;
 
-    @MockBean
+    @MockitoBean
     private BuildingBlockExecution execution;
 
-    @MockBean
+    @MockitoBean
     private ApiHandlerClient apiHandlerClient;
 
-    @MockBean
+    @MockitoBean
     private ExceptionBuilder exceptionBuilder;
 
     @Before

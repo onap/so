@@ -43,12 +43,16 @@ import org.onap.so.bpmn.infrastructure.workflow.tasks.WorkflowActionBBFailure;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class ExecuteActivityTest extends TestDataSetup {
     @InjectMocks
     protected ExecuteActivity executeActivity;
 
+    // Mockito creates this spy (no eager initializer — an eager `new` + @InjectMocks yields a
+    // non-spy under Mockito 5, causing NotAMockException). It is NOT auto-injected into the other
+    // @InjectMocks target (executeActivity) though, so it is wired in explicitly in @Before.
     @InjectMocks
     @Spy
     private ExceptionBuilder exceptionBuilder;
@@ -63,6 +67,7 @@ public class ExecuteActivityTest extends TestDataSetup {
 
     @Before
     public void before() throws Exception {
+        ReflectionTestUtils.setField(executeActivity, "exceptionBuilder", exceptionBuilder);
         execution = new DelegateExecutionFake();
         execution.setVariable("vnfType", "testVnfType");
         execution.setVariable("requestAction", "testRequestAction");

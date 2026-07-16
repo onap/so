@@ -126,7 +126,6 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
         mockCatalogDb();
         mockRequestDb();
         mockAai();
-        grpcNettyServer.resetList();
 
         final String msoRequestId = UUID.randomUUID().toString();
         executionVariables.put(ExecutionVariableNames.MSO_REQUEST_ID, msoRequestId);
@@ -149,7 +148,7 @@ public class ServiceLevelUpgradeTest extends BaseBPMNTest {
                 "Activity_1q4o9fx", "Gateway_02fectw", "Activity_1hp67qz", "Gateway_18ch73t", "Activity_0ft7fa2",
                 "Gateway_1vq11i7", "Activity_0o2rrag", "Activity_1n4rk7m", "Activity_1lz38px", "Event_12983th");
 
-        List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessages();
+        List<ExecutionServiceInput> detailedMessages = grpcNettyServer.getDetailedMessagesForRequestId(msoRequestId);
         assertEquals(10, detailedMessages.size());
         int count = 0;
         String action = "";

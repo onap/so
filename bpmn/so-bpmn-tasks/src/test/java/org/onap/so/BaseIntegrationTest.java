@@ -34,8 +34,8 @@ import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -52,25 +52,25 @@ public abstract class BaseIntegrationTest extends TestDataSetup {
     @Value("${wiremock.server.port}")
     protected String wireMockPort;
 
-    @SpyBean
+    @MockitoSpyBean
     protected SDNCClient SPY_sdncClient;
 
-    @SpyBean
+    @MockitoSpyBean
     protected SDNOHealthCheckResources MOCK_sdnoHealthCheckResources;
 
-    @SpyBean
+    @MockitoSpyBean
     protected SniroHomingV2 sniroHoming;
 
-    @SpyBean
+    @MockitoSpyBean
     protected SniroClient sniroClient;
 
-    @SpyBean
+    @MockitoSpyBean
     protected OofHomingV2 oofHoming;
 
-    @SpyBean
+    @MockitoSpyBean
     protected OofClient oofClient;
 
-    @MockBean
+    @MockitoBean
     protected CatalogDbClient catalogDbClient;
 
     @Autowired

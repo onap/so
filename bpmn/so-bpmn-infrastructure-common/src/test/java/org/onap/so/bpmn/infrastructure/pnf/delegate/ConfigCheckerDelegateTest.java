@@ -40,7 +40,7 @@ import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -69,10 +69,10 @@ public class ConfigCheckerDelegateTest {
      */
     private static String TEST_MODEL_UUID = "f2daaac6-5017-4e1e-96c8-6a27dfbe1421";
 
-    @MockBean
+    @MockitoBean
     private CatalogDbClient catalogDbClient;
 
-    @MockBean
+    @MockitoBean
     private ProcessEngineConfiguration processEngineConfiguration;
 
     @Autowired

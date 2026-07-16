@@ -18,10 +18,11 @@ import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import io.grpc.testing.GrpcCleanupRule;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 import jakarta.annotation.PostConstruct;
 import org.junit.Rule;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.EventType;
@@ -50,7 +51,9 @@ public class GrpcNettyServer extends BluePrintProcessingServiceImplBase {
 
     private final CountDownLatch allRequestsDelivered = new CountDownLatch(1);
     private final AtomicReference<StreamObserver<ExecutionServiceOutput>> responseObserverRef = new AtomicReference<>();
-    private final List<ExecutionServiceInput> detailedMessages = new ArrayList<>();
+    // Thread-safe: surefire runs the workflow ITs with <parallel>classes</parallel> in a single reused
+    // fork, so several tests append to this shared singleton concurrently from gRPC worker threads.
+    private final List<ExecutionServiceInput> detailedMessages = new CopyOnWriteArrayList<>();
 
     @PostConstruct
     public void start() throws IOException {
@@ -62,6 +65,10 @@ public class GrpcNettyServer extends BluePrintProcessingServiceImplBase {
 
                 responseObserverRef.set(responseObserver);
 
+                // Use the per-stream responseObserver captured here, NOT the shared responseObserverRef:
+                // concurrent CDS calls (multiple grpc worker threads) each overwrite the shared ref, so a
+                // callback could target another stream's already-completed observer, which under newer
+                // gRPC throws "sendHeaders has already been called".
                 StreamObserver<ExecutionServiceInput> requestObserver = new StreamObserver<ExecutionServiceInput>() {
                     @Override
                     public void onNext(ExecutionServiceInput message) {
@@ -72,19 +79,19 @@ public class GrpcNettyServer extends BluePrintProcessingServiceImplBase {
                                 .setStatus(Status.newBuilder().setEventType(EventType.EVENT_COMPONENT_EXECUTED).build())
                                 .build();
 
-                        responseObserverRef.get().onNext(executionServiceOutput);
+                        responseObserver.onNext(executionServiceOutput);
                         logger.info("Message sent: {}", executionServiceOutput);
                     }
 
                     @Override
                     public void onError(Throwable t) {
-                        responseObserverRef.get().onError(t);
+                        responseObserver.onError(t);
                     }
 
                     @Override
                     public void onCompleted() {
                         allRequestsDelivered.countDown();
-                        responseObserverRef.get().onCompleted();
+                        responseObserver.onCompleted();
                     }
                 };
 
@@ -100,8 +107,15 @@ public class GrpcNettyServer extends BluePrintProcessingServiceImplBase {
         return this.detailedMessages;
     }
 
-    public void resetList() {
-        detailedMessages.clear();
+    /**
+     * Returns only the messages received for the given mso-request-id. Tests must use this rather than
+     * {@link #getDetailedMessages()} for their size/ordering assertions: the backing list is a shared singleton and,
+     * under surefire's parallel-classes execution, concurrent workflow ITs interleave their messages into it. Filtering
+     * by request id makes each test see exactly its own messages.
+     */
+    public List<ExecutionServiceInput> getDetailedMessagesForRequestId(String requestId) {
+        return this.detailedMessages.stream().filter(eSI -> requestId.equals(eSI.getCommonHeader().getRequestId()))
+                .collect(Collectors.toList());
     }
 
 }

@@ -53,7 +53,7 @@ import static org.mockito.Mockito.*
 public class DoDeleteVnfAndModulesTest extends MsoGroovyTest{
 
     @Captor
-    static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+    static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
     @Spy
     DoDeleteVnfAndModules doDeleteVnfAndModules
