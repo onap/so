@@ -26,7 +26,13 @@ import org.onap.aaiclient.client.graphinventory.entities.uri.GraphInventoryUri;
 
 public interface AAIUri<T extends AAIUri<?, ?>, OP extends AAIObjectBase> extends GraphInventoryUri<T, OP> {
 
+    /**
+     * The AAI URI prefix (root + version) is a fixed regex; compile it once and share it rather than recompiling on
+     * every call to {@link #getPrefixPattern()}.
+     */
+    Pattern PREFIX_PATTERN = Pattern.compile("/aai/v\\d+");
+
     public default Pattern getPrefixPattern() {
-        return Pattern.compile("/aai/v\\d+");
+        return PREFIX_PATTERN;
     }
 }

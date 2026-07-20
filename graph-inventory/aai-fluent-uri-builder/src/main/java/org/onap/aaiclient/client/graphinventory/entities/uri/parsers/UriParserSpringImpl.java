@@ -26,10 +26,18 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.web.util.UriTemplate;
 import org.springframework.web.util.UriUtils;
 
 public class UriParserSpringImpl implements UriParser {
+
+    /**
+     * Constructing a {@link UriParserSpringImpl} compiles a regex {@link java.util.regex.Pattern} (via
+     * {@link UriTemplate}). Templates come from a fixed, finite set generated at build time, so parsers are cached and
+     * reused across calls. Instances are immutable and therefore safe to share between threads.
+     */
+    private static final ConcurrentHashMap<String, UriParserSpringImpl> CACHE = new ConcurrentHashMap<>();
 
     private final UriTemplate uriTemplate;
     private final String template;
@@ -37,6 +45,14 @@ public class UriParserSpringImpl implements UriParser {
     public UriParserSpringImpl(final String template) {
         this.uriTemplate = new UriTemplate(template);
         this.template = template;
+    }
+
+    /**
+     * Returns a cached parser for the given template, compiling one on first use. Prefer this over the constructor on
+     * hot paths to avoid recompiling the same template's regex repeatedly.
+     */
+    public static UriParserSpringImpl forTemplate(final String template) {
+        return CACHE.computeIfAbsent(template, UriParserSpringImpl::new);
     }
 
     @Override

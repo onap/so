@@ -47,11 +47,11 @@ public abstract class SimpleBaseUri<T extends GraphInventoryResourceUri<?, ?>, P
             this.type = type;
             this.internalURI = UriBuilder.fromPath(this.getTemplate(type));
             this.values =
-                    this.getURIKeys(uri.getRawPath().replaceAll(getPrefixPattern().toString(), "")).values().toArray();
+                    this.getURIKeys(getPrefixPattern().matcher(uri.getRawPath()).replaceAll("")).values().toArray();
             this.parentUri = null;
         } else {
             this.type = type;
-            this.internalURI = UriBuilder.fromPath(uri.getRawPath().replaceAll(getPrefixPattern().toString(), ""));
+            this.internalURI = UriBuilder.fromPath(getPrefixPattern().matcher(uri.getRawPath()).replaceAll(""));
             this.values = new Object[0];
             this.parentUri = null;
         }
@@ -155,7 +155,7 @@ public abstract class SimpleBaseUri<T extends GraphInventoryResourceUri<?, ?>, P
     protected Map<String, String> getURIKeys(String uri) {
         UriParser parser;
         if (!("".equals(this.getTemplate(type)))) {
-            parser = new UriParserSpringImpl(this.getTemplate(type));
+            parser = UriParserSpringImpl.forTemplate(this.getTemplate(type));
         } else {
             return new HashMap<>();
         }
@@ -207,7 +207,7 @@ public abstract class SimpleBaseUri<T extends GraphInventoryResourceUri<?, ?>, P
     }
 
     public void validateValuesSize(String template, Object... values) {
-        UriParser parser = new UriParserSpringImpl(template);
+        UriParser parser = UriParserSpringImpl.forTemplate(template);
         Set<String> variables = parser.getVariables();
         if (variables.size() != values.length) {
             throw new IncorrectNumberOfUriKeys(String.format("Expected %s variables: %s", variables.size(), variables));
