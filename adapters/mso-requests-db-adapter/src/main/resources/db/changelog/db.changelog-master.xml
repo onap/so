@@ -117,5 +117,8 @@
     <changeSet id="V8.3__Add_Columns_Workflow_Name_Operation_Name" author="so-migration">
         <sqlFile path="db/migration/V8.3__Add_Columns_Workflow_Name_Operation_Name.sql" relativeToChangelogFile="false"/>
     </changeSet>
+    <changeSet id="V8.4__Fix_IS_DATA_INTERNAL_Column_Type" author="so-migration">
+        <sqlFile path="db/migration/V8.4__Fix_IS_DATA_INTERNAL_Column_Type.sql" relativeToChangelogFile="false"/>
+    </changeSet>
 
 </databaseChangeLog>
