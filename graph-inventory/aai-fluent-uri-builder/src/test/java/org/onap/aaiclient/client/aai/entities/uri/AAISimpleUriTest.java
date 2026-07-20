@@ -31,6 +31,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
+import org.onap.aaiclient.client.graphinventory.Format;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
 
 public class AAISimpleUriTest {
@@ -146,6 +147,15 @@ public class AAISimpleUriTest {
         e2.queryParam("test", "value");
 
         assertEquals(e2.build().toString(), uri.build().toString());
+    }
+
+    @Test
+    public void depthFormatAndNodesOnlyQueryParamsAreApplied() {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf("test1"))
+                .depth(Depth.ONE).nodesOnly(true).format(Format.SIMPLE);
+
+        String uriOutput = uri.build().toString();
+        assertEquals("/network/generic-vnfs/generic-vnf/test1?depth=1&format=simple&nodes-only=", uriOutput);
     }
 
     @Test

@@ -67,19 +67,19 @@ public class AAISimpleUri extends
 
     @Override
     public AAISimplePluralUri relatedTo(AAIObjectPlurals plural) {
-        this.internalURI.path(relatedTo);
+        this.internalURI = internalURI.path(relatedTo);
         return new AAISimplePluralUri(this, plural);
     }
 
     @Override
     public AAISimpleUri relatedTo(AAISingleFragment fragment) {
-        this.internalURI.path(relatedTo);
+        this.internalURI = internalURI.path(relatedTo);
         return new AAISimpleUri(this, fragment.get().build(), fragment.get().values());
     }
 
     @Override
     public AAISimplePluralUri relatedTo(AAIPluralFragment fragment) {
-        this.internalURI.path(relatedTo);
+        this.internalURI = internalURI.path(relatedTo);
         return new AAISimplePluralUri(this, fragment.get().build());
     }
 
