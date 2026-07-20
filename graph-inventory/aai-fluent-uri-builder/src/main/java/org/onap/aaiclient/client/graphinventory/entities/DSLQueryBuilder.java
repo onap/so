@@ -63,7 +63,7 @@ public class DSLQueryBuilder<S, E> {
         Object obj = steps.get(steps.size() - 1);
         if (obj instanceof DSLNodeBase) {
             consumer.accept((DSLNodeBase) steps.get(steps.size() - 1));
-        } else if (obj.getClass().getName().contains("$$Lambda$")) {
+        } else if (obj.getClass().getName().contains("$$Lambda")) {
             // process lambda expressions
             for (Field f : obj.getClass().getDeclaredFields()) {
                 f.setAccessible(true);

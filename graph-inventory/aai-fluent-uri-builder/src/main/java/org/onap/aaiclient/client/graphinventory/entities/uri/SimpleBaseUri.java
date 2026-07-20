@@ -188,21 +188,21 @@ public abstract class SimpleBaseUri<T extends GraphInventoryResourceUri<?, ?>, P
 
     @Override
     public T depth(Depth depth) {
-        this.internalURI.replaceQueryParam("depth", depth.toString());
+        this.internalURI = internalURI.replaceQueryParam("depth", depth.toString());
         return (T) this;
     }
 
     @Override
     public T nodesOnly(boolean nodesOnly) {
         if (nodesOnly) {
-            this.internalURI.replaceQueryParam("nodes-only", "");
+            this.internalURI = internalURI.replaceQueryParam("nodes-only", "");
         }
         return (T) this;
     }
 
     @Override
     public T format(Format format) {
-        this.internalURI.replaceQueryParam("format", format);
+        this.internalURI = internalURI.replaceQueryParam("format", format);
         return (T) this;
     }
 

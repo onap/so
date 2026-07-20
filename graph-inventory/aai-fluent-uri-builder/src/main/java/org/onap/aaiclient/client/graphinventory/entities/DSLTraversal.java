@@ -24,8 +24,8 @@ public class DSLTraversal<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (o != null) {
-            return this.toString().equals(o);
+        if (o instanceof DSLTraversal) {
+            return this.traversal.equals(((DSLTraversal<?>) o).traversal);
         }
         return false;
     }
