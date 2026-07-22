@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.onap.so</groupId>
     <artifactId>common</artifactId>
-    <version>1.21.0-SNAPSHOT</version>
+    <version>1.21.0</version>
   </parent>
   <artifactId>clients</artifactId>
   <packaging>pom</packaging>
