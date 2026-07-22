@@ -80,6 +80,19 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
+          <!-- These are heavyweight @SpringBootTest workflow ITs that share a single cached
+               Spring context, and with it one WireMockServer and one GrpcNettyServer bean.
+               The inherited root-pom config runs them with <parallel>classes</parallel> and,
+               because perCoreThreadCount defaults to true, effective concurrency is
+               threadCount x CPU cores. Several tests then stub the same catalogdb URL with
+               different blueprint names and reset the shared WireMock server in @After, so
+               concurrent classes clobber each other's stubs and lifecycle (blueprint-name
+               swaps, null ControllerStatus, "Not listening on HTTPS port"). Pin this module
+               to a single test thread so the classes run serially. -->
+          <configuration>
+            <perCoreThreadCount>false</perCoreThreadCount>
+            <threadCount>1</threadCount>
+          </configuration>
           <executions>
             <execution>
               <id>default-test</id>
