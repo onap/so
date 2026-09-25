@@ -63,7 +63,7 @@ import org.onap.sdc.toscaparser.api.SubstitutionMappings;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.sdc.toscaparser.api.elements.StatefulEntityType;
 import org.onap.sdc.toscaparser.api.parameters.Input;
-import org.onap.sdc.utils.DistributionStatusEnum;
+import org.onap.sdc.api.notification.DistributionStatusEnum;
 import org.onap.so.asdc.BaseTest;
 import org.onap.so.asdc.client.ResourceInstance;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
