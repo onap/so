@@ -25,6 +25,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +40,8 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 import org.onap.aaiclient.client.aai.AAIVersion;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.onap.sdc.api.notification.IStatusData;
+import org.onap.sdc.utils.DistributionStatusEnum;
 import org.onap.so.asdc.BaseTest;
 import org.onap.so.asdc.client.exceptions.ASDCControllerException;
 import org.onap.so.asdc.client.test.emulators.ArtifactInfoImpl;
@@ -92,6 +96,9 @@ public class ASDCControllerITTest extends BaseTest {
 
     @Autowired
     private ASDCController asdcController;
+
+    @Autowired
+    private ASDCStatusCallBack asdcStatusCallBack;
 
     @Autowired
     private PnfResourceRepository pnfResourceRepository;
@@ -317,6 +324,38 @@ public class ASDCControllerITTest extends BaseTest {
             logger.info(e.getMessage(), e);
             fail(e.getMessage());
         }
+    }
+
+    @Test
+    public void treatNotification_AllComponentsDone_UpdatesCatalogDistributionStatus() {
+        String serviceUuid = "77cf276e-905c-43f6-8d54-dda474be2f2e";
+        String serviceInvariantUuid = "913e6776-4bc3-49b9-b399-b5bb4690f0c7";
+        initMockAaiServer(serviceUuid, serviceInvariantUuid);
+
+        NotificationDataImpl notificationData = new NotificationDataImpl();
+        notificationData.setServiceUUID(serviceUuid);
+        notificationData.setDistributionID(distributionId);
+        notificationData.setServiceInvariantUUID(serviceInvariantUuid);
+        notificationData.setServiceVersion("1.0");
+        notificationData.setResources(List.of(constructPnfResourceInfo()));
+        notificationData.setServiceArtifacts(List.of(constructPnfServiceArtifact()));
+
+        reportComponentStatus("AAI", DistributionStatusEnum.COMPONENT_DONE_OK);
+        reportComponentStatus("SDNC", DistributionStatusEnum.COMPONENT_DONE_OK);
+
+        asdcController.treatNotification(notificationData);
+
+        Service service = serviceRepository.findById(serviceUuid)
+                .orElseThrow(() -> new EntityNotFoundException("Service: " + serviceUuid + " not found"));
+        assertEquals(DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK.name(), service.getDistrobutionStatus());
+    }
+
+    private void reportComponentStatus(String componentName, DistributionStatusEnum status) {
+        IStatusData statusData = mock(IStatusData.class);
+        when(statusData.getDistributionID()).thenReturn(distributionId);
+        when(statusData.getComponentName()).thenReturn(componentName);
+        when(statusData.getStatus()).thenReturn(status);
+        asdcStatusCallBack.activateCallback(statusData);
     }
 
     /**

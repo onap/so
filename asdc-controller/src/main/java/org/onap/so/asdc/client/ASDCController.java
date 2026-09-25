@@ -299,7 +299,7 @@ public class ASDCController {
                 logger.debug("Exception caused by: {}", e.getCause().getMessage());
             }
         }
-        wd.updateCatalogDBStatus(iNotif.getServiceInvariantUUID(), overallStatus);
+        wd.updateCatalogDBStatus(iNotif.getServiceUUID(), overallStatus);
         return watchdogError;
     }
 
