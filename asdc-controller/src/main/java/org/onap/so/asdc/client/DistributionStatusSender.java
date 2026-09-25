@@ -25,7 +25,7 @@ import org.onap.sdc.api.IDistributionClient;
 import org.onap.sdc.api.consumer.IDistributionStatusMessage;
 import org.onap.sdc.api.consumer.IFinalDistrStatusMessage;
 import org.onap.sdc.api.notification.IArtifactInfo;
-import org.onap.sdc.utils.DistributionStatusEnum;
+import org.onap.sdc.api.notification.DistributionStatusEnum;
 import org.onap.so.asdc.installer.ResourceStructure;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.logger.LoggingAnchor;

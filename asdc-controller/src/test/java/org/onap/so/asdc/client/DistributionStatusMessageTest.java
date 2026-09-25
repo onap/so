@@ -22,7 +22,7 @@ package org.onap.so.asdc.client;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import org.onap.sdc.utils.DistributionStatusEnum;
+import org.onap.sdc.api.notification.DistributionStatusEnum;
 
 public class DistributionStatusMessageTest {
 

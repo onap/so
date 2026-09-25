@@ -37,11 +37,12 @@ import org.onap.sdc.api.consumer.INotificationCallback;
 import org.onap.sdc.api.consumer.IStatusCallback;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.notification.IVfModuleMetadata;
+import org.onap.sdc.api.notification.StatusMessage;
 import org.onap.sdc.api.results.IDistributionClientDownloadResult;
 import org.onap.sdc.api.results.IDistributionClientResult;
 import org.onap.sdc.impl.DistributionClientDownloadResultImpl;
 import org.onap.sdc.impl.DistributionClientResultImpl;
-import org.onap.sdc.utils.DistributionActionResultEnum;
+import org.onap.sdc.api.results.DistributionActionResultEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,6 +145,12 @@ public class DistributionClientEmulator implements IDistributionClient {
     @Override
     public IDistributionClientResult sendDownloadStatus(IDistributionStatusMessage arg0, String arg1) {
         this.distributionMessageReceived.add(arg0);
+        return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS,
+                DistributionActionResultEnum.SUCCESS.name());
+    }
+
+    @Override
+    public IDistributionClientResult sendNotificationStatus(StatusMessage arg0) {
         return new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS,
                 DistributionActionResultEnum.SUCCESS.name());
     }

@@ -23,7 +23,7 @@
 package org.onap.so.asdc.client;
 
 import org.onap.sdc.api.consumer.IFinalDistrStatusMessage;
-import org.onap.sdc.utils.DistributionStatusEnum;
+import org.onap.sdc.api.notification.DistributionStatusEnum;
 
 public class FinalDistributionStatusMessage implements IFinalDistrStatusMessage {
 

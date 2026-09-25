@@ -32,8 +32,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.sdc.api.IDistributionClient;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.results.IDistributionClientDownloadResult;
-import org.onap.sdc.utils.DistributionActionResultEnum;
-import org.onap.sdc.utils.DistributionStatusEnum;
+import org.onap.sdc.api.results.DistributionActionResultEnum;
+import org.onap.sdc.api.notification.DistributionStatusEnum;
 import org.onap.so.asdc.client.exceptions.ASDCDownloadException;
 
 @RunWith(MockitoJUnitRunner.class)

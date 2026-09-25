@@ -21,7 +21,7 @@
 package org.onap.so.asdc.client;
 
 import java.util.function.LongSupplier;
-import org.onap.sdc.utils.DistributionStatusEnum;
+import org.onap.sdc.api.notification.DistributionStatusEnum;
 import org.onap.so.asdc.tenantIsolation.DistributionStatus;
 import org.onap.so.asdc.tenantIsolation.WatchdogDistribution;
 import org.slf4j.Logger;

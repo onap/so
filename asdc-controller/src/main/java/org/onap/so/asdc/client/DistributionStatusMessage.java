@@ -22,7 +22,7 @@ package org.onap.so.asdc.client;
 
 
 import org.onap.sdc.api.consumer.IDistributionStatusMessage;
-import org.onap.sdc.utils.DistributionStatusEnum;
+import org.onap.sdc.api.notification.DistributionStatusEnum;
 
 public class DistributionStatusMessage implements IDistributionStatusMessage {
 

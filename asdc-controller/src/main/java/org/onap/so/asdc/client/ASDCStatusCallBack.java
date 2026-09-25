@@ -26,7 +26,7 @@ package org.onap.so.asdc.client;
 
 import org.onap.sdc.api.consumer.IStatusCallback;
 import org.onap.sdc.api.notification.IStatusData;
-import org.onap.sdc.utils.DistributionStatusEnum;
+import org.onap.sdc.api.notification.DistributionStatusEnum;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;

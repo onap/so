@@ -34,7 +34,7 @@ import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.api.results.IDistributionClientDownloadResult;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
-import org.onap.sdc.utils.DistributionStatusEnum;
+import org.onap.sdc.api.notification.DistributionStatusEnum;
 import org.onap.so.asdc.client.exceptions.ASDCDownloadException;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.installer.PnfResourceStructure;

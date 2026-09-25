@@ -30,7 +30,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.sdc.api.IDistributionClient;
 import org.onap.sdc.api.consumer.IDistributionStatusMessage;
 import org.onap.sdc.api.consumer.IFinalDistrStatusMessage;
-import org.onap.sdc.utils.DistributionStatusEnum;
+import org.onap.sdc.api.notification.DistributionStatusEnum;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DistributionStatusSenderTest {
