@@ -375,15 +375,26 @@ public class ASDCRestInterfaceTest extends BaseTest {
         ObjectMapper mapper = new ObjectMapper();
         NotificationDataImpl request = mapper.readValue(new File(resourceLocation + "demo-public-ns-notification.json"),
                 NotificationDataImpl.class);
-        headers.add("resource-location", "/resource-examples/public-ns/demo-public-ns-notification.json");
+        headers.add("resource-location", "/resource-examples/public-ns/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
         Optional<Service> service = serviceRepo.findById("da28696e-d4c9-4df4-9f91-465c6c09a81e");
-        // assertTrue(service.isPresent());
-        // assertEquals("PublicNS", service.get().getModelName());
+        assertTrue(service.isPresent());
+        assertEquals("PublicNS", service.get().getModelName());
+
+        assertVfModuleCustomization("ae70c293-8db3-40cd-8cd0-30cde194bea5", "8caeefbd-ab71-40c9-9387-8729d7d9c2de");
+        assertVfModuleCustomization("fd8595de-1081-4e39-a401-24ffebaa9ed8", "ea551d60-f9c9-48f2-9757-b01eb2d26d13");
+    }
+
+    private void assertVfModuleCustomization(String vnfCustomizationUuid, String vfModuleCustomizationUuid) {
+        List<VnfResourceCustomization> vnfCustomizations =
+                vnfCustRepo.findByModelCustomizationUUID(vnfCustomizationUuid);
+        assertEquals(1, vnfCustomizations.size());
+        assertTrue(vnfCustomizations.get(0).getVfModuleCustomizations().stream()
+                .anyMatch(vfModuleCust -> vfModuleCustomizationUuid.equals(vfModuleCust.getModelCustomizationUUID())));
     }
 
     @Test
