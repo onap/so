@@ -21,11 +21,22 @@ package org.onap.so.asdc.client;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.startsWith;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +51,12 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 import org.onap.aaiclient.client.aai.AAIVersion;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.mockito.ArgumentMatcher;
+import org.onap.sdc.api.consumer.IDistributionStatusMessage;
+import org.onap.sdc.api.consumer.IFinalDistrStatusMessage;
 import org.onap.sdc.api.notification.IStatusData;
+import org.onap.sdc.impl.DistributionClientDownloadResultImpl;
+import org.onap.sdc.utils.DistributionActionResultEnum;
 import org.onap.sdc.utils.DistributionStatusEnum;
 import org.onap.so.asdc.BaseTest;
 import org.onap.so.asdc.client.exceptions.ASDCControllerException;
@@ -61,7 +77,9 @@ import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
 import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
+import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
+import org.onap.so.db.request.data.repository.WatchdogDistributionStatusRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -97,8 +115,17 @@ public class ASDCControllerITTest extends BaseTest {
     @Autowired
     private ASDCController asdcController;
 
+    private static final String PNF_SERVICE_UUID = "77cf276e-905c-43f6-8d54-dda474be2f2e";
+    private static final String PNF_SERVICE_INVARIANT_UUID = "913e6776-4bc3-49b9-b399-b5bb4690f0c7";
+
     @Autowired
     private ASDCStatusCallBack asdcStatusCallBack;
+
+    @Autowired
+    private ASDCNotificationCallBack asdcNotificationCallBack;
+
+    @Autowired
+    private WatchdogDistributionStatusRepository watchdogDistributionStatusRepository;
 
     @Autowired
     private PnfResourceRepository pnfResourceRepository;
@@ -130,7 +157,7 @@ public class ASDCControllerITTest extends BaseTest {
         logger.info("Using distributionId: {}, artifactUUID: {} for testcase: {}", distributionId, artifactUuid,
                 testName.getMethodName());
 
-        distributionClient = new DistributionClientEmulator();
+        distributionClient = spy(new DistributionClientEmulator());
         distributionClient.setResourcePath("src/test/resources");
         asdcController.setDistributionClient(distributionClient);
         try {
@@ -328,26 +355,145 @@ public class ASDCControllerITTest extends BaseTest {
 
     @Test
     public void treatNotification_AllComponentsDone_UpdatesCatalogDistributionStatus() {
-        String serviceUuid = "77cf276e-905c-43f6-8d54-dda474be2f2e";
-        String serviceInvariantUuid = "913e6776-4bc3-49b9-b399-b5bb4690f0c7";
-        initMockAaiServer(serviceUuid, serviceInvariantUuid);
+        initMockAaiServer(PNF_SERVICE_UUID, PNF_SERVICE_INVARIANT_UUID);
+        reportComponentStatus("AAI", DistributionStatusEnum.COMPONENT_DONE_OK);
+        reportComponentStatus("SDNC", DistributionStatusEnum.COMPONENT_DONE_OK);
 
-        NotificationDataImpl notificationData = new NotificationDataImpl();
-        notificationData.setServiceUUID(serviceUuid);
+        asdcController.treatNotification(pnfNotification());
+
+        Service service = serviceRepository.findById(PNF_SERVICE_UUID)
+                .orElseThrow(() -> new EntityNotFoundException("Service: " + PNF_SERVICE_UUID + " not found"));
+        assertEquals(DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK.name(), service.getDistrobutionStatus());
+    }
+
+    @Test
+    public void notificationCallback_AllComponentsDone_ReportsDistributionCompleteOk() {
+        initMockAaiServer(PNF_SERVICE_UUID, PNF_SERVICE_INVARIANT_UUID);
+        reportComponentStatus("AAI", DistributionStatusEnum.COMPONENT_DONE_OK);
+        reportComponentStatus("SDNC", DistributionStatusEnum.COMPONENT_DONE_OK);
+
+        asdcNotificationCallBack.activateCallback(pnfNotification());
+
+        String csarUrl = constructPnfServiceArtifact().getArtifactURL();
+        verify(distributionClient)
+                .sendDownloadStatus(argThat(statusMessage(csarUrl, DistributionStatusEnum.DOWNLOAD_OK)));
+        verify(distributionClient)
+                .sendDeploymentStatus(argThat(statusMessage(csarUrl, DistributionStatusEnum.DEPLOY_OK)));
+        verify(distributionClient)
+                .sendFinalDistrStatus(argThat(finalStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK)));
+        verify(distributionClient, never()).sendFinalDistrStatus(any(), anyString());
+        assertEquals(DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK.name(), storedDistributionStatus());
+    }
+
+    @Test
+    public void treatNotification_ComponentNeverReports_ReportsTimeoutError() {
+        initMockAaiServer(PNF_SERVICE_UUID, PNF_SERVICE_INVARIANT_UUID);
+        reportComponentStatus("AAI", DistributionStatusEnum.COMPONENT_DONE_OK);
+
+        asdcController.treatNotification(pnfNotification());
+
+        verify(distributionClient).sendFinalDistrStatus(
+                argThat(finalStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR)),
+                eq("Timeout occurred while waiting for all components to report status"));
+        assertEquals(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name(), storedDistributionStatus());
+    }
+
+    @Test
+    public void treatNotification_ComponentDoneError_ReportsDistributionCompleteError() {
+        initMockAaiServer(PNF_SERVICE_UUID, PNF_SERVICE_INVARIANT_UUID);
+        reportComponentStatus("AAI", DistributionStatusEnum.COMPONENT_DONE_OK);
+        reportComponentStatus("SDNC", DistributionStatusEnum.COMPONENT_DONE_ERROR);
+
+        asdcController.treatNotification(pnfNotification());
+
+        verify(distributionClient)
+                .sendFinalDistrStatus(argThat(finalStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR)));
+        assertEquals(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name(), storedDistributionStatus());
+    }
+
+    @Test
+    public void treatNotification_AaiUpdateFails_ReportsDistributionCompleteError() {
+        String modelVerEndpoint = "/aai/" + AAIVersion.LATEST + "/service-design-and-creation/models/model/"
+                + PNF_SERVICE_INVARIANT_UUID + "/model-vers/model-ver/" + PNF_SERVICE_UUID + "?depth=0";
+        wireMockServer.stubFor(post(urlEqualTo(modelVerEndpoint)).willReturn(serverError()));
+        reportComponentStatus("AAI", DistributionStatusEnum.COMPONENT_DONE_OK);
+        reportComponentStatus("SDNC", DistributionStatusEnum.COMPONENT_DONE_OK);
+
+        asdcController.treatNotification(pnfNotification());
+
+        verify(distributionClient).sendFinalDistrStatus(
+                argThat(finalStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR)),
+                startsWith("Error calling A&AI"));
+        assertEquals(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name(), storedDistributionStatus());
+    }
+
+    @Test
+    public void treatNotification_CsarAlreadyDeployed_ReportsAlreadyDeployed() {
+        initMockAaiServer(PNF_SERVICE_UUID, PNF_SERVICE_INVARIANT_UUID);
+        ArtifactInfoImpl csar = constructPnfServiceArtifact();
+        csar.setArtifactChecksum("ZjUzNjg1NDMyMTc4MWJmZjFlNDcyOGQ0Zjc1YWQwYzQ=");
+        NotificationDataImpl notificationData = pnfNotification();
+        notificationData.setServiceArtifacts(List.of(csar));
+        asdcController.treatNotification(notificationData);
+
+        distributionId = UUID.randomUUID().toString();
         notificationData.setDistributionID(distributionId);
-        notificationData.setServiceInvariantUUID(serviceInvariantUuid);
-        notificationData.setServiceVersion("1.0");
-        notificationData.setResources(List.of(constructPnfResourceInfo()));
-        notificationData.setServiceArtifacts(List.of(constructPnfServiceArtifact()));
-
+        clearInvocations(distributionClient);
         reportComponentStatus("AAI", DistributionStatusEnum.COMPONENT_DONE_OK);
         reportComponentStatus("SDNC", DistributionStatusEnum.COMPONENT_DONE_OK);
 
         asdcController.treatNotification(notificationData);
 
-        Service service = serviceRepository.findById(serviceUuid)
-                .orElseThrow(() -> new EntityNotFoundException("Service: " + serviceUuid + " not found"));
-        assertEquals(DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK.name(), service.getDistrobutionStatus());
+        verify(distributionClient).sendDeploymentStatus(
+                argThat(statusMessage(constructPnfServiceArtifact().getArtifactURL(),
+                        DistributionStatusEnum.ALREADY_DEPLOYED)),
+                eq("Csar with UUID: " + artifactUuid + " already exists"));
+        verify(distributionClient)
+                .sendFinalDistrStatus(argThat(finalStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK)));
+    }
+
+    @Test
+    public void treatNotification_CsarDownloadFails_ReportsDownloadErrorAndDistributionCompleteError() {
+        initMockAaiServer(PNF_SERVICE_UUID, PNF_SERVICE_INVARIANT_UUID);
+        doReturn(new DistributionClientDownloadResultImpl(DistributionActionResultEnum.ARTIFACT_NOT_FOUND,
+                "artifact not found")).when(distributionClient).download(any());
+        reportComponentStatus("AAI", DistributionStatusEnum.COMPONENT_DONE_OK);
+        reportComponentStatus("SDNC", DistributionStatusEnum.COMPONENT_DONE_OK);
+
+        asdcController.treatNotification(pnfNotification());
+
+        verify(distributionClient).sendDownloadStatus(argThat(
+                statusMessage(constructPnfServiceArtifact().getArtifactURL(), DistributionStatusEnum.DOWNLOAD_ERROR)),
+                eq("artifact not found"));
+        verify(distributionClient)
+                .sendFinalDistrStatus(argThat(finalStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR)));
+        assertFalse(serviceRepository.findById(PNF_SERVICE_UUID).isPresent());
+        assertEquals(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name(), storedDistributionStatus());
+    }
+
+    private NotificationDataImpl pnfNotification() {
+        NotificationDataImpl notificationData = new NotificationDataImpl();
+        notificationData.setServiceUUID(PNF_SERVICE_UUID);
+        notificationData.setDistributionID(distributionId);
+        notificationData.setServiceInvariantUUID(PNF_SERVICE_INVARIANT_UUID);
+        notificationData.setServiceVersion("1.0");
+        notificationData.setResources(List.of(constructPnfResourceInfo()));
+        notificationData.setServiceArtifacts(List.of(constructPnfServiceArtifact()));
+        return notificationData;
+    }
+
+    private String storedDistributionStatus() {
+        return watchdogDistributionStatusRepository.findById(distributionId)
+                .map(WatchdogDistributionStatus::getDistributionIdStatus).orElse(null);
+    }
+
+    private static ArgumentMatcher<IDistributionStatusMessage> statusMessage(String artifactUrl,
+            DistributionStatusEnum status) {
+        return message -> artifactUrl.equals(message.getArtifactURL()) && status == message.getStatus();
+    }
+
+    private static ArgumentMatcher<IFinalDistrStatusMessage> finalStatus(DistributionStatusEnum status) {
+        return message -> status == message.getStatus();
     }
 
     private void reportComponentStatus(String componentName, DistributionStatusEnum status) {
