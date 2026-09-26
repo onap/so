@@ -864,11 +864,6 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.antlr</groupId>
-        <artifactId>antlr4-runtime</artifactId>
-        <version>4.10.1</version>
-      </dependency>
-      <dependency>
         <groupId>me.hdpe.bowman</groupId>
         <artifactId>bowman-client</artifactId>
         <version>${bowman.client.version}</version>
@@ -888,12 +883,6 @@
         <artifactId>logging-filter-spring</artifactId>
         <version>${onap-logging-version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpcore</artifactId>
-        <version>4.4.4</version>
-        <scope>compile</scope>
-      </dependency>
       <!-- Apache HttpClient 4 (HC4) is no longer managed by the Spring Boot 3.5 BOM
            (httpclient.version was removed; only httpcore 4.4.16 and httpclient5 5.x remain).
            SO still uses HC4 directly (e.g. asdc-controller BpmnInstaller MultipartEntityBuilder),
@@ -907,12 +896,6 @@
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpmime</artifactId>
         <version>${httpclient4.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-codec</groupId>
-        <artifactId>commons-codec</artifactId>
-        <version>1.15</version>
-        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>commons-io</groupId>
@@ -932,11 +915,6 @@
         <version>${springboot.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.yaml</groupId>
-        <artifactId>snakeyaml</artifactId>
-        <version>2.0</version>
       </dependency>
       <dependency>
         <groupId>jakarta.interceptor</groupId>
@@ -1060,16 +1038,6 @@
         <groupId>org.apache.kafka</groupId>
         <artifactId>kafka-clients</artifactId>
         <version>${kafka.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.h2database</groupId>
-        <artifactId>h2</artifactId>
-        <version>2.3.232</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mariadb.jdbc</groupId>
-        <artifactId>mariadb-java-client</artifactId>
-        <version>3.1.4</version>
       </dependency>
       <dependency>
         <groupId>org.camunda.bpm</groupId>
