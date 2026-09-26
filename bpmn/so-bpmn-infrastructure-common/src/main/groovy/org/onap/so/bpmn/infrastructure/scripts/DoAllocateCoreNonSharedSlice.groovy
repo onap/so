@@ -24,8 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 
 import groovy.json.JsonOutput
 
-import static org.hamcrest.CoreMatchers.instanceOf
-
 import jakarta.ws.rs.core.Response
 import org.apache.commons.collections.map.HashedMap
 import org.camunda.bpm.engine.delegate.BpmnError

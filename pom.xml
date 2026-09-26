@@ -797,10 +797,12 @@
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-core</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-library</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -840,7 +842,7 @@
     <dependency>
       <groupId>com.openpojo</groupId>
       <artifactId>openpojo</artifactId>
-      <version>0.8.13</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -858,7 +860,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.38</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   <dependencyManagement>
@@ -1055,6 +1057,11 @@
         <groupId>org.reflections</groupId>
         <artifactId>reflections</artifactId>
         <version>0.10.2</version>
+      </dependency>
+      <dependency>
+        <groupId>com.openpojo</groupId>
+        <artifactId>openpojo</artifactId>
+        <version>0.8.13</version>
       </dependency>
       <dependency>
         <groupId>org.apache.kafka</groupId>
