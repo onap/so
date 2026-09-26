@@ -13,7 +13,6 @@
   <description>MSO Common classes:- Logger</description>
   <properties>
     <!-- Match the Spring Boot 3.5 BOM's managed Tomcat version (tomcat.version). -->
-    <tomcat-catalina-version>10.1.55</tomcat-catalina-version>
   </properties>
   <dependencies>
     <dependency>
@@ -60,25 +59,11 @@
       <artifactId>spring-webmvc</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.modelmapper</groupId>
-      <artifactId>modelmapper</artifactId>
-      <version>3.2.6</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina</artifactId>
-      <!-- tomcat-catalina is not BOM-managed (only tomcat-embed-* is); pin it to match the
-           Boot 3.5 managed Tomcat version so coyote/catalina stay in sync (fixes NoSuchMethodError
-           AbstractProtocol.setMaxQueueSize under Boot 3.5 / Tomcat 10.1.42+). Keep aligned with
-           the spring-boot BOM's tomcat.version on future Boot upgrades. -->
-      <version>${tomcat-catalina-version}</version>
-    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-ext</artifactId>
@@ -91,6 +76,11 @@
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>2.8.9</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -116,13 +106,14 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.reflections</groupId>
-      <artifactId>reflections</artifactId>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.zaxxer</groupId>

@@ -97,11 +97,6 @@
       <artifactId>jersey-media-json-jackson</artifactId>
     </dependency>
     <dependency>
-      <groupId>me.hdpe.bowman</groupId>
-      <artifactId>bowman-client</artifactId>
-      <version>${bowman.client.version}</version>
-    </dependency>
-    <dependency>
       <groupId>pl.pragmatists</groupId>
       <artifactId>JUnitParams</artifactId>
       <scope>test</scope>
