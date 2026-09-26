@@ -148,6 +148,11 @@
       <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.sun.xml.messaging.saaj</groupId>
+      <artifactId>saaj-impl</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-spring-boot-starter-jaxrs</artifactId>
     </dependency>
@@ -172,12 +177,6 @@
       <groupId>org.onap.so.adapters</groupId>
       <artifactId>mso-adapters-rest-interface</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish</groupId>
-      <artifactId>javax.json</artifactId>
-      <version>1.0.4</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.micrometer</groupId>
