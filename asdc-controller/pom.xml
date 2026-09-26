@@ -12,7 +12,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <antlr.version>4.7.1</antlr.version>
+    <antlr.version>4.13.2</antlr.version>
     <sdc.tosca.version>1.6.5</sdc.tosca.version>
     <jtosca.version>1.5.1</jtosca.version>
   </properties>
@@ -249,7 +249,6 @@
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
-      <version>1.15</version>
     </dependency>
     <dependency>
       <groupId>org.onap.so</groupId>
