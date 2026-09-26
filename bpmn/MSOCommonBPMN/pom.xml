@@ -227,9 +227,8 @@
       <artifactId>jersey-media-json-jackson</artifactId>
     </dependency>
     <dependency>
-      <groupId>me.hdpe.bowman</groupId>
-      <artifactId>bowman-client</artifactId>
-      <version>${bowman.client.version}</version>
+      <groupId>org.modelmapper</groupId>
+      <artifactId>modelmapper</artifactId>
     </dependency>
     <dependency>
       <groupId>pl.pragmatists</groupId>
