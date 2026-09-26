@@ -12,8 +12,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <json4s-jackson-version>3.6.0</json4s-jackson-version>
-    <json4s-core-version>3.6.0</json4s-core-version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -37,26 +35,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jersey</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.activation</groupId>
-      <artifactId>activation</artifactId>
-      <version>1.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.transaction</groupId>
-      <artifactId>jta</artifactId>
-      <version>1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.json4s</groupId>
-      <artifactId>json4s-jackson_2.12</artifactId>
-      <version>${json4s-jackson-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.json4s</groupId>
-      <artifactId>json4s-core_2.12</artifactId>
-      <version>${json4s-core-version}</version>
     </dependency>
     <dependency>
       <groupId>jakarta.servlet</groupId>

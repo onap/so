@@ -151,10 +151,6 @@
       <artifactId>cxf-spring-boot-starter-jaxrs</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-service-description-openapi-v3</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <scope>test</scope>
