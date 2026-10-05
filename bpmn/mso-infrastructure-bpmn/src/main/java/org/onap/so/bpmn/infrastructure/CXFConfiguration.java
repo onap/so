@@ -33,7 +33,6 @@ import org.apache.cxf.jaxrs.openapi.OpenApiFeature;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.onap.so.bpmn.common.adapter.sdnc.SDNCCallbackAdapterPortType;
-import org.onap.so.bpmn.common.adapter.vnf.VnfAdapterNotify;
 import org.onap.so.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.onap.so.bpmn.common.workflow.service.WorkflowMessageResource;
 import org.onap.so.bpmn.common.workflow.service.WorkflowResource;
@@ -72,22 +71,9 @@ public class CXFConfiguration {
     @Autowired
     private SDNCCallbackAdapterPortType sdncAdapterCallbackServiceImpl;
 
-    @Autowired
-    private VnfAdapterNotify vnfAdapterNotifyServiceImpl;
-
     @Bean
     public ServletRegistrationBean cxfServlet() {
         return new ServletRegistrationBean(new CXFServlet(), "/mso/*");
-    }
-
-    @Bean
-    public Endpoint vnfAdapterCallback() {
-        EndpointImpl endpoint = new EndpointImpl(bus, vnfAdapterNotifyServiceImpl);
-        endpoint.publish("/VNFAdaptercallback");
-        endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
-        endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
-        endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
-        return endpoint;
     }
 
     @Bean

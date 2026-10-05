@@ -96,26 +96,6 @@
               <pluginExecutions>
                 <pluginExecution>
                   <pluginExecutionFilter>
-                    <groupId>
-                      org.jvnet.jax-ws-commons
-                    </groupId>
-                    <artifactId>
-                      jaxws-maven-plugin
-                    </artifactId>
-                    <versionRange>
-                      [2.3,)
-                    </versionRange>
-                    <goals>
-                      <goal>wsgen</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore>
-                    </ignore>
-                  </action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <versionRange>[1.0.0,)</versionRange>

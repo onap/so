@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import jakarta.jws.WebService;
 import jakarta.xml.ws.Holder;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.onap.logging.filter.base.ErrorCode;
@@ -77,8 +76,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 @Transactional
-@WebService(serviceName = "NetworkAdapter", endpointInterface = "org.onap.so.adapters.network.MsoNetworkAdapter",
-        targetNamespace = "http://org.onap.so/network")
 public class MsoNetworkAdapterImpl {
 
     private static final String OS3_NW_PROPERTY = "org.onap.so.adapters.network.aic3nw";

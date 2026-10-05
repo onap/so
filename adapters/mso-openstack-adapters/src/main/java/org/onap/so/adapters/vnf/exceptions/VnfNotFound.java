@@ -21,7 +21,6 @@
 package org.onap.so.adapters.vnf.exceptions;
 
 
-import jakarta.xml.ws.WebFault;
 
 /**
  * This class reports an exception when trying to update a Network that does not exist in the target cloud/tenant. Note
@@ -29,8 +28,6 @@ import jakarta.xml.ws.WebFault;
  *
  *
  */
-@WebFault(name = "VnfNotFound", faultBean = "org.onap.so.adapters.vnf.exceptions.VnfExceptionBean",
-        targetNamespace = "http://org.onap.so/vnf")
 public class VnfNotFound extends VnfException {
 
     private static final long serialVersionUID = 1L;

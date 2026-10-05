@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import jakarta.jws.WebService;
 import jakarta.xml.ws.Holder;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.adapters.vdu.CloudInfo;
@@ -83,8 +82,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebService(serviceName = "VnfAdapter", endpointInterface = "org.onap.so.adapters.vnf.MsoVnfAdapter",
-        targetNamespace = "http://org.onap.so/vnf")
 @Component
 @Transactional
 public class MsoVnfPluginAdapterImpl {

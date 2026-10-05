@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import jakarta.ws.rs.core.Response;
-import jakarta.xml.bind.JAXBException;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -62,15 +61,8 @@ import org.junit.Rule;
 import org.onap.so.bpmn.common.adapter.sdnc.CallbackHeader;
 import org.onap.so.bpmn.common.adapter.sdnc.SDNCAdapterCallbackRequest;
 import org.onap.so.bpmn.common.adapter.sdnc.SDNCAdapterResponse;
-import org.onap.so.bpmn.common.adapter.vnf.CreateVnfNotification;
-import org.onap.so.bpmn.common.adapter.vnf.DeleteVnfNotification;
-import org.onap.so.bpmn.common.adapter.vnf.MsoExceptionCategory;
-import org.onap.so.bpmn.common.adapter.vnf.MsoRequest;
-import org.onap.so.bpmn.common.adapter.vnf.UpdateVnfNotification;
-import org.onap.so.bpmn.common.adapter.vnf.VnfRollback;
 import org.onap.so.bpmn.common.workflow.context.WorkflowResponse;
 import org.onap.so.bpmn.common.workflow.service.SDNCAdapterCallbackServiceImpl;
-import org.onap.so.bpmn.common.workflow.service.VnfAdapterNotifyServiceImpl;
 import org.onap.so.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.onap.so.bpmn.common.workflow.service.WorkflowMessageResource;
 import org.onap.so.bpmn.common.workflow.service.WorkflowResource;
@@ -78,9 +70,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -934,175 +923,6 @@ public abstract class WorkflowTest {
     }
 
     /**
-     * Injects a Create VNF adapter callback request. The specified callback data may contain the placeholder string
-     * ((MESSAGE-ID)) which is replaced with the actual message ID. It may also contain the placeholder string
-     * ((REQUEST-ID)) which is replaced request ID of the original MSO request.
-     * 
-     * @param content the content of the callback
-     * @param timeout the timeout in milliseconds
-     * @return true if the callback could be injected, false otherwise
-     * @throws JAXBException if the content does not adhere to the schema
-     */
-    protected boolean injectCreateVNFCallback(String content, long timeout) {
-
-        String messageId = (String) getProcessVariable("vnfAdapterCreateV1", "VNFC_messageId", timeout);
-
-        if (messageId == null) {
-            return false;
-        }
-
-        content = content.replace("((MESSAGE-ID))", messageId);
-        // Deprecated usage. All test code should switch to the (( ... )) syntax.
-        content = content.replace("{{MESSAGE-ID}}", messageId);
-
-        if (content.contains("((REQUEST-ID))")) {
-            content = content.replace("((REQUEST-ID))", msoRequestId);
-            // Deprecated usage. All test code should switch to the (( ... )) syntax.
-            content = content.replace("{{REQUEST-ID}}", msoRequestId);
-        }
-
-        logger.debug("Injecting VNF adapter callback");
-
-        // Is it possible to unmarshal this with JAXB? I couldn't.
-
-        CreateVnfNotification createVnfNotification = new CreateVnfNotification();
-        XPathTool xpathTool = new VnfNotifyXPathTool();
-        xpathTool.setXML(content);
-
-        try {
-            String completed = xpathTool.evaluate("/tns:createVnfNotification/tns:completed/text()");
-            createVnfNotification.setCompleted("true".equals(completed));
-
-            String vnfId = xpathTool.evaluate("/tns:createVnfNotification/tns:vnfId/text()");
-            createVnfNotification.setVnfId(vnfId);
-
-            NodeList entries = (NodeList) xpathTool.evaluate("/tns:createVnfNotification/tns:outputs/tns:entry",
-                    XPathConstants.NODESET);
-
-            CreateVnfNotificationOutputs outputs = new CreateVnfNotificationOutputs();
-
-            for (int i = 0; i < entries.getLength(); i++) {
-                Node node = entries.item(i);
-
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element entry = (Element) node;
-                    String key = entry.getElementsByTagNameNS("*", "key").item(0).getTextContent();
-                    String value = entry.getElementsByTagNameNS("*", "value").item(0).getTextContent();
-                    outputs.add(key, value);
-                }
-            }
-
-            createVnfNotification.setOutputs(outputs);
-
-            VnfRollback rollback = new VnfRollback();
-
-            String cloudSiteId = xpathTool.evaluate("/tns:createVnfNotification/tns:rollback/tns:cloudSiteId/text()");
-            rollback.setCloudSiteId(cloudSiteId);
-
-            String cloudOwner = xpathTool.evaluate("/tns:createVnfNotification/tns:rollback/tns:cloudOwner/text()");
-            rollback.setCloudOwner(cloudOwner);
-
-            String requestId =
-                    xpathTool.evaluate("/tns:createVnfNotification/tns:rollback/tns:msoRequest/tns:requestId/text()");
-            String serviceInstanceId = xpathTool
-                    .evaluate("/tns:createVnfNotification/tns:rollback/tns:msoRequest/tns:serviceInstanceId/text()");
-
-            if (requestId != null || serviceInstanceId != null) {
-                MsoRequest msoRequest = new MsoRequest();
-                msoRequest.setRequestId(requestId);
-                msoRequest.setServiceInstanceId(serviceInstanceId);
-                rollback.setMsoRequest(msoRequest);
-            }
-
-            String tenantCreated =
-                    xpathTool.evaluate("/tns:createVnfNotification/tns:rollback/tns:tenantCreated/text()");
-            rollback.setTenantCreated("true".equals(tenantCreated));
-
-            String tenantId = xpathTool.evaluate("/tns:createVnfNotification/tns:rollback/tns:tenantId/text()");
-            rollback.setTenantId(tenantId);
-
-            String vnfCreated = xpathTool.evaluate("/tns:createVnfNotification/tns:rollback/tns:vnfCreated/text()");
-            rollback.setVnfCreated("true".equals(vnfCreated));
-
-            String rollbackVnfId = xpathTool.evaluate("/tns:createVnfNotification/tns:rollback/tns:vnfId/text()");
-            rollback.setVnfId(rollbackVnfId);
-
-            createVnfNotification.setRollback(rollback);
-
-        } catch (Exception e) {
-            logger.debug("Failed to unmarshal VNF callback content:");
-            logger.debug(content);
-            return false;
-        }
-
-        VnfAdapterNotifyServiceImpl notifyService = new VnfAdapterNotifyServiceImpl();
-
-
-        notifyService.createVnfNotification(messageId, createVnfNotification.isCompleted(),
-                createVnfNotification.getException(), createVnfNotification.getErrorMessage(),
-                createVnfNotification.getVnfId(), createVnfNotification.getOutputs(),
-                createVnfNotification.getRollback());
-
-        return true;
-    }
-
-    /**
-     * Injects a Delete VNF adapter callback request. The specified callback data may contain the placeholder string
-     * ((MESSAGE-ID)) which is replaced with the actual message ID. It may also contain the placeholder string
-     * ((REQUEST-ID)) which is replaced request ID of the original MSO request.
-     * 
-     * @param content the content of the callback
-     * @param timeout the timeout in milliseconds
-     * @return true if the callback could be injected, false otherwise
-     * @throws JAXBException if the content does not adhere to the schema
-     */
-    protected boolean injectDeleteVNFCallback(String content, long timeout) {
-
-        String messageId = (String) getProcessVariable("vnfAdapterDeleteV1", "VNFDEL_uuid", timeout);
-
-        if (messageId == null) {
-            return false;
-        }
-
-        content = content.replace("((MESSAGE-ID))", messageId);
-        // Deprecated usage. All test code should switch to the (( ... )) syntax.
-        content = content.replace("{{MESSAGE-ID}}", messageId);
-
-        logger.debug("Injecting VNF adapter delete callback");
-
-        // Is it possible to unmarshal this with JAXB? I couldn't.
-
-        DeleteVnfNotification deleteVnfNotification = new DeleteVnfNotification();
-        XPathTool xpathTool = new VnfNotifyXPathTool();
-        xpathTool.setXML(content);
-
-        try {
-            String completed = xpathTool.evaluate("/tns:deleteVnfNotification/tns:completed/text()");
-            deleteVnfNotification.setCompleted("true".equals(completed));
-            // if notification failure, set the exception and error message
-            if (deleteVnfNotification.isCompleted() == false) {
-                deleteVnfNotification.setException(MsoExceptionCategory.INTERNAL);
-                deleteVnfNotification
-                        .setErrorMessage(xpathTool.evaluate("/tns:deleteVnfNotification/tns:errorMessage/text()"));
-            }
-
-        } catch (Exception e) {
-            logger.debug("Failed to unmarshal VNF Delete callback content:");
-            logger.debug(content);
-            return false;
-        }
-
-        VnfAdapterNotifyServiceImpl notifyService = new VnfAdapterNotifyServiceImpl();
-
-
-        notifyService.deleteVnfNotification(messageId, deleteVnfNotification.isCompleted(),
-                deleteVnfNotification.getException(), deleteVnfNotification.getErrorMessage());
-
-        return true;
-    }
-
-
-    /**
      * Runs a program to inject workflow messages into the test environment. A program is essentially just a list of
      * keys that identify event data to be injected, in sequence. An example program:
      * 
@@ -1828,39 +1648,6 @@ public abstract class WorkflowTest {
         @Override
         public String getPrefix(String uri) {
             return uriMap.get(uri);
-        }
-    }
-
-    /**
-     * A VnfNotify XPathTool.
-     */
-    protected class VnfNotifyXPathTool extends XPathTool {
-        public VnfNotifyXPathTool() {
-            addNamespace("tns", "http://org.onap.so/vnfNotify");
-        }
-    }
-
-    /**
-     * Helper class to make it easier to create this type.
-     */
-    private static class CreateVnfNotificationOutputs extends CreateVnfNotification.Outputs {
-        public void add(String key, String value) {
-            Entry entry = new Entry();
-            entry.setKey(key);
-            entry.setValue(value);
-            getEntry().add(entry);
-        }
-    }
-
-    /**
-     * Helper class to make it easier to create this type.
-     */
-    private static class UpdateVnfNotificationOutputs extends UpdateVnfNotification.Outputs {
-        public void add(String key, String value) {
-            Entry entry = new Entry();
-            entry.setKey(key);
-            entry.setValue(value);
-            getEntry().add(entry);
         }
     }
 }

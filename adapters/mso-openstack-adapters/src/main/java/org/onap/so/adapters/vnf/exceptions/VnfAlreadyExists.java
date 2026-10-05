@@ -22,16 +22,12 @@ package org.onap.so.adapters.vnf.exceptions;
 
 
 
-import jakarta.xml.ws.WebFault;
-
 /**
  * This class reports an exception when trying to create a VNF when another VNF of the same name already exists in the
  * target cloud/tenant. Note that the createVnf method suppresses this exception by default.
  *
  *
  */
-@WebFault(name = "VnfAlreadyExists", faultBean = "org.onap.so.adapters.vnf.exceptions.VnfExceptionBean",
-        targetNamespace = "http://org.onap.so/vnf")
 public class VnfAlreadyExists extends VnfException {
 
     private static final long serialVersionUID = 1L;

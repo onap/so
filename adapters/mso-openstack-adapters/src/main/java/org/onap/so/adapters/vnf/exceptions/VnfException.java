@@ -22,7 +22,6 @@ package org.onap.so.adapters.vnf.exceptions;
 
 
 
-import jakarta.xml.ws.WebFault;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 
@@ -32,8 +31,6 @@ import org.onap.so.openstack.exceptions.MsoExceptionCategory;
  * 
  *
  */
-@WebFault(name = "VnfException", faultBean = "org.onap.so.adapters.vnf.exceptions.VnfExceptionBean",
-        targetNamespace = "http://org.onap.so/vnf")
 public class VnfException extends Exception {
 
     private static final long serialVersionUID = 1L;

@@ -22,7 +22,6 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import static org.apache.cxf.common.util.CollectionUtils.isEmpty
 import jakarta.ws.rs.core.UriBuilder
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -215,7 +214,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
                 Optional<Relationships> relationships = wrapper.getRelationships()
                 if (relationships.isPresent()) {
                     List<AAIResourceUri> tenantURIList = relationships.get().getRelatedUris(Types.TENANT)
-                    if (!isEmpty(tenantURIList)) {
+                    if (tenantURIList != null && !tenantURIList.isEmpty()) {
                         String volumeGroupTenantId = tenantURIList.get(0).getURIKeys().get(AAIFluentTypeBuilder.Types.TENANT.getUriParams().tenantId)
                         execution.setVariable('UPDVfModVol_volumeGroupTenantId', volumeGroupTenantId)
                         logger.debug("Received Tenant Id {} from AAI for Volume Group with Volume Group Id {}, AIC Cloud Region ",

@@ -187,15 +187,6 @@ mso:
       name: GenericNotificationServiceATT
     sdncadapter:
       callback: http://localhost:30254/mso/SDNCAdapterCallbackService
-    vnfadapter:
-      create:
-        callback: http://localhost:30253/mso/vnfAdapterNotify
-      delete:
-        callback: http://localhost:30253/mso/vnfAdapterNotify
-      query:
-        callback: http://localhost:30253/mso/vnfAdapterNotify
-      rollback:
-        callback: http://localhost:30253/mso/vnfAdapterNotify
   global:
     dmaap:
       username: testuser
