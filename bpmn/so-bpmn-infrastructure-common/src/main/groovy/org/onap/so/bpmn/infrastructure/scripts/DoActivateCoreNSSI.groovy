@@ -162,7 +162,7 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
         List instanceParamsvalues = execution.getVariable("snssaiAndOrchStatusList")
         Map<String, Object> nSsai= new LinkedHashMap<>()
         nSsai.put("sNssai", instanceParamsvalues)
-        String supportedsNssaiJson = mapper.writeValueAsString(nSsai)
+        String supportedsNssaiJson = objectMapper.writeValueAsString(nSsai)
         logger.debug(Prefix+" **** Exit DoActivateCoreNSSI ::: prepareVnfInstanceParamsJson ****")
         return supportedsNssaiJson
     }
@@ -327,8 +327,8 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
     public void prepareSOMacroRequestPayLoad(DelegateExecution execution) {
         logger.debug("**** Enter DoActivateCoreNSSI ::: prepareSOMacroRequestPayLoad ****")
         String json = execution.getVariable("serviceVnfs")
-        List<Object> vnfList = mapper.readValue(json, List.class);
-        Map<String,Object> serviceMap = mapper.readValue(execution.getVariable("serviceModelInfo"), Map.class);
+        List<Object> vnfList = objectMapper.readValue(json, List.class);
+        Map<String,Object> serviceMap = objectMapper.readValue(execution.getVariable("serviceModelInfo"), Map.class);
         ModelInfo serviceModelInfo = new ModelInfo()
         serviceModelInfo.setModelType(ModelType.service)
         serviceModelInfo.setModelInvariantId(serviceMap.get("modelInvariantUuid"))
@@ -482,7 +482,7 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
 
         Map<String, Object> requestDetailsMap = new LinkedHashMap<>()
         requestDetailsMap.put("requestDetails", requestDetails)
-        String requestPayload = mapper.writeValueAsString(requestDetailsMap)
+        String requestPayload = objectMapper.writeValueAsString(requestDetailsMap)
         logger.debug("requestDetails "+requestPayload)
         execution.setVariable("requestPayload", requestPayload)
 

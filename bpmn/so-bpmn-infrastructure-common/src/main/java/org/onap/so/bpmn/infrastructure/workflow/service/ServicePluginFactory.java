@@ -106,7 +106,7 @@ public class ServicePluginFactory {
             new String[] {VS_MONITORED, VS_UNMONITORED, TS_MONITORED, TS_UNMONITORED};
 
     static {
-        try (InputStream is = ClassLoader.class.getResourceAsStream("/application.properties")) {
+        try (InputStream is = ServicePluginFactory.class.getResourceAsStream("/application.properties")) {
             if (null != is) {
                 Properties prop = new Properties();
                 prop.load(is);

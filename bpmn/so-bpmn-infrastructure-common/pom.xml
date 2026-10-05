@@ -99,16 +99,6 @@
                 <includes>
                   <include>**/*Test.java</include>
                 </includes>
-                <excludes>
-                  <!-- DoActivateCoreNSSI still uses the removed 'mapper' field (MissingPropertyException) -->
-                  <exclude>**/scripts/DoActivateCoreNSSITest.java</exclude>
-                  <!-- DoCreateVfModuleVolumeV2.callRESTQueryAAIVolGrpName assigns a plural URI to AAIResourceUri (GroovyCastException) -->
-                  <exclude>**/scripts/DoCreateVfModuleVolumeV2Test.java</exclude>
-                  <!-- ScaleCustomE2EServiceInstance.prepareInitServiceOperationStatus references the undefined serviceName (MissingPropertyException) -->
-                  <exclude>**/scripts/SacleCustomE2EServiceInstanceTest.java</exclude>
-                  <!-- default endpoints are read via ClassLoader.class.getResourceAsStream, which cannot see the classpath on Java 9+ -->
-                  <exclude>**/workflow/service/ServicePluginFactoryTest.java</exclude>
-                </excludes>
               </configuration>
             </execution>
           </executions>

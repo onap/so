@@ -30,6 +30,7 @@ import org.onap.aai.domain.yang.VolumeGroup
 import org.onap.aai.domain.yang.VolumeGroups
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory
@@ -217,7 +218,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
         def cloudRegion = execution.getVariable('lcpCloudRegionId')
 
         try {
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), cloudRegion).volumeGroups()).queryParam("volume-group-name", volumeGroupName)
+            AAIPluralResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(Defaults.CLOUD_OWNER.toString(), cloudRegion).volumeGroups()).queryParam("volume-group-name", volumeGroupName)
             Optional<VolumeGroups> volumeGroups = getAAIClient().get(VolumeGroups.class,uri)
             if(volumeGroups.isPresent()){
                 VolumeGroup volumeGroup = volumeGroups.get().getVolumeGroup().get(0);

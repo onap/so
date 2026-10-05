@@ -278,7 +278,6 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
                             <ns:updateServiceOperationStatus xmlns:ns="http://org.onap.so/requestsdb">
                             <serviceId>${MsoUtils.xmlEscape(serviceId)}</serviceId>
                             <operationId>${MsoUtils.xmlEscape(operationId)}</operationId>
-                            <serviceName>${MsoUtils.xmlEscape(serviceName)}</serviceName>
                             <operationType>${MsoUtils.xmlEscape(operationType)}</operationType>
                             <userId>${MsoUtils.xmlEscape(userId)}</userId>
                             <result>${MsoUtils.xmlEscape(result)}</result>
