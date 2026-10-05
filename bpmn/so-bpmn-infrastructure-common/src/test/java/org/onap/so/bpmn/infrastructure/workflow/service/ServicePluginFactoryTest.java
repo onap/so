@@ -20,7 +20,9 @@
 package org.onap.so.bpmn.infrastructure.workflow.service;
 
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +36,9 @@ public class ServicePluginFactoryTest {
 
     @Mock
     ServiceDecomposition serviceDecomposition;
+
+    @Mock
+    DelegateExecution execution;
 
     @Spy
     ServicePluginFactory servicePluginFactory;
@@ -110,8 +115,9 @@ public class ServicePluginFactoryTest {
 
     @Test
     public void doTPResourcesAllocation_Success() {
+        when(execution.getVariable("serviceInstanceName")).thenReturn("test");
         doReturn(null).when(servicePluginFactory).getTPsfromAAI("test");
-        String result = servicePluginFactory.doTPResourcesAllocation(null, uuiRequest);
+        String result = servicePluginFactory.doTPResourcesAllocation(execution, uuiRequest);
         Assert.assertNotEquals(result, uuiRequest);
     }
 

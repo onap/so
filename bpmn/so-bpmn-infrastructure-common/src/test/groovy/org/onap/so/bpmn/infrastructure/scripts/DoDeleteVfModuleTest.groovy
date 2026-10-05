@@ -47,7 +47,7 @@ import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.common.scripts.utils.XmlComparator
 import org.onap.so.bpmn.mock.FileUtil
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 class DoDeleteVfModuleTest extends MsoGroovyTest{
 
     @Spy

@@ -65,10 +65,12 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 		super.init("DeleteVfModuleVolumeInfraV1")
 		MockitoAnnotations.openMocks(this);
 		when(deleteVfModuleVolumeInfraV1.getAAIClient()).thenReturn(client)
+		when(mockExecution.getVariable("testProcessKey")).thenReturn("DeleteVfModuleVolumeInfraV1")
 	}
 
 	String deleteVnfAdapterRequestXml = """<deleteVolumeGroupRequest>
    <cloudSiteId>RDM2WAGPLCP</cloudSiteId>
+   <cloudOwner>CloudOwner</cloudOwner>
    <tenantId>fba1bd1e195a404cacb9ce17a9b2b421</tenantId>
    <volumeGroupId>78987</volumeGroupId>
    <volumeGroupStackId/>
@@ -96,9 +98,9 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
    </soapenv:Body>
 </soapenv:Envelope>"""
 
-	String completionRequestXml = """<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
-                            xmlns:ns="http://org.onap/so/request/types/v1"
-                            xmlns="http://org.onap/so/infra/vnf-request/v1">
+	String completionRequestXml = """<aetgt:MsoCompletionRequest xmlns="http://org.onap/so/infra/vnf-request/v1"
+                            xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+                            xmlns:ns="http://org.onap/so/request/types/v1">
    <request-info>
       <request-id>TEST-REQUEST-ID-0123</request-id>
       <action>DELETE</action>
@@ -108,9 +110,9 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
    <aetgt:mso-bpel-name>BPMN VF Module Volume action: DELETE</aetgt:mso-bpel-name>
 </aetgt:MsoCompletionRequest>"""
 
-	String falloutHandlerRequestXml = """<aetgt:FalloutHandlerRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
-                             xmlns:ns="http://org.onap/so/request/types/v1"
-                             xmlns="http://org.onap/so/infra/vnf-request/v1">
+	String falloutHandlerRequestXml = """<aetgt:FalloutHandlerRequest xmlns="http://org.onap/so/infra/vnf-request/v1"
+                             xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+                             xmlns:ns="http://org.onap/so/request/types/v1">
    <request-info>
       <request-id>TEST-REQUEST-ID-0123</request-id>
       <action>DELETE</action>
@@ -128,6 +130,7 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 
 		ExecutionEntity mockExecution = setupMock('DeleteVfModuleVolumeInfraV1')
 		when(mockExecution.getVariable("DELVfModVol_cloudRegion")).thenReturn('RDM2WAGPLCP')
+		when(mockExecution.getVariable("DELVfModVol_cloudOwner")).thenReturn('CloudOwner')
 		when(mockExecution.getVariable("DELVfModVol_tenantId")).thenReturn('fba1bd1e195a404cacb9ce17a9b2b421')
 		when(mockExecution.getVariable("DELVfModVol_volumeGroupId")).thenReturn('78987')
 		when(mockExecution.getVariable("DELVfModVol_volumeGroupHeatStackId")).thenReturn('')
@@ -185,7 +188,7 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 		when(mockExecution.getVariable("DELVfModVol_source")).thenReturn('VID')
 
 		DeleteVfModuleVolumeInfraV1 myproc = new DeleteVfModuleVolumeInfraV1()
-		myproc.prepareFalloutHandler(mockExecution, 'true')
+		myproc.prepareFalloutHandler(mockExecution)
 
 		verify(mockExecution).setVariable("DELVfModVol_Success", false)
 		verify(mockExecution).setVariable("DELVfModVol_FalloutHandlerRequest", falloutHandlerRequestXml)

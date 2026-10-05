@@ -246,6 +246,7 @@ class DoCompareServiceInstanceDataTest extends MsoGroovyTest {
 
     @Test(expected = BpmnError.class)
     void testPreProcessRequestException() {
+        when(mockExecution.getVariable("testProcessKey")).thenReturn("DoCompareServiceInstanceData")
         DoCompareServiceInstanceData csi = new DoCompareServiceInstanceData()
         csi.preProcessRequest(mockExecution)
     }

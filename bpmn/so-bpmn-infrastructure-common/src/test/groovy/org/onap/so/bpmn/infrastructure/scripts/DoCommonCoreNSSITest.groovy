@@ -29,6 +29,7 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAISimpleUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.aai.entities.uri.ServiceInstanceUri
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
@@ -67,8 +68,8 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
 
         when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment("5G-999"))
-        AAIResourceUri networkServiceInstanceUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment("NS-777"))
+        AAIResourceUri nssiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment("5G-999"))
+        AAIResourceUri networkServiceInstanceUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment("NS-777"))
 
         ServiceInstance nssi = new ServiceInstance()
         nssi.setServiceInstanceId("5G-999")
@@ -90,7 +91,7 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
         Relationships rsMock = mock(Relationships.class)
         Optional<Relationships> orsMock = Optional.of(rsMock)
         List<AAIResourceUri> arus = new ArrayList<>()
-        AAIResourceUri aru = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(networkServiceInstance.getServiceInstanceId()))
+        AAIResourceUri aru = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(networkServiceInstance.getServiceInstanceId()))
         arus.add(aru)
 
         when(client.get(nssiUri)).thenReturn(wrapperMock)
@@ -127,7 +128,7 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
         GenericVnf genericVNF = new GenericVnf()
         genericVNF.setVnfId("VNF-1")
 
-        AAIResourceUri networkServiceInstanceUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(networkServiceInstance.getServiceInstanceId()))
+        AAIResourceUri networkServiceInstanceUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(networkServiceInstance.getServiceInstanceId()))
 
         Optional<GenericVnf> genericVnfOpt = Optional.of(genericVNF)
         AAIResourceUri genericVNFUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().genericVnf(genericVNF.getVnfId()))
@@ -240,7 +241,7 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
 
         currentNSSI.put("nssi", nssi)
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nssiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         AAIResourceUri sliceProfileInstanceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("global-subscriber-id").serviceSubscription("subscription-service-type").
                 serviceInstance("slice-profile-instance-id"))
@@ -332,7 +333,7 @@ class DoCommonCoreNSSITest extends MsoGroovyTest {
         nssi.setServiceInstanceId("5G-999")
         nssi.setOrchestrationStatus("orchestration-status")
 
-        AAIResourceUri networkServiceInstanceUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(networkServiceInstance.getServiceInstanceId()))
+        AAIResourceUri networkServiceInstanceUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(networkServiceInstance.getServiceInstanceId()))
 
         AAIResourceUri cloudRegionAAIUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion("cloud-owner", "cloud-region-id"))
 

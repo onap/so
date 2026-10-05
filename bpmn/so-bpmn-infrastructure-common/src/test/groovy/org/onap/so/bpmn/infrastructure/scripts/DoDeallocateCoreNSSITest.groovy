@@ -30,6 +30,7 @@ import org.onap.aai.domain.yang.v19.SliceProfile
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
@@ -116,7 +117,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         when(spy.getAuthHeader(mockExecution, "auth-value", "mso.msoKey")).thenReturn(authHeaderResponse)
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nssiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         ServiceInstance nssi = new ServiceInstance()
         nssi.setServiceInstanceId("5G-999")
@@ -124,7 +125,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         when(client.get(ServiceInstance.class, nssiUri)).thenReturn(nssiOpt)
 
-        AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
+        AAIResourceUri nsiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
 
         ServiceInstance nsi = new ServiceInstance()
         nsi.setServiceInstanceId("5G-777")
@@ -308,7 +309,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         currentNSSI.put("nssiId", nssiId)
         currentNSSI.put("nsiId", nsiId)
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nssiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         ServiceInstance nssi = new ServiceInstance()
         nssi.setServiceInstanceId(nssiId)
@@ -325,7 +326,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         currentNSSI.put("nssi", nssi)
 
-        AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
+        AAIResourceUri nsiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
 
         AAIResultWrapper wrapperMock = mock(AAIResultWrapper.class)
         when(client.get(nssiUri)).thenReturn(wrapperMock)
@@ -334,7 +335,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
         when(wrapperMock.getRelationships()).thenReturn(orsMock)
 
         List<AAIResourceUri> allottedUris = new ArrayList<>()
-        AAIResourceUri allottedUri = AAIUriFactory.createResourceUri(Types.ALLOTTED_RESOURCE.getFragment("allotted-id"))
+        AAIResourceUri allottedUri = AAIClientUriFactory.createResourceUri(Types.ALLOTTED_RESOURCE.getFragment("allotted-id"))
         allottedUris.add(allottedUri)
 
         when(rsMock.getRelatedUris(Types.ALLOTTED_RESOURCE)).thenReturn(allottedUris)
@@ -372,7 +373,7 @@ class DoDeallocateCoreNSSITest extends MsoGroovyTest {
 
         currentNSSI.put("nssiId", nssiId)
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nssiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         DoDeallocateCoreNSSI spy = spy(DoDeallocateCoreNSSI.class)
 

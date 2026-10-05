@@ -19,6 +19,7 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
+import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertTrue
 import static org.mockito.ArgumentMatchers.eq
@@ -33,6 +34,8 @@ import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
+import org.onap.aai.domain.yang.Relationship
+import org.onap.aai.domain.yang.RelationshipList
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
@@ -78,10 +81,16 @@ class DoDeleteSliceServiceTest extends MsoGroovyTest {
         when(obj.getAAIClient()).thenReturn(client)
         when(client.exists(resourceUri)).thenReturn(true)
         when(client.get(resourceUri, NotFoundException.class)).thenReturn(wrapper)
-        obj.queryE2ESliceSeriveFromAAI(mockExecution)
+        AAIResourceUri sliceProfileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("5G-666"))
+        when(client.exists(sliceProfileUri)).thenReturn(true)
+        when(client.get(sliceProfileUri, NotFoundException.class)).thenReturn(new AAIResultWrapper(mockSliceProfileInstance()))
+        obj.queryServiceProfileFromAAI(mockExecution)
         Mockito.verify(mockExecution,times(1)).setVariable(eq("snssai"), captor.capture())
         String snssai = captor.getValue()
-        assertNotNull(snssai)
+        assertEquals("01-010101", snssai)
+        Mockito.verify(mockExecution,times(1)).setVariable(eq("sliceProfileList"), captor.capture())
+        List<ServiceInstance> sliceProfileList = captor.getValue()
+        assertEquals(["5G-666"], sliceProfileList*.getServiceInstanceId())
     }
 
     @Test
@@ -90,7 +99,7 @@ class DoDeleteSliceServiceTest extends MsoGroovyTest {
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn("5GCustomer")
         when(mockExecution.getVariable("serviceType")).thenReturn("5G")
 
-        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(
+        AAIPluralResourceUri resourceUri = AAIUriFactory.createResourceUri(
             AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("5ad89cf9-0569-4a93-9306-d8324321e2be").allottedResources())
             DoDeleteSliceService obj = spy(DoDeleteSliceService.class)
 
@@ -101,7 +110,7 @@ class DoDeleteSliceServiceTest extends MsoGroovyTest {
         obj.getAllottedResFromAAI(mockExecution)
         Mockito.verify(mockExecution,times(1)).setVariable(eq("nsiId"), captor.capture())
         String nsiId = captor.getValue()
-        assertNotNull(nsiId)
+        assertEquals("5G-888", nsiId)
     }
 
     @Test
@@ -117,10 +126,13 @@ class DoDeleteSliceServiceTest extends MsoGroovyTest {
         when(obj.getAAIClient()).thenReturn(client)
         when(client.exists(resourceUri)).thenReturn(true)
         when(client.get(resourceUri, NotFoundException.class)).thenReturn(wrapper)
+        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("5G-999"))
+        when(client.exists(nssiUri)).thenReturn(true)
+        when(client.get(nssiUri, NotFoundException.class)).thenReturn(new AAIResultWrapper(mockNSSIReturn()))
         obj.getNSIFromAAI(mockExecution)
         Mockito.verify(mockExecution,times(1)).setVariable(eq("nssiIdList"), captor.capture())
         List<String> nssiIdList = captor.getValue()
-        assertNotNull(nssiIdList)
+        assertEquals(["5G-999"], nssiIdList)
     }
 
     @Test
@@ -173,24 +185,29 @@ class DoDeleteSliceServiceTest extends MsoGroovyTest {
 
     @Test
     void testQuerySliceProfileFromAAI(){
-        def currentNSSI = [:]
-        currentNSSI.put("nssiServiceInstanceId","5G-999")
-        when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
-        when(mockExecution.getVariable("globalSubscriberId")).thenReturn("5GCustomer")
-        when(mockExecution.getVariable("serviceType")).thenReturn("5G")
+        Relationship relationship = new Relationship()
+        relationship.setRelatedTo("service-instance")
+        relationship.setRelatedLink("/aai/v16/business/customers/customer/5GCustomer/service-subscriptions/service-subscription/5G/service-instances/service-instance/5G-666")
+        RelationshipList relationshipList = new RelationshipList()
+        relationshipList.getRelationship().add(relationship)
+        ServiceInstance nssi = new ServiceInstance()
+        nssi.setServiceInstanceId("5G-999")
+        nssi.setRelationshipList(relationshipList)
+        ServiceInstance sliceProfileInstance = new ServiceInstance()
+        sliceProfileInstance.setServiceInstanceId("5G-666")
+        sliceProfileInstance.setServiceRole("slice-profile")
 
-        AAIResultWrapper wrapper = new AAIResultWrapper(mockSliceProfile())
-        AAIPluralResourceUri profileUri = AAIUriFactory.createResourceUri(
-            AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("5G-999").sliceProfiles())
+        when(mockExecution.getVariable("currentNSSIIndex")).thenReturn(0)
+        when(mockExecution.getVariable("nssiInstanceList")).thenReturn([nssi])
+        when(mockExecution.getVariable("sliceProfileList")).thenReturn([sliceProfileInstance])
+        when(mockExecution.getVariable("proportion")).thenReturn("90")
 
-        DoDeleteSliceService obj = spy(DoDeleteSliceService.class)
-        when(obj.getAAIClient()).thenReturn(client)
-        when(client.exists(profileUri)).thenReturn(true)
-        when(client.get(profileUri, NotFoundException.class)).thenReturn(wrapper)
-        obj.querySliceProfileFromAAI(mockExecution)
+        DoDeleteSliceService ddss = new DoDeleteSliceService()
+        ddss.getCurrentNSSI(mockExecution)
         verify(mockExecution,times(1)).setVariable(eq("currentNSSI"), captor.capture())
-        Map value = captor.getValue()
-        assertNotNull(currentNSSI.get('profileId'))
+        Map currentNSSI = captor.getValue()
+        assertEquals("5G-999", currentNSSI.get('nssiServiceInstanceId'))
+        assertEquals("5G-666", currentNSSI.get('profileId'))
     }
 
     @Test
@@ -239,6 +256,17 @@ class DoDeleteSliceServiceTest extends MsoGroovyTest {
                     }
                 """
         return expect
+    }
+
+    private String mockSliceProfileInstance(){
+        return """
+                    {
+                        "service-instance-id": "5G-666",
+                        "service-instance-name": "eMBB_Slice_Profile_5GCustomer",
+                        "service-role": "slice-profile",
+                        "environment-context": "01-010101"
+                    }
+                """
     }
 
     private String mockNSSIReturn(){

@@ -65,6 +65,7 @@ class UpdateVfModuleVolumeInfraV1Test extends MsoGroovyTest{
     public void init() {
         super.init("UpdateVfModuleVolumeInfraV1")
         MockitoAnnotations.initMocks(this)
+        when(mockExecution.getVariable("testProcessKey")).thenReturn("UpdateVfModuleVolumeInfraV1")
     }
 
     @Test

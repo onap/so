@@ -36,15 +36,21 @@ import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
 import org.onap.so.bpmn.vcpe.scripts.GroovyTestBase
+import org.springframework.mock.env.MockEnvironment
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner.class)
 class DoDeleteServiceInstanceTest {
+
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort())
 
     @Captor
     static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
@@ -72,25 +78,27 @@ class DoDeleteServiceInstanceTest {
 
 
     @Test
-    public void testPostProcessAAIGET() {
+    public void testGetServiceInstance() {
         ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn('true')
-        when(mockExecution.getVariable("aai.endpoint")).thenReturn('http://localhost:8090')
-        when(mockExecution.getVariable("GENGS_FoundIndicator")).thenReturn(true)
+        when(mockExecution.getVariable("serviceInstanceId")).thenReturn("e151059a-d924-4629-845f-264db19e50b4")
         when(mockExecution.getVariable("sdnc.si.svc.types")).thenReturn("")
-        when(mockExecution.getVariable("globalSubscriberId")).thenReturn("globalSubscriberId_test")
-        when(mockExecution.getVariable("subscriptionServiceType")).thenReturn("subscriptionServiceType_test")
-
-        String aaiGetResponse = FileUtil.readResourceFile("__files/GenericFlows/aaiGetResponse.xml")
-        when(mockExecution.getVariable("GENGS_service")).thenReturn(aaiGetResponse)
-        when(mockExecution.getVariable("GENGS_siResourceLink")).thenReturn("/aai/v8/business/customers/customer/MSO_1610_dev/service-subscriptions/service-subscription/MSO-dev-service-type/service-instances/service-instance/")
-        when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn('8')
-        when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
+        when(mockExecution.getVariable("sdncVersion")).thenReturn("1707")
 
         mockData()
-        DoDeleteServiceInstance instance = new DoDeleteServiceInstance()
-        instance.postProcessAAIGET(mockExecution)
+        UrnPropertiesReader urnPropertiesReader = new UrnPropertiesReader()
+        urnPropertiesReader.setEnvironment(new MockEnvironment().withProperty("aai.endpoint", "http://localhost:" + wireMockRule.port()))
+        try {
+            DoDeleteServiceInstance instance = new DoDeleteServiceInstance()
+            instance.getServiceInstance(mockExecution)
+        } finally {
+            urnPropertiesReader.setEnvironment(null)
+        }
 
+        Mockito.verify(mockExecution).setVariable("GENGS_FoundIndicator", true)
+        Mockito.verify(mockExecution).setVariable("globalSubscriberId", "MSO_1610_dev")
+        Mockito.verify(mockExecution).setVariable("subscriptionServiceType", "MSO-dev-service-type")
+        Mockito.verify(mockExecution).setVariable("serviceType", "testservicetype")
+        Mockito.verify(mockExecution).setVariable("serviceRole", "testservicerole")
         Mockito.verify(mockExecution).setVariable("sendToSDNC", true)
     }
 
@@ -116,9 +124,10 @@ class DoDeleteServiceInstanceTest {
     }
 
     private void mockData() {
-        stubFor(get(urlMatching(".*/aai/v[0-9]+/business/customers/customer/MSO_1610_dev/service-subscriptions/service-subscription/MSO-dev-service-type/service-instances/service-instance/.*"))
-                .willReturn(aResponse()
-                .withStatus(200).withHeader("Content-Type", "text/xml")
-                .withBodyFile("")))
+        String siPath = "/aai/v[0-9]+/business/customers/customer/MSO_1610_dev/service-subscriptions/service-subscription/MSO-dev-service-type/service-instances/service-instance/e151059a-d924-4629-845f-264db19e50b4"
+        wireMockRule.stubFor(get(urlPathMatching("/aai/v[0-9]+/nodes/service-instances/service-instance/e151059a-d924-4629-845f-264db19e50b4"))
+                .willReturn(okJson("""{"results":[{"resource-type":"service-instance","resource-link":"/aai/v19/business/customers/customer/MSO_1610_dev/service-subscriptions/service-subscription/MSO-dev-service-type/service-instances/service-instance/e151059a-d924-4629-845f-264db19e50b4"}]}""")))
+        wireMockRule.stubFor(get(urlPathMatching(siPath))
+                .willReturn(okJson("""{"service-instance-id":"e151059a-d924-4629-845f-264db19e50b4","service-type":"testservicetype","service-role":"testservicerole","orchestration-status":"Active","resource-version":"1508838121849","relationship-list":{"relationship":[{"related-to":"service-instance","related-link":"/aai/v19/business/customers/customer/test_customer/service-subscriptions/service-subscription/example-service-type/service-instances/service-instance/1234_1"}]}}""")))
     }
 }

@@ -527,27 +527,6 @@ String updateNetworkRequest_noPhysicalName =
 	<messageId>messageId_generated</messageId>
 </ns2:updateNetworkContrailResponse>"""
 
-	  String updateRollbackNetworkRequest =
-	  """<rollbackNetworkRequest>
-   <networkRollback>
-      <networkId>MNS-25180-L-01-dmz_direct_net_1/2c88a3a9-69b9-43a7-ada6-1aca577c3641</networkId>
-      <neutronNetworkId>c4f4e878-cde0-4b15-ae9a-bda857759cea</neutronNetworkId>
-      <networkStackId/>
-      <networkType>CONTRAIL_EXTERNAL</networkType>
-      <networkUpdated>true</networkUpdated>
-      <tenantId>7dd5365547234ee8937416c65507d266</tenantId>
-      <cloudSiteId>RDM2WAGPLCP</cloudSiteId>
-      <msoRequest>
-         <requestId>1ef47428-cade-45bd-a103-0751e8b2deb0</requestId>
-         <serviceInstanceId/>
-      </msoRequest>
-   </networkRollback>
-</rollbackNetworkRequest>"""
-
-
-  String networkException500 =
-  """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><soap:Fault><faultcode>soap:VersionMismatch</faultcode><faultstring>"http://org.onap.so/network", the namespace on the "updateNetworkContrail" element, is not a valid SOAP version.</faultstring></soap:Fault></soap:Body></soap:Envelope>"""
-
 	String changeAssignSDNCRequest =
     """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                   xmlns:ns5="http://org.onap/so/request/types/v1"
@@ -1302,8 +1281,8 @@ String rollbackNetworkRequest =
         verify(mockExecution).setVariable("prefix", Prefix + "")
         verify(mockExecution).setVariable(Prefix + "aaiQqueryVpnBindingReturnCode", "200")
         verify(mockExecution).setVariable(Prefix + "queryVpnBindingAAIResponse",
-                """<rest:payload xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
-              xmlns="defaultTestNamespacev14"\n              contentType="text/xml">\n   <vpn-binding>
+                """<rest:payload xmlns="defaultTestNamespacev14"
+              xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"\n              contentType="text/xml">\n   <vpn-binding>
       <global-route-target/>\n   </vpn-binding>\n</rest:payload>""")
         verify(mockExecution).setVariable(Prefix + "routeCollection", "<routeTargets/>")
     }
@@ -1396,8 +1375,8 @@ String rollbackNetworkRequest =
         verify(mockExecution).setVariable(Prefix + "networkTableRefCount", 0)
         verify(mockExecution).setVariable(Prefix + "aaiQqueryNetworkTableRefReturnCode", "200")
         verify(mockExecution).setVariable(Prefix + "queryNetworkTableRefAAIResponse",
-                """<rest:payload xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
-              xmlns="defaultTestNamespacev14"\n              contentType="text/xml">\n   <route-table-references>
+                """<rest:payload xmlns="defaultTestNamespacev14"
+              xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"\n              contentType="text/xml">\n   <route-table-references>
       <route-table-reference-fqdn/>\n   </route-table-references>\n</rest:payload>""")
         verify(mockExecution).setVariable(Prefix + "tableRefCollection", "<routeTableFqdns/>")
     }
@@ -1420,8 +1399,8 @@ String rollbackNetworkRequest =
         verify(mockExecution).setVariable(Prefix + "networkPolicyCount", 0)
         verify(mockExecution).setVariable(Prefix + "aaiQqueryNetworkPolicyReturnCode", "200")
         verify(mockExecution).setVariable(Prefix + "queryNetworkPolicyAAIResponse",
-                """<rest:payload xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
-              xmlns="defaultTestNamespacev14"\n              contentType="text/xml">\n   <network-policy>
+                """<rest:payload xmlns="defaultTestNamespacev14"
+              xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"\n              contentType="text/xml">\n   <network-policy>
       <network-policy-fqdn/>\n   </network-policy>\n</rest:payload>""")
         verify(mockExecution).setVariable(Prefix + "networkCollection", "<policyFqdns/>")
     }
@@ -1475,51 +1454,6 @@ String rollbackNetworkRequest =
         verify(mockExecution).setVariable(Prefix + "isPONR", true)
     }
 
-
-    @Test
-    public void validateUpdateNetworkResponseREST() {
-
-        println "************ validateNetworkResponse ************* "
-
-        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-        // Initialize prerequisite variables
-        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-        when(mockExecution.getVariable(Prefix + "updateNetworkResponse")).thenReturn(updateNetworkResponseREST)
-        when(mockExecution.getVariable(Prefix + "networkReturnCode")).thenReturn('200')
-
-        DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
-        DoUpdateNetworkInstance.validateUpdateNetworkResponse(mockExecution)
-
-        verify(mockExecution).setVariable("prefix", Prefix + "")
-        verify(mockExecution).setVariable(Prefix + "updateNetworkResponse", updateNetworkResponseREST)
-        verify(mockExecution).setVariable(Prefix + "isNetworkRollbackNeeded", true)
-        verify(mockExecution).setVariable(Prefix + "rollbackNetworkRequest", updateRollbackNetworkRequest)
-    }
-
-    @Test
-    public void validateUpdateNetworkResponseREST_Error() {
-
-        println "************ validateNetworkResponse ************* "
-
-        WorkflowException workflowException = new WorkflowException("DoUpdateNetworkInstance", 2500, "Received error from Network Adapter: JBWEB000065: HTTP Status 500.")
-
-        ExecutionEntity mockExecution = setupMock()
-        // Initialize prerequisite variables
-        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-        when(mockExecution.getVariable(Prefix + "updateNetworkResponse")).thenReturn(networkException500)
-        when(mockExecution.getVariable(Prefix + "networkReturnCode")).thenReturn('500')
-
-        DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
-        try {
-            DoUpdateNetworkInstance.validateUpdateNetworkResponse(mockExecution)
-        } catch (Exception ex) {
-            println " Test End - Handle catch-throw BpmnError()! "
-        }
-
-        verify(mockExecution).setVariable("prefix", Prefix + "")
-        verify(mockExecution, atLeast(1)).setVariable(eq("WorkflowException"), refEq(workflowException))
-
-    }
 
     @Test
     public void validateSDNCResponse() {

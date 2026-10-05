@@ -30,9 +30,18 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.MockitoAnnotations
 import org.onap.so.bpmn.infrastructure.scripts.DoCustomDeleteE2EServiceInstance
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.mock.FileUtil
 import org.onap.so.bpmn.vcpe.scripts.GroovyTestBase
+import org.springframework.mock.env.MockEnvironment
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import static com.github.tomakehurst.wiremock.client.WireMock.delete
+import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo
+import static com.github.tomakehurst.wiremock.client.WireMock.get
+import static com.github.tomakehurst.wiremock.client.WireMock.okJson
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
 import static org.assertj.core.api.Assertions.assertThatThrownBy
 import static org.mockito.ArgumentMatchers.anyString
 import static org.mockito.Mockito.verify
@@ -142,13 +151,22 @@ class DoCustomDeleteE2EServiceInstanceTest extends GroovyTestBase {
     }
 
     @Test
-    public void postProcessAAIDELTest() {
+    public void deleteServiceInstanceTest() {
         ExecutionEntity mex = setupMock()
         def map = setupMap(mex)
         initPreProcess(mex)
-        when(mex.getVariable("GENDS_SuccessIndicator")).thenReturn("true")
-        DoCustomDeleteE2EServiceInstance instance = new DoCustomDeleteE2EServiceInstance()
-        instance.postProcessAAIDEL(mex)
+        String siPath = "/aai/v[0-9]+/business/customers/customer/4993921112123/service-subscriptions/service-subscription/VoLTE/service-instances/service-instance/e151059a-d924-4629-845f-264db19e50b4"
+        wireMockRule.stubFor(get(urlPathMatching(siPath)).willReturn(okJson("""{"service-instance-id":"e151059a-d924-4629-845f-264db19e50b4","resource-version":"1234"}""")))
+        wireMockRule.stubFor(delete(urlPathMatching(siPath)).willReturn(aResponse().withStatus(204)))
+        UrnPropertiesReader urnPropertiesReader = new UrnPropertiesReader()
+        urnPropertiesReader.setEnvironment(new MockEnvironment().withProperty("aai.endpoint", LOCAL_URI))
+        try {
+            DoCustomDeleteE2EServiceInstance instance = new DoCustomDeleteE2EServiceInstance()
+            instance.deleteServiceInstance(mex)
+        } finally {
+            urnPropertiesReader.setEnvironment(null)
+        }
+        wireMockRule.verify(deleteRequestedFor(urlPathMatching(siPath)).withQueryParam("resource-version", equalTo("1234")))
     }
 
     private void initPreProcess(ExecutionEntity mex) {

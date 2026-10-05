@@ -39,6 +39,8 @@ import org.onap.so.bpmn.common.scripts.MsoGroovyTest
  */
 class DoCreateE2EServiceInstanceTest extends MsoGroovyTest{
 
+    private static final String UUI_REQUEST = """{"service":{"serviceDefId":"c1d4305f-cdbd-4bbe-9069-a2f4978fd89e" , "templateId" : "d4df5c27-98a1-4812-a8aa-c17f055b7a3f"}}"""
+
 
     @Before
     public void init() {
@@ -58,11 +60,11 @@ class DoCreateE2EServiceInstanceTest extends MsoGroovyTest{
 
     private ServiceInstance getExpectedServiceInstance() {
         ServiceInstance expectedServiceInstanceData = new ServiceInstance()
-        expectedServiceInstanceData.setServiceInstanceId("1234")
         expectedServiceInstanceData.setServiceInstanceName("volte-service")
         expectedServiceInstanceData.setServiceType("E2E Service")
         expectedServiceInstanceData.setServiceRole("E2E Service")
         expectedServiceInstanceData.setOrchestrationStatus("Created")
+        expectedServiceInstanceData.setInputParameters(UUI_REQUEST)
         return expectedServiceInstanceData
     }
 
@@ -72,7 +74,7 @@ class DoCreateE2EServiceInstanceTest extends MsoGroovyTest{
         when(mockExecution.getVariable("serviceType")).thenReturn("TRANSPORT")
         when(mockExecution.getVariable("serviceInstanceId")).thenReturn("1234")
         when(mockExecution.getVariable("serviceInstanceName")).thenReturn("volte-service")
-        when(mockExecution.getVariable("uuiRequest")).thenReturn("""{"service":{"serviceDefId":"c1d4305f-cdbd-4bbe-9069-a2f4978fd89e" , "templateId" : "d4df5c27-98a1-4812-a8aa-c17f055b7a3f"}}""")
+        when(mockExecution.getVariable("uuiRequest")).thenReturn(UUI_REQUEST)
         when(mockExecution.getVariable("mso.workflow.sdncadapter.callback")).thenReturn("/mso/sdncadapter/")
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
         when(mockExecution.getVariable("mso.workflow.default.aai.customer.version")).thenReturn("8")

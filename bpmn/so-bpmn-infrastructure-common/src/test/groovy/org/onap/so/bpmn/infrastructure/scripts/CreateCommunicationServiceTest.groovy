@@ -256,9 +256,36 @@ class CreateCommunicationServiceTest extends MsoGroovyTest {
        communicationService.generateE2EServiceProfile(mockExecution)
 
        Mockito.verify(mockExecution, times(1)).setVariable(eq("e2eInputMap"), captor.capture())
-       def csInputMap = captor.getValue()
-       assertEquals(csInputMap, getExpectE2eInputMap())
+       def e2eInputMap = captor.getValue()
+       assertEquals(getExpectGeneratedE2eInputMap(), e2eInputMap)
    }
+
+    private static Map<String, Object> getExpectGeneratedE2eInputMap() {
+        Map<String, Object> e2eInputMap = new HashMap<>()
+        e2eInputMap.put("nstar0_allottedresource0_providing_service_uuid", "")
+        e2eInputMap.put("nstar0_allottedresource0_providing_service_invariant_uuid", "")
+        e2eInputMap.put("areaTrafficCapDL", 0)
+        e2eInputMap.put("areaTrafficCapUL", 0)
+        e2eInputMap.put("latency", 20)
+        e2eInputMap.put("maxNumberofUEs", 300)
+        e2eInputMap.put("uEMobilityLevel", "stationary")
+        e2eInputMap.put("resourceSharingLevel", "shared")
+        e2eInputMap.put("coverageAreaTAList", "01001")
+        e2eInputMap.put("plmnIdList", "39-00")
+        e2eInputMap.put("sNSSAI", null)
+        e2eInputMap.put("sST", null)
+        e2eInputMap.put("activityFactor", 0)
+        e2eInputMap.put("jitter", 10)
+        e2eInputMap.put("dLThptPerUE", 10)
+        e2eInputMap.put("uLThptPerUE", 30)
+        e2eInputMap.put("dLThptPerSlice", 0)
+        e2eInputMap.put("uLThptPerSlice", 0)
+        e2eInputMap.put("maxNumberofConns", 0)
+        e2eInputMap.put("expDataRateDL", 0)
+        e2eInputMap.put("expDataRateUL", 0)
+        e2eInputMap.put("maxNumberofPDUSession", 0)
+        return e2eInputMap
+    }
 
     private static Map<String, Object> getExpectE2eInputMap() {
         Map<String, Object> e2eInputMap = new HashMap<>()
@@ -444,7 +471,7 @@ class CreateCommunicationServiceTest extends MsoGroovyTest {
                         "expDataRateUL":30,
                         "latency":20,
                         "maxNumberofUEs":300,
-                        "uemobilityLevel":"stationary",
+                        "uEMobilityLevel":"stationary",
                         "resourceSharingLevel":"shared",
                         "coverageAreaList": "01001",
                         "useInterval":"3"
