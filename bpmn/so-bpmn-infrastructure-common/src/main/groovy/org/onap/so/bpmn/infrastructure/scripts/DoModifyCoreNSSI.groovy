@@ -33,6 +33,7 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -294,7 +295,7 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
 
         // Associates Allotted Resource with Slice Profile Instance
         try {
-            AAIResourceUri sliceProfileInstanceUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(sliceProfileInstanceId))
+            AAIResourceUri sliceProfileInstanceUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(sliceProfileInstanceId))
             Optional<ServiceInstance> sliceProfileInstanceOpt = client.get(ServiceInstance.class, sliceProfileInstanceUri)
             if (sliceProfileInstanceOpt.isPresent()) {
              /*   ServiceInstance sliceProfileInstance = sliceProfileInstanceOpt.get()
@@ -322,7 +323,7 @@ class DoModifyCoreNSSI extends DoCommonCoreNSSI {
 
         // Associates NSSI with Allotted Resource
         try {
-            AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+            AAIResourceUri nssiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
             client.connect(allottedResourceUri, nssiUri)
         } catch(Exception e){
             exceptionUtil.buildAndThrowWorkflowException(execution, 25000, "Exception occured while NSSI with Allotted Resource connect call: " + e.getMessage())

@@ -31,6 +31,7 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ONAPComponents
@@ -147,7 +148,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         String nssiId = currentNSSI['nssiId']
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nssiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
         Optional<ServiceInstance> nssiOpt = client.get(ServiceInstance.class, nssiUri)
 
         if (nssiOpt.isPresent()) {
@@ -1079,7 +1080,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         String givenSliceProfileId = currentNSSI['sliceProfileId']
 
         // NSSI
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nssiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
         AAIResultWrapper nssiWrapper = client.get(nssiUri)
         Optional<Relationships> nssiRelationships = nssiWrapper.getRelationships()
 
@@ -1168,7 +1169,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
         def currentNSSI = execution.getVariable("currentNSSI")
 
         String nssiId = currentNSSI['nssiId']
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nssiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         String isTerminateNSSIVar = execution.getVariable("isTerminateNSSI" )
 

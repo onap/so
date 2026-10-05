@@ -29,6 +29,7 @@ import org.onap.aaiclient.client.aai.AAIObjectType;
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ErrorCode
@@ -282,7 +283,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			String serviceInstanceId = execution.getVariable('DoCVNF_serviceInstanceId')
 
 			AAIResourcesClient resourceClient = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
+			AAIResourceUri uri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 
 			if(resourceClient.exists(uri)){
 				Map<String, String> keys = uri.getURIKeys()
