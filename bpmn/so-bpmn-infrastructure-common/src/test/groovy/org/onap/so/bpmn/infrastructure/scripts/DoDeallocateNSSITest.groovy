@@ -26,23 +26,29 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
 import org.onap.logging.filter.base.ONAPComponents
-import org.onap.so.beans.nsmf.JobStatusResponse
+import org.onap.so.beans.nsmf.NetworkType
 import org.onap.so.beans.nsmf.NssiResponse
-import org.onap.so.beans.nsmf.ResponseDescriptor
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+import org.onap.so.bpmn.common.scripts.NssmfAdapterUtils
+import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.domain.ServiceArtifact
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.ServiceInfo
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
-import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
+import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 
+import jakarta.ws.rs.NotFoundException
 import jakarta.ws.rs.core.Response
 
+import java.lang.reflect.Field
+
+import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertTrue
 import static org.mockito.ArgumentMatchers.anyString
@@ -104,13 +110,15 @@ class DoDeallocateNSSITest extends MsoGroovyTest {
         serviceInfo.setServiceArtifact(artifactList)
         ServiceDecomposition decomposition = new ServiceDecomposition()
         decomposition.setServiceInfo(serviceInfo)
+        decomposition.setServiceRole("HW")
+        decomposition.setServiceCategory("CN NSST")
         when(mockExecution.getVariable("serviceDecomposition")).thenReturn(decomposition)
         when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
 
         DoDeallocateNSSI ddnssi = new DoDeallocateNSSI()
         ddnssi.processDecomposition(mockExecution)
-        String vendor = currentNSSI.get("vendor")
-        assertNotNull(vendor)
+        assertEquals("HW", currentNSSI.get("vendor"))
+        assertEquals(NetworkType.CORE, currentNSSI.get("domainType"))
     }
 
     @Test
@@ -121,13 +129,23 @@ class DoDeallocateNSSITest extends MsoGroovyTest {
         currentNSSI.put("statusDescription","")
         currentNSSI.put("e2eServiceInstanceId","21d57d4b-52ad-4d3c-a798-248b5bb9124b")
         currentNSSI.put("operationId","4c614769-f58a-4556-8ad9-dcd903077c82")
+        currentNSSI.put("domainType", NetworkType.CORE)
         when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
+        when(mockExecution.getVariable("responseDescriptor")).thenReturn(
+                """{"status":"processing","statusDescription":"deallocating","progress":"50"}""")
 
         DoDeallocateNSSI ddnssi = new DoDeallocateNSSI()
         ddnssi.handleJobStatus(mockExecution)
+        Mockito.verify(mockExecution).setVariable("isNSSIDeAllocated", false)
+        Mockito.verify(mockExecution).setVariable("isNeedUpdateDB", true)
+        assertEquals(50, currentNSSI.get("jobProgress"))
+        assertEquals("processing", currentNSSI.get("status"))
+
+        ddnssi.prepareUpdateOperationStatus(mockExecution)
         Mockito.verify(mockExecution,times(1)).setVariable(eq("updateOperationStatus"), captor.capture())
         String updateOperationStatus= captor.getValue()
-        assertNotNull(updateOperationStatus)
+        assertTrue(updateOperationStatus.contains("<progress>45</progress>"))
+        assertTrue(updateOperationStatus.contains("<operationContent>CORE processing</operationContent>"))
     }
 
     @Test
@@ -139,9 +157,12 @@ class DoDeallocateNSSITest extends MsoGroovyTest {
         currentNSSI.put("serviceType","5G")
         when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
 
-        AAIResourceUri profileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("5G-999").sliceProfile("ddf57704-fe8d-417b-882d-2f2a12ddb225"))
+        AAIPluralResourceUri profilesUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("ddf57704-fe8d-417b-882d-2f2a12ddb225").sliceProfiles())
+        AAIResourceUri profileUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer").serviceSubscription("5G").serviceInstance("ddf57704-fe8d-417b-882d-2f2a12ddb225").sliceProfile("31a83df8-5bd0-4df7-a50f-7900476b81a2"))
         DoDeallocateNSSI obj = spy(DoDeallocateNSSI.class)
         when(obj.getAAIClient()).thenReturn(client)
+        when(client.get(profilesUri, NotFoundException.class)).thenReturn(
+                new AAIResultWrapper("""{"slice-profile":[{"profile-id":"31a83df8-5bd0-4df7-a50f-7900476b81a2"}]}"""))
         when(client.exists(profileUri)).thenReturn(true)
         doNothing().when(client).delete(profileUri)
 
@@ -166,7 +187,7 @@ class DoDeallocateNSSITest extends MsoGroovyTest {
 
         when(httpClientFactoryMock.newJsonClient(new URL(nssmfRequest), ONAPComponents.EXTERNAL)).thenReturn(httpClientMock)
         DoDeallocateNSSI obj = spy(DoDeallocateNSSI.class)
-        when(obj.getHttpClientFactory()).thenReturn(httpClientFactoryMock)
+        setNssmfAdapterUtils(obj, httpClientFactoryMock)
         Response responseMock = mock(Response.class)
         NssiResponse response = new NssiResponse()
         response.setNssiId("NSSI-C-004-HDBHZ-NSSMF-01-A-HW")
@@ -177,45 +198,38 @@ class DoDeallocateNSSITest extends MsoGroovyTest {
         when(responseMock.hasEntity()).thenReturn(true)
 
         obj.sendRequestToNSSMF(mockExecution)
-        String jobId = currentNSSI['jobId']
-        assertNotNull(jobId)
+        assertEquals("a5c5913d-448a-bcb1-9b800a944d84", currentNSSI['jobId'])
+        assertEquals(0, currentNSSI['jobProgress'])
     }
 
     @Test
     void testGetJobStatus(){
-        httpClientFactoryMock = mock(HttpClientFactory.class)
-        httpClientMock = mock(HttpClient.class)
-
         def currentNSSI = [:]
         currentNSSI.put("jobId", "a5c5913d-448a-bcb1-9b800a944d84")
         currentNSSI.put("nssiServiceInstanceId","5G-999")
         currentNSSI.put("nsiServiceInstanceId","5G-888")
         currentNSSI.put("jobProgress",60)
 
-        when(mockExecution.getVariable("isNSSIDeAllocated")).thenReturn(false)
-        when(mockExecution.getVariable("isNSSIDeAllocated")).thenReturn(false)
         when(mockExecution.getVariable("currentNSSI")).thenReturn(currentNSSI)
-        when(mockExecution.getVariable("mso.adapters.nssmf.endpoint")).thenReturn("http://so-nssmf-adapter.onap:8088")
-        String nssmfRequest = "http://so-nssmf-adapter.onap:8088/api/rest/provMns/v1/NSS/jobs/a5c5913d-448a-bcb1-9b800a944d84"
+        when(mockExecution.getVariable("responseDescriptor")).thenReturn(
+                """{"status":"finished","statusDescription":"finished deallocate nssi","progress":"100"}""")
 
-        when(httpClientFactoryMock.newJsonClient(new URL(nssmfRequest), ONAPComponents.EXTERNAL)).thenReturn(httpClientMock)
-        DoDeallocateNSSI obj = spy(DoDeallocateNSSI.class)
-        when(obj.getHttpClientFactory()).thenReturn(httpClientFactoryMock)
-        Response responseMock = mock(Response.class)
-        ResponseDescriptor descriptor = new ResponseDescriptor()
-        descriptor.setProgress(100)
-        descriptor.setStatusDescription("finished deallocate nssi")
-        JobStatusResponse jobStatusResponse = new JobStatusResponse()
-        jobStatusResponse.setResponseDescriptor(descriptor)
-        when(httpClientMock.post(anyString())).thenReturn(responseMock)
-        when(responseMock.getStatus()).thenReturn(202)
-        when(responseMock.readEntity(JobStatusResponse.class)) thenReturn(jobStatusResponse)
-        when(responseMock.hasEntity()).thenReturn(true)
+        DoDeallocateNSSI obj = new DoDeallocateNSSI()
+        obj.prepareJobStatusRequest(mockExecution)
+        Mockito.verify(mockExecution).setVariable("jobId", "a5c5913d-448a-bcb1-9b800a944d84")
 
-        obj.getJobStatus(mockExecution)
+        obj.handleJobStatus(mockExecution)
         Mockito.verify(mockExecution,times(1)).setVariable(eq("isNSSIDeAllocated"), captor.capture())
         boolean value = captor.getValue()
         assertTrue(value)
+        Mockito.verify(mockExecution).setVariable("isNeedUpdateDB", true)
+        assertEquals(100, currentNSSI.get("jobProgress"))
+    }
+
+    private static void setNssmfAdapterUtils(DoDeallocateNSSI obj, HttpClientFactory httpClientFactory) {
+        Field field = DoDeallocateNSSI.class.getDeclaredField("nssmfAdapterUtils")
+        field.setAccessible(true)
+        field.set(obj, new NssmfAdapterUtils(httpClientFactory, new JsonUtils()))
     }
 
 

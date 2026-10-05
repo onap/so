@@ -30,7 +30,9 @@ import org.mockito.Mockito
 import org.onap.aai.domain.yang.CommunicationServiceProfile
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
-import org.onap.aaiclient.client.aai.AAIResourcesClient
+import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 
 import static org.assertj.core.api.Assertions.assertThat
 import static org.junit.Assert.assertEquals
@@ -45,7 +47,7 @@ class DoCreateCommunicationServiceTest extends MsoGroovyTest {
     @Before
     public void setUp() throws Exception {
         super.init("DoCreateCommunicationService")
-        communicationService.client = spy(AAIResourcesClient.class)
+        communicationService.client = client
     }
 
     @Captor
@@ -78,12 +80,13 @@ class DoCreateCommunicationServiceTest extends MsoGroovyTest {
         resData.setCreatedAt("")
         resData.setEnvironmentContext("")
         assertThat(resData).usingRecursiveComparison().isEqualTo(expectedServiceInstanceData)
+        verify(client).create(AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.business().customer("5GCustomer")
+                .serviceSubscription("5G").serviceInstance("12345")), resData)
     }
 
     @Test
     public void testCreateCommunicationServiceProfile() {
         mockData()
-        DoCreateCommunicationService communicationService = new DoCreateCommunicationService()
 
         CommunicationServiceProfile expectedServiceInstanceData = getExpectedServiceInstanceProfile()
 
@@ -95,6 +98,7 @@ class DoCreateCommunicationServiceTest extends MsoGroovyTest {
 
         Mockito.verify(mockExecution).setVariable(eq("communicationServiceInstanceProfile"), captor.capture())
         CommunicationServiceProfile resData = captor.getValue()
+        verify(client).create(any(AAIResourceUri.class), eq(resData))
         resData.setProfileId("")
         assertThat(resData).usingRecursiveComparison().isEqualTo(expectedServiceInstanceData)
     }

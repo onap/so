@@ -102,6 +102,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 		super.init("DoCreateVfModuleVolumeV2")
 		doCreateVfModuleVolumeV2 = spy(DoCreateVfModuleVolumeV2.class)
 		when(doCreateVfModuleVolumeV2.getAAIClient()).thenReturn(client)
+		when(mockExecution.getVariable("testProcessKey")).thenReturn("DoCreateVfModuleVolumeV2")
 		MockitoAnnotations.initMocks(this)
 	}
 	
@@ -200,7 +201,7 @@ class DoCreateVfModuleVolumeV2Test extends MsoGroovyTest {
 		when(mockExecution.getVariable(modelCustomizationId)).thenReturn(modelCustomizationId)
 		when(mockExecution.getVariable(lcpCloudRegionId)).thenReturn(lcpCloudRegionId)
 		when(mockExecution.getVariable("DCVFMODVOLV2_createVnfAResponse")).thenReturn("<createVnfAResponse><volumeGroupStackId>volumeGroupStackId</volumeGroupStackId></createVnfAResponse>")
-		when(client.update(any(),any())).thenThrow(Exception.class)
+		when(client.update(any(),any())).thenThrow(RuntimeException.class)
 		thrown.expect(BpmnError.class)
 		doCreateVfModuleVolumeV2.callRESTUpdateCreatedVolGrpName(mockExecution,null)
 		verify(mockExecution).setVariable("DCVFMODVOLV2_heatStackId","volumeGroupStackId")

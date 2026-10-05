@@ -53,7 +53,7 @@ import org.onap.aaiclient.client.graphinventory.entities.uri.Depth
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 class DoDeleteVfModuleFromVnfTest extends MsoGroovyTest {
 
     @Captor

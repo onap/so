@@ -25,13 +25,16 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.bpmn.mock.FileUtil
 import org.onap.so.bpmn.vcpe.scripts.GroovyTestBase
 
 import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
 
+@RunWith(MockitoJUnitRunner.Silent.class)
 class DoScaleE2EServiceInstanceTest extends GroovyTestBase {
 
     private static String request

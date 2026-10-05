@@ -1302,8 +1302,8 @@ String rollbackNetworkRequest =
         verify(mockExecution).setVariable("prefix", Prefix + "")
         verify(mockExecution).setVariable(Prefix + "aaiQqueryVpnBindingReturnCode", "200")
         verify(mockExecution).setVariable(Prefix + "queryVpnBindingAAIResponse",
-                """<rest:payload xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
-              xmlns="defaultTestNamespacev14"\n              contentType="text/xml">\n   <vpn-binding>
+                """<rest:payload xmlns="defaultTestNamespacev14"
+              xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"\n              contentType="text/xml">\n   <vpn-binding>
       <global-route-target/>\n   </vpn-binding>\n</rest:payload>""")
         verify(mockExecution).setVariable(Prefix + "routeCollection", "<routeTargets/>")
     }
@@ -1396,8 +1396,8 @@ String rollbackNetworkRequest =
         verify(mockExecution).setVariable(Prefix + "networkTableRefCount", 0)
         verify(mockExecution).setVariable(Prefix + "aaiQqueryNetworkTableRefReturnCode", "200")
         verify(mockExecution).setVariable(Prefix + "queryNetworkTableRefAAIResponse",
-                """<rest:payload xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
-              xmlns="defaultTestNamespacev14"\n              contentType="text/xml">\n   <route-table-references>
+                """<rest:payload xmlns="defaultTestNamespacev14"
+              xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"\n              contentType="text/xml">\n   <route-table-references>
       <route-table-reference-fqdn/>\n   </route-table-references>\n</rest:payload>""")
         verify(mockExecution).setVariable(Prefix + "tableRefCollection", "<routeTableFqdns/>")
     }
@@ -1420,8 +1420,8 @@ String rollbackNetworkRequest =
         verify(mockExecution).setVariable(Prefix + "networkPolicyCount", 0)
         verify(mockExecution).setVariable(Prefix + "aaiQqueryNetworkPolicyReturnCode", "200")
         verify(mockExecution).setVariable(Prefix + "queryNetworkPolicyAAIResponse",
-                """<rest:payload xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
-              xmlns="defaultTestNamespacev14"\n              contentType="text/xml">\n   <network-policy>
+                """<rest:payload xmlns="defaultTestNamespacev14"
+              xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"\n              contentType="text/xml">\n   <network-policy>
       <network-policy-fqdn/>\n   </network-policy>\n</rest:payload>""")
         verify(mockExecution).setVariable(Prefix + "networkCollection", "<policyFqdns/>")
     }

@@ -23,7 +23,6 @@ package org.onap.so.bpmn.infrastructure.scripts
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.MockitoAnnotations
@@ -35,18 +34,14 @@ import static org.mockito.Mockito.when
 
 class DeleteCustomE2EServiceInstanceTest extends GroovyTestBase {
 
-    private static String request
+    private static final String request =
+            """{"globalSubscriberId":"38829939920000","serviceType":"VoLTE","source":"CCD","operationId":"59960003992"}"""
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(GroovyTestBase.PORT)
 
     String Prefix = "CVRCS_"
     String RbType = "DCRENI_"
-
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        request = FileUtil.readResourceFile("__files/InfrastructureFlows/DeleteCustomE2EService.json")
-    }
 
     @Before
     public void init()
@@ -66,17 +61,15 @@ class DeleteCustomE2EServiceInstanceTest extends GroovyTestBase {
         mex.setVariable("isDebugLogEnabled","true")
         instance.preProcessRequest(mex);
 
-        verify(mex).getVariable(GroovyTestBase.DBGFLAG)
-
-        Map<String,String> userParams = new HashMap<>()
-        userParams.put("someUserParam","someValue")
+        verify(mex).getVariable("bpmnRequest")
 
         verify(mex).setVariable("prefix", "DELSI_")
         verify(mex).setVariable("msoRequestId", "mri")
         verify(mex).setVariable("source", "CCD")
         verify(mex).setVariable("operationType", "DELETE")
         verify(mex).setVariable("globalSubscriberId", "38829939920000")
-        verify(mex).setVariable("serviceInputParams",userParams)
+        verify(mex).setVariable("subscriptionServiceType", "VoLTE")
+        verify(mex).setVariable("operationId", "59960003992")
     }
 
     @Test

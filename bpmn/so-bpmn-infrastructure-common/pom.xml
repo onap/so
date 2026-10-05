@@ -88,6 +88,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
+          <!-- The script tests bind WireMock to fixed ports and set the static
+               UrnPropertiesReader environment, so classes must not run in parallel. -->
+          <configuration>
+            <perCoreThreadCount>false</perCoreThreadCount>
+            <threadCount>1</threadCount>
+          </configuration>
           <executions>
             <execution>
               <id>default-test</id>
@@ -98,50 +104,23 @@
                 <includes>
                   <include>**/*Test.java</include>
                 </includes>
-                <!-- Tests below have pre-existing failures due to API drift while previously
-                     excluded from CI via AllTestsTestSuite / AllTasksTestsTestSuite patterns.
-                     TODO: Fix each test and remove its exclusion. -->
                 <excludes>
-                  <exclude>**/scripts/CreateCommunicationServiceTest.java</exclude>
-                  <exclude>**/scripts/CreateCustomE2EServiceInstanceTest.java</exclude>
-                  <exclude>**/scripts/CreateSDNCNetworkResourceTest.java</exclude>
-                  <exclude>**/scripts/CreateVfModuleInfraTest.java</exclude>
-                  <exclude>**/scripts/DeleteCustomE2EServiceInstanceTest.java</exclude>
-                  <exclude>**/scripts/DeleteNetworkInstanceTest.java</exclude>
-                  <exclude>**/scripts/DeleteVfModuleVolumeInfraV1Test.java</exclude>
-                  <exclude>**/scripts/DoActivateCoreNSSITest.java</exclude>
+                  <!-- AAIUriFactory.createResourceUri(AAISingleFragment) no longer exists, the scripts fail with MissingMethodException -->
                   <exclude>**/scripts/DoCommonCoreNSSITest.java</exclude>
-                  <exclude>**/scripts/DoCompareServiceInstanceDataTest.java</exclude>
-                  <exclude>**/scripts/DoCreateCommunicationServiceTest.java</exclude>
-                  <exclude>**/scripts/DoCreateE2EServiceInstanceTest.java</exclude>
-                  <exclude>**/scripts/DoCreateNetworkInstanceRollbackTest.java</exclude>
-                  <exclude>**/scripts/DoCreateNetworkInstanceTest.java</exclude>
-                  <exclude>**/scripts/DoCreateServiceInstanceTest.java</exclude>
-                  <exclude>**/scripts/DoCreateVFCNetworkServiceInstanceTest.java</exclude>
-                  <exclude>**/scripts/DoCreateVfModuleRollbackTest.java</exclude>
-                  <exclude>**/scripts/DoCreateVfModuleTest.java</exclude>
-                  <exclude>**/scripts/DoCreateVfModuleVolumeV2Test.java</exclude>
-                  <exclude>**/scripts/DoCreateVnfAndModulesTest.java</exclude>
-                  <exclude>**/scripts/DoCreateVnfTest.java</exclude>
-                  <exclude>**/scripts/DoCustomDeleteE2EServiceInstanceTest.java</exclude>
                   <exclude>**/scripts/DoDeallocateCoreNSSITest.java</exclude>
-                  <exclude>**/scripts/DoDeallocateNSSITest.java</exclude>
-                  <exclude>**/scripts/DoDeleteNetworkInstanceTest.java</exclude>
                   <exclude>**/scripts/DoDeleteServiceInstanceTest.java</exclude>
-                  <exclude>**/scripts/DoDeleteSliceServiceTest.java</exclude>
-                  <exclude>**/scripts/DoDeleteVFCNetworkServiceInstanceTest.java</exclude>
-                  <exclude>**/scripts/DoDeleteVfModuleFromVnfTest.java</exclude>
-                  <exclude>**/scripts/DoDeleteVfModuleTest.java</exclude>
-                  <exclude>**/scripts/DoDeleteVfModuleVolumeV2Test.java</exclude>
-                  <exclude>**/scripts/DoDeleteVnfAndModulesTest.java</exclude>
                   <exclude>**/scripts/DoModifyCoreNSSITest.java</exclude>
-                  <exclude>**/scripts/DoScaleE2EServiceInstanceTest.java</exclude>
-                  <exclude>**/scripts/DoUpdateNetworkInstanceTest.java</exclude>
-                  <exclude>**/scripts/DoUpdateVfModuleTest.java</exclude>
-                  <exclude>**/scripts/DoUpdateVnfAndModulesTest.java</exclude>
+                  <!-- DoActivateCoreNSSI still uses the removed 'mapper' field (MissingPropertyException) -->
+                  <exclude>**/scripts/DoActivateCoreNSSITest.java</exclude>
+                  <!-- DoCreateVfModuleVolumeV2.callRESTQueryAAIVolGrpName assigns a plural URI to AAIResourceUri (GroovyCastException) -->
+                  <exclude>**/scripts/DoCreateVfModuleVolumeV2Test.java</exclude>
+                  <!-- ScaleCustomE2EServiceInstance.prepareInitServiceOperationStatus references the undefined serviceName (MissingPropertyException) -->
                   <exclude>**/scripts/SacleCustomE2EServiceInstanceTest.java</exclude>
-                  <exclude>**/scripts/UpdateNetworkInstanceTest.java</exclude>
-                  <exclude>**/scripts/UpdateVfModuleVolumeInfraV1Test.java</exclude>
+                  <!-- tests call script methods that moved to the network adapter external task (callPONetworkAdapter, validate*NetworkResponse) -->
+                  <exclude>**/scripts/DoCreateNetworkInstanceRollbackTest.java</exclude>
+                  <exclude>**/scripts/DoDeleteNetworkInstanceTest.java</exclude>
+                  <exclude>**/scripts/DoUpdateNetworkInstanceTest.java</exclude>
+                  <!-- default endpoints are read via ClassLoader.class.getResourceAsStream, which cannot see the classpath on Java 9+ -->
                   <exclude>**/workflow/service/ServicePluginFactoryTest.java</exclude>
                 </excludes>
               </configuration>

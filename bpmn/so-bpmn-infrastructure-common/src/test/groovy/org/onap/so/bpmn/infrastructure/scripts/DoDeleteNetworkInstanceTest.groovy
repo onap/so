@@ -31,6 +31,7 @@ import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
+import org.junit.After
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
@@ -41,8 +42,10 @@ import org.onap.aai.domain.yang.Relationship
 import org.onap.aai.domain.yang.RelationshipList
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.common.scripts.MsoUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.aaiclient.client.aai.AAIObjectType
+import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
@@ -52,6 +55,7 @@ import org.onap.so.constants.Defaults
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.junit.WireMockRule
+import org.springframework.mock.env.MockEnvironment
 
 
 class DoDeleteNetworkInstanceTest  extends  MsoGroovyTest{
@@ -518,56 +522,6 @@ String networkInputsMissingCloudRegion =
 				  </aetgt:WorkflowException>"""
 
 
-	String queryAAIResponse =
-		"""<rest:RESTResponse xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
-                   statusCode="200">
-   <rest:headers>
-      <rest:header name="Transfer-Encoding" value="chunked"/>
-      <rest:header name="Date" value="Sat,30 Jan 2016 20:09:24 GMT"/>
-      <rest:header name="Expires" value="Thu,01 Jan 1970 00:00:00 UTC"/>
-      <rest:header name="X-AAI-TXID"
-                   value="localhost-20160130-20:09:24:814-165843"/>
-      <rest:header name="Content-Type" value="application/xml"/>
-      <rest:header name="Server" value="Apache-Coyote/1.1"/>
-      <rest:header name="Cache-Control" value="private"/>
-   </rest:headers>
-   <rest:payload contentType="text/xml">
-      <l3-network xmlns="http://org.openecomp.aai.inventory/v3">
-         <network-id>bdc5efe8-404a-409b-85f6-0dcc9eebae30</network-id>
-         <network-name>HSL_direct_net_2</network-name>
-         <network-type>CONTRAIL_BASIC</network-type>
-         <network-role>HSL_direct</network-role>
-         <network-technology>contrail</network-technology>
-         <neutron-network-id>8bbd3edf-b835-4610-96a2-a5cafa029042</neutron-network-id>
-         <service-id>a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb</service-id>
-         <orchestration-status>active</orchestration-status>
-         <heat-stack-id>HSL_direct_net_2/57594a56-1c92-4a38-9caa-641c1fa3d4b6</heat-stack-id>
-         <subnets>
-            <subnet>
-               <subnet-id>ea5f2a2c-604f-47ff-a9c5-253ee4f0ef0a</subnet-id>
-               <neutron-subnet-id>5a77fdc2-7789-4649-a1b9-6eaf1db1813a</neutron-subnet-id>
-               <gateway-address>172.16.34.1</gateway-address>
-               <network-start-address>172.16.34.0</network-start-address>
-               <cidr-mask>28</cidr-mask>
-               <ip-version>4</ip-version>
-               <orchestration-status>active</orchestration-status>
-               <dhcp-enabled>true</dhcp-enabled>
-               <relationship-list/>
-            </subnet>
-         </subnets>
-         <relationship-list>
-            <relationship>
-               <related-to>tenant</related-to>
-               <related-link>https://aai-app-e2e.test.com:8443/aai/v3/cloud-infrastructure/tenants/tenant/e81d842d3e8b45c5a59f57cd76af3aaf/</related-link>
-               <relationship-data>
-                  <relationship-key>tenant.tenant-id</relationship-key>
-                  <relationship-value>e81d842d3e8b45c5a59f57cd76af3aaf</relationship-value>
-               </relationship-data>
-            </relationship>
-         </relationship-list>
-      </l3-network>
-   </rest:payload>
-</rest:RESTResponse>"""
 
     String deleteNetworkRequest =
     """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
@@ -688,68 +642,6 @@ String aaiWorkflowException =
 					<aetgt:ErrorCode>2500</aetgt:ErrorCode>
 				  </aetgt:WorkflowException>"""
 
-	String aaiResponse =
-   """<rest:RESTResponse xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
-                   statusCode="200">
-   <rest:headers>
-      <rest:header name="Transfer-Encoding" value="chunked"/>
-      <rest:header name="Date" value="Sat,30 Jan 2016 20:09:24 GMT"/>
-      <rest:header name="Expires" value="Thu,01 Jan 1970 00:00:00 UTC"/>
-      <rest:header name="X-AAI-TXID"
-                   value="localhost-20160130-20:09:24:814-165843"/>
-      <rest:header name="Content-Type" value="application/xml"/>
-      <rest:header name="Server" value="Apache-Coyote/1.1"/>
-      <rest:header name="Cache-Control" value="private"/>
-   </rest:headers>
-   <rest:payload contentType="text/xml">
-      <l3-network xmlns="http://org.openecomp.aai.inventory/v8">
-         <network-id>bdc5efe8-404a-409b-85f6-0dcc9eebae30</network-id>
-         <network-name>HSL_direct_net_2</network-name>
-         <network-type>CONTRAIL_BASIC</network-type>
-         <network-role>HSL_direct</network-role>
-         <network-technology>contrail</network-technology>
-         <neutron-network-id>8bbd3edf-b835-4610-96a2-a5cafa029042</neutron-network-id>
-         <service-id>a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb</service-id>
-         <orchestration-status>active</orchestration-status>
-         <heat-stack-id>HSL_direct_net_2/57594a56-1c92-4a38-9caa-641c1fa3d4b6</heat-stack-id>
-         <subnets>
-            <subnet>
-               <subnet-id>ea5f2a2c-604f-47ff-a9c5-253ee4f0ef0a</subnet-id>
-               <neutron-subnet-id>5a77fdc2-7789-4649-a1b9-6eaf1db1813a</neutron-subnet-id>
-               <gateway-address>172.16.34.1</gateway-address>
-               <network-start-address>172.16.34.0</network-start-address>
-               <cidr-mask>28</cidr-mask>
-               <ip-version>4</ip-version>
-               <orchestration-status>active</orchestration-status>
-               <dhcp-enabled>true</dhcp-enabled>
-               <relationship-list/>
-            </subnet>
-         </subnets>
-         <relationship-list>
-            <relationship>
-               <related-to>tenant</related-to>
-               <related-link>https://aai-app-e2e.test.com:8443/aai/v8/cloud-infrastructure/tenants/tenant/e81d842d3e8b45c5a59f57cd76af3aaf/</related-link>
-               <relationship-data>
-                  <relationship-key>tenant.tenant-id</relationship-key>
-                  <relationship-value>e81d842d3e8b45c5a59f57cd76af3aaf</relationship-value>
-               </relationship-data>
-            </relationship>
-			<relationship>
-               <related-to>cloud-region</related-to>
-               <related-link>cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/RDM2WAGPLCP/</related-link>
-               <relationship-data>
-                  <relationship-key>cloud-region.cloud-owner</relationship-key>
-                  <relationship-value>CloudOwner</relationship-value>
-               </relationship-data>
-               <relationship-data>
-                  <relationship-key>cloud-region.cloud-region-id</relationship-key>
-                  <relationship-value>RDM2WAGPLCP</relationship-value>
-               </relationship-data>						   
-            </relationship>			            
-         </relationship-list>
-      </l3-network>
-   </rest:payload>
-</rest:RESTResponse>"""
 
 String aaiResponseWithRelationship =
 """<rest:RESTResponse xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
@@ -848,9 +740,9 @@ String aaiResponseWithRelationship =
       </request-information>
       <service-information>
          <service-id>a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb</service-id>
-         <service-type/>
+         <service-type>null</service-type>
          <service-instance-id>f70e927b-6087-4974-9ef8-c5e4d5847ca4</service-instance-id>
-         <subscriber-name/>
+         <subscriber-name>null</subscriber-name>
       </service-information>
       <network-request-information>
          <network-id>bdc5efe8-404a-409b-85f6-0dcc9eebae30</network-id>
@@ -1127,6 +1019,18 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			MockitoAnnotations.initMocks(this)
 		}
 
+		@After
+		public void resetEnvironment() {
+			new UrnPropertiesReader().setEnvironment(null)
+		}
+
+		private void useAaiEnvironment() {
+			MockEnvironment environment = new MockEnvironment()
+			environment.setProperty("mso.workflow.global.default.aai.version", "14")
+			environment.setProperty("aai.endpoint", "http://localhost:8090")
+			new UrnPropertiesReader().setEnvironment(environment)
+		}
+
 		@Test
 		public void preProcessRequest_Json() {
 			
@@ -1179,8 +1083,8 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			verify(mockExecution).setVariable(Prefix + "source", "VID")
 
 			// Authentications
-			verify(mockExecution).setVariable("BasicAuthHeaderValuePO", "Basic cGFzc3dvcmQ=")
-			verify(mockExecution).setVariable("BasicAuthHeaderValueSDNC", "Basic cGFzc3dvcmQ=")
+			verify(mockExecution).setVariable("BasicAuthHeaderValuePO", "Basic cG9CcG1uOnBhc3N3b3JkMSQ=")
+			verify(mockExecution).setVariable("BasicAuthHeaderValueSDNC", "Basic cG9CcG1uOnBhc3N3b3JkMSQ=")
 
 
 		}
@@ -1246,8 +1150,8 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			verify(mockExecution).setVariable(Prefix + "source", "VID")
 
 			// Authentications
-			verify(mockExecution).setVariable("BasicAuthHeaderValuePO", "Basic cGFzc3dvcmQ=")
-			verify(mockExecution).setVariable("BasicAuthHeaderValueSDNC", "Basic cGFzc3dvcmQ=")
+			verify(mockExecution).setVariable("BasicAuthHeaderValuePO", "Basic cG9CcG1uOnBhc3N3b3JkMSQ=")
+			verify(mockExecution).setVariable("BasicAuthHeaderValueSDNC", "Basic cG9CcG1uOnBhc3N3b3JkMSQ=")
 
 
 		}
@@ -1411,8 +1315,8 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			verify(mockExecution).setVariable(Prefix + "messageId", "7df689f9-7b93-430b-9b9e-28140d70cc7ad")
 			verify(mockExecution).setVariable(Prefix + "lcpCloudRegion", null)
 
-			verify(mockExecution).setVariable("BasicAuthHeaderValuePO","Basic cGFzc3dvcmQ=")
-			verify(mockExecution).setVariable("BasicAuthHeaderValueSDNC", "Basic cGFzc3dvcmQ=")
+			verify(mockExecution).setVariable("BasicAuthHeaderValuePO","Basic cG9CcG1uOnBhc3N3b3JkMSQ=")
+			verify(mockExecution).setVariable("BasicAuthHeaderValueSDNC", "Basic cG9CcG1uOnBhc3N3b3JkMSQ=")
 
 		}
 
@@ -1426,7 +1330,7 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			ExecutionEntity mockExecution = setupMock()
 			// Initialize prerequisite variables
 			when(mockExecution.getVariable(Prefix + "networkRequest")).thenReturn(expectedVperNetworkRequest)
-			when(mockExecution.getVariable(Prefix + "queryAAIResponse")).thenReturn(queryAAIResponse)
+			when(mockExecution.getVariable(Prefix + "queryAAIResponse")).thenReturn(getQueriedL3Network())
 			when(mockExecution.getVariable(Prefix + "cloudRegionPo")).thenReturn("RDM2WAGPLCP")
 			when(mockExecution.getVariable(Prefix + "tenantId")).thenReturn("e81d842d3e8b45c5a59f57cd76af3aaf")
 
@@ -1456,7 +1360,7 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			ExecutionEntity mockExecution = setupMock()
 			// Initialize prerequisite variables
 			when(mockExecution.getVariable(Prefix + "networkRequest")).thenReturn(expectedNetworkRequest)
-			when(mockExecution.getVariable(Prefix + "queryAAIResponse")).thenReturn(queryAAIResponse)
+			when(mockExecution.getVariable(Prefix + "queryAAIResponse")).thenReturn(getQueriedL3Network())
 			when(mockExecution.getVariable(Prefix + "cloudRegionPo")).thenReturn("RDM2WAGPLCP")
 			when(mockExecution.getVariable(Prefix + "tenantId")).thenReturn("e81d842d3e8b45c5a59f57cd76af3aaf")
 
@@ -1486,7 +1390,7 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			println "************ sendRequestToVnfAdapter ************* "
 
 			WireMock.reset();
-			MockNetworkAdapter("bdc5efe8-404a-409b-85f6-0dcc9eebae30", 200, "deleteNetworkResponse_Success.xml");
+			MockNetworkAdapter(wireMockRule, "bdc5efe8-404a-409b-85f6-0dcc9eebae30", 200, "deleteNetworkResponse_Success.xml");
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable(Prefix + "deleteNetworkRequest")).thenReturn(deleteNetworkRESTRequest)
@@ -1513,7 +1417,7 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			// Initialize prerequisite variables
 			when(mockExecution.getVariable(Prefix + "networkRequest")).thenReturn(expectedNetworkRequest)
 			when(mockExecution.getVariable(Prefix + "cloudRegionSdnc")).thenReturn("RDM2WAGPLCP")
-			when(mockExecution.getVariable(Prefix + "queryAAIResponse")).thenReturn(aaiResponse)
+			when(mockExecution.getVariable(Prefix + "queryAAIResponse")).thenReturn(getQueriedL3Network())
 			when(mockExecution.getVariable("mso-request-id")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 			when(mockExecution.getVariable("testMessageId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 			when(mockExecution.getVariable("serviceInstanceId")).thenReturn("f70e927b-6087-4974-9ef8-c5e4d5847ca4")
@@ -1610,9 +1514,11 @@ String sdncAdapterWorkflowFormattedResponse_404 =
             L3Network l3Network = getL3Network()
             Relationship relationship = new Relationship();
             relationship.setRelatedTo("vf-module")
+            relationship.setRelatedLink("/aai/v21/network/generic-vnfs/generic-vnf/105df7e5-0b3b-49f7-a837-4864b62827c4/vf-modules/vf-module/d9217058-95a0-49ee-b9a9-949259e89349")
             l3Network.getRelationshipList().getRelationship().add(relationship)
             AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(networkId)).depth(Depth.ALL)
             when(client.get(L3Network.class,uri)).thenReturn(Optional.of(l3Network))
+            when(client.get(uri)).thenReturn(new AAIResultWrapper(l3Network))
 
 			doDeleteNetworkInstance.callRESTQueryAAI(mockExecution)
 
@@ -1647,6 +1553,7 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			L3Network l3Network = getL3Network()
             AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(networkId)).depth(Depth.ALL)
 			when(client.get(L3Network.class,uri)).thenReturn(Optional.of(l3Network))
+			when(client.get(uri)).thenReturn(new AAIResultWrapper(l3Network))
 			doDeleteNetworkInstance.callRESTQueryAAI(mockExecution)
 
 			verify(mockExecution, atLeast(1)).setVariable("prefix", Prefix)
@@ -1685,6 +1592,7 @@ String sdncAdapterWorkflowFormattedResponse_404 =
         l3Network.setRelationshipList(relationshipList)
         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().l3Network(networkId)).depth(Depth.ALL)
         when(client.get(L3Network.class,uri)).thenReturn(Optional.of(l3Network))
+        when(client.get(uri)).thenReturn(new AAIResultWrapper(l3Network))
         doDeleteNetworkInstance.callRESTQueryAAI(mockExecution)
 
         verify(mockExecution, atLeast(1)).setVariable("prefix", Prefix)
@@ -1692,6 +1600,15 @@ String sdncAdapterWorkflowFormattedResponse_404 =
         verify(mockExecution).setVariable(Prefix + "aaiReturnCode", 200)
         verify(mockExecution).setVariable(Prefix + "isAAIGood", true)
         verify(mockExecution).setVariable(Prefix + "queryAAIResponse", l3Network)
+    }
+
+    private L3Network getQueriedL3Network() {
+        L3Network l3Network = new L3Network()
+        l3Network.setNetworkId("bdc5efe8-404a-409b-85f6-0dcc9eebae30")
+        l3Network.setNetworkName("HSL_direct_net_2")
+        l3Network.setNetworkType("CONTRAIL_BASIC")
+        l3Network.setHeatStackId("HSL_direct_net_2/57594a56-1c92-4a38-9caa-641c1fa3d4b6")
+        l3Network
     }
 
     private L3Network getL3Network() {
@@ -1716,7 +1633,9 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			println "************ callRESTQueryAAICloudRegion30_200 ************* "
 
 			WireMock.reset();
-			MockGetNetworkCloudRegion("DeleteNetworkV2/cloudRegion30_AAIResponse_Success.xml", "RDM2WAGPLCP");
+
+			useAaiEnvironment()
+			MockGetNetworkCloudRegion(wireMockRule, "DeleteNetworkV2/cloudRegion30_AAIResponse_Success.xml", "RDM2WAGPLCP");
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable("prefix")).thenReturn(Prefix)
@@ -1746,7 +1665,9 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			println "************ callRESTQueryAAICloudRegion_NotFound ************* "
 
 			WireMock.reset();
-			MockGetNetworkCloudRegion_404("MDTWNJ21");
+
+			useAaiEnvironment()
+			MockGetNetworkCloudRegion_404(wireMockRule, "MDTWNJ21");
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable("prefix")).thenReturn(Prefix)
@@ -1778,7 +1699,9 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			println "************ callRESTQueryAAICloudRegion25_200 ************* "
 
 			WireMock.reset();
-			MockGetNetworkCloudRegion("DeleteNetworkV2/cloudRegion25_AAIResponse_Success.xml", "RDM2WAGPLCP");
+
+			useAaiEnvironment()
+			MockGetNetworkCloudRegion(wireMockRule, "DeleteNetworkV2/cloudRegion25_AAIResponse_Success.xml", "RDM2WAGPLCP");
 
 			ExecutionEntity mockExecution = setupMock()
 			when(mockExecution.getVariable("prefix")).thenReturn(Prefix)

@@ -32,6 +32,7 @@ import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
@@ -254,9 +255,9 @@ class DoModifyCoreNSSITest extends MsoGroovyTest  {
         SliceProfile sliceProfile = new SliceProfile()
         currentNSSI.put("createdSliceProfile", sliceProfile)
 
-        AAIResourceUri sliceProfileInstanceUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(sliceProfileInstanceId))
+        AAIResourceUri sliceProfileInstanceUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(sliceProfileInstanceId))
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nssiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         ServiceInstance sliceProfileInstance = new ServiceInstance()
         sliceProfileInstance.setServiceInstanceId(sliceProfileInstanceId)
@@ -328,13 +329,13 @@ class DoModifyCoreNSSITest extends MsoGroovyTest  {
         DoModifyCoreNSSI spy = spy(DoModifyCoreNSSI.class)
         when(spy.getAAIClient()).thenReturn(client)
 
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nssiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         AAIResultWrapper wrapperMock = mock(AAIResultWrapper.class) //new AAIResultWrapper(json)
         Relationships rsMock = mock(Relationships.class)
         Optional<Relationships> orsMock = Optional.of(rsMock)
         List<AAIResourceUri> allottedUris = new ArrayList<>()
-        AAIResourceUri allottedUri = AAIUriFactory.createResourceUri(Types.ALLOTTED_RESOURCE.getFragment("allotted-id"))
+        AAIResourceUri allottedUri = AAIClientUriFactory.createResourceUri(Types.ALLOTTED_RESOURCE.getFragment("allotted-id"))
         allottedUris.add(allottedUri)
 
         when(client.get(nssiUri)).thenReturn(wrapperMock)
@@ -347,7 +348,7 @@ class DoModifyCoreNSSITest extends MsoGroovyTest  {
         sliceProfileInstance.setServiceRole("slice-profile-instance")
 
         List<AAIResourceUri> sliceProfileInstanceUris = new ArrayList<>()
-        AAIResourceUri sliceProfileInstanceUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(sliceProfileInstance.getServiceInstanceId()))
+        AAIResourceUri sliceProfileInstanceUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(sliceProfileInstance.getServiceInstanceId()))
         sliceProfileInstanceUris.add(sliceProfileInstanceUri)
 
         Optional<ServiceInstance> sliceProfileInstanceOpt = Optional.of(sliceProfileInstance)

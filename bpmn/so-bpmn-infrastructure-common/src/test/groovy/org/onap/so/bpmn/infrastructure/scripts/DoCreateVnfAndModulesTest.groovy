@@ -51,7 +51,7 @@ import org.onap.so.bpmn.core.domain.VnfResource
 
 import static org.mockito.Mockito.*
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 class DoCreateVnfAndModulesTest {
 
 	@Captor

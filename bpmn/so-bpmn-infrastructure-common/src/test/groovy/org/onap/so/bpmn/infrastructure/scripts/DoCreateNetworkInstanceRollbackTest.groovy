@@ -53,6 +53,9 @@ import org.apache.commons.lang3.*
 
 @RunWith(MockitoJUnitRunner.class)
 class DoCreateNetworkInstanceRollbackTest  {
+
+	@Rule
+	public WireMockRule wireMockRule = new WireMockRule(28090)
 	
 	def utils = new MsoUtils()
 		String Prefix="CRENWKIR_"
@@ -248,7 +251,7 @@ class DoCreateNetworkInstanceRollbackTest  {
 		//@Ignore
 		public void callPONetworkAdapter() {
 
-			MockNetworkAdapterRestRollbackDelete("deleteNetworkResponse_Success.xml","8abc633a-810b-4ca5-8b3a-09511d13a2ce");
+			MockNetworkAdapterRestRollbackDelete(wireMockRule, "deleteNetworkResponse_Success.xml","8abc633a-810b-4ca5-8b3a-09511d13a2ce");
 			
 			ExecutionEntity mockExecution = setupMock()
 			// Initialize prerequisite variables
@@ -297,7 +300,7 @@ class DoCreateNetworkInstanceRollbackTest  {
 			verify(mockExecution, atLeast(1)).setVariable("prefix", Prefix)
 			verify(mockExecution, atLeast(1)).setVariable("rolledBack", true)
 			verify(mockExecution, atLeast(1)).setVariable("wasDeleted", true)
-			verify(mockExecution).setVariable("WorkflowException", refEq(expectedWorkflowException, any(WorkflowException.class)))
+			verify(mockExecution).setVariable(eq("workflowException"), refEq(expectedWorkflowException))
 			//verify(mockExecution).setVariable("WorkflowException", expectedWorkflowException)
 		}
 		

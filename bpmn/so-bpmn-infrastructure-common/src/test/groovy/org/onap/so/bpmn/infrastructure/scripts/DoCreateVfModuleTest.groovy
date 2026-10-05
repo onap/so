@@ -25,6 +25,7 @@ import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
+import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -37,13 +38,15 @@ import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.bpmn.common.scripts.utils.XmlComparator
 import org.onap.so.bpmn.core.RollbackData
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
+import org.springframework.mock.env.MockEnvironment
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 class DoCreateVfModuleTest {
     def prefix = "DCVFM_"
 
@@ -56,6 +59,16 @@ class DoCreateVfModuleTest {
     @Before
     void init() throws IOException {
         MockitoAnnotations.openMocks(this);
+        MockEnvironment environment = new MockEnvironment()
+        environment.setProperty("mso.workflow.global.default.aai.version", "14")
+        environment.setProperty("mso.workflow.global.default.aai.namespace", "http://org.onap.aai.inventory/")
+        environment.setProperty("aai.endpoint", "http://localhost:8090")
+        new UrnPropertiesReader().setEnvironment(environment)
+    }
+
+    @After
+    void cleanupEnv() {
+        new UrnPropertiesReader().setEnvironment(null)
     }
 
     @Test
@@ -154,7 +167,7 @@ class DoCreateVfModuleTest {
         obj.queryCloudRegion(mockExecution)
 
         Mockito.verify(mockExecution).setVariable("prefix", prefix)
-        Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionRequest", "http://localhost:28090/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/12345")
+        Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionRequest", "http://localhost:8090/aai/v14/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/12345")
         Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionReturnCode", "200")
     }
 
@@ -181,7 +194,9 @@ class DoCreateVfModuleTest {
 
         Mockito.verify(mockExecution).setVariable("prefix", prefix)
         Mockito.verify(mockExecution).setVariable(prefix + "networkPolicyFqdnCount", 1)
-        Mockito.verify(mockExecution).setVariable(prefix + "aaiQqueryNetworkPolicyByFqdnReturnCode", 200)
+        wireMockRule.verify(getRequestedFor(urlPathMatching("/aai/v[0-9]+/network/network-policies"))
+                .withQueryParam("network-policy-fqdn", equalTo("test")))
+        wireMockRule.verify(0, putRequestedFor(urlPathMatching("/aai/v[0-9]+/network/network-policies/network-policy/.*")))
     }
 
 
@@ -207,20 +222,20 @@ class DoCreateVfModuleTest {
         return mockExecution
     }
 
-    private static void mockData() {
-        stubFor(get(urlMatching(".*/aai/v[0-9]+/network/generic-vnfs/generic-vnf/12345[?]depth=1"))
+    private void mockData() {
+        wireMockRule.stubFor(get(urlMatching(".*/aai/v[0-9]+/network/generic-vnfs/generic-vnf/12345[?]depth=1"))
                 .willReturn(aResponse()
                 .withStatus(200).withHeader("Content-Type", "text/xml")
                 .withBodyFile("DoCreateVfModule/getGenericVnfResponse.xml")))
-        stubFor(get(urlMatching(".*/aai/v[0-9]+/network/generic-vnfs/generic-vnf/12345/vf-modules/vf-module[?]vf-module-name=module-0"))
+        wireMockRule.stubFor(get(urlMatching(".*/aai/v[0-9]+/network/generic-vnfs/generic-vnf/12345/vf-modules[?]vf-module-name=module-0"))
                 .willReturn(aResponse()
                 .withStatus(200).withHeader("Content-Type", "text/xml")
                 .withBodyFile("DoCreateVfModule/getGenericVnfResponse.xml")))
-        stubFor(get(urlMatching(".*/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/12345"))
+        wireMockRule.stubFor(get(urlMatching(".*/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/12345"))
                 .willReturn(aResponse()
                 .withStatus(200).withHeader("Content-Type", "text/xml")
                 .withBodyFile("DoCreateVfModule/cloudRegion_AAIResponse_Success.xml")))
-        stubFor(get(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy\\?network-policy-fqdn=.*"))
+        wireMockRule.stubFor(get(urlPathMatching("/aai/v[0-9]+/network/network-policies"))
                 .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "text/xml")
