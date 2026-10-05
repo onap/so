@@ -32,7 +32,6 @@ import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.core.domain.ModelInfo
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.domain.ServiceInstance
-import org.onap.so.bpmn.mock.StubResponseAAI
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 
 import static org.mockito.Mockito.*
@@ -93,7 +92,6 @@ class DoCreateServiceInstanceTest extends MsoGroovyTest{
         when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
         when(mockExecution.getVariable("mso.workflow.custom.DoCreateServiceInstance.aai.version")).thenReturn('8')
-        StubResponseAAI.MockGetCustomer("12345", "")
         DoCreateServiceInstance obj = spy(DoCreateServiceInstance.class)
         when(obj.getAAIClient()).thenReturn(client)
         when(client.exists(isA(AAIResourceUri.class))).thenReturn(true)
@@ -102,13 +100,13 @@ class DoCreateServiceInstanceTest extends MsoGroovyTest{
 
     @Test
     void testGetAAICustomerById_NoCustFound() {
+        when(mockExecution.getVariable("testProcessKey")).thenReturn("DoCreateServiceInstance")
         when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn("12345")
         when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
         when(mockExecution.getVariable("mso.workflow.custom.DoCreateServiceInstance.aai.version")).thenReturn('8')
-        StubResponseAAI.MockGetCustomer("12345", "")
         DoCreateServiceInstance obj = spy(DoCreateServiceInstance.class)
         when(obj.getAAIClient()).thenReturn(client)
         when(client.exists(isA(AAIResourceUri.class))).thenReturn(false)
@@ -118,17 +116,17 @@ class DoCreateServiceInstanceTest extends MsoGroovyTest{
 
     @Test
     void testGetAAICustomerById_Exception() {
+        when(mockExecution.getVariable("testProcessKey")).thenReturn("DoCreateServiceInstance")
         when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn("12345")
         when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
         when(mockExecution.getVariable("mso.workflow.custom.DoCreateServiceInstance.aai.version")).thenReturn('8')
-        StubResponseAAI.MockGetCustomer("12345", "")
         DoCreateServiceInstance obj = spy(DoCreateServiceInstance.class)
         when(obj.getAAIClient()).thenReturn(client)
-        when(client.exists(isA(AAIResourceUri.class))).thenThrow(Exception.class)
-        thrown.expect(Exception.class)
+        when(client.exists(isA(AAIResourceUri.class))).thenThrow(new RuntimeException("AAI unavailable"))
+        thrown.expect(BpmnError.class)
         obj.getAAICustomerById(mockExecution)
     }
 }

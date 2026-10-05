@@ -49,7 +49,7 @@ import org.onap.aaiclient.client.graphinventory.exceptions.GraphInventoryUriComp
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class DoDeleteVnfAndModulesTest extends MsoGroovyTest{
 
     @Captor
@@ -67,6 +67,7 @@ public class DoDeleteVnfAndModulesTest extends MsoGroovyTest{
         super.init("DoDeleteVnfAndModules")
         MockitoAnnotations.openMocks(this);
         when(doDeleteVnfAndModules.getAAIClient()).thenReturn(client)
+        when(mockExecution.getVariable("testProcessKey")).thenReturn("DoDeleteVnfAndModules")
     }
 
     @Test

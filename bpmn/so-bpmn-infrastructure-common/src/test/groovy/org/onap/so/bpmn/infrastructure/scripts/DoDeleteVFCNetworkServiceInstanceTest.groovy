@@ -55,10 +55,11 @@ public class DoDeleteVFCNetworkServiceInstanceTest extends MsoGroovyTest {
 
     @Test
     void callRESTDeleteAAIVolumeGroupTestException(){
+        when(mockExecution.getVariable("testProcessKey")).thenReturn("DoDeleteVFCNetworkServiceInstance")
         String resourceInstanceId = "resourceInstanceId"
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("resourceInstanceId")).thenReturn(resourceInstanceId)
-        doThrow(Exception.class).when(client).disconnect(isA(AAIResourceUri.class),isA(AAIResourceUri.class))
+        doThrow(RuntimeException.class).when(client).disconnect(isA(AAIResourceUri.class),isA(AAIResourceUri.class))
         thrown.expect(BpmnError.class)
         doDeleteVFCNetworkServiceInstance.deleteNSRelationship(mockExecution)
     }

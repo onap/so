@@ -94,6 +94,7 @@ class DoDeleteVfModuleVolumeV2Test extends MsoGroovyTest{
         super.init("DoDeleteVfModuleVolumeV2")
         MockitoAnnotations.openMocks(this);
         when(deleteVfModuleVolumeV2.getAAIClient()).thenReturn(client)
+        when(mockExecution.getVariable("testProcessKey")).thenReturn("DoDeleteVfModuleVolumeV2")
         when(mockEnvironment.getProperty("mso.workflow.global.default.aai.version")).thenReturn("14")
         when(mockEnvironment.getProperty("mso.workflow.global.default.aai.namespace")).thenReturn("defaultTestNamespace")
         when(mockEnvironment.getProperty("aai.endpoint")).thenReturn("http://localhost:8090")
@@ -268,7 +269,7 @@ class DoDeleteVfModuleVolumeV2Test extends MsoGroovyTest{
         Optional<VolumeGroup> volumeGroup = getAAIObjectFromJson(VolumeGroup.class,"__files/aai/VolumeGroupWithVfModule.json");
         when(mockExecution.getVariable("DDVMV_queryAAIVolGrpResponse")).thenReturn(volumeGroup.get())
         when(mockExecution.getVariable("DDVMV_aicCloudRegion")).thenReturn("Region1")
-        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(CLOUD_OWNER, "Region1").volumeGroup(volumeGroup.get()).getVolumeGroupId())
+        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion(CLOUD_OWNER, "Region1").volumeGroup(volumeGroup.get().getVolumeGroupId()))
         doThrow(new GraphInventoryUriComputationException("Error")).when(client).delete(resourceUri)
         try {
             deleteVfModuleVolumeV2.callRESTDeleteAAIVolumeGroup(mockExecution, "true")

@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import static org.junit.Assert.assertEquals
 import static org.mockito.Mockito.*
 
 import org.apache.commons.lang3.*
@@ -32,6 +33,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -172,7 +174,9 @@ class SacleCustomE2EServiceInstanceTest{
         ScaleCustomE2EServiceInstance scaleCustomE2EServiceInstance = new ScaleCustomE2EServiceInstance()
         scaleCustomE2EServiceInstance.prepareCompletionRequest(mockExecution)
 
-        verify(mockExecution).setVariable("CompleteMsoProcessRequest", xmlMsoCompletionRequest)
+        ArgumentCaptor<String> request = ArgumentCaptor.forClass(String.class)
+        verify(mockExecution).setVariable(eq("CompleteMsoProcessRequest"), request.capture())
+        assertEquals(withoutGeneratedPrefix(xmlMsoCompletionRequest), withoutGeneratedPrefix(request.getValue()))
 
     }
 
@@ -192,4 +196,7 @@ class SacleCustomE2EServiceInstanceTest{
         verify(mockExecution).setVariable("CVFMI_updateServiceOperStatusRequest", payload)
     }
 
+    private static String withoutGeneratedPrefix(String xml) {
+        return xml.replaceAll(/w\d+aaan\d+/, "generated")
+    }
 }

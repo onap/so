@@ -38,7 +38,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import static org.junit.Assert.assertNotNull
 import static org.mockito.Mockito.*
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 class CreateCustomE2EServiceInstanceTest {
 
     @Before

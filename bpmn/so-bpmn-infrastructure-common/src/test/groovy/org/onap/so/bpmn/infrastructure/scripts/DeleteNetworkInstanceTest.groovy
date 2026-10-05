@@ -41,7 +41,7 @@ import org.onap.so.bpmn.core.WorkflowException
 import com.github.tomakehurst.wiremock.junit.WireMockRule
 
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 class DeleteNetworkInstanceTest  {
 
 	@Rule
@@ -82,9 +82,9 @@ class DeleteNetworkInstanceTest  {
 					</aetgt:FalloutHandlerRequest>"""
 					
 	String completeMsoProcessRequest = 
-    """<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
-                            xmlns:ns="http://org.onap/so/request/types/v1"
-                            xmlns="http://org.onap/so/infra/vnf-request/v1">
+    """<aetgt:MsoCompletionRequest xmlns="http://org.onap/so/infra/vnf-request/v1"
+                            xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+                            xmlns:ns="http://org.onap/so/request/types/v1">
    <request-info>
       <request-id>88f65519-9a38-4c4b-8445-9eb4a5a5af56</request-id>
       <action>DELETE</action>

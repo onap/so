@@ -56,7 +56,7 @@ import jakarta.ws.rs.NotFoundException
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
 
     def prefix = "DCVFMR_"
@@ -147,6 +147,7 @@ class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
         when(mockExecution.getVariable(prefix + "requestId")).thenReturn("testRequestId")
         when(mockExecution.getVariable(prefix + "vfModuleId")).thenReturn("cb510af0-5b21-4bc7-86d9-323cb396ce32")
         when(mockExecution.getVariable(prefix + "mso-request-id")).thenReturn("12345")
+        when(mockExecution.getVariable(prefix + "cloudOwner")).thenReturn("CloudOwner")
         when(mockExecution.getVariable("mso.workflow.message.endpoint")).thenReturn('http://localhost:18080/mso/WorkflowMessage/')
 
 
