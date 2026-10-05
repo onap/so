@@ -38,7 +38,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
-import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ErrorCode
@@ -363,7 +363,7 @@ public class CreateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 				si.setOrchestrationStatus("Pending")
 			}
 			AAIResourcesClient client = new AAIResourcesClient()
-			AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
+			AAIResourceUri uri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 			client.update(uri, si)
 		} catch (BpmnError e) {
 			throw e

@@ -46,7 +46,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import static org.mockito.Mockito.*
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 class DoDeleteServiceInstanceTest {
 
     @Rule

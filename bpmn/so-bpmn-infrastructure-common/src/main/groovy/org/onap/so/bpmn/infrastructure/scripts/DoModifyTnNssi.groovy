@@ -32,6 +32,7 @@ import org.onap.aai.domain.yang.SliceProfile
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -153,7 +154,7 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
         String serviceInstanceId = execution.getVariable("sliceServiceInstanceId")
 
         AAIResourcesClient resourceClient = getAAIClient()
-        AAIResourceUri ssServiceuri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
+        AAIResourceUri ssServiceuri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 
         try {
             Optional<ServiceInstance> ssOpt = resourceClient.get(ServiceInstance.class, ssServiceuri)
@@ -471,7 +472,7 @@ public class DoModifyTnNssi extends AbstractServiceTaskProcessor {
             ServiceInstance si = new ServiceInstance()
             si.setOrchestrationStatus(orchStatus)
             AAIResourcesClient client = getAAIClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(sliceServiceInstanceId))
+            AAIResourceUri uri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(sliceServiceInstanceId))
             client.update(uri, si)
         } catch (BpmnError e) {
             throw e

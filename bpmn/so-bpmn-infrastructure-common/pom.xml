@@ -105,11 +105,6 @@
                   <include>**/*Test.java</include>
                 </includes>
                 <excludes>
-                  <!-- AAIUriFactory.createResourceUri(AAISingleFragment) no longer exists, the scripts fail with MissingMethodException -->
-                  <exclude>**/scripts/DoCommonCoreNSSITest.java</exclude>
-                  <exclude>**/scripts/DoDeallocateCoreNSSITest.java</exclude>
-                  <exclude>**/scripts/DoDeleteServiceInstanceTest.java</exclude>
-                  <exclude>**/scripts/DoModifyCoreNSSITest.java</exclude>
                   <!-- DoActivateCoreNSSI still uses the removed 'mapper' field (MissingPropertyException) -->
                   <exclude>**/scripts/DoActivateCoreNSSITest.java</exclude>
                   <!-- DoCreateVfModuleVolumeV2.callRESTQueryAAIVolGrpName assigns a plural URI to AAIResourceUri (GroovyCastException) -->
