@@ -48,6 +48,7 @@
     <sonar.jacoco.reportMissing.force.zero>true</sonar.jacoco.reportMissing.force.zero>
     <sonar.projectVersion>${project.version}</sonar.projectVersion>
     <sonar.cpd.exclusions>**/*</sonar.cpd.exclusions>
+    <argLine />
     <org.apache.maven.user-settings />
     <openstack.version>1.12.0</openstack.version>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
@@ -341,7 +342,7 @@
               <goal>report</goal>
             </goals>
             <configuration>
-              <dataFile>${project.build.directory}/code-coverage/jacoco.exec</dataFile>
+              <dataFile>${project.build.directory}/jacoco.exec</dataFile>
               <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
             </configuration>
           </execution>
@@ -636,6 +637,7 @@
           <version>3.1.2</version>
           <configuration>
             <argLine>
+              @{argLine}
               --add-opens java.base/java.lang=ALL-UNNAMED
               --add-opens java.base/java.lang.reflect=ALL-UNNAMED
               --add-opens java.base/java.util=ALL-UNNAMED
