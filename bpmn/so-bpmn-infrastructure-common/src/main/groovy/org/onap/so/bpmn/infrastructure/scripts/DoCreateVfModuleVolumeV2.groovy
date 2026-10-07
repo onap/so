@@ -32,6 +32,7 @@ import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.AaiUtil
@@ -149,7 +150,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
             String serviceInstanceId = execution.getVariable('serviceInstanceId')
 
             AAIResourcesClient resourceClient = new AAIResourcesClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
+            AAIResourceUri uri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(serviceInstanceId))
 
             if(!resourceClient.exists(uri)){
                 (new ExceptionUtil()).buildAndThrowWorkflowException(execution, 2500, "Service instance was not found in aai")

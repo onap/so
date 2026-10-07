@@ -33,6 +33,7 @@ import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.logging.filter.base.ONAPComponents
@@ -208,7 +209,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
         AAIResourcesClient client = getAAIClient()
 
         // NSSI
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nssiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
         Optional<ServiceInstance> nssiOpt = client.get(ServiceInstance.class, nssiUri)
 
         if (nssiOpt.isPresent()) {
@@ -224,7 +225,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
         // NSI
         String nsiId = currentNSSI['nsiId']
         ServiceInstance nsi = null
-        AAIResourceUri nsiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
+        AAIResourceUri nsiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nsiId))
         Optional<ServiceInstance> nsiOpt = client.get(ServiceInstance.class, nsiUri)
         if (nsiOpt.isPresent()) {
             nsi = nsiOpt.get()
@@ -460,7 +461,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
         String subscriptionServiceType = execution.getVariable("subscriptionServiceType")
 
         // NSSI
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nssiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
 
         String allottedResourceId = null
@@ -524,7 +525,7 @@ class DoDeallocateCoreNSSI extends DoCommonCoreNSSI {
         def currentNSSI = execution.getVariable("currentNSSI")
 
         String nssiId = currentNSSI['nssiId']
-        AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
+        AAIResourceUri nssiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId))
 
         try {
             client.delete(nssiUri)

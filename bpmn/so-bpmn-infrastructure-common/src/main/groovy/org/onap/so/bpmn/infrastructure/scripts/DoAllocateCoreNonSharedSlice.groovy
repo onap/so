@@ -52,6 +52,7 @@ import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
 import org.onap.aaiclient.client.aai.entities.AAIEdgeLabel
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
@@ -371,10 +372,10 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
             }
             //URI for NSSI
-            AAIResourceUri nssiUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId));
+            AAIResourceUri nssiUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(nssiId));
             logger.debug("nssiUri to update RelationShip :  "+nssiUri)
             //URI for Network Service Instance
-            AAIResourceUri networkServiceInstanceUri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(networkServiceInstanceId))
+            AAIResourceUri networkServiceInstanceUri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(networkServiceInstanceId))
             logger.debug("networkServiceInstanceUri to update RelationShip :  "+networkServiceInstanceUri)
             // Update Relationship in AAI
             getAAIClient().connect(nssiUri, networkServiceInstanceUri, AAIEdgeLabel.COMPOSED_OF);

@@ -28,6 +28,7 @@ import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -212,7 +213,7 @@ class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
             ServiceInstance si = new ServiceInstance()
             si.setOrchestrationStatus(orchStatus)
             AAIResourcesClient client = getAAIClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(tnNssiId))
+            AAIResourceUri uri = AAIClientUriFactory.createResourceUri(Types.SERVICE_INSTANCE.getFragment(tnNssiId))
             client.update(uri, si)
         } catch (BpmnError e) {
             throw e

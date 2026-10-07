@@ -23,16 +23,16 @@ package org.onap.so.bpmn.common.scripts
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertTrue
 import static org.mockito.ArgumentMatchers.any
+import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.atLeastOnce
+import static org.mockito.Mockito.doNothing
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.spy
 import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
 import jakarta.ws.rs.core.UriBuilder
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
-import org.mockito.internal.stubbing.answers.DoesNothing
 import org.onap.aai.domain.yang.AllottedResource
 import org.onap.aaiclient.client.aai.AAIObjectType
 import org.onap.aaiclient.client.aai.entities.AAIResultWrapper
@@ -56,15 +56,13 @@ class AllottedResourceUtilsTest extends MsoGroovyTest{
     }
 
     @Test
-    @Ignore
     void getARbyId() {
         String allottedResourceId = "allottedResourceId"
         AllottedResource expectedAllottedResource = new AllottedResource()
         expectedAllottedResource.setId("ID")
         expectedAllottedResource.setResourceVersion("1.2")
         when(client.get(any(AAIResourceUri.class))).thenReturn(new AAIResultWrapper(expectedAllottedResource))
-        AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(Types.ALLOTTED_RESOURCE.getFragment(allottedResourceId))
-        when(allottedResourceUtils.setExecutionVariables(mockExecution,expectedAllottedResource,resourceUri)).thenAnswer(new DoesNothing())
+        doNothing().when(allottedResourceUtils).setExecutionVariables(eq(mockExecution), any(AllottedResource.class), any(AAIResourceUri.class))
         boolean allottedResource = allottedResourceUtils.ifExistsAR(mockExecution,allottedResourceId)
         assertTrue(allottedResource)
     }

@@ -27,6 +27,7 @@ import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aaiclient.client.aai.AAIResourcesClient
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -117,7 +118,7 @@ class DoCloudLeasedLineCreate extends AbstractServiceTaskProcessor {
             ServiceInstance si = new ServiceInstance()
             si.setOrchestrationStatus(orchStatus)
             AAIResourcesClient client = new AAIResourcesClient()
-            AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.Types.SERVICE_INSTANCE.getFragment(cllId))
+            AAIResourceUri uri = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.Types.SERVICE_INSTANCE.getFragment(cllId))
             client.update(uri, si)
         } catch (BpmnError e) {
             throw e

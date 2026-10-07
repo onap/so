@@ -34,6 +34,7 @@ import org.onap.aaiclient.client.aai.entities.Relationships
 import org.onap.aaiclient.client.aai.entities.uri.AAIPluralResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory
+import org.onap.aaiclient.client.aai.entities.uri.AAIClientUriFactory
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
@@ -425,7 +426,7 @@ class TnNssmfUtils {
 
         ServiceInstance nssi = null
         AAIResourcesClient client = new AAIResourcesClient()
-        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.Types.SERVICE_INSTANCE
+        AAIResourceUri uri = AAIClientUriFactory.createResourceUri(AAIFluentTypeBuilder.Types.SERVICE_INSTANCE
                 .getFragment(serviceInstanceId))
         Optional<ServiceInstance> nssiOpt = client.get(ServiceInstance.class, uri)
 
