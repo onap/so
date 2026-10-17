@@ -45,6 +45,8 @@ public class DistributionStatusSender {
 
     private static final Logger logger = LoggerFactory.getLogger(DistributionStatusSender.class);
 
+    static final String ARTIFACT_NOT_USED = "The artifact has not been used by the modules defined in the resource";
+
     @Autowired
     private ASDCConfiguration asdcConfig;
 
@@ -65,9 +67,8 @@ public class DistributionStatusSender {
                     && resourceStructure.getArtifactsMapByUUID().get(artifactInfo.getArtifactUUID())
                             .getDeployedInDb() == 0) {
                 this.sendASDCNotification(client, NotificationType.DEPLOY, artifactInfo.getArtifactURL(),
-                        resourceStructure.getNotification().getDistributionID(), DistributionStatusEnum.DEPLOY_ERROR,
-                        "The artifact has not been used by the modules defined in the resource",
-                        System.currentTimeMillis());
+                        resourceStructure.getNotification().getDistributionID(), DistributionStatusEnum.DEPLOY_OK,
+                        ARTIFACT_NOT_USED, System.currentTimeMillis());
             } else {
                 this.sendASDCNotification(client, NotificationType.DEPLOY, artifactInfo.getArtifactURL(),
                         resourceStructure.getNotification().getDistributionID(), distribStatus, errorReason,

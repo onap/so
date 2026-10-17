@@ -68,14 +68,37 @@ public class WatchdogStatusWaiterTest {
     }
 
     @Test
-    public void waitForComponents_failure_reportsCompleteError() throws Exception {
+    public void waitForComponents_failure_reportsCompleteErrorNamingTheFailedComponents() throws Exception {
         when(wd.getOverallDistributionStatus("dist-1")).thenReturn(DistributionStatus.FAILURE.name());
+        when(wd.getComponentFailureSummary("dist-1")).thenReturn("COMPONENT_DONE_ERROR from AAI");
 
         WatchdogStatusResult result = waiter.waitForComponents("dist-1");
 
         assertFalse(result.isDeploySuccess());
         assertEquals(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name(), result.getOverallStatus());
-        assertNull(result.getWatchdogError());
+        assertEquals("Distribution ended with status FAILURE: COMPONENT_DONE_ERROR from AAI",
+                result.getWatchdogError());
+    }
+
+    @Test
+    public void waitForComponents_failureWithoutSummary_stillReportsAReason() throws Exception {
+        when(wd.getOverallDistributionStatus("dist-1")).thenReturn(DistributionStatus.TIMEOUT.name());
+        when(wd.getComponentFailureSummary("dist-1")).thenThrow(new RuntimeException("db down"));
+
+        WatchdogStatusResult result = waiter.waitForComponents("dist-1");
+
+        assertEquals(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name(), result.getOverallStatus());
+        assertEquals("Distribution ended with status TIMEOUT", result.getWatchdogError());
+    }
+
+    @Test
+    public void waitForComponents_timeout_namesTheComponentsThatDidNotReport() throws Exception {
+        when(wd.getOverallDistributionStatus("dist-1")).thenReturn(DistributionStatus.INCOMPLETE.name());
+        when(wd.getComponentFailureSummary("dist-1")).thenReturn("no status from SDNC");
+
+        WatchdogStatusResult result = waiter.waitForComponents("dist-1");
+
+        assertEquals(WatchdogStatusWaiter.TIMEOUT_ERROR + ": no status from SDNC", result.getWatchdogError());
     }
 
     @Test

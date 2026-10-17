@@ -394,7 +394,7 @@ public class ASDCControllerITTest extends BaseTest {
 
         verify(distributionClient).sendFinalDistrStatus(
                 argThat(finalStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR)),
-                eq("Timeout occurred while waiting for all components to report status"));
+                eq("Timeout occurred while waiting for all components to report status: no status from SDNC"));
         assertEquals(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name(), storedDistributionStatus());
     }
 
@@ -406,8 +406,9 @@ public class ASDCControllerITTest extends BaseTest {
 
         asdcController.treatNotification(pnfNotification());
 
-        verify(distributionClient)
-                .sendFinalDistrStatus(argThat(finalStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR)));
+        verify(distributionClient).sendFinalDistrStatus(
+                argThat(finalStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR)),
+                eq("Distribution ended with status FAILURE: COMPONENT_DONE_ERROR from SDNC"));
         assertEquals(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name(), storedDistributionStatus());
     }
 
@@ -465,8 +466,9 @@ public class ASDCControllerITTest extends BaseTest {
         verify(distributionClient).sendDownloadStatus(argThat(
                 statusMessage(constructPnfServiceArtifact().getArtifactURL(), DistributionStatusEnum.DOWNLOAD_ERROR)),
                 eq("artifact not found"));
-        verify(distributionClient)
-                .sendFinalDistrStatus(argThat(finalStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR)));
+        verify(distributionClient).sendFinalDistrStatus(
+                argThat(finalStatus(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR)),
+                eq("Distribution ended with status FAILURE: COMPONENT_DONE_ERROR from SO"));
         assertFalse(serviceRepository.findById(PNF_SERVICE_UUID).isPresent());
         assertEquals(DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name(), storedDistributionStatus());
     }

@@ -21,6 +21,7 @@
 package org.onap.so.asdc.tenantIsolation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
@@ -102,6 +103,22 @@ public class WatchdogDistributionTest extends BaseTest {
     public void getOverallDistributionStatusExceptionTest() throws Exception {
         expectedException.expect(Exception.class);
         watchdogDistribution.getOverallDistributionStatus(null);
+    }
+
+    @Test
+    public void getComponentFailureSummaryNamesFailedComponentsTest() {
+        assertEquals("COMPONENT_DONE_ERROR from AAI, SDNC, SO",
+                watchdogDistribution.getComponentFailureSummary(FAILURE_TEST));
+    }
+
+    @Test
+    public void getComponentFailureSummaryNamesMissingComponentsTest() {
+        assertEquals("no status from SO, AAI, SDNC", watchdogDistribution.getComponentFailureSummary(INCOMPLETE_TEST));
+    }
+
+    @Test
+    public void getComponentFailureSummarySuccessTest() {
+        assertNull(watchdogDistribution.getComponentFailureSummary(SUCCESS_TEST));
     }
 
     @Test

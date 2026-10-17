@@ -21,6 +21,7 @@
 package org.onap.so.asdc.client;
 
 import static org.mockito.Mockito.*;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +32,11 @@ import org.onap.sdc.api.IDistributionClient;
 import org.onap.sdc.api.consumer.IDistributionStatusMessage;
 import org.onap.sdc.api.consumer.IFinalDistrStatusMessage;
 import org.onap.sdc.api.notification.DistributionStatusEnum;
+import org.onap.sdc.api.notification.IArtifactInfo;
+import org.onap.sdc.api.notification.INotificationData;
+import org.onap.sdc.api.notification.IResourceInstance;
+import org.onap.so.asdc.installer.ResourceStructure;
+import org.onap.so.asdc.installer.VfModuleArtifact;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DistributionStatusSenderTest {
@@ -82,5 +88,32 @@ public class DistributionStatusSenderTest {
     public void sendFinalDistributionStatus_withError_callsSendFinalDistrStatusWithReason() {
         sender.sendFinalDistributionStatus(client, "dist-1", DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR, "bad");
         verify(client).sendFinalDistrStatus(any(IFinalDistrStatusMessage.class), eq("bad"));
+    }
+
+    @Test
+    public void sendDeployNotificationsForResource_artifactNotUsedByModules_isNotReportedAsError() {
+        IArtifactInfo artifact = mock(IArtifactInfo.class);
+        when(artifact.getArtifactType()).thenReturn("HEAT_ENV");
+        when(artifact.getArtifactUUID()).thenReturn("artifact-uuid");
+        when(artifact.getArtifactURL()).thenReturn("http://artifact");
+        IResourceInstance resourceInstance = mock(IResourceInstance.class);
+        when(resourceInstance.getArtifacts()).thenReturn(Collections.singletonList(artifact));
+        INotificationData notification = mock(INotificationData.class);
+        when(notification.getDistributionID()).thenReturn("dist-1");
+        VfModuleArtifact unusedArtifact = mock(VfModuleArtifact.class);
+        when(unusedArtifact.getDeployedInDb()).thenReturn(0);
+        ResourceStructure resourceStructure = mock(ResourceStructure.class);
+        when(resourceStructure.getResourceInstance()).thenReturn(resourceInstance);
+        when(resourceStructure.getNotification()).thenReturn(notification);
+        when(resourceStructure.getArtifactsMapByUUID())
+                .thenReturn(Collections.singletonMap("artifact-uuid", unusedArtifact));
+
+        sender.sendDeployNotificationsForResource(client, resourceStructure, DistributionStatusEnum.DEPLOY_OK, null);
+
+        verify(client).sendDeploymentStatus(
+                argThat(message -> message.getStatus() == DistributionStatusEnum.DEPLOY_OK
+                        && "http://artifact".equals(message.getArtifactURL())),
+                eq(DistributionStatusSender.ARTIFACT_NOT_USED));
+        verifyNoMoreInteractions(client);
     }
 }

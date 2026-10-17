@@ -22,14 +22,19 @@
 
 package org.onap.so.asdc.tenantIsolation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.aaiclient.client.aai.entities.uri.AAIResourceUri;
 import org.onap.aaiclient.client.aai.entities.uri.AAIUriFactory;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.entities.uri.Depth;
+import org.onap.sdc.api.notification.DistributionStatusEnum;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
@@ -155,6 +160,41 @@ public class WatchdogDistribution {
         }
         logger.debug("Exiting getOverallDistributionStatus method in WatchdogDistribution");
         return status;
+    }
+
+    /**
+     * Describes which components made a distribution fail: those that reported COMPONENT_DONE_ERROR and the configured
+     * components that have not reported any status.
+     *
+     * @return the description, or null when no component failed or is missing
+     */
+    public String getComponentFailureSummary(String distributionId) {
+        List<WatchdogComponentDistributionStatus> cdStatuses =
+                watchdogCDStatusRepository.findByDistributionId(distributionId);
+        Set<String> reported = new HashSet<>();
+        Set<String> failed = new TreeSet<>();
+        for (WatchdogComponentDistributionStatus cdStatus : cdStatuses) {
+            reported.add(cdStatus.getComponentName());
+            if (DistributionStatusEnum.COMPONENT_DONE_ERROR.name()
+                    .equalsIgnoreCase(cdStatus.getComponentDistributionStatus())) {
+                failed.add(cdStatus.getComponentName());
+            }
+        }
+        List<String> missing = new ArrayList<>();
+        for (String name : componentNames) {
+            if (!reported.contains(name)) {
+                missing.add(name);
+            }
+        }
+
+        List<String> parts = new ArrayList<>();
+        if (!failed.isEmpty()) {
+            parts.add("COMPONENT_DONE_ERROR from " + String.join(", ", failed));
+        }
+        if (!missing.isEmpty()) {
+            parts.add("no status from " + String.join(", ", missing));
+        }
+        return parts.isEmpty() ? null : String.join("; ", parts);
     }
 
     public void executePatchAAI(String distributionId, String serviceModelInvariantUUID, String distributionStatus)

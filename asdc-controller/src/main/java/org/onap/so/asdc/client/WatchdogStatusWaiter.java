@@ -38,6 +38,7 @@ import org.springframework.stereotype.Component;
 public class WatchdogStatusWaiter {
 
     private static final Logger logger = LoggerFactory.getLogger(WatchdogStatusWaiter.class);
+    static final String TIMEOUT_ERROR = "Timeout occurred while waiting for all components to report status";
 
     @FunctionalInterface
     interface Sleeper {
@@ -86,6 +87,8 @@ public class WatchdogStatusWaiter {
                     overallStatus = DistributionStatusEnum.DISTRIBUTION_COMPLETE_OK.name();
                 } else {
                     overallStatus = DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name();
+                    watchdogError =
+                            describeFailure(distributionId, "Distribution ended with status " + distributionStatus);
                 }
                 componentsComplete = true;
             }
@@ -93,7 +96,7 @@ public class WatchdogStatusWaiter {
 
         if (!componentsComplete) {
             logger.debug("Timeout of {} seconds was reached before all components reported status", watchDogTimeout);
-            watchdogError = "Timeout occurred while waiting for all components to report status";
+            watchdogError = describeFailure(distributionId, TIMEOUT_ERROR);
             overallStatus = DistributionStatusEnum.DISTRIBUTION_COMPLETE_ERROR.name();
         }
 
@@ -103,6 +106,16 @@ public class WatchdogStatusWaiter {
         }
 
         return new WatchdogStatusResult(overallStatus, watchdogError, isDeploySuccess);
+    }
+
+    private String describeFailure(String distributionId, String error) {
+        try {
+            String summary = wd.getComponentFailureSummary(distributionId);
+            return summary == null ? error : error + ": " + summary;
+        } catch (Exception e) {
+            logger.debug("Could not determine the failed components for DistributionId: {}", distributionId, e);
+            return error;
+        }
     }
 
     private void sleepQuietly(long millis) {

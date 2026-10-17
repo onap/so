@@ -211,10 +211,11 @@ public class ResourceInstaller {
                 errorMessage);
         // at resource level
         for (IResourceInstance resource : iNotif.getResources()) {
-            resourceStructure = new VfResourceStructure(iNotif, resource);
-            errorMessage = String.format("Resource with UUID: %s already exists", resource.getResourceUUID());
-            statusSender.sendCsarDeployNotification(client, resourceStructure, toscaResourceStructure, deployStatus,
-                    errorMessage);
+            String resourceMessage = deployStatus == DistributionStatusEnum.ALREADY_DEPLOYED
+                    ? String.format("Resource with UUID: %s already exists", resource.getResourceUUID())
+                    : errorMessage;
+            statusSender.sendDeployNotificationsForResource(client, new VfResourceStructure(iNotif, resource),
+                    deployStatus, resourceMessage);
         }
     }
 
