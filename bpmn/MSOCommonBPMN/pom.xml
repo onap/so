@@ -70,6 +70,8 @@
               </includes>
               <excludes>
                 <exclude>**/bpmn/common/scripts/**/*Test.java</exclude>
+                <!-- ClockUtil is global; cached Spring engines must not observe these tests' clock. -->
+                <exclude>**/bpmn/common/verification/WorkflowMessagePersistenceTest.java</exclude>
               </excludes>
             </configuration>
           </execution>
@@ -246,4 +248,34 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>groovy-migration-verification</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>groovy-persistence-tests</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <includes>
+                    <include>**/bpmn/common/verification/WorkflowMessagePersistenceTest.java</include>
+                  </includes>
+                  <failIfNoTests>true</failIfNoTests>
+                  <forkCount>1</forkCount>
+                  <reuseForks>false</reuseForks>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
