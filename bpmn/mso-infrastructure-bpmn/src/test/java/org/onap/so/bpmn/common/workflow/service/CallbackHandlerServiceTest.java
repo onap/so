@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2019 Nokia.
  * ================================================================================
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,18 +23,23 @@
 package org.onap.so.bpmn.common.workflow.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.RETURNS_SELF;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import org.camunda.bpm.engine.OptimisticLockingException;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.impl.ExecutionQueryImpl;
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.ExecutionQuery;
+import org.camunda.bpm.engine.runtime.MessageCorrelationBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.bpmn.common.workflow.service.CallbackHandlerService.CallbackError;
@@ -52,13 +59,17 @@ public class CallbackHandlerServiceTest {
     private static final String LOG_MARKER = "markerTest";
 
     private RuntimeService runtimeServiceMock;
+    private MessageCorrelationBuilder correlationBuilderMock;
+    private Environment environmentMock;
     private CallbackHandlerService testedObject;
 
     @Before
     public void setup() {
         runtimeServiceMock = mock(RuntimeService.class);
+        correlationBuilderMock = mock(MessageCorrelationBuilder.class, RETURNS_SELF);
+        when(runtimeServiceMock.createMessageCorrelation(EVENT_NAME)).thenReturn(correlationBuilderMock);
         testedObject = new CallbackHandlerService(runtimeServiceMock);
-        mockEnvironment();
+        environmentMock = mockEnvironment();
     }
 
     @Test
@@ -76,6 +87,58 @@ public class CallbackHandlerServiceTest {
     public void callbackNotSuccessful_noWaitingProcesses() {
         // given
         mockRuntimeService(Collections.emptyList());
+        // when
+        CallbackResult callbackResult = testedObject.handleCallback(METHOD_NAME, MESSAGE, EVENT_NAME, MESSAGE_VARIABLE,
+                CORRELATION_VARIABLE, CORRELATION_VALUE, LOG_MARKER, new HashMap<>());
+        // then
+        assertThat(callbackResult).isExactlyInstanceOf(CallbackError.class);
+    }
+
+    @Test
+    public void callbackSuccessful_afterOptimisticLockingRetry() {
+        // given
+        mockRuntimeService(new ArrayList<>(Arrays.asList(new ExecutionEntity())));
+        when(correlationBuilderMock.correlateWithResult()).thenThrow(new OptimisticLockingException("conflict"))
+                .thenReturn(null);
+        // when
+        CallbackResult callbackResult = testedObject.handleCallback(METHOD_NAME, MESSAGE, EVENT_NAME, MESSAGE_VARIABLE,
+                CORRELATION_VARIABLE, CORRELATION_VALUE, LOG_MARKER, new HashMap<>());
+        // then
+        assertThat(callbackResult).isExactlyInstanceOf(CallbackSuccess.class);
+        verify(correlationBuilderMock, times(2)).correlateWithResult();
+    }
+
+    @Test
+    public void callbackNotSuccessful_optimisticLockingRetriesExhausted() {
+        // given
+        mockRuntimeService(new ArrayList<>(Arrays.asList(new ExecutionEntity())));
+        when(environmentMock.getProperty("mso.bpmn.optimisticlockingexception.retrycount")).thenReturn("1");
+        when(correlationBuilderMock.correlateWithResult()).thenThrow(new OptimisticLockingException("conflict"));
+        // when
+        CallbackResult callbackResult = testedObject.handleCallback(METHOD_NAME, MESSAGE, EVENT_NAME, MESSAGE_VARIABLE,
+                CORRELATION_VARIABLE, CORRELATION_VALUE, LOG_MARKER, new HashMap<>());
+        // then
+        assertThat(callbackResult).isExactlyInstanceOf(CallbackError.class);
+        verify(correlationBuilderMock, times(2)).correlateWithResult();
+    }
+
+    @Test
+    public void callbackNotSuccessful_processExecutionFails() {
+        // given
+        mockRuntimeService(new ArrayList<>(Arrays.asList(new ExecutionEntity())));
+        when(correlationBuilderMock.correlateWithResult()).thenThrow(new IllegalStateException("flow failed"));
+        // when
+        CallbackResult callbackResult = testedObject.handleCallback(METHOD_NAME, MESSAGE, EVENT_NAME, MESSAGE_VARIABLE,
+                CORRELATION_VARIABLE, CORRELATION_VALUE, LOG_MARKER, new HashMap<>());
+        // then
+        assertThat(callbackResult).isExactlyInstanceOf(CallbackError.class);
+        verify(correlationBuilderMock, times(1)).correlateWithResult();
+    }
+
+    @Test
+    public void callbackNotSuccessful_moreThanOneWaitingProcess() {
+        // given
+        mockRuntimeService(new ArrayList<>(Arrays.asList(new ExecutionEntity(), new ExecutionEntity())));
         // when
         CallbackResult callbackResult = testedObject.handleCallback(METHOD_NAME, MESSAGE, EVENT_NAME, MESSAGE_VARIABLE,
                 CORRELATION_VARIABLE, CORRELATION_VALUE, LOG_MARKER, new HashMap<>());

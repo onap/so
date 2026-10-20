@@ -6,6 +6,8 @@
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG.
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,7 +33,6 @@ import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
 import org.camunda.bpm.engine.OptimisticLockingException;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.Execution;
-import org.camunda.bpm.engine.runtime.MessageCorrelationResult;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
@@ -50,6 +51,7 @@ public class CallbackHandlerService {
     public static final long FAST_POLL_DUR_SECONDS = 5;
     public static final long FAST_POLL_INT_MS = 100;
     public static final long SLOW_POLL_INT_MS = 1000;
+    public static final int DEFAULT_OPTIMISTIC_LOCKING_RETRY_COUNT = 3;
 
     private static final Logger logger = LoggerFactory.getLogger(CallbackHandlerService.class);
 
@@ -105,9 +107,9 @@ public class CallbackHandlerService {
             logCallbackSuccess(method, startTime);
             return new CallbackSuccess();
         } catch (Exception e) {
-            logger.debug("Exception :", e);
             String msg = "Caught " + e.getClass().getSimpleName() + " processing " + messageEventName + " with "
                     + correlationVariable + " = '" + correlationValue + "'";
+            logger.error("{} {}", logMarker, msg, e);
             logCallbackError(method, startTime, msg);
             return new CallbackError(msg);
         }
@@ -118,10 +120,10 @@ public class CallbackHandlerService {
      * return value indicates whether or not a process was found to receive the message. Due to the synchronous nature
      * of message injection in Camunda, by the time this method returns, one of 3 things will have happened: (1) the
      * process received the message and ended, (2) the process received the message and reached an activity that
-     * suspended, or (3) an exception occurred during correlation or while the process was executing. Correlation
-     * exceptions are handled differently from process execution exceptions. Correlation exceptions are thrown so the
-     * client knows something went wrong with the delivery of the message. Process execution exceptions are logged but
-     * not thrown.
+     * suspended, or (3) an exception occurred during correlation or while the process was executing. Either kind of
+     * exception rolls back the Camunda transaction, so the process is still waiting and the message was not delivered.
+     * Both are thrown so the client is told the delivery failed. An {@link OptimisticLockingException} is retried
+     * first.
      *
      * @param messageEventName the message event name
      * @param correlationVariable the process variable used as the correlator
@@ -230,93 +232,50 @@ public class CallbackHandlerService {
             // resumed flow may send request #2 to a remote system before MSO has
             // acknowledged the notification associated with request #1.
 
+            logger.debug("{} Running {} to receive {} with {} = '{}'", logMarker, execInfoList.get(0), messageEventName,
+                    correlationVariable, correlationValue);
+
             try {
-                logger.debug("{} Running {} to receive {} with {} = '{}'", logMarker, execInfoList.get(0),
-                        messageEventName, correlationVariable, correlationValue);
-
-                @SuppressWarnings("unused")
-                MessageCorrelationResult result = runtimeService.createMessageCorrelation(messageEventName)
-                        .setVariables(variables).processInstanceVariableEquals(correlationVariable, correlationValue)
-                        .correlateWithResult();
-
-            } catch (MismatchingMessageCorrelationException e) {
-                // A correlation exception occurred even after we identified
-                // one waiting process. Throw it back to the client.
-                throw e;
+                runtimeService.createMessageCorrelation(messageEventName).setVariables(variables)
+                        .processInstanceVariableEquals(correlationVariable, correlationValue).correlateWithResult();
             } catch (OptimisticLockingException ole) {
-
-                String msg = "Caught " + ole.getClass().getSimpleName() + " after receiving " + messageEventName
-                        + " with " + correlationVariable + " = '" + correlationValue + "': " + ole;
-                logger.debug(msg);
-                logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
-                        "BPMN CORRELATION ERROR -", ErrorCode.UnknownError.getValue(), msg, ole);
-
-                // Retry for OptimisticLocking Exceptions
-                int retryCount = 0;
-                String retryStr = UrnPropertiesReader.getVariable("mso.bpmn.optimisticlockingexception.retrycount");
-                if (retryStr != null) {
-                    try {
-                        retryCount = Integer.parseInt(retryStr);
-                    } catch (NumberFormatException e) {
-                        // Ignore
-                    }
-                }
-
-                logger.debug("Retry correlate for OptimisticLockingException, retryCount:{}", retryCount);
-
-                for (; retryCount > 0; retryCount--) {
-
-                    try {
-                        Thread.sleep(SLOW_POLL_INT_MS);
-
-                        @SuppressWarnings("unused")
-                        MessageCorrelationResult result =
-                                runtimeService.createMessageCorrelation(messageEventName).setVariables(variables)
-                                        .processInstanceVariableEquals(correlationVariable, correlationValue)
-                                        .correlateWithResult();
-                        retryCount = 0;
-                        logger.debug("OptimisticLockingException retry was successful, seting retryCount: {}",
-                                retryCount);
-                    } catch (OptimisticLockingException olex) {
-                        // oleFlag = ex instanceof org.camunda.bpm.engine.OptimisticLockingException;
-                        String strMsg = "Received exception, OptimisticLockingException retry failed, retryCount:"
-                                + retryCount + " | exception returned: " + olex;
-                        logger.debug(strMsg);
-                        logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
-                                ErrorCode.UnknownError.getValue(), strMsg, olex);
-                    } catch (Exception excep) {
-                        retryCount = 0;
-                        // oleFlag = ex instanceof org.camunda.bpm.engine.OptimisticLockingException;
-                        String strMsg = "Received exception, OptimisticLockingException retry failed, retryCount:"
-                                + retryCount + " | exception returned: " + excep;
-                        logger.debug(strMsg);
-                        logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
-                                ErrorCode.UnknownError.getValue(), strMsg, excep);
-                    }
-
-                }
-
-            } catch (Exception e) {
-                // This must be an exception from the flow itself. Log it, but don't
-                // report it back to the client.
-                String msg = "Caught " + e.getClass().getSimpleName() + " running " + execInfoList.get(0)
-                        + " after receiving " + messageEventName + " with " + correlationVariable + " = '"
-                        + correlationValue + "': " + e;
-                logger.debug(msg);
-                logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
-                        ErrorCode.UnknownError.getValue(), msg, e);
+                retryCorrelation(messageEventName, correlationVariable, correlationValue, variables, ole);
             }
-        } catch (Exception e) {
-            // This must be an exception from the flow itself. Log it, but don't
-            // report it back to the client.
-            String msg = "Caught " + e.getClass().getSimpleName() + " after receiving " + messageEventName + " with "
-                    + correlationVariable + " = '" + correlationValue + "': " + e;
-            logger.debug(msg);
-            logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN CORRELATION ERROR -",
-                    ErrorCode.UnknownError.getValue(), msg, e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while correlating " + messageEventName + " with "
+                    + correlationVariable + " = '" + correlationValue + "'", e);
         }
 
         return true;
+    }
+
+    private void retryCorrelation(String messageEventName, String correlationVariable, String correlationValue,
+            Map<String, Object> variables, OptimisticLockingException firstException) throws InterruptedException {
+        int retryCount = DEFAULT_OPTIMISTIC_LOCKING_RETRY_COUNT;
+        String retryStr = UrnPropertiesReader.getVariable("mso.bpmn.optimisticlockingexception.retrycount");
+        if (retryStr != null) {
+            try {
+                retryCount = Integer.parseInt(retryStr);
+            } catch (NumberFormatException e) {
+                logger.warn("Ignoring invalid mso.bpmn.optimisticlockingexception.retrycount '{}'", retryStr);
+            }
+        }
+
+        OptimisticLockingException lastException = firstException;
+        for (int attempt = 1; attempt <= retryCount; attempt++) {
+            logger.warn("{} correlating {} with {} = '{}', retry {} of {}", lastException.getClass().getSimpleName(),
+                    messageEventName, correlationVariable, correlationValue, attempt, retryCount);
+            Thread.sleep(SLOW_POLL_INT_MS);
+            try {
+                runtimeService.createMessageCorrelation(messageEventName).setVariables(variables)
+                        .processInstanceVariableEquals(correlationVariable, correlationValue).correlateWithResult();
+                return;
+            } catch (OptimisticLockingException ole) {
+                lastException = ole;
+            }
+        }
+        throw lastException;
     }
 
     /**
