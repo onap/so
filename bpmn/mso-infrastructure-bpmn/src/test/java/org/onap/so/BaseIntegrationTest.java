@@ -20,6 +20,10 @@
 
 package org.onap.so;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import java.util.regex.Pattern;
 import org.junit.After;
 import org.junit.runner.RunWith;
 import org.onap.so.bpmn.common.BPMNUtil;
@@ -37,7 +41,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @ContextConfiguration
-@AutoConfigureWireMock(port = 0)
+@AutoConfigureWireMock(port = 0, files = "file:target/test-classes")
 public abstract class BaseIntegrationTest extends WorkflowTest {
     @Autowired
     BPMNUtil bpmnUtil;
@@ -47,6 +51,14 @@ public abstract class BaseIntegrationTest extends WorkflowTest {
 
     @Autowired
     protected WireMockServer wireMockServer;
+
+    protected void stubAaiVolumeGroup(String region, String volumeGroupId, String responseFile, int status) {
+        wireMockServer.stubFor(
+                get(urlPathMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/" + "CloudOwner/"
+                        + Pattern.quote(region) + "/volume-groups/volume-group/" + Pattern.quote(volumeGroupId)))
+                                .willReturn(aResponse().withStatus(status)
+                                        .withHeader("Content-Type", "application/json").withBodyFile(responseFile)));
+    }
 
     @After
     public void baseAfterTest() {
