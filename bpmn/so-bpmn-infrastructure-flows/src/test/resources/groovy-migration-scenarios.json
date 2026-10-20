@@ -33,6 +33,296 @@
       "id": "query-job-unknown-status",
       "module": "so-bpmn-infrastructure-flows",
       "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#unknownNonterminalStatusTakesTheTimerRouteAndCanLaterFail"
+    },
+    {
+      "id": "fallout-successfulFailureRecordingPreservesIdentityAndWritesTheFailureContract",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#successfulFailureRecordingPreservesIdentityAndWritesTheFailureContract"
+    },
+    {
+      "id": "fallout-failedRequestLookupProducesAFailedHandlerResponseWithoutAnUpdate",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#failedRequestLookupProducesAFailedHandlerResponseWithoutAnUpdate"
+    },
+    {
+      "id": "fallout-failedStatusWriteCannotBeReportedAsSuccessfulFailureHandling",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#failedStatusWriteCannotBeReportedAsSuccessfulFailureHandling"
+    },
+    {
+      "id": "fallout-malformedSuccessfulLookupResponseFailsBeforeWritingTheRequest",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#malformedSuccessfulLookupResponseFailsBeforeWritingTheRequest"
+    },
+    {
+      "id": "fallout-omittedErrorFieldsUseTheDefinedFallbackCodeAndMessage",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#omittedErrorFieldsUseTheDefinedFallbackCodeAndMessage"
+    },
+    {
+      "id": "persisted-workflow-callbackResumesAfterRestartWithTypedAndScopedVariables",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.WorkflowMessagePersistenceTest#callbackResumesAfterRestartWithTypedAndScopedVariables"
+    },
+    {
+      "id": "persisted-workflow-timerSurvivesRestartAndExecutesTheProductionTimeoutRoute",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.WorkflowMessagePersistenceTest#timerSurvivesRestartAndExecutesTheProductionTimeoutRoute"
+    },
+    {
+      "id": "persisted-workflow-correlationSelectsOnlyTheMatchingWaitingRequest",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.WorkflowMessagePersistenceTest#correlationSelectsOnlyTheMatchingWaitingRequest"
+    },
+    {
+      "id": "persisted-workflow-invalidInputsProduceTypedErrorsWithoutCreatingWaitStates",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.WorkflowMessagePersistenceTest#invalidInputsProduceTypedErrorsWithoutCreatingWaitStates"
+    },
+    {
+      "id": "persisted-workflow-manualTaskListenersSurviveRestartWithoutRepeatingDatabaseUpdates",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.WorkflowMessagePersistenceTest#manualTaskListenersSurviveRestartWithoutRepeatingDatabaseUpdates"
+    },
+    {
+      "id": "vnf-rollback-control-enabledRollbackWithNoCreatedResourcesReachesTheSuccessActivity",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#enabledRollbackWithNoCreatedResourcesReachesTheSuccessActivity"
+    },
+    {
+      "id": "vnf-rollback-control-explicitlyDisabledRollbackExitsBeforeSuccessOrExternalCompensation",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#explicitlyDisabledRollbackExitsBeforeSuccessOrExternalCompensation"
+    },
+    {
+      "id": "vnf-rollback-control-invalidCreatedModuleCountUsesTheProductionErrorSubprocess",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#invalidCreatedModuleCountUsesTheProductionErrorSubprocess"
+    },
+    {
+      "id": "vnf-rollback-control-absentRollbackDataUsesTheProductionErrorSubprocess",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#absentRollbackDataUsesTheProductionErrorSubprocess"
+    },
+    {
+      "id": "vnf-rollback-control-successfulNoopRollbackRetainsTheOriginalRequestError",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#successfulNoopRollbackRetainsTheOriginalRequestError"
+    },
+    {
+      "id": "prepare-update-vf-module-success",
+      "module": "mso-infrastructure-bpmn",
+      "test": "org.onap.so.bpmn.common.PrepareUpdateAAIVfModuleIT#happyPath"
+    },
+    {
+      "id": "prepare-update-vf-module-query-not-found",
+      "module": "mso-infrastructure-bpmn",
+      "test": "org.onap.so.bpmn.common.PrepareUpdateAAIVfModuleIT#badGet"
+    },
+    {
+      "id": "prepare-update-vf-module-base-with-add-ons",
+      "module": "mso-infrastructure-bpmn",
+      "test": "org.onap.so.bpmn.common.PrepareUpdateAAIVfModuleIT#failValidation1"
+    },
+    {
+      "id": "prepare-update-vf-module-missing-module",
+      "module": "mso-infrastructure-bpmn",
+      "test": "org.onap.so.bpmn.common.PrepareUpdateAAIVfModuleIT#failValidation2"
+    },
+    {
+      "id": "prepare-update-vf-module-update-not-found",
+      "module": "mso-infrastructure-bpmn",
+      "test": "org.onap.so.bpmn.common.PrepareUpdateAAIVfModuleIT#badPatch"
+    },
+    {
+      "id": "allotted-resource-rollback-createdResourceIsDeletedExactlyOnce",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.AllottedResourceRollbackProcessTest#createdResourceIsDeletedExactlyOnce"
+    },
+    {
+      "id": "allotted-resource-rollback-alreadyDeletedResourceIsAnIdempotentSuccess",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.AllottedResourceRollbackProcessTest#alreadyDeletedResourceIsAnIdempotentSuccess"
+    },
+    {
+      "id": "allotted-resource-rollback-resourceVersionConflictRecordsRollbackFailure",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.AllottedResourceRollbackProcessTest#resourceVersionConflictRecordsRollbackFailure"
+    },
+    {
+      "id": "allotted-resource-rollback-unavailableInventoryRecordsRollbackFailure",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.AllottedResourceRollbackProcessTest#unavailableInventoryRecordsRollbackFailure"
+    },
+    {
+      "id": "allotted-resource-rollback-disabledRollbackDoesNotDeleteTheResource",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.AllottedResourceRollbackProcessTest#disabledRollbackDoesNotDeleteTheResource"
+    },
+    {
+      "id": "allotted-resource-rollback-noCreatedResourceSkipsCompensation",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.AllottedResourceRollbackProcessTest#noCreatedResourceSkipsCompensation"
+    },
+    {
+      "id": "allotted-resource-rollback-resourceAbsentBeforeDeletionNeedsNoDeleteRequest",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.AllottedResourceRollbackProcessTest#resourceAbsentBeforeDeletionNeedsNoDeleteRequest"
+    },
+    {
+      "id": "allotted-resource-rollback-absentInventoryStopsBeforeSdncCompensation",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.AllottedResourceRollbackProcessTest#absentInventoryStopsBeforeSdncCompensation"
+    },
+    {
+      "id": "allotted-resource-rollback-rejectedPendingDeleteUpdateStopsBeforeSdncCompensation",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.AllottedResourceRollbackProcessTest#rejectedPendingDeleteUpdateStopsBeforeSdncCompensation"
+    },
+    {
+      "id": "cloud-leased-line-delete-disabledSdncDeletesTheVersionedResourceAndRecordsCompletion",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineDeleteProcessTest#disabledSdncDeletesTheVersionedResourceAndRecordsCompletion"
+    },
+    {
+      "id": "cloud-leased-line-delete-rejectedDeletionDoesNotRecordSuccessfulCompletion",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineDeleteProcessTest#rejectedDeletionDoesNotRecordSuccessfulCompletion"
+    },
+    {
+      "id": "cloud-leased-line-delete-missingInventoryStopsBeforeDeletionAndCompletion",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineDeleteProcessTest#missingInventoryStopsBeforeDeletionAndCompletion"
+    },
+    {
+      "id": "cloud-leased-line-delete-missingCallbackStopsBeforeExternalMutation",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineDeleteProcessTest#missingCallbackStopsBeforeExternalMutation"
+    },
+    {
+      "id": "tn-transport-activationWithSdncDisabledUpdatesAaiAndRecordsTheFinishedJob",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.TnTransportLifecycleProcessTest#activationWithSdncDisabledUpdatesAaiAndRecordsTheFinishedJob"
+    },
+    {
+      "id": "tn-transport-deactivationWithSdncDisabledUpdatesAaiAndRecordsTheFinishedJob",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.TnTransportLifecycleProcessTest#deactivationWithSdncDisabledUpdatesAaiAndRecordsTheFinishedJob"
+    },
+    {
+      "id": "tn-transport-missingCallbackRetainsItsBusinessErrorThroughTheProductionErrorHandler",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.TnTransportLifecycleProcessTest#missingCallbackRetainsItsBusinessErrorThroughTheProductionErrorHandler"
+    },
+    {
+      "id": "tn-transport-aaiUpdateFailureRetainsItsOriginalErrorAndPreventsACompletedStatusWrite",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.TnTransportLifecycleProcessTest#aaiUpdateFailureRetainsItsOriginalErrorAndPreventsACompletedStatusWrite"
+    },
+    {
+      "id": "tn-transport-rejectedStatusWriteUsesTheWorkflowErrorRoute",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.TnTransportLifecycleProcessTest#rejectedStatusWriteUsesTheWorkflowErrorRoute"
+    },
+    {
+      "id": "model-version-comparison-equivalentModelsUseBothRealDecompositionCallsAndProduceNoChanges",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#equivalentModelsUseBothRealDecompositionCallsAndProduceNoChanges"
+    },
+    {
+      "id": "model-version-comparison-changedModelsPreserveAdditionAndDeletionOrderAcrossCallMappings",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#changedModelsPreserveAdditionAndDeletionOrderAcrossCallMappings"
+    },
+    {
+      "id": "model-version-comparison-unavailableTargetCatalogStopsBeforeTheOriginalQueryOrComparison",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#unavailableTargetCatalogStopsBeforeTheOriginalQueryOrComparison"
+    },
+    {
+      "id": "model-version-comparison-missingOriginalCatalogStopsBeforeComparison",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#missingOriginalCatalogStopsBeforeComparison"
+    },
+    {
+      "id": "model-version-comparison-malformedSuccessfulTargetDecompositionStopsBeforeTheOriginalQuery",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#malformedSuccessfulTargetDecompositionStopsBeforeTheOriginalQuery"
+    },
+    {
+      "id": "model-version-comparison-missingModelIdentityStopsBeforeAnyCatalogRequest",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#missingModelIdentityStopsBeforeAnyCatalogRequest"
+    },
+    {
+      "id": "allotted-sdnc-rollback-brgRollbackWaitsForEachControllerCallbackBeforeDeletingInventory",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.AllottedResourceSdncRollbackProcessTest#brgRollbackWaitsForEachControllerCallbackBeforeDeletingInventory"
+    },
+    {
+      "id": "allotted-sdnc-rollback-txcRollbackWaitsForEachControllerCallbackBeforeDeletingInventory",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.AllottedResourceSdncRollbackProcessTest#txcRollbackWaitsForEachControllerCallbackBeforeDeletingInventory"
+    },
+    {
+      "id": "allotted-sdnc-rollback-failedControllerCallbacksStopTheRemainingCompensationStages",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.AllottedResourceSdncRollbackProcessTest#failedControllerCallbacksStopTheRemainingCompensationStages"
+    },
+    {
+      "id": "allotted-sdnc-rollback-controllerTimeoutStopsInventoryDeletionAndRejectsLateCallbacks",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.AllottedResourceSdncRollbackProcessTest#controllerTimeoutStopsInventoryDeletionAndRejectsLateCallbacks"
+    },
+    {
+      "id": "allotted-sdnc-rollback-rejectedControllerRequestStopsBeforeCallbackWaitingOrInventoryDeletion",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.AllottedResourceSdncRollbackProcessTest#rejectedControllerRequestStopsBeforeCallbackWaitingOrInventoryDeletion"
+    },
+    {
+      "id": "service-intent-creationInitializesStatusAndReturnsTheJobWithoutCallingTheCllSubprocess",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ServiceIntentProcessTest#creationInitializesStatusAndReturnsTheJobWithoutCallingTheCllSubprocess"
+    },
+    {
+      "id": "service-intent-modificationUsesTheTnDispatchRouteAfterReadingTheServiceModel",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ServiceIntentProcessTest#modificationUsesTheTnDispatchRouteAfterReadingTheServiceModel"
+    },
+    {
+      "id": "service-intent-deletionOfAnotherServiceTypeReturnsTheJobWithoutCallingTheCllSubprocess",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ServiceIntentProcessTest#deletionOfAnotherServiceTypeReturnsTheJobWithoutCallingTheCllSubprocess"
+    },
+    {
+      "id": "service-intent-missingSubscriberStopsEachWorkflowBeforeInventoryStatusOrAcceptedResponse",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ServiceIntentProcessTest#missingSubscriberStopsEachWorkflowBeforeInventoryStatusOrAcceptedResponse"
+    },
+    {
+      "id": "service-intent-missingCreationModelStopsBeforeStatusInitializationAndAcceptedResponse",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ServiceIntentProcessTest#missingCreationModelStopsBeforeStatusInitializationAndAcceptedResponse"
+    },
+    {
+      "id": "service-intent-missingServiceStopsModifyAndDeleteBeforeAnyExternalAction",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ServiceIntentProcessTest#missingServiceStopsModifyAndDeleteBeforeAnyExternalAction"
+    },
+    {
+      "id": "service-intent-cllDeletionFailureReturnsFromTheRealChildWithoutACompletionStatusWrite",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ServiceIntentProcessTest#cllDeletionFailureReturnsFromTheRealChildWithoutACompletionStatusWrite"
+    },
+    {
+      "id": "service-intent-missingCllInventoryFailsBeforeDeletionAndDoesNotLoseTheAcceptedJobIdentifier",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ServiceIntentProcessTest#missingCllInventoryFailsBeforeDeletionAndDoesNotLoseTheAcceptedJobIdentifier"
+    },
+    {
+      "id": "service-intent-cllDeletionRetainsTheServiceAndModelForTheFinalStatusUpdate",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ServiceIntentProcessTest#cllDeletionRetainsTheServiceAndModelForTheFinalStatusUpdate"
     }
   ],
   "coverageSlices": [],
