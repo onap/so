@@ -1,0 +1,8 @@
+{
+  "vf-module-id": "lukewarm",
+  "vf-module-name": "PCRF::module-0-0",
+  "is-base-vf-module": true,
+  "heat-stack-id": "fastburn",
+  "orchestration-status": "pending-create",
+  "resource-version": "0000074"
+}
