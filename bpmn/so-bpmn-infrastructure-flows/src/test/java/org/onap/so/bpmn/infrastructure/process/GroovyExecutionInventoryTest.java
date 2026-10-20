@@ -23,6 +23,7 @@ package org.onap.so.bpmn.infrastructure.process;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +37,7 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -49,8 +51,12 @@ import java.util.regex.Matcher;
 import java.util.stream.Stream;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.junit.Test;
+import org.camunda.bpm.engine.ProcessEngine;
+import org.camunda.bpm.engine.ProcessEngineConfiguration;
+import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.camunda.connect.plugin.impl.ConnectProcessEnginePlugin;
 import org.junit.Assume;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -83,6 +89,97 @@ public class GroovyExecutionInventoryTest {
             assertEquals(diagnostic, baseline.path("sha256").asText(), inventory.fingerprint());
             validateProtectedSurfaces(inventory, manifest);
         }
+    }
+
+    @Test
+    public void packagedProductionDefinitionsDeployInCamunda() throws Exception {
+        Assume.assumeTrue("Packaged deployment smoke requires groovy-migration-verification profile",
+                Boolean.getBoolean("groovy.migration.verification"));
+        Inventory inventory = packagedInventory();
+        Map<String, String> failures = new TreeMap<>();
+        Set<String> deployed = new TreeSet<>();
+        ProcessEngineConfigurationImpl configuration = (ProcessEngineConfigurationImpl) ProcessEngineConfiguration
+                .createStandaloneInMemProcessEngineConfiguration();
+        String name = "production-deployment-" + java.util.UUID.randomUUID();
+        configuration.setProcessEngineName(name);
+        configuration.setJdbcUrl("jdbc:h2:mem:" + name + ";DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
+        configuration.setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_CREATE_DROP);
+        configuration.setEnforceHistoryTimeToLive(false);
+        configuration.setJobExecutorActivate(false);
+        configuration.setHistory(ProcessEngineConfiguration.HISTORY_NONE);
+        configuration.setProcessEnginePlugins(Collections.singletonList(new ConnectProcessEnginePlugin()));
+        ProcessEngine engine = configuration.buildProcessEngine();
+        try {
+            for (Map.Entry<String, byte[]> resource : inventory.productionBytes.entrySet()) {
+                String resourceName = resource.getKey();
+                if (!resourceName.endsWith(".bpmn") && !resourceName.endsWith(".bpmn20.xml")) {
+                    resourceName += ".bpmn";
+                }
+                try (InputStream content = new ByteArrayInputStream(resource.getValue())) {
+                    engine.getRepositoryService().createDeployment().name(resource.getKey())
+                            .addInputStream(resourceName, content).deploy();
+                    deployed.add(resource.getKey());
+                } catch (RuntimeException failure) {
+                    failures.put(resource.getKey(), failure.getMessage());
+                }
+            }
+            Path output = Paths.get("target", "groovy-migration", "production-deployment.json");
+            Files.createDirectories(output.getParent());
+            Map<String, Object> report = new TreeMap<>();
+            report.put("resources", inventory.resources);
+            report.put("deployedResources", deployed);
+            report.put("failedResources", failures);
+            long definitions = engine.getRepositoryService().createProcessDefinitionQuery().count();
+            report.put("deployedProcessDefinitions", definitions);
+            MAPPER.writerWithDefaultPrettyPrinter().writeValue(output.toFile(), report);
+            assertTrue(
+                    "Production BPMN deployment failed; inspect " + output.toAbsolutePath() + ": " + failures.keySet(),
+                    failures.isEmpty());
+            assertEquals("Every packaged process must be deployable", inventory.processes.size(), definitions);
+        } finally {
+            engine.close();
+        }
+    }
+
+    @Test
+    public void literalProcessTargetsResolveWithoutChangingTheirIdentifiers() throws Exception {
+        Assume.assumeTrue("Literal process resolution requires groovy-migration-verification profile",
+                Boolean.getBoolean("groovy.migration.verification"));
+        Inventory inventory = packagedInventory();
+        Map<String, String> missing = unresolvedLiteralCalls(inventory);
+        Map<String, String> dynamic = new TreeMap<>();
+        inventory.calls.forEach((call, target) -> {
+            if (target.contains("${") || target.contains("#{")) {
+                dynamic.put(call, target);
+            }
+        });
+        Map<String, Object> report = new TreeMap<>();
+        report.put("unresolvedLiteralCalls", missing);
+        report.put("dynamicCallsRequiringScenarios", dynamic);
+        Path output = Paths.get("target", "groovy-migration", "call-target-resolution.json");
+        Files.createDirectories(output.getParent());
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(output.toFile(), report);
+        assertTrue("Unresolved literal process targets: " + missing + "; inspect " + output.toAbsolutePath(),
+                missing.isEmpty());
+    }
+
+    @Test
+    public void literalResolutionPreservesWhitespaceAndRetainsDynamicCallsInTheInventory() throws Exception {
+        Inventory inventory = new Inventory();
+        inventory.add("fixture", "flow.bpmn",
+                fixture("<b:callActivity id='valid' calledElement='process'/>"
+                        + "<b:callActivity id='space' calledElement='process '/>"
+                        + "<b:callActivity id='empty' calledElement=''/>"
+                        + "<b:callActivity id='dynamic' calledElement='${chosenProcess}'/>"
+                        + "<b:callActivity id='fallback' calledElement='#{fallbackProcess}'/>"));
+        Map<String, String> expected = new TreeMap<>();
+        expected.put("fixture/flow.bpmn/process/space", "process ");
+        expected.put("fixture/flow.bpmn/process/empty", "");
+        assertEquals(expected, unresolvedLiteralCalls(inventory));
+        Map<?, ?> unresolved = (Map<?, ?>) inventory.report().get("unresolvedCalls");
+        assertEquals(4, unresolved.size());
+        assertEquals("${chosenProcess}", unresolved.get("fixture/flow.bpmn/process/dynamic"));
+        assertEquals("#{fallbackProcess}", unresolved.get("fixture/flow.bpmn/process/fallback"));
     }
 
     @Test
@@ -131,6 +228,42 @@ public class GroovyExecutionInventoryTest {
     }
 
     @Test
+    public void inventoriesExplicitGroovyLanguageConditionsAlongsideScriptFormatSurfaces() throws Exception {
+        Inventory inventory = new Inventory();
+        inventory.add("fixture", "flow.bpmn",
+                fixture(script("task") + "<b:sequenceFlow id='route'><b:conditionExpression language='groovy'>"
+                        + "execution.getVariable('enabled') == true</b:conditionExpression></b:sequenceFlow>"
+                        + "<b:sequenceFlow id='other'><b:conditionExpression language='Groovy'>"
+                        + "execution.getVariable('enabled') == false</b:conditionExpression></b:sequenceFlow>"
+                        + "<b:sequenceFlow id='juel'><b:conditionExpression language='juel'>"
+                        + "${enabled}</b:conditionExpression></b:sequenceFlow>"));
+        assertEquals(3, inventory.surfaces.size());
+        assertEquals(1, inventory.scriptFormatSurfaces);
+        assertEquals(2, inventory.languageOnlySurfaces);
+        assertTrue(inventory.surfaces.containsKey("fixture/flow.bpmn/process/route/conditionExpression[0]"));
+        assertTrue(inventory.surfaces.containsKey("fixture/flow.bpmn/process/other/conditionExpression[0]"));
+    }
+
+    @Test
+    public void scopedScenariosRejectMissingProcessesAndEntriesOutsideTheirProcess() throws Exception {
+        Inventory inventory = new Inventory();
+        inventory.add("fixture", "first.bpmn", fixture(script("task")));
+        inventory.add("fixture", "second.bpmn", new String(fixture(script("foreign")), StandardCharsets.UTF_8)
+                .replace("id='process'", "id='other'").getBytes(StandardCharsets.UTF_8));
+        validateProtectedSurfaces(inventory,
+                MAPPER.readTree("{\"scenarios\":[{\"id\":\"valid\",\"test\":\"Test#method\","
+                        + "\"processId\":\"process\",\"entryActivity\":\"task\"}],\"protectedSurfaces\":[]}"));
+        for (String scope : new String[] {"\"processId\":\"missing\"", "\"entryActivity\":\"task\"",
+                "\"processId\":\"process\",\"entryActivity\":\"missing\"",
+                "\"processId\":\"process\",\"entryActivity\":\"foreign\""}) {
+            JsonNode manifest = MAPPER.readTree("{\"scenarios\":[{\"id\":\"invalid\",\"test\":\"Test#method\"," + scope
+                    + "}],\"protectedSurfaces\":[]}");
+            assertThrows("Invalid scenario scope: " + scope, AssertionError.class,
+                    () -> validateProtectedSurfaces(inventory, manifest));
+        }
+    }
+
+    @Test
     public void protectedSurfaceWithoutScenarioFailsValidation() throws Exception {
         Inventory inventory = new Inventory();
         inventory.add("fixture", "flow.bpmn", fixture(script("first")));
@@ -147,11 +280,30 @@ public class GroovyExecutionInventoryTest {
         assertTrue("Removing a required scenario must fail inventory verification", rejected);
     }
 
+    private static Map<String, String> unresolvedLiteralCalls(Inventory inventory) {
+        Map<String, String> missing = new TreeMap<>();
+        inventory.calls.forEach((call, target) -> {
+            if (!target.contains("${") && !target.contains("#{") && !inventory.processes.contains(target)) {
+                missing.put(call, target);
+            }
+        });
+        return missing;
+    }
+
     private static void validateProtectedSurfaces(Inventory inventory, JsonNode manifest) {
         Set<String> scenarios = new TreeSet<>();
         for (JsonNode scenario : manifest.path("scenarios")) {
             assertFalse("Scenario needs an executable test", scenario.path("test").asText().isEmpty());
             assertTrue("Duplicate scenario", scenarios.add(scenario.path("id").asText()));
+            if (scenario.has("processId") || scenario.has("entryActivity")) {
+                String process = scenario.path("processId").asText();
+                assertTrue("Scenario process disappeared: " + process, inventory.processes.contains(process));
+                if (scenario.has("entryActivity")) {
+                    String entry = scenario.path("entryActivity").asText();
+                    assertTrue("Scenario entry disappeared from " + process + ": " + entry,
+                            inventory.processElements.get(process).contains(entry));
+                }
+            }
         }
         Set<String> protectedKeys = new TreeSet<>();
         for (JsonNode mapping : manifest.path("protectedSurfaces")) {
@@ -220,8 +372,12 @@ public class GroovyExecutionInventoryTest {
 
     private static final class Inventory {
         private final Set<String> resources = new TreeSet<>();
+        private final Map<String, byte[]> productionBytes = new TreeMap<>();
         private final Set<String> processes = new TreeSet<>();
         private final Map<String, String> processOwners = new TreeMap<>();
+        private final Map<String, Set<String>> processElements = new TreeMap<>();
+        private int scriptFormatSurfaces;
+        private int languageOnlySurfaces;
         private final TreeMap<String, String> surfaces = new TreeMap<>();
         private final Map<String, String> calls = new TreeMap<>();
         private final Map<String, Map<String, Object>> contracts = new TreeMap<>();
@@ -246,6 +402,7 @@ public class GroovyExecutionInventoryTest {
             }
             String resourceKey = module + "/" + resource;
             assertTrue("Duplicate BPMN resource: " + resourceKey, resources.add(resourceKey));
+            productionBytes.put(resourceKey, bytes);
             NodeList definitions = document.getElementsByTagNameNS(BPMN, "process");
             for (int i = 0; i < definitions.getLength(); i++) {
                 Element process = (Element) definitions.item(i);
@@ -253,15 +410,27 @@ public class GroovyExecutionInventoryTest {
                 assertFalse("Process needs an ID: " + resourceKey, processId.isEmpty());
                 assertTrue("Duplicate process ID: " + processId, processes.add(processId));
                 processOwners.put(processId, resourceKey);
+                Set<String> elementIds = new TreeSet<>();
+                processElements.put(processId, elementIds);
                 NodeList elements = process.getElementsByTagName("*");
                 for (int j = 0; j < elements.getLength(); j++) {
                     Element element = (Element) elements.item(j);
+                    if (BPMN.equals(element.getNamespaceURI()) && element.hasAttribute("id")) {
+                        elementIds.add(element.getAttribute("id"));
+                    }
                     if (BPMN.equals(element.getNamespaceURI()) && "callActivity".equals(element.getLocalName())) {
                         calls.put(resourceKey + "/" + processId + "/" + element.getAttribute("id"),
                                 element.getAttribute("calledElement"));
                     }
-                    if ("groovy".equalsIgnoreCase(element.getAttribute("scriptFormat"))
+                    boolean groovyFormat = "groovy".equalsIgnoreCase(element.getAttribute("scriptFormat"));
+                    boolean groovyLanguage = "groovy".equalsIgnoreCase(element.getAttribute("language"));
+                    if ((groovyFormat || groovyLanguage)
                             && (BPMN.equals(element.getNamespaceURI()) || CAMUNDA.equals(element.getNamespaceURI()))) {
+                        if (groovyFormat) {
+                            scriptFormatSurfaces++;
+                        } else {
+                            languageOnlySurfaces++;
+                        }
                         String key = resourceKey + "/" + processId + "/" + context(element, process);
                         String external = element.getAttributeNS(CAMUNDA, "resource");
                         if (external.isEmpty()) {
@@ -368,7 +537,10 @@ public class GroovyExecutionInventoryTest {
             report.put("sha256", fingerprint());
             report.put("resources", resources);
             report.put("processes", processOwners);
+            report.put("processElements", processElements);
             report.put("groovySurfaces", surfaces);
+            report.put("groovyScriptFormatSurfaces", scriptFormatSurfaces);
+            report.put("groovyLanguageOnlySurfaces", languageOnlySurfaces);
             report.put("calls", calls);
             report.put("contracts", contracts);
             Map<String, String> unresolved = new TreeMap<>();

@@ -31,16 +31,30 @@ import com.github.tomakehurst.wiremock.common.FileSource;
 public class WireMockFixtureLoadingIT {
     @Test
     public void sharedAaiResponsesAreReadableThroughTheConfiguredWireMockRoot() {
-        String[] roots = BaseIntegrationTest.class.getAnnotation(AutoConfigureWireMock.class).files();
-        Resource[] resources = new Resource[roots.length];
-        for (int index = 0; index < roots.length; index++) {
-            resources[index] = new DefaultResourceLoader().getResource(roots[index]);
-        }
-        FileSource bodies = new ResourcesFileSource(resources).child("__files");
+        FileSource bodies = workflowBodies();
 
         for (String file : new String[] {"aai-volume-group-id-info.xml", "CRTGVNF_queryAAIResponseVolume.xml",
                 "CRTGVNF_queryAAIResponseVolume_idsNotMatch.xml", "aaiFault.xml"}) {
             assertTrue(file, bodies.getBinaryFileNamed(file).readContents().length > 0);
         }
+    }
+
+    @Test
+    public void infrastructureResponsesAreReadableThroughTheConfiguredWireMockRoot() {
+        FileSource bodies = workflowBodies();
+        for (String file : new String[] {"GenericFlows/getSIUrlById.xml",
+                "VCPE/DoCreateAllottedResourceTXC/getArTxc2.xml", "VfModularity/UpdateAAIVfModuleRequest.xml"}) {
+            assertTrue(file, bodies.getBinaryFileNamed(file).readContents().length > 0);
+        }
+    }
+
+    private FileSource workflowBodies() {
+        String[] roots = BaseIntegrationTest.class.getAnnotation(AutoConfigureWireMock.class).files();
+        Resource[] resources = new Resource[roots.length];
+        for (int index = 0; index < roots.length; index++) {
+            resources[index] = new DefaultResourceLoader().getResource(roots[index]);
+        }
+        return new ResourcesFileSource(resources).child("__files");
+
     }
 }
