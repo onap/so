@@ -8,6 +8,33 @@
     "groovySurfaces": 1310
   },
   "protectedSurfaces": [],
-  "scenarios": [],
+  "scenarios": [
+    {
+      "id": "query-job-finished",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#finishedJobExecutesAllProductionScriptsAndCompletesWithoutATimer"
+    },
+    {
+      "id": "query-job-failed",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#failedJobIsATerminalDescriptorRatherThanAnotherPoll"
+    },
+    {
+      "id": "query-job-polling",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#processingJobWaitsForItsTimerBeforeQueryingAgain"
+    },
+    {
+      "id": "query-job-timeout",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#timedOutProcessingJobUsesTheProductionTimeoutDescriptorAndCompletionRoute"
+    },
+    {
+      "id": "query-job-unknown-status",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#unknownNonterminalStatusTakesTheTimerRouteAndCanLaterFail"
+    }
+  ],
+  "coverageSlices": [],
   "retiredSurfaces": []
 }
