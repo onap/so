@@ -29,6 +29,7 @@ import org.junit.Ignore;
 
 import static org.mockito.Mockito.*
 
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
 import org.junit.runner.RunWith
@@ -93,5 +94,39 @@ class ExceptionUtilTest {
 		String errMsg = eUtil.getErrorMessage(null, "CreateVCEV2")
 		Assert.assertEquals("Unexpected error encountered in CreateVCEV2", errMsg)
 	}
+
+    @Test
+    public void testProcessSubflowsBPMNExceptionPreservesOriginalError() {
+        DelegateExecution execution = mock(DelegateExecution.class)
+        WorkflowException original = new WorkflowException("DoCreateVnf", 7000, "SDNC callback timed out", "createVnf")
+        when(execution.getVariable("testProcessKey")).thenReturn("HomingBB")
+        when(execution.getVariable("WorkflowException")).thenReturn(original)
+
+        new ExceptionUtil().processSubflowsBPMNException(execution)
+
+        verify(execution, never()).setVariable(eq("WorkflowException"), any())
+    }
+
+    @Test
+    public void testProcessSubflowsBPMNExceptionCreatesMissingError() {
+        Map<String, Object> variables = [testProcessKey: "HomingBB"]
+        DelegateExecution execution = mock(DelegateExecution.class)
+        when(execution.getVariable(anyString())).thenAnswer { invocation ->
+            variables[invocation.getArgument(0)]
+        }
+        doAnswer { invocation ->
+            variables[invocation.getArgument(0)] = invocation.getArgument(1)
+            null
+        }.when(execution).setVariable(anyString(), any())
+
+        new ExceptionUtil().processSubflowsBPMNException(execution)
+
+        Assert.assertTrue(variables["WorkflowException"] instanceof WorkflowException)
+        WorkflowException error = (WorkflowException) variables["WorkflowException"]
+        Assert.assertEquals("HomingBB", error.getProcessKey())
+        Assert.assertEquals(2500, error.getErrorCode())
+        Assert.assertEquals("Internal Error - Occured During HomingBB", error.getErrorMessage())
+        verify(execution).setVariable("WorkflowException", error)
+    }
 	
 }
