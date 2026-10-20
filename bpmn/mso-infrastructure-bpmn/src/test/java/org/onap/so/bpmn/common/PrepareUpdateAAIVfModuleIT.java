@@ -22,11 +22,16 @@
 
 package org.onap.so.bpmn.common;
 
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockAAIVfModuleBadPatch;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithDepth;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.absent;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetGenericVnfById_404;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockPatchVfModuleId;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -58,9 +63,8 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
         String prepareUpdateAAIVfModuleRequest =
                 FileUtil.readResourceFile("__files/VfModularity/PrepareUpdateAAIVfModuleRequest.xml");
 
-        MockGetGenericVnfByIdWithDepth(wireMockServer, "skask", 1, "VfModularity/GenericVnf.xml");
-        MockPutGenericVnf(wireMockServer, "/skask/vf-modules/vf-module/supercool", "PCRF", 200);
-        MockPatchVfModuleId(wireMockServer, "skask", "supercool");
+        stubGenericVnfAndModule("supercool");
+        stubModuleUpdate("supercool", 200);
 
         String businessKey = UUID.randomUUID().toString();
         Map<String, Object> variables = new HashMap<>();
@@ -78,6 +82,24 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
         String heatStackId = (String) getVariableFromHistory(businessKey, "PUAAIVfMod_heatStackId");
         logger.debug("Ouput heat-stack-id:{}", heatStackId);
         Assert.assertEquals("slowburn", heatStackId);
+        Assert.assertEquals(Boolean.TRUE, getVariableFromHistory(businessKey, "PUAAIVfMod_vfModuleOK"));
+        Assert.assertNull(getVariableFromHistory(businessKey, "WorkflowException"));
+        wireMockServer.verify(1, getRequestedFor(urlPathMatching(genericVnfPath()))
+                .withQueryParam("depth", equalTo("1")).withHeader("Accept", equalTo("application/json")));
+        wireMockServer.verify(1,
+                getRequestedFor(urlPathMatching(modulePath("supercool"))).withQueryParam("format", equalTo("count"))
+                        .withQueryParam("resultIndex", equalTo("0")).withQueryParam("resultSize", equalTo("1")));
+        wireMockServer.verify(1,
+                postRequestedFor(urlPathMatching(modulePath("supercool")))
+                        .withHeader("X-HTTP-Method-Override", equalTo("PATCH"))
+                        .withHeader("Content-Type", equalTo("application/merge-patch+json"))
+                        .withRequestBody(matchingJsonPath("$['vf-module-id']", equalTo("supercool")))
+                        .withRequestBody(matchingJsonPath("$['orchestration-status']", equalTo("pending-delete")))
+                        .withRequestBody(matchingJsonPath("$['heat-stack-id']", equalTo("slowburn")))
+                        .withRequestBody(matchingJsonPath("$['resource-version']", equalTo("0000075"))));
+        assertActivity(businessKey, "UpdateVfModule", 1);
+        assertActivity(businessKey, "EndEvent_4", 1);
+        assertActivity(businessKey, "ScriptTask_2", 0);
 
         logEnd();
     }
@@ -129,7 +151,8 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
                 FileUtil.readResourceFile("__files/VfModularity/PrepareUpdateAAIVfModuleRequest.xml")
                         .replaceFirst("supercool", "lukewarm");
 
-        MockGetGenericVnfByIdWithDepth(wireMockServer, "skask", 1, "VfModularity/GenericVnf.xml");
+        stubGenericVnfAndModule("lukewarm");
+        stubModuleUpdate("lukewarm", 200);
 
         String businessKey = UUID.randomUUID().toString();
         Map<String, Object> variables = new HashMap<>();
@@ -160,7 +183,7 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
                 FileUtil.readResourceFile("__files/VfModularity/PrepareUpdateAAIVfModuleRequest.xml")
                         .replaceFirst("supercool", "notsocool");
 
-        MockGetGenericVnfByIdWithDepth(wireMockServer, "skask", 1, "VfModularity/GenericVnf.xml");
+        stubGenericVnfAndModule("notsocool");
 
         String businessKey = UUID.randomUUID().toString();
         Map<String, Object> variables = new HashMap<>();
@@ -174,12 +197,18 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
         Assert.assertNotNull(workflowException);
         logger.debug("Subflow WorkflowException error message: {}", workflowException.getErrorMessage());
         Assert.assertTrue(workflowException.getErrorMessage().startsWith("VF Module validation error: VF Module"));
+        Assert.assertEquals(5000, workflowException.getErrorCode());
+        Assert.assertEquals(Boolean.FALSE, getVariableFromHistory(businessKey, "PUAAIVfMod_vfModuleOK"));
+        wireMockServer.verify(0, postRequestedFor(urlPathMatching(modulePath("notsocool"))));
+        assertActivity(businessKey, "ScriptTask_2", 1);
+        assertActivity(businessKey, "EndEvent_1", 1);
+        assertActivity(businessKey, "UpdateVfModule", 0);
 
         logEnd();
     }
 
     /**
-     * Test the case where the GET to AAI is successful, but the subsequent PUT returns 404.
+     * Test the case where the GET to AAI is successful, but the subsequent update returns 404.
      */
     @Test
 
@@ -190,9 +219,8 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
         String prepareUpdateAAIVfModuleRequest =
                 FileUtil.readResourceFile("__files/VfModularity/PrepareUpdateAAIVfModuleRequest.xml");
 
-        MockGetGenericVnfByIdWithDepth(wireMockServer, "skask", 1, "VfModularity/GenericVnf.xml");
-        MockAAIVfModuleBadPatch(wireMockServer,
-                "/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/supercool", 404);
+        stubGenericVnfAndModule("supercool");
+        stubModuleUpdate("supercool", 404);
 
         String businessKey = UUID.randomUUID().toString();
         Map<String, Object> variables = new HashMap<>();
@@ -213,6 +241,43 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
         logger.debug("Subflow WorkflowException error message: {}", workflowException.getErrorMessage());
 
         logEnd();
+    }
+
+    private void stubGenericVnfAndModule(String moduleId) {
+        wireMockServer.stubFor(get(urlPathMatching(genericVnfPath())).withQueryParam("depth", equalTo("1"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                        .withBodyFile("vf-module-update/generic-vnf.json")));
+        boolean missing = "notsocool".equals(moduleId);
+        wireMockServer.stubFor(get(urlPathMatching(modulePath(moduleId))).withQueryParam("format", equalTo("count"))
+                .withQueryParam("resultIndex", equalTo("0")).withQueryParam("resultSize", equalTo("1"))
+                .willReturn(aResponse().withStatus(missing ? 404 : 200)));
+        if (!missing) {
+            wireMockServer.stubFor(get(urlPathMatching(modulePath(moduleId))).withQueryParam("format", absent())
+                    .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                            .withBodyFile("vf-module-update/" + moduleId + ".json")));
+        }
+    }
+
+    private String genericVnfPath() {
+        return "/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask";
+    }
+
+    private String modulePath(String moduleId) {
+        return genericVnfPath() + "/vf-modules/vf-module/" + moduleId;
+    }
+
+    private void stubModuleUpdate(String moduleId, int status) {
+        wireMockServer.stubFor(
+                post(urlPathMatching(modulePath(moduleId))).withHeader("X-HTTP-Method-Override", equalTo("PATCH"))
+                        .withHeader("Content-Type", equalTo("application/merge-patch+json"))
+                        .willReturn(aResponse().withStatus(status)));
+    }
+
+    private void assertActivity(String businessKey, String activityId, long expected) {
+        String processId = historyService.createHistoricProcessInstanceQuery().processInstanceBusinessKey(businessKey)
+                .processDefinitionKey("PrepareUpdateAAIVfModule").singleResult().getId();
+        Assert.assertEquals(activityId, expected, historyService.createHistoricActivityInstanceQuery()
+                .processInstanceId(processId).activityId(activityId).finished().count());
     }
 }
 

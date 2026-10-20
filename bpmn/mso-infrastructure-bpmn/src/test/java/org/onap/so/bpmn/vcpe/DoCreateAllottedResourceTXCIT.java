@@ -21,16 +21,14 @@ import static org.junit.Assert.assertTrue;
 import static org.onap.so.bpmn.common.BPMNUtil.waitForWorkflowToFinish;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetAllottedResource;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetServiceInstance;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockNodeQueryServiceInstanceById;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockPatchAllottedResource;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutAllottedResource;
 import static org.onap.so.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
-import static org.onap.so.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
+import org.json.JSONObject;
 import org.onap.so.bpmn.common.BPMNUtil;
 import org.onap.so.bpmn.mock.FileUtil;
 
@@ -50,19 +48,14 @@ public class DoCreateAllottedResourceTXCIT extends AbstractTestBase {
     @Test
     public void testDoCreateAllottedResourceTXC_Success() throws Exception {
         logStart();
-        // TODO: use INST instead of DEC_INST
-        /*
-         * should be INST instead of DEC_INST, but AAI utilities appear to have a bug in that they don't URL-encode the
-         * SI id before using it in the query
-         */
-        MockNodeQueryServiceInstanceById(wireMockServer, DEC_INST, "GenericFlows/getSIUrlById.xml");
-        MockNodeQueryServiceInstanceById(wireMockServer, DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
+        stubServiceInstanceLookup(DEC_INST, "GenericFlows/getSIUrlById.xml");
+        stubServiceInstanceLookup(DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
 
         MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
         MockGetServiceInstance(wireMockServer, CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
         MockPutAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
-        MockPatchAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
-        mockSDNCAdapter(wireMockServer, 200);
+        stubAllottedResourceRelationshipsAndUpdates();
+        stubControllerResponse(200);
         mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
         Map<String, Object> variables = new HashMap<>();
@@ -87,25 +80,21 @@ public class DoCreateAllottedResourceTXCIT extends AbstractTestBase {
         assertEquals("my-vni", BPMNUtil.getVariable(processEngine, PROCNAME, "vni", processId));
         assertEquals("my-bearer-ip", BPMNUtil.getVariable(processEngine, PROCNAME, "vgmuxBearerIP", processId));
         assertEquals("my-lan-ip", BPMNUtil.getVariable(processEngine, PROCNAME, "vgmuxLanIP", processId));
+        assertCreatedAllottedResource();
         logEnd();
     }
 
     @Test
     public void testDoCreateAllottedResourceTXC_NoSI() throws Exception {
         logStart();
-        // TODO: use INST instead of DEC_INST
-        /*
-         * should be INST instead of DEC_INST, but AAI utilities appear to have a bug in that they don't URL-encode the
-         * SI id before using it in the query
-         */
-        MockNodeQueryServiceInstanceById(wireMockServer, DEC_INST, "GenericFlows/getNotFound.xml");
-        MockNodeQueryServiceInstanceById(wireMockServer, DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
+        stubServiceInstanceLookup(DEC_INST, "GenericFlows/getNotFound.xml");
+        stubServiceInstanceLookup(DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
 
         MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
         MockGetServiceInstance(wireMockServer, CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
         MockPutAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
-        MockPatchAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
-        mockSDNCAdapter(wireMockServer, 200);
+        stubAllottedResourceRelationshipsAndUpdates();
+        stubControllerResponse(200);
         mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
         Map<String, Object> variables = new HashMap<>();
@@ -126,21 +115,16 @@ public class DoCreateAllottedResourceTXCIT extends AbstractTestBase {
     @Test
     public void testDoCreateAllottedResourceTXC_ActiveAr() throws Exception {
         logStart();
-        // TODO: use INST instead of DEC_INST
-        /*
-         * should be INST instead of DEC_INST, but AAI utilities appear to have a bug in that they don't URL-encode the
-         * SI id before using it in the query
-         */
-        MockNodeQueryServiceInstanceById(wireMockServer, DEC_INST, "GenericFlows/getSIUrlById.xml");
-        MockNodeQueryServiceInstanceById(wireMockServer, DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
+        stubServiceInstanceLookup(DEC_INST, "GenericFlows/getSIUrlById.xml");
+        stubServiceInstanceLookup(DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
 
         MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "VCPE/DoCreateAllottedResourceTXC/getSIandAR.xml");
         MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID,
                 "VCPE/DoCreateAllottedResourceTXC/getArTxc2.xml");
         MockGetServiceInstance(wireMockServer, CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
         MockPutAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
-        MockPatchAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
-        mockSDNCAdapter(wireMockServer, 200);
+        stubAllottedResourceRelationshipsAndUpdates();
+        stubControllerResponse(200);
         mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
         Map<String, Object> variables = new HashMap<>();
@@ -149,13 +133,14 @@ public class DoCreateAllottedResourceTXCIT extends AbstractTestBase {
         variables.put("failExists", "false");
 
         String processId = invokeSubProcess(PROCNAME, variables);
+        assertActiveResourceWasReused(processId);
 
         injectSDNCCallbacks(callbacks, "query");
 
         waitForWorkflowToFinish(processEngine, processId);
 
         assertTrue(isProcessEndedByProcessInstanceId(processId));
-        String workflowException = BPMNUtil.getVariable(processEngine, PROCNAME, VAR_WFEX);
+        String workflowException = BPMNUtil.getVariable(processEngine, PROCNAME, VAR_WFEX, processId);
         assertEquals(null, workflowException);
 
         assertEquals("namefromrequest",
@@ -169,20 +154,15 @@ public class DoCreateAllottedResourceTXCIT extends AbstractTestBase {
     @Test
     public void testDoCreateAllottedResourceTXC_NoParentSI() throws Exception {
         logStart();
-        // TODO: use INST instead of DEC_INST
-        /*
-         * should be INST instead of DEC_INST, but AAI utilities appear to have a bug in that they don't URL-encode the
-         * SI id before using it in the query
-         */
-        MockNodeQueryServiceInstanceById(wireMockServer, DEC_INST, "GenericFlows/getSIUrlById.xml");
+        stubServiceInstanceLookup(DEC_INST, "GenericFlows/getSIUrlById.xml");
 
-        MockNodeQueryServiceInstanceById(wireMockServer, DEC_PARENT_INST, "GenericFlows/getNotFound.xml");
+        stubServiceInstanceLookup(DEC_PARENT_INST, "GenericFlows/getNotFound.xml");
 
         MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
         MockGetServiceInstance(wireMockServer, CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
         MockPutAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
-        MockPatchAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
-        mockSDNCAdapter(wireMockServer, 200);
+        stubAllottedResourceRelationshipsAndUpdates();
+        stubControllerResponse(200);
         mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
         Map<String, Object> variables = new HashMap<>();
@@ -203,19 +183,14 @@ public class DoCreateAllottedResourceTXCIT extends AbstractTestBase {
     @Test
     public void testDoCreateAllottedResourceTXC_SubProcessError() throws Exception {
         logStart();
-        // TODO: use INST instead of DEC_INST
-        /*
-         * should be INST instead of DEC_INST, but AAI utilities appear to have a bug in that they don't URL-encode the
-         * SI id before using it in the query
-         */
-        MockNodeQueryServiceInstanceById(wireMockServer, DEC_INST, "GenericFlows/getSIUrlById.xml");
-        MockNodeQueryServiceInstanceById(wireMockServer, DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
+        stubServiceInstanceLookup(DEC_INST, "GenericFlows/getSIUrlById.xml");
+        stubServiceInstanceLookup(DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
 
         MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
         MockGetServiceInstance(wireMockServer, CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
         MockPutAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
-        MockPatchAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
-        mockSDNCAdapter(wireMockServer, 404);
+        stubAllottedResourceRelationshipsAndUpdates();
+        stubControllerResponse(404);
         mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
         Map<String, Object> variables = new HashMap<>();
@@ -234,6 +209,7 @@ public class DoCreateAllottedResourceTXCIT extends AbstractTestBase {
     }
 
     private void setVariablesSuccess(Map<String, Object> variables, String requestId) {
+        variables.put("mso.workflow.sdnc.replication.delay", "PT0S");
         // TODO: need all of these?
         variables.put("isDebugLogEnabled", "true");
         variables.put("failExists", "true");
@@ -252,10 +228,10 @@ public class DoCreateAllottedResourceTXCIT extends AbstractTestBase {
 
         variables.put("serviceChainServiceInstanceId", "scsiId");
 
-        String arModelInfo = "{ " + "\"modelType\": \"allotted-resource\","
-                + "\"modelInvariantUuid\": \"ff5256d2-5a33-55df-13ab-12abad84e7ff\","
-                + "\"modelUuid\": \"fe6478e5-ea33-3346-ac12-ab121484a3fe\"," + "\"modelName\": \"vSAMP12\","
-                + "\"modelVersion\": \"1.0\"," + "\"modelCustomizationUuid\": \"MODEL-ID-1234\"," + "}";
+        String arModelInfo = new JSONObject().put("modelType", "allotted-resource")
+                .put("modelInvariantUuid", "ff5256d2-5a33-55df-13ab-12abad84e7ff")
+                .put("modelUuid", "fe6478e5-ea33-3346-ac12-ab121484a3fe").put("modelName", "vSAMP12")
+                .put("modelVersion", "1.0").put("modelCustomizationUuid", "MODEL-ID-1234").toString();
         variables.put("allottedResourceModelInfo", arModelInfo);
     }
 

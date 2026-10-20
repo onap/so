@@ -1,0 +1,23 @@
+{
+  "vnf-id": "skask",
+  "vnf-name": "STMTN5MMSC20",
+  "resource-version": "0000020",
+  "vf-modules": {
+    "vf-module": [
+      {
+        "vf-module-id": "lukewarm",
+        "is-base-vf-module": true,
+        "heat-stack-id": "fastburn",
+        "orchestration-status": "pending-create",
+        "resource-version": "0000074"
+      },
+      {
+        "vf-module-id": "supercool",
+        "is-base-vf-module": false,
+        "heat-stack-id": "slowburn",
+        "orchestration-status": "pending-create",
+        "resource-version": "0000075"
+      }
+    ]
+  }
+}

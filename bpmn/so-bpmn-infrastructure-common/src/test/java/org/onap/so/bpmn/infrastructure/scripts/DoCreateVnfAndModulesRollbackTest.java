@@ -85,6 +85,7 @@ public class DoCreateVnfAndModulesRollbackTest {
         assertEquals(Integer.valueOf(0), variables.get("DCVAMR_numOfAddOnModules"));
         assertEquals(Integer.valueOf(0), variables.get("DCVAMR_numOfModulesToDelete"));
         assertSame(Boolean.FALSE, variables.get("DCVAMR_aLaCarte"));
+        assertFalse("Eligible compensation must not be skipped", Boolean.TRUE.equals(variables.get("skipRollback")));
         assertTrue(variables.containsKey("rolledBack"));
         assertNull(variables.get("rolledBack"));
         assertTrue(variables.containsKey("rollbackError"));

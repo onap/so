@@ -197,10 +197,11 @@ public class QueryJobStatusProcessTest {
     }
 
     private void respondWith(String status) {
-        wireMockServer.stubFor(post(urlEqualTo(JOB_PATH))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json; charset=UTF-8")
-                        .withBody("{\"responseDescriptor\":{\"status\":\"" + status
-                                + "\",\"statusDescription\":\"job-result\",\"progress\":0,\"enabled\":false}}")));
+        // The engine's pooled connector outlives each method's WireMock server.
+        wireMockServer.stubFor(post(urlEqualTo(JOB_PATH)).willReturn(aResponse().withStatus(200)
+                .withHeader("Connection", "close").withHeader("Content-Type", "application/json; charset=UTF-8")
+                .withBody("{\"responseDescriptor\":{\"status\":\"" + status
+                        + "\",\"statusDescription\":\"job-result\",\"progress\":0,\"enabled\":false}}")));
     }
 
     private Job waitingTimer(ProcessInstance process) {
