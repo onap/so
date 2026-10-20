@@ -33,6 +33,81 @@
       "id": "query-job-unknown-status",
       "module": "so-bpmn-infrastructure-flows",
       "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#unknownNonterminalStatusTakesTheTimerRouteAndCanLaterFail"
+    },
+    {
+      "id": "fallout-successfulFailureRecordingPreservesIdentityAndWritesTheFailureContract",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#successfulFailureRecordingPreservesIdentityAndWritesTheFailureContract"
+    },
+    {
+      "id": "fallout-failedRequestLookupProducesAFailedHandlerResponseWithoutAnUpdate",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#failedRequestLookupProducesAFailedHandlerResponseWithoutAnUpdate"
+    },
+    {
+      "id": "fallout-failedStatusWriteCannotBeReportedAsSuccessfulFailureHandling",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#failedStatusWriteCannotBeReportedAsSuccessfulFailureHandling"
+    },
+    {
+      "id": "fallout-malformedSuccessfulLookupResponseFailsBeforeWritingTheRequest",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#malformedSuccessfulLookupResponseFailsBeforeWritingTheRequest"
+    },
+    {
+      "id": "fallout-omittedErrorFieldsUseTheDefinedFallbackCodeAndMessage",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#omittedErrorFieldsUseTheDefinedFallbackCodeAndMessage"
+    },
+    {
+      "id": "persisted-workflow-callbackResumesAfterRestartWithTypedAndScopedVariables",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.WorkflowMessagePersistenceTest#callbackResumesAfterRestartWithTypedAndScopedVariables"
+    },
+    {
+      "id": "persisted-workflow-timerSurvivesRestartAndExecutesTheProductionTimeoutRoute",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.WorkflowMessagePersistenceTest#timerSurvivesRestartAndExecutesTheProductionTimeoutRoute"
+    },
+    {
+      "id": "persisted-workflow-correlationSelectsOnlyTheMatchingWaitingRequest",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.WorkflowMessagePersistenceTest#correlationSelectsOnlyTheMatchingWaitingRequest"
+    },
+    {
+      "id": "persisted-workflow-invalidInputsProduceTypedErrorsWithoutCreatingWaitStates",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.WorkflowMessagePersistenceTest#invalidInputsProduceTypedErrorsWithoutCreatingWaitStates"
+    },
+    {
+      "id": "persisted-workflow-manualTaskListenersSurviveRestartWithoutRepeatingDatabaseUpdates",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.WorkflowMessagePersistenceTest#manualTaskListenersSurviveRestartWithoutRepeatingDatabaseUpdates"
+    },
+    {
+      "id": "vnf-rollback-control-enabledRollbackWithNoCreatedResourcesReachesTheSuccessActivity",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#enabledRollbackWithNoCreatedResourcesReachesTheSuccessActivity"
+    },
+    {
+      "id": "vnf-rollback-control-explicitlyDisabledRollbackExitsBeforeSuccessOrExternalCompensation",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#explicitlyDisabledRollbackExitsBeforeSuccessOrExternalCompensation"
+    },
+    {
+      "id": "vnf-rollback-control-invalidCreatedModuleCountUsesTheProductionErrorSubprocess",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#invalidCreatedModuleCountUsesTheProductionErrorSubprocess"
+    },
+    {
+      "id": "vnf-rollback-control-absentRollbackDataUsesTheProductionErrorSubprocess",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#absentRollbackDataUsesTheProductionErrorSubprocess"
+    },
+    {
+      "id": "vnf-rollback-control-successfulNoopRollbackRetainsTheOriginalRequestError",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#successfulNoopRollbackRetainsTheOriginalRequestError"
     }
   ],
   "coverageSlices": [],
