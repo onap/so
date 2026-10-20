@@ -36,6 +36,7 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -49,8 +50,12 @@ import java.util.regex.Matcher;
 import java.util.stream.Stream;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.junit.Test;
+import org.camunda.bpm.engine.ProcessEngine;
+import org.camunda.bpm.engine.ProcessEngineConfiguration;
+import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.camunda.connect.plugin.impl.ConnectProcessEnginePlugin;
 import org.junit.Assume;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -83,6 +88,97 @@ public class GroovyExecutionInventoryTest {
             assertEquals(diagnostic, baseline.path("sha256").asText(), inventory.fingerprint());
             validateProtectedSurfaces(inventory, manifest);
         }
+    }
+
+    @Test
+    public void packagedProductionDefinitionsDeployInCamunda() throws Exception {
+        Assume.assumeTrue("Packaged deployment smoke requires groovy-migration-verification profile",
+                Boolean.getBoolean("groovy.migration.verification"));
+        Inventory inventory = packagedInventory();
+        Map<String, String> failures = new TreeMap<>();
+        Set<String> deployed = new TreeSet<>();
+        ProcessEngineConfigurationImpl configuration = (ProcessEngineConfigurationImpl) ProcessEngineConfiguration
+                .createStandaloneInMemProcessEngineConfiguration();
+        String name = "production-deployment-" + java.util.UUID.randomUUID();
+        configuration.setProcessEngineName(name);
+        configuration.setJdbcUrl("jdbc:h2:mem:" + name + ";DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
+        configuration.setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_CREATE_DROP);
+        configuration.setEnforceHistoryTimeToLive(false);
+        configuration.setJobExecutorActivate(false);
+        configuration.setHistory(ProcessEngineConfiguration.HISTORY_NONE);
+        configuration.setProcessEnginePlugins(Collections.singletonList(new ConnectProcessEnginePlugin()));
+        ProcessEngine engine = configuration.buildProcessEngine();
+        try {
+            for (Map.Entry<String, byte[]> resource : inventory.productionBytes.entrySet()) {
+                String resourceName = resource.getKey();
+                if (!resourceName.endsWith(".bpmn") && !resourceName.endsWith(".bpmn20.xml")) {
+                    resourceName += ".bpmn";
+                }
+                try (InputStream content = new ByteArrayInputStream(resource.getValue())) {
+                    engine.getRepositoryService().createDeployment().name(resource.getKey())
+                            .addInputStream(resourceName, content).deploy();
+                    deployed.add(resource.getKey());
+                } catch (RuntimeException failure) {
+                    failures.put(resource.getKey(), failure.getMessage());
+                }
+            }
+            Path output = Paths.get("target", "groovy-migration", "production-deployment.json");
+            Files.createDirectories(output.getParent());
+            Map<String, Object> report = new TreeMap<>();
+            report.put("resources", inventory.resources);
+            report.put("deployedResources", deployed);
+            report.put("failedResources", failures);
+            long definitions = engine.getRepositoryService().createProcessDefinitionQuery().count();
+            report.put("deployedProcessDefinitions", definitions);
+            MAPPER.writerWithDefaultPrettyPrinter().writeValue(output.toFile(), report);
+            assertTrue(
+                    "Production BPMN deployment failed; inspect " + output.toAbsolutePath() + ": " + failures.keySet(),
+                    failures.isEmpty());
+            assertEquals("Every packaged process must be deployable", inventory.processes.size(), definitions);
+        } finally {
+            engine.close();
+        }
+    }
+
+    @Test
+    public void literalProcessTargetsResolveWithoutChangingTheirIdentifiers() throws Exception {
+        Assume.assumeTrue("Literal process resolution requires groovy-migration-verification profile",
+                Boolean.getBoolean("groovy.migration.verification"));
+        Inventory inventory = packagedInventory();
+        Map<String, String> missing = unresolvedLiteralCalls(inventory);
+        Map<String, String> dynamic = new TreeMap<>();
+        inventory.calls.forEach((call, target) -> {
+            if (target.contains("${") || target.contains("#{")) {
+                dynamic.put(call, target);
+            }
+        });
+        Map<String, Object> report = new TreeMap<>();
+        report.put("unresolvedLiteralCalls", missing);
+        report.put("dynamicCallsRequiringScenarios", dynamic);
+        Path output = Paths.get("target", "groovy-migration", "call-target-resolution.json");
+        Files.createDirectories(output.getParent());
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(output.toFile(), report);
+        assertTrue("Unresolved literal process targets: " + missing + "; inspect " + output.toAbsolutePath(),
+                missing.isEmpty());
+    }
+
+    @Test
+    public void literalResolutionPreservesWhitespaceAndRetainsDynamicCallsInTheInventory() throws Exception {
+        Inventory inventory = new Inventory();
+        inventory.add("fixture", "flow.bpmn",
+                fixture("<b:callActivity id='valid' calledElement='process'/>"
+                        + "<b:callActivity id='space' calledElement='process '/>"
+                        + "<b:callActivity id='empty' calledElement=''/>"
+                        + "<b:callActivity id='dynamic' calledElement='${chosenProcess}'/>"
+                        + "<b:callActivity id='fallback' calledElement='#{fallbackProcess}'/>"));
+        Map<String, String> expected = new TreeMap<>();
+        expected.put("fixture/flow.bpmn/process/space", "process ");
+        expected.put("fixture/flow.bpmn/process/empty", "");
+        assertEquals(expected, unresolvedLiteralCalls(inventory));
+        Map<?, ?> unresolved = (Map<?, ?>) inventory.report().get("unresolvedCalls");
+        assertEquals(4, unresolved.size());
+        assertEquals("${chosenProcess}", unresolved.get("fixture/flow.bpmn/process/dynamic"));
+        assertEquals("#{fallbackProcess}", unresolved.get("fixture/flow.bpmn/process/fallback"));
     }
 
     @Test
@@ -145,6 +241,16 @@ public class GroovyExecutionInventoryTest {
             rejected = true;
         }
         assertTrue("Removing a required scenario must fail inventory verification", rejected);
+    }
+
+    private static Map<String, String> unresolvedLiteralCalls(Inventory inventory) {
+        Map<String, String> missing = new TreeMap<>();
+        inventory.calls.forEach((call, target) -> {
+            if (!target.contains("${") && !target.contains("#{") && !inventory.processes.contains(target)) {
+                missing.put(call, target);
+            }
+        });
+        return missing;
     }
 
     private static void validateProtectedSurfaces(Inventory inventory, JsonNode manifest) {
@@ -220,6 +326,7 @@ public class GroovyExecutionInventoryTest {
 
     private static final class Inventory {
         private final Set<String> resources = new TreeSet<>();
+        private final Map<String, byte[]> productionBytes = new TreeMap<>();
         private final Set<String> processes = new TreeSet<>();
         private final Map<String, String> processOwners = new TreeMap<>();
         private final TreeMap<String, String> surfaces = new TreeMap<>();
@@ -246,6 +353,7 @@ public class GroovyExecutionInventoryTest {
             }
             String resourceKey = module + "/" + resource;
             assertTrue("Duplicate BPMN resource: " + resourceKey, resources.add(resourceKey));
+            productionBytes.put(resourceKey, bytes);
             NodeList definitions = document.getElementsByTagNameNS(BPMN, "process");
             for (int i = 0; i < definitions.getLength(); i++) {
                 Element process = (Element) definitions.item(i);
