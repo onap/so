@@ -22,10 +22,12 @@
 
 package org.onap.so.client;
 
+import java.util.Map;
 import java.util.Optional;
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation.Builder;
 import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,35 +40,41 @@ public class RestRequest implements CheckedSupplier<Response> {
     private final RestClient client;
     private final String method;
     private final Object entity;
+    private final Map<String, String> traceHeaders;
 
     public RestRequest(RestClient client, String method, Object entity) {
+        this(client, method, entity, Map.of());
+    }
+
+    public RestRequest(RestClient client, String method, Object entity, Map<String, String> traceHeaders) {
         this.client = client;
         this.method = method;
         this.entity = entity;
+        this.traceHeaders = traceHeaders;
     }
 
     @Override
     public Response get() throws Exception {
         final Response response;
         if ("GET".equals(method)) {
-            response = this.client.getBuilder(method).accept(this.client.getAccept()).get();
+            response = builder().accept(this.client.getAccept()).get();
         } else if ("POST".equals(method)) {
-            response = this.client.getBuilder(method).accept(this.client.getAccept())
-                    .post(Entity.entity(entity, this.client.getContentType()));
+            response =
+                    builder().accept(this.client.getAccept()).post(Entity.entity(entity, this.client.getContentType()));
         } else if ("PATCH".equals(method)) {
-            response = this.client.getBuilder(method).header("X-HTTP-Method-Override", "PATCH")
-                    .accept(this.client.getAccept()).post(Entity.entity(entity, this.client.getMergeContentType()));
+            response = builder().header("X-HTTP-Method-Override", "PATCH").accept(this.client.getAccept())
+                    .post(Entity.entity(entity, this.client.getMergeContentType()));
         } else if ("DELETE".equals(method)) {
             if (entity == null) {
-                response = this.client.getBuilder(method).accept(this.client.getAccept()).delete();
+                response = builder().accept(this.client.getAccept()).delete();
 
             } else {
-                response = this.client.getBuilder(method).accept(this.client.getAccept())
+                response = builder().accept(this.client.getAccept())
                         .build(HttpMethod.DELETE, Entity.entity(entity, this.client.getContentType())).invoke();
             }
         } else if ("PUT".equals(method)) {
-            response = this.client.getBuilder(method).accept(this.client.getAccept())
-                    .put(Entity.entity(entity, this.client.getContentType()));
+            response =
+                    builder().accept(this.client.getAccept()).put(Entity.entity(entity, this.client.getContentType()));
         } else {
             response = Response.serverError().entity(method + " not valid").build();
         }
@@ -86,6 +94,12 @@ public class RestRequest implements CheckedSupplier<Response> {
         }
 
         return response;
+    }
+
+    private Builder builder() {
+        Builder builder = this.client.getBuilder(method);
+        traceHeaders.forEach(builder::header);
+        return builder;
     }
 
 }

@@ -23,6 +23,7 @@ package org.onap.so.client;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.configuration.HttpComponentsClientConfiguration;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -32,6 +33,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+import io.micrometer.observation.ObservationRegistry;
 
 @Configuration
 public class RestTemplateConfig {
@@ -54,11 +56,12 @@ public class RestTemplateConfig {
 
     @Bean
     @Qualifier(CONFIGURABLE_REST_TEMPLATE)
-    public RestTemplate configurableRestTemplate() {
+    public RestTemplate configurableRestTemplate(ObjectProvider<ObservationRegistry> observationRegistry) {
         final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
                 httpComponentsClientConfiguration.httpComponentsClientHttpRequestFactory();
         final RestTemplate restTemplate =
                 new RestTemplate(new BufferingClientHttpRequestFactory(clientHttpRequestFactory));
+        restTemplate.setObservationRegistry(observationRegistry.getIfAvailable(() -> ObservationRegistry.NOOP));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());
         restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));
         return restTemplate;

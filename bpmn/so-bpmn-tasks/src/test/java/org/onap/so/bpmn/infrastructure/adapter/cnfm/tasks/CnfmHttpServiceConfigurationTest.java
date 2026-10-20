@@ -29,7 +29,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.configuration.HttpComponentsClientConfiguration;
 import org.onap.so.rest.service.HttpRestServiceProvider;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import io.micrometer.observation.ObservationRegistry;
 
 /**
  * @author Raviteja Karumuri (raviteja.karumuri@est.tech)
@@ -50,7 +52,8 @@ public class CnfmHttpServiceConfigurationTest {
         Mockito.when(httpComponentsClientConfiguration.httpComponentsClientHttpRequestFactory())
                 .thenReturn(requestFactory);
         final HttpRestServiceProvider returnedValue = objForTest
-                .cnfmHttpRestServiceProvider(objForTest.cnfmRestTemplateBean(httpComponentsClientConfiguration));
+                .cnfmHttpRestServiceProvider(objForTest.cnfmRestTemplateBean(httpComponentsClientConfiguration,
+                        new DefaultListableBeanFactory().getBeanProvider(ObservationRegistry.class)));
         assertNotNull(returnedValue);
     }
 }

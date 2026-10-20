@@ -30,6 +30,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.client.ClientObservationRegistry;
 import org.onap.so.db.request.beans.ArchivedInfraRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationStatus;
@@ -311,6 +312,7 @@ public class RequestsDbClient {
      */
     public InfraActiveRequests getInfraActiveRequests(String requestId, String basicAuth, String host) {
         RestTemplate template = new RestTemplate();
+        template.setObservationRegistry(ClientObservationRegistry.get());
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.AUTHORIZATION, basicAuth);
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
@@ -341,6 +343,7 @@ public class RequestsDbClient {
      */
     public void updateInfraActiveRequests(InfraActiveRequests request, String basicAuth, String host) {
         RestTemplate template = new RestTemplate();
+        template.setObservationRegistry(ClientObservationRegistry.get());
         template.getInterceptors().add(new SOSpringClientFilter());
         template.getInterceptors().add(new SpringClientPayloadFilter());
         HttpHeaders headers = new HttpHeaders();

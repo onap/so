@@ -39,9 +39,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.test.context.TestPropertySource;
-import brave.handler.MutableSpan;
-import brave.handler.SpanHandler;
-import brave.propagation.TraceContext;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.context.Context;
+import io.opentelemetry.sdk.trace.ReadWriteSpan;
+import io.opentelemetry.sdk.trace.ReadableSpan;
+import io.opentelemetry.sdk.trace.SpanProcessor;
 
 /**
  * Exercises the filtering against the running application: the predicate from {@code UntracedPathsConfiguration}, and
@@ -49,8 +51,8 @@ import brave.propagation.TraceContext;
  */
 @AutoConfigureObservability
 @Import(UntracedPathsTest.TestConfig.class)
-@TestPropertySource(properties = {"management.tracing.sampling.probability=1.0",
-        "management.observations.enable.spring.security=false",
+@TestPropertySource(properties = {"management.tracing.enabled=true", "management.tracing.sampling.probability=1.0",
+        "management.otlp.tracing.export.enabled=false", "management.observations.enable.spring.security=false",
         "management.observations.enable.tasks.scheduled.execution=false"})
 public class UntracedPathsTest extends CatalogDbAdapterBaseTest {
 
@@ -60,7 +62,7 @@ public class UntracedPathsTest extends CatalogDbAdapterBaseTest {
     private final TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
 
     @Autowired
-    private RecordingSpanHandler spans;
+    private RecordingSpanProcessor spans;
 
     @Autowired
     private FrequentTask frequentTask;
@@ -117,8 +119,8 @@ public class UntracedPathsTest extends CatalogDbAdapterBaseTest {
     @TestConfiguration
     static class TestConfig {
         @Bean
-        RecordingSpanHandler recordingSpanHandler() {
-            return new RecordingSpanHandler();
+        RecordingSpanProcessor recordingSpanProcessor() {
+            return new RecordingSpanProcessor();
         }
 
         @Bean
@@ -136,21 +138,37 @@ public class UntracedPathsTest extends CatalogDbAdapterBaseTest {
         }
     }
 
-    static class RecordingSpanHandler extends SpanHandler {
-        private final List<MutableSpan> finished = new CopyOnWriteArrayList<>();
+    static class RecordingSpanProcessor implements SpanProcessor {
+        private static final AttributeKey<String> HTTP_URL = AttributeKey.stringKey("http.url");
+
+        private final List<ReadableSpan> finished = new CopyOnWriteArrayList<>();
 
         @Override
-        public boolean end(final TraceContext context, final MutableSpan span, final Cause cause) {
+        public void onStart(final Context parentContext, final ReadWriteSpan span) {
+            // only finished spans are of interest
+        }
+
+        @Override
+        public boolean isStartRequired() {
+            return false;
+        }
+
+        @Override
+        public void onEnd(final ReadableSpan span) {
             finished.add(span);
+        }
+
+        @Override
+        public boolean isEndRequired() {
             return true;
         }
 
         List<String> names() {
-            return finished.stream().map(MutableSpan::name).collect(Collectors.toList());
+            return finished.stream().map(ReadableSpan::getName).collect(Collectors.toList());
         }
 
         List<String> urls() {
-            return finished.stream().map(span -> span.tag("http.url")).filter(url -> url != null)
+            return finished.stream().map(span -> span.getAttribute(HTTP_URL)).filter(url -> url != null)
                     .collect(Collectors.toList());
         }
 

@@ -43,6 +43,8 @@ spring:
       fail-on-empty-beans: false
   main:
     allow-bean-definition-overriding: true
+#Actuator
+management:
   tracing:
     enabled: ${TRACING_ENABLED:false}
     sampling:
@@ -51,11 +53,9 @@ spring:
       type:
         - w3c
         - b3
-#Actuator
-management:
-  zipkin:
+  otlp:
     tracing:
-      endpoint: ${TRACING_COLLECTOR_URL:http://jaeger-collector.istio-system:9411}/api/v2/spans
+      endpoint: ${TRACING_COLLECTOR_URL:http://jaeger-collector.istio-system:4318}/v1/traces
   endpoints:
     web:
       base-path: /manage

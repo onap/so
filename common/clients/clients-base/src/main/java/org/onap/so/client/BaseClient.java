@@ -79,6 +79,7 @@ public class BaseClient<I, O> {
             throws RestClientException {
         HttpEntity<I> requestEntity = new HttpEntity<I>(data, getHttpHeader());
         RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setObservationRegistry(ClientObservationRegistry.get());
         restTemplate
                 .setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());

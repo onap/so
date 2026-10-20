@@ -37,6 +37,7 @@ import org.apache.hc.core5.util.Timeout;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.logging.filter.base.ErrorCode;
+import org.onap.so.client.ClientObservationRegistry;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
@@ -176,6 +177,7 @@ public class BPRestCallback {
                 .build();
 
         RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setObservationRegistry(ClientObservationRegistry.get());
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(factory));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());

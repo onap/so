@@ -18,6 +18,7 @@ import org.camunda.bpm.engine.impl.persistence.entity.HistoricActivityInstanceEn
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
 import org.json.JSONObject;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.client.ClientObservationRegistry;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -239,6 +240,7 @@ public class CamundaRequestHandler {
                 .build();
 
         RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setObservationRegistry(ClientObservationRegistry.get());
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(factory));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());

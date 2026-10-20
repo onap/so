@@ -31,27 +31,28 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-import brave.handler.MutableSpan;
-import brave.handler.SpanHandler;
-import brave.propagation.TraceContext;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
+import io.opentelemetry.context.Context;
+import io.opentelemetry.sdk.trace.ReadWriteSpan;
+import io.opentelemetry.sdk.trace.ReadableSpan;
+import io.opentelemetry.sdk.trace.SpanProcessor;
 
 /**
- * Verifies that the tracing pipeline introduced with the Spring Boot 3 migration (Micrometer Tracing + the Brave
- * bridge, which replaced Spring Cloud Sleuth) is actually wired and reports finished spans.
+ * Verifies that the tracing pipeline (Micrometer Tracing + the OpenTelemetry bridge) is actually wired and reports
+ * finished spans.
  *
  * {@code @AutoConfigureObservability} is required: {@code @SpringBootTest} otherwise installs Spring Boot's
  * observability test customizer, which disables tracing and registers a no-op {@code Tracer}. With it enabled, a test
- * {@link SpanHandler} bean is collected by Boot's {@code BraveAutoConfiguration} and wired into the live Brave
- * {@code Tracing}, so the assertion observes a real span flowing through the pipeline. This restores the behavioural
- * verification of the original test without its {@code Thread.sleep}-then-poll-WireMock flakiness: the handler captures
- * the span synchronously on {@code end()}.
+ * {@link SpanProcessor} bean is collected by Boot's {@code OpenTelemetryTracingAutoConfiguration} and wired into the
+ * live {@code SdkTracerProvider}, so the assertion observes a real span flowing through the pipeline. The processor
+ * captures the span synchronously on {@code end()}.
  */
 @AutoConfigureObservability
-@Import(TracingTest.TestSpanHandlerConfiguration.class)
-@TestPropertySource(properties = {"management.tracing.sampling.probability=1.0"})
+@Import(TracingTest.TestSpanProcessorConfiguration.class)
+@TestPropertySource(properties = {"management.tracing.enabled=true", "management.tracing.sampling.probability=1.0",
+        "management.otlp.tracing.export.enabled=false"})
 public class TracingTest extends CatalogDbAdapterBaseTest {
 
     @Autowired
@@ -61,7 +62,7 @@ public class TracingTest extends CatalogDbAdapterBaseTest {
     Tracer tracer;
 
     @Autowired
-    TestSpanHandler testSpanHandler;
+    TestSpanProcessor testSpanProcessor;
 
     @Test
     public void thatTracingBeansAreAvailable() {
@@ -71,7 +72,7 @@ public class TracingTest extends CatalogDbAdapterBaseTest {
 
     @Test
     public void thatFinishedSpansAreReportedThroughThePipeline() {
-        testSpanHandler.clear();
+        testSpanProcessor.clear();
 
         final Span span = tracer.nextSpan().name("catalogdb-tracing-test-span").start();
         try (Tracer.SpanInScope ignored = tracer.withSpan(span)) {
@@ -80,28 +81,42 @@ public class TracingTest extends CatalogDbAdapterBaseTest {
             span.end();
         }
 
-        assertTrue("A sampled span must be reported to the registered SpanHandler",
-                testSpanHandler.spanNames().contains("catalogdb-tracing-test-span"));
+        assertTrue("A sampled span must be reported to the registered SpanProcessor",
+                testSpanProcessor.spanNames().contains("catalogdb-tracing-test-span"));
     }
 
     @TestConfiguration
-    static class TestSpanHandlerConfiguration {
+    static class TestSpanProcessorConfiguration {
         @Bean
-        TestSpanHandler testSpanHandler() {
-            return new TestSpanHandler();
+        TestSpanProcessor testSpanProcessor() {
+            return new TestSpanProcessor();
         }
     }
 
     /**
-     * Captures the names of spans reported to Brave on {@code end()}. Brave only invokes {@code end()} for sampled
-     * spans, which is why the test forces a sampling probability of 1.0.
+     * Captures the names of finished spans. The SDK only records sampled spans, which is why the test forces a sampling
+     * probability of 1.0.
      */
-    static class TestSpanHandler extends SpanHandler {
+    static class TestSpanProcessor implements SpanProcessor {
         private final List<String> spanNames = new CopyOnWriteArrayList<>();
 
         @Override
-        public boolean end(final TraceContext context, final MutableSpan span, final Cause cause) {
-            spanNames.add(span.name());
+        public void onStart(final Context parentContext, final ReadWriteSpan span) {
+            // only finished spans are of interest
+        }
+
+        @Override
+        public boolean isStartRequired() {
+            return false;
+        }
+
+        @Override
+        public void onEnd(final ReadableSpan span) {
+            spanNames.add(span.getName());
+        }
+
+        @Override
+        public boolean isEndRequired() {
             return true;
         }
 

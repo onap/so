@@ -29,10 +29,14 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Invocation.Builder;
@@ -53,11 +57,15 @@ import org.onap.so.logging.jaxrs.filter.SOMetricLogClientFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.transport.SenderContext;
 import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
 
 public abstract class RestClient {
     private static final String APPLICATION_MERGE_PATCH_JSON = "application/merge-patch+json";
+    private static final String CLIENT_OBSERVATION_NAME = "so.rest.client.requests";
+    private static final String STATUS_KEY = "status";
 
     public static final String ECOMP_COMPONENT_NAME = "MSO";
 
@@ -321,7 +329,30 @@ public abstract class RestClient {
     }
 
     protected Response buildRequest(String method, Object entity) throws Exception {
-        return new RestRequest(this, method, entity).get();
+        SenderContext<Map<String, String>> context = new SenderContext<>(Map::put);
+        context.setCarrier(new LinkedHashMap<>());
+        String targetEntity = String.valueOf(getTargetEntity());
+        context.setRemoteServiceName(targetEntity);
+        Observation observation =
+                Observation.createNotStarted(CLIENT_OBSERVATION_NAME, () -> context, ClientObservationRegistry.get())
+                        .contextualName("http " + method.toLowerCase(Locale.ROOT))
+                        .lowCardinalityKeyValue("method", method).lowCardinalityKeyValue("client.name", targetEntity)
+                        // preset for requests that get no response: Prometheus needs the same tag keys on every sample
+                        .lowCardinalityKeyValue(STATUS_KEY, "CLIENT_ERROR");
+        return observation.observeChecked(() -> {
+            try {
+                Response response = new RestRequest(this, method, entity, context.getCarrier()).get();
+                observation.lowCardinalityKeyValue(STATUS_KEY, String.valueOf(response.getStatus()));
+                return response;
+            } catch (WebApplicationException e) {
+                observation.lowCardinalityKeyValue(STATUS_KEY, String.valueOf(e.getResponse().getStatus()));
+                throw e;
+            } finally {
+                if (webTarget != null) {
+                    observation.highCardinalityKeyValue("http.url", webTarget.getUri().toString());
+                }
+            }
+        });
     }
 
     private <T> Optional<T> format(Response response, Class<T> resultClass) {

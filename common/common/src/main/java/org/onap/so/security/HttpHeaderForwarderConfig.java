@@ -21,6 +21,7 @@ package org.onap.so.security;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -29,6 +30,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import io.micrometer.observation.ObservationRegistry;
 
 /**
  * @author Sheel Bajpai (sheel.bajpai@orange.com)
@@ -38,8 +40,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Profile("serviceMesh")
 class HttpHeaderForwarderConfig implements WebMvcConfigurer {
     @Bean
-    public RestTemplate restTemplate() {
+    public RestTemplate restTemplate(ObjectProvider<ObservationRegistry> observationRegistry) {
         RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setObservationRegistry(observationRegistry.getIfAvailable(() -> ObservationRegistry.NOOP));
 
         List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
         if (CollectionUtils.isEmpty(interceptors))
