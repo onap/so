@@ -16,6 +16,7 @@ package org.onap.so;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.RuntimeService;
@@ -26,6 +27,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -36,6 +39,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ContextConfiguration
 @AutoConfigureWireMock(port = 0)
 public abstract class BaseBPMNTest {
+    private final String workflowPropertySource = getClass().getName() + "-" + UUID.randomUUID();
+
+    @Autowired
+    private ConfigurableEnvironment environment;
 
     @Autowired
     protected RuntimeService runtimeService;
@@ -57,8 +64,17 @@ public abstract class BaseBPMNTest {
     @Value("${wiremock.server.port}")
     protected int wireMockPort;
 
+    protected void setWorkflowProperties(Map<String, Object> properties) {
+        // A second Spring context would bind another MariaDB to the suite's configured port.
+        environment.getPropertySources()
+                .addFirst(new MapPropertySource(workflowPropertySource, new HashMap<>(properties)));
+    }
+
     @After
     public void shutDown() {
+        if (environment != null) {
+            environment.getPropertySources().remove(workflowPropertySource);
+        }
         wireMockServer.resetAll();
     }
 }
