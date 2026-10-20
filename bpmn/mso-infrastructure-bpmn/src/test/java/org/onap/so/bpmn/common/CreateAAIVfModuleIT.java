@@ -24,6 +24,9 @@ package org.onap.so.bpmn.common;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import java.util.HashMap;
@@ -243,11 +246,11 @@ public class CreateAAIVfModuleIT extends BaseIntegrationTest {
     }
 
     public static void MockAAICreateGenericVnf(WireMockServer wireMockServer) {
-        wireMockServer.stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*"))
-                .withRequestBody(containing("<service-id>00000000-0000-0000-0000-000000000000</service-id>"))
+        wireMockServer.stubFor(put(urlPathMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/[^/]+"))
+                .withRequestBody(matchingJsonPath("$.service-id", equalTo("00000000-0000-0000-0000-000000000000")))
                 .willReturn(aResponse().withStatus(201)));
-        wireMockServer.stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*"))
-                .withRequestBody(containing("<service-id>99999999-9999-9999-9999-999999999999</service-id>"))
+        wireMockServer.stubFor(put(urlPathMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/[^/]+"))
+                .withRequestBody(matchingJsonPath("$.service-id", equalTo("99999999-9999-9999-9999-999999999999")))
                 .willReturn(aResponse().withStatus(500).withHeader("Content-Type", "text/xml")
                         .withBodyFile("aaiFault.xml")));
     }

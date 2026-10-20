@@ -29,6 +29,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
@@ -210,6 +212,78 @@ public class ServiceTaskProcessorContractTest {
         for (Object value : Arrays.asList(true, "true")) {
             variables.put("CreateServiceWorkflowResponseSent", value);
             assertTrue(processor.responseSent(execution));
+        }
+    }
+
+    @Test
+    public void equivalentStatusesCompareAcrossRuntimeTypesWithoutTruthiness() {
+        assertTrue(processor.isOneOf(200, "200"));
+        assertTrue(processor.isOneOf(200L, 200));
+        assertTrue(processor.isOneOf(Boolean.FALSE, "false"));
+        assertFalse(processor.isOneOf(0, Boolean.FALSE));
+        assertFalse(processor.isOneOf(200, "0200"));
+        assertFalse(processor.isOneOf(200, 200.0));
+    }
+
+    @Test
+    public void sameTypeStatusComparisonKeepsCaseAndWhitespaceSignificant() {
+        assertTrue(processor.isOneOf(new String("FINISHED"), "FINISHED"));
+        assertTrue(processor.isOneOf(Boolean.FALSE, Boolean.FALSE));
+        assertFalse(processor.isOneOf("FINISHED", "finished"));
+        assertFalse(processor.isOneOf(" 200 ", 200));
+        assertFalse(processor.isOneOf("unmatched"));
+    }
+
+    @Test
+    public void nullAndEmptyStatusesRemainDistinct() {
+        assertTrue(processor.isOneOf(null, (Object) null));
+        assertTrue(processor.isOneOf("", ""));
+        assertFalse(processor.isOneOf(null, "null"));
+        assertFalse(processor.isOneOf("", (Object) null));
+        assertFalse(processor.isOneOf(null, ""));
+    }
+
+    @Test
+    public void variableStringAccessDoesNotConflateMissingEmptyFalseAndZero() {
+        variables.put("empty", "");
+        variables.put("enabled", Boolean.FALSE);
+        variables.put("count", 0);
+        assertNull(AbstractServiceTaskProcessor.getVariable(execution, "missing"));
+        assertEquals("", AbstractServiceTaskProcessor.getVariable(execution, "empty"));
+        assertEquals("false", AbstractServiceTaskProcessor.getVariable(execution, "enabled"));
+        assertEquals("0", AbstractServiceTaskProcessor.getVariable(execution, "count"));
+        assertSame(Boolean.FALSE, variables.get("enabled"));
+        assertEquals(Integer.valueOf(0), variables.get("count"));
+    }
+
+    @Test
+    public void callbackDeliveryFailureRemainsRetryableAndPreservesTheOriginalError() {
+        variables.put("isAsyncProcess", Boolean.TRUE);
+        WorkflowException original = new WorkflowException("CreateService", 5310, "original request error");
+        variables.put("WorkflowException", original);
+        WorkflowContextHolder holder = mock(WorkflowContextHolder.class);
+        doThrow(new IllegalStateException("callback unavailable")).doNothing().when(holder).processCallback(
+                eq("CreateService"), eq("process-1"), eq("request-1"), any(WorkflowCallbackResponse.class));
+        try (MockedStatic<WorkflowContextHolder> singleton = mockStatic(WorkflowContextHolder.class)) {
+            singleton.when(WorkflowContextHolder::getInstance).thenReturn(holder);
+            processor.respond(execution, 200, "first attempt");
+            assertFalse(processor.responseSent(execution));
+            assertFalse(variables.containsKey("CreateServiceWorkflowResponseSent"));
+            assertSame(original, variables.get("WorkflowException"));
+            processor.respond(execution, 201, "accepted response");
+            assertTrue(processor.responseSent(execution));
+            assertEquals("true", variables.get("CreateServiceWorkflowResponseSent"));
+            assertEquals("accepted response", variables.get("WorkflowResponse"));
+            assertSame(original, variables.get("WorkflowException"));
+            ArgumentCaptor<WorkflowCallbackResponse> responses =
+                    ArgumentCaptor.forClass(WorkflowCallbackResponse.class);
+            verify(holder, times(2)).processCallback(eq("CreateService"), eq("process-1"), eq("request-1"),
+                    responses.capture());
+            assertEquals(200, responses.getAllValues().get(0).getStatusCode());
+            assertEquals(201, responses.getAllValues().get(1).getStatusCode());
+            processor.respond(execution, 500, "duplicate response");
+            verifyNoMoreInteractions(holder);
+            assertEquals("accepted response", variables.get("WorkflowResponse"));
         }
     }
 

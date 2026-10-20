@@ -22,6 +22,7 @@ package org.onap.so.bpmn.common.verification;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -33,8 +34,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
@@ -76,6 +81,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
+import org.onap.so.client.policy.PolicyClientImpl;
 import org.onap.so.bpmn.common.scripts.ReceiveWorkflowMessage;
 import org.onap.so.bpmn.common.scripts.TrinityExceptionUtil;
 import org.onap.so.bpmn.core.RollbackData;
@@ -89,6 +97,8 @@ public class WorkflowMessagePersistenceTest {
     private static Path mariaDataDirectory;
     private static byte[] productionBpmn;
     private static byte[] manualHandlingBpmn;
+    private static byte[] rainyDayBpmn;
+    private static byte[] cnfAdapterBpmn;
     private ProcessEngine engine;
     private String database;
     private String jdbcUrl;
@@ -99,6 +109,8 @@ public class WorkflowMessagePersistenceTest {
         assertTrue("Expected h2 or mariadb persistence backend", Arrays.asList("h2", "mariadb").contains(backend));
         productionBpmn = productionResource("subprocess/ReceiveWorkflowMessage.bpmn");
         manualHandlingBpmn = productionResource("subprocess/BuildingBlock/ManualHandling.bpmn");
+        rainyDayBpmn = productionResource("subprocess/BuildingBlock/RainyDayHandler.bpmn");
+        cnfAdapterBpmn = productionResource("subprocess/CNFAdapterAsyncCall.bpmn");
         if ("mariadb".equals(backend)) {
             Path directory = Paths.get("target", "groovy-migration", "persistence").toAbsolutePath();
             Files.createDirectories(directory);
@@ -144,7 +156,9 @@ public class WorkflowMessagePersistenceTest {
         reopenEngine();
         engine.getRepositoryService().createDeployment()
                 .addInputStream("ReceiveWorkflowMessage.bpmn", new ByteArrayInputStream(productionBpmn))
-                .addInputStream("ManualHandling.bpmn", new ByteArrayInputStream(manualHandlingBpmn)).deploy();
+                .addInputStream("ManualHandling.bpmn", new ByteArrayInputStream(manualHandlingBpmn))
+                .addInputStream("RainyDayHandler.bpmn", new ByteArrayInputStream(rainyDayBpmn))
+                .addInputStream("CNFAdapterAsyncCall.bpmn", new ByteArrayInputStream(cnfAdapterBpmn)).deploy();
     }
 
     @After
@@ -364,6 +378,350 @@ public class WorkflowMessagePersistenceTest {
         } finally {
             requests.stop();
         }
+    }
+
+    @Test
+    public void rainyDayManualCallMappingsSurviveRestartWithTaskLocalResponses() throws Exception {
+        WireMockServer requests = new WireMockServer(0);
+        requests.start();
+        try (MockedStatic<UrnPropertiesReader> properties = mockStatic(UrnPropertiesReader.class, CALLS_REAL_METHODS);
+                MockedConstruction<PolicyClientImpl> policy = mockConstruction(PolicyClientImpl.class)) {
+            properties.when(() -> UrnPropertiesReader.getVariable(anyString(), any(DelegateExecution.class)))
+                    .thenAnswer(call -> {
+                        String name = call.getArgument(0);
+                        DelegateExecution execution = call.getArgument(1);
+                        Object value = execution.getVariable(name);
+                        if (value != null) {
+                            return String.valueOf(value);
+                        }
+                        switch (name) {
+                            case "mso.adapters.openecomp.db.endpoint":
+                                return "http://localhost:" + requests.port() + "/requests";
+                            case "mso.adapters.db.auth":
+                                return "test:test";
+                            case "mso.msoKey":
+                                return "";
+                            default:
+                                return null;
+                        }
+                    });
+            requests.stubFor(post(urlEqualTo("/requests"))
+                    .willReturn(aResponse().withStatus(204).withHeader("Connection", "close")));
+            for (String response : new String[] {"retry", "abort"}) {
+                requests.resetRequests();
+                String requestId = "rainy-manual-" + response;
+                Map<String, Object> input = rainyDayRequest(requestId, "Manual");
+                ProcessInstance process = engine.getRuntimeService().startProcessInstanceByKey("RainyDayHandler",
+                        UUID.randomUUID().toString(), input);
+                ProcessInstance child = engine.getRuntimeService().createProcessInstanceQuery()
+                        .superProcessInstanceId(process.getId()).singleResult();
+                assertNotNull(child);
+                assertEquals("ManualHandling",
+                        engine.getRepositoryService().getProcessDefinition(child.getProcessDefinitionId()).getKey());
+                Task task = engine.getTaskService().createTaskQuery().processInstanceId(child.getId()).singleResult();
+                assertNotNull(task);
+                assertEquals(requestId, engine.getTaskService().getVariable(task.getId(), "originalRequestId"));
+                assertEquals("operator", engine.getTaskService().getVariable(task.getId(), "originalRequestorId"));
+                assertEquals("5300", engine.getTaskService().getVariable(task.getId(), "errorCode"));
+                assertEquals("rollback, skip, manual, abort",
+                        engine.getTaskService().getVariable(task.getId(), "validResponses"));
+                engine.getTaskService().claim(task.getId(), "operator");
+                engine.getTaskService().setVariableLocal(task.getId(), "responseValue", response);
+                assertNull(engine.getRuntimeService().getVariable(process.getId(), "responseValue"));
+                assertDatabaseUpdates(requests, requestId, "PENDING_MANUAL_TASK");
+                restart();
+                Task restored = engine.getTaskService().createTaskQuery().taskId(task.getId()).singleResult();
+                assertNotNull(restored);
+                assertEquals(child.getId(), restored.getProcessInstanceId());
+                assertEquals("operator", restored.getAssignee());
+                assertEquals(response, engine.getTaskService().getVariableLocal(restored.getId(), "responseValue"));
+                assertEquals("Manual", engine.getRuntimeService().getVariable(process.getId(), "handlingCode"));
+                assertDatabaseUpdates(requests, requestId, "PENDING_MANUAL_TASK");
+                engine.getTaskService().complete(restored.getId());
+                assertEnded(process.getId());
+                assertEnded(child.getId());
+                assertEquals("retry".equals(response) ? "Retry" : "Abort", historic(process.getId(), "handlingCode"));
+                assertEquals("RDH_", historic(process.getId(), "prefix"));
+                assertActivityCount(process.getId(), "preProcessRequest_ScriptTask", 1);
+                assertActivityCount(process.getId(), "QueryPolicyEngine", 1);
+                assertActivityCount(process.getId(), "Task_1qu3p0x", 1);
+                assertActivityCount(child.getId(), "ManualHandlingUserTask", 1);
+                assertDatabaseUpdates(requests, requestId, "PENDING_MANUAL_TASK", "IN_PROGRESS");
+            }
+            assertTrue("Configured disposition must bypass the policy client", policy.constructed().isEmpty());
+        } finally {
+            requests.stop();
+        }
+    }
+
+    @Test
+    public void rainyDayNonManualDispositionsUseTheProductionGatewayWithoutCreatingTasks() {
+        try (MockedConstruction<PolicyClientImpl> policy = mockConstruction(PolicyClientImpl.class)) {
+            for (String disposition : new String[] {"Retry", "Abort", "Skip", "Rollback"}) {
+                Map<String, Object> input = rainyDayRequest("default-" + disposition, disposition);
+                input.put("WorkflowException", new WorkflowException("DoCreateVnf", 5300, "Original request error"));
+                ProcessInstance process = engine.getRuntimeService().startProcessInstanceByKey("RainyDayHandler",
+                        UUID.randomUUID().toString(), input);
+                assertEnded(process.getId());
+                assertEquals(disposition, historic(process.getId(), "handlingCode"));
+                assertEquals("rollback, skip, manual, abort", historic(process.getId(), "validResponses"));
+                assertEquals("RDH_", historic(process.getId(), "prefix"));
+                Object stored = historic(process.getId(), "WorkflowException");
+                assertTrue(stored instanceof WorkflowException);
+                WorkflowException original = (WorkflowException) stored;
+                assertEquals("DoCreateVnf", original.getProcessKey());
+                assertEquals(5300, original.getErrorCode());
+                assertEquals("Original request error", original.getErrorMessage());
+                assertActivityCount(process.getId(), "preProcessRequest_ScriptTask", 1);
+                assertActivityCount(process.getId(), "QueryPolicyEngine", 1);
+                assertActivityCount(process.getId(), "ExclusiveGateway_0kqwevj", 1);
+                assertActivityCount(process.getId(), "Task_1qu3p0x", 0);
+                assertActivityCount(process.getId(), "EndEvent_3", 1);
+                assertEquals(0, engine.getTaskService().createTaskQuery().processInstanceId(process.getId()).count());
+            }
+            assertTrue("Configured dispositions must bypass the policy client", policy.constructed().isEmpty());
+        }
+    }
+
+    @Test
+    public void cnfCallMappingsAndCallbackSurviveRestartWithoutRepeatingTheHttpPost() {
+        WireMockServer requests = new WireMockServer(0);
+        requests.start();
+        String correlator = "cnf-resume";
+        try (MockedStatic<UrnPropertiesReader> properties = cnfConfiguration(null)) {
+            stubCnf(requests, correlator, 202);
+            Map<String, Object> input = cnfInputs(requests, correlator);
+            input.put("zero", 0);
+            input.put("disabled", false);
+            ProcessInstance parent =
+                    engine.getRuntimeService().startProcessInstanceByKey("CNFAdapterAsyncCall", correlator, input);
+            ProcessInstance child = engine.getRuntimeService().createProcessInstanceQuery()
+                    .superProcessInstanceId(parent.getId()).singleResult();
+            assertNotNull(child);
+            assertEquals("ReceiveWorkflowMessage",
+                    engine.getRepositoryService().getProcessDefinition(child.getProcessDefinitionId()).getKey());
+            assertEquals("CNF", engine.getRuntimeService().getVariableLocal(child.getId(), "RCVWFMSG_messageType"));
+            assertEquals(correlator, engine.getRuntimeService().getVariableLocal(child.getId(), "RCVWFMSG_correlator"));
+            assertEquals("PT30M", engine.getRuntimeService().getVariableLocal(child.getId(), "RCVWFMSG_timeout"));
+            assertEquals(Boolean.FALSE,
+                    engine.getRuntimeService().getVariableLocal(child.getId(), "RCVWFMSG_SuccessIndicator"));
+            assertFalse(engine.getRuntimeService().getVariablesLocal(child.getId()).containsKey("cnfRequestPayload"));
+            assertFalse(engine.getRuntimeService().getVariablesLocal(parent.getId()).containsKey("CNF_CORRELATOR"));
+            assertFalse(engine.getRuntimeService().getVariablesLocal(parent.getId()).containsKey("prefix"));
+            assertCnfPost(requests, correlator);
+            restart();
+
+            ProcessInstance restored = engine.getRuntimeService().createProcessInstanceQuery()
+                    .superProcessInstanceId(parent.getId()).singleResult();
+            assertNotNull(restored);
+            assertEquals(child.getId(), restored.getId());
+            assertEquals("PT30M", engine.getRuntimeService().getVariable(parent.getId(), "timeout"));
+            Object payload = engine.getRuntimeService().getVariable(parent.getId(), "cnfRequestPayload");
+            assertEquals(String.class, payload.getClass());
+            assertEquals(cnfPayload(correlator), payload);
+            assertEquals(Integer.valueOf(0), engine.getRuntimeService().getVariable(parent.getId(), "zero"));
+            assertEquals(Boolean.FALSE, engine.getRuntimeService().getVariable(parent.getId(), "disabled"));
+            rejectCnfCallback("wrong-cnf-request");
+            assertCnfPost(requests, correlator);
+            String response = "{\"status\":\"ok\",\"name\":\"München & 雪\",\"count\":0,\"enabled\":false}";
+            correlateCnf(correlator, response);
+
+            assertEnded(child.getId());
+            assertEnded(parent.getId());
+            assertEquals(response, historic(parent.getId(), "asyncCallbackResponse"));
+            assertEquals(String.class, historic(parent.getId(), "asyncCallbackResponse").getClass());
+            assertNull(historic(parent.getId(), "WorkflowException"));
+            assertEquals(Boolean.TRUE, historic(child.getId(), "RCVWFMSG_SuccessIndicator"));
+            assertEquals(0, engine.getManagementService().createJobQuery().processInstanceId(child.getId()).count());
+            assertActivityCount(parent.getId(), "Activity_0lttdg6", 1);
+            assertActivityCount(parent.getId(), "Activity_1ttieoz", 1);
+            assertActivityCount(parent.getId(), "Activity_0fhymrt", 1);
+            assertActivityCount(parent.getId(), "Event_15f5cnf", 1);
+            assertActivityCount(parent.getId(), "Event_1t6t0h6", 0);
+            rejectCnfCallback(correlator);
+            assertCnfPost(requests, correlator);
+            assertEquals(1, requests.getAllServeEvents().size());
+        } finally {
+            requests.stop();
+        }
+    }
+
+    @Test
+    public void cnfCallbackTimeoutPropagatesThePersistedChildErrorWithoutRepeatingTheHttpPost() {
+        WireMockServer requests = new WireMockServer(0);
+        requests.start();
+        String correlator = "cnf-timeout";
+        try (MockedStatic<UrnPropertiesReader> properties = cnfConfiguration("PT1M")) {
+            stubCnf(requests, correlator, 202);
+            ProcessInstance parent = engine.getRuntimeService().startProcessInstanceByKey("CNFAdapterAsyncCall",
+                    correlator, cnfInputs(requests, correlator));
+            ProcessInstance child = engine.getRuntimeService().createProcessInstanceQuery()
+                    .superProcessInstanceId(parent.getId()).singleResult();
+            assertNotNull(child);
+            Job timer = engine.getManagementService().createJobQuery().processInstanceId(child.getId()).singleResult();
+            assertNotNull(timer);
+            assertEquals(new Date(START_TIME + 60000), timer.getDuedate());
+            restart();
+            Job restored =
+                    engine.getManagementService().createJobQuery().processInstanceId(child.getId()).singleResult();
+            assertNotNull(restored);
+            assertEquals(timer.getId(), restored.getId());
+            assertEquals(timer.getDuedate(), restored.getDuedate());
+            assertCnfPost(requests, correlator);
+            ClockUtil.setCurrentTime(new Date(START_TIME + 61000));
+            assertTrue(restored.getDuedate().before(ClockUtil.getCurrentTime()));
+            engine.getManagementService().executeJob(restored.getId());
+
+            assertEnded(child.getId());
+            assertEnded(parent.getId());
+            Object stored = historic(parent.getId(), "WorkflowException");
+            assertEquals(WorkflowException.class, stored.getClass());
+            WorkflowException error = (WorkflowException) stored;
+            assertEquals("ReceiveWorkflowMessage", error.getProcessKey());
+            assertEquals(7010, error.getErrorCode());
+            assertEquals("Receive Workflow Message Timeout Error", error.getErrorMessage());
+            assertNull(historic(parent.getId(), "asyncCallbackResponse"));
+            assertActivityCount(child.getId(), "BoundaryEvent_1", 1);
+            assertActivityCount(child.getId(), "ScriptTask_setSuccess", 0);
+            assertActivityCount(parent.getId(), "Activity_0lttdg6", 1);
+            assertActivityCount(parent.getId(), "Activity_1ttieoz", 1);
+            assertActivityCount(child.getId(), "EndEvent_8", 1);
+            assertActivityCount(parent.getId(), "Event_15f5cnf", 0);
+            assertActivityCount(parent.getId(), "Event_1t6t0h6", 1);
+            rejectCnfCallback(correlator);
+            assertCnfPost(requests, correlator);
+            assertEquals(1, requests.getAllServeEvents().size());
+        } finally {
+            requests.stop();
+        }
+    }
+
+    @Test
+    public void cnfValidationUsesTheProductionErrorSubprocessBeforeCallingHttpOrCreatingAChild() {
+        WireMockServer requests = new WireMockServer(0);
+        requests.start();
+        try (MockedStatic<UrnPropertiesReader> properties = cnfConfiguration("PT1M")) {
+            for (String name : new String[] {"apiPath", "cnfRequestPayload", "correlator", "messageType"}) {
+                Map<String, Object> input = cnfInputs(requests, "cnf-invalid-" + name);
+                input.remove(name);
+                ProcessInstance process = engine.getRuntimeService().startProcessInstanceByKey("CNFAdapterAsyncCall",
+                        UUID.randomUUID().toString(), input);
+                assertEnded(process.getId());
+                Object stored = historic(process.getId(), "WorkflowException");
+                assertEquals(WorkflowException.class, stored.getClass());
+                WorkflowException error = (WorkflowException) stored;
+                assertEquals("CNFAdapterAsyncCall", error.getProcessKey());
+                assertEquals(500, error.getErrorCode());
+                String label = "apiPath".equals(name) ? "API PATH" : name;
+                assertEquals("Cannot process CNF adapter call : " + label + " is null", error.getErrorMessage());
+                assertActivityCount(process.getId(), "Event_1t6t0h6", 1);
+                assertActivityCount(process.getId(), "Event_15f5cnf", 0);
+                assertActivityCount(process.getId(), "Activity_1ttieoz", 0);
+                assertEquals(0, engine.getHistoryService().createHistoricProcessInstanceQuery()
+                        .superProcessInstanceId(process.getId()).count());
+            }
+            assertEquals(0, requests.getAllServeEvents().size());
+        } finally {
+            requests.stop();
+        }
+    }
+
+    @Test
+    public void cnfRejectedHttpAcknowledgementsRetainTheirCodeAndNeverCreateCallbackWaits() {
+        WireMockServer requests = new WireMockServer(0);
+        requests.start();
+        try (MockedStatic<UrnPropertiesReader> properties = cnfConfiguration("PT1M")) {
+            for (int status : new int[] {400, 500}) {
+                String correlator = "cnf-rejected-" + status;
+                stubCnf(requests, correlator, status);
+                ProcessInstance process = engine.getRuntimeService().startProcessInstanceByKey("CNFAdapterAsyncCall",
+                        correlator, cnfInputs(requests, correlator));
+                assertEnded(process.getId());
+                Object stored = historic(process.getId(), "WorkflowException");
+                assertEquals(WorkflowException.class, stored.getClass());
+                WorkflowException error = (WorkflowException) stored;
+                assertEquals("CNFAdapterAsyncCall", error.getProcessKey());
+                assertEquals(status, error.getErrorCode());
+                assertEquals("Received a Bad Sync Response from CNF.", error.getErrorMessage());
+                assertActivityCount(process.getId(), "Event_1t6t0h6", 1);
+                assertActivityCount(process.getId(), "Event_15f5cnf", 0);
+                assertActivityCount(process.getId(), "Activity_0fhymrt", 0);
+                assertEquals(0, engine.getHistoryService().createHistoricProcessInstanceQuery()
+                        .superProcessInstanceId(process.getId()).count());
+                assertCnfPost(requests, correlator);
+            }
+            assertEquals(2, requests.getAllServeEvents().size());
+        } finally {
+            requests.stop();
+        }
+    }
+
+    private static MockedStatic<UrnPropertiesReader> cnfConfiguration(String timeout) {
+        MockedStatic<UrnPropertiesReader> properties = mockStatic(UrnPropertiesReader.class, CALLS_REAL_METHODS);
+        properties.when(
+                () -> UrnPropertiesReader.getVariable(eq("mso.adapters.cnf.timeout"), any(DelegateExecution.class)))
+                .thenReturn(timeout);
+        return properties;
+    }
+
+    private static Map<String, Object> cnfInputs(WireMockServer requests, String correlator) {
+        Map<String, Object> input = new HashMap<>();
+        input.put("apiPath", "http://localhost:" + requests.port() + cnfPath(correlator));
+        input.put("cnfRequestPayload", cnfPayload(correlator));
+        input.put("correlator", correlator);
+        input.put("messageType", "CNF");
+        return input;
+    }
+
+    private static String cnfPath(String correlator) {
+        return "/cnf/requests?instance=" + correlator;
+    }
+
+    private static String cnfPayload(String correlator) {
+        return "{\"requestId\":\"" + correlator + "\",\"count\":0,\"enabled\":false,\"name\":\"München & 雪\"}";
+    }
+
+    private static void stubCnf(WireMockServer requests, String correlator, int status) {
+        requests.stubFor(post(urlEqualTo(cnfPath(correlator)))
+                .willReturn(aResponse().withStatus(status).withHeader("Connection", "close")));
+    }
+
+    private static void assertCnfPost(WireMockServer requests, String correlator) {
+        requests.verify(1,
+                postRequestedFor(urlEqualTo(cnfPath(correlator)))
+                        .withHeader("Content-Type", containing("application/json"))
+                        .withRequestBody(equalToJson(cnfPayload(correlator))));
+    }
+
+    private void correlateCnf(String correlator, String response) {
+        engine.getRuntimeService().createMessageCorrelation("WorkflowMessage")
+                .processInstanceVariableEquals("CNF_CORRELATOR", correlator).setVariable("CNF_MESSAGE", response)
+                .correlate();
+    }
+
+    private void rejectCnfCallback(String correlator) {
+        try {
+            correlateCnf(correlator, "unexpected-cnf-response");
+            fail("CNF callback should not correlate: " + correlator);
+        } catch (MismatchingMessageCorrelationException expected) {
+            assertTrue(expected.getMessage().contains("WorkflowMessage"));
+        }
+    }
+
+    private Map<String, Object> rainyDayRequest(String requestId, String disposition) {
+        Map<String, Object> input = new HashMap<>();
+        input.put("msoRequestId", requestId);
+        input.put("policy.default.disposition", disposition);
+        input.put("serviceType", "Service");
+        input.put("vnfType", "router");
+        input.put("currentActivity", "allocate");
+        input.put("workStep", "create");
+        input.put("failedActivity", "Controller");
+        input.put("errorCode", "5300");
+        input.put("errorText", "東京 & controller failure");
+        input.put("requestorId", "operator");
+        input.put("isDebugLogEnabled", false);
+        return input;
     }
 
     private static void assertDatabaseUpdates(WireMockServer requests, String requestId, String... statuses)

@@ -39,6 +39,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import junitparams.naming.TestCaseName;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @RunWith(JUnitParamsRunner.class)
@@ -63,6 +64,7 @@ public class ResponseExceptionMapperImplTest {
 
     @Test
     @Parameters(method = "statusesAndCorrespondingExceptions")
+    @TestCaseName("{method}[{index}]")
     public void shouldThrowExceptionWhenStatusIsNotOk(Status status, Class<Exception> expectedException) {
         // given
         Response response = createMockResponse(status);
