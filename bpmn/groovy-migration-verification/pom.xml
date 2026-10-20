@@ -56,8 +56,9 @@
             </goals>
             <configuration>
               <outputDirectory>${project.build.directory}/site/groovy-migration-aggregate</outputDirectory>
+              <!-- JaCoCo resolves includes from each module's base directory. -->
               <dataFileIncludes>
-                <dataFileInclude>groovy-migration/jacoco.exec</dataFileInclude>
+                <dataFileInclude>target/groovy-migration/jacoco.exec</dataFileInclude>
               </dataFileIncludes>
             </configuration>
           </execution>
