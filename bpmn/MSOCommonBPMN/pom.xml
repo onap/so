@@ -43,6 +43,20 @@
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
+            <id>mariadb-test-support</id>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <skip>false</skip>
+              <classifier>mariadb-test-support</classifier>
+              <includes>
+                <include>org/onap/so/SpringOwnedMariaDbService.class</include>
+                <include>org/onap/so/SpringOwnedMariaDbService$*.class</include>
+              </includes>
+            </configuration>
+          </execution>
+          <execution>
             <goals>
               <goal>test-jar</goal>
             </goals>

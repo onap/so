@@ -351,9 +351,38 @@
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>unpack-shared-test-fixtures</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <skip>false</skip>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.onap.so</groupId>
+                      <artifactId>MSOCommonBPMN</artifactId>
+                      <version>${project.version}</version>
+                      <type>test-jar</type>
+                      <classifier>tests</classifier>
+                      <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                      <includes>__files/**</includes>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
             <version>3.1.2</version>
             <configuration>
+              <!-- The repackaged Boot jar hides classes under BOOT-INF from the Failsafe class loader. -->
+              <classesDirectory>${project.build.outputDirectory}</classesDirectory>
               <skip>false</skip>
               <failIfNoTests>true</failIfNoTests>
               <includes>

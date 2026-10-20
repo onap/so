@@ -1,0 +1,6 @@
+{
+  "volume-group-id": "VOLUME_GROUP_ID_1",
+  "volume-group-name": "VOLUME_GROUP_ID_1_NAME",
+  "heat-stack-id": "heat-stack-id",
+  "resource-version": "1"
+}

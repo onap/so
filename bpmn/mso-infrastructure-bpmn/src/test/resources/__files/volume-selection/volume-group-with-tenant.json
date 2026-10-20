@@ -1,0 +1,20 @@
+{
+  "volume-group-id": "a8399879-31b3-4973-be26-0a0cbe776b58",
+  "volume-group-name": "MoG_CinderVolumes_2",
+  "heat-stack-id": "MoG_CinderVolumes_2/19387dc6-060f-446e-b41f-dcfd29c73845",
+  "resource-version": "1458839419",
+  "relationship-list": {
+    "relationship": [
+      {
+        "related-to": "tenant",
+        "related-link": "/aai/v24/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/MDTWNJ21/tenants/tenant/7dd5365547234ee8937416c65507d266",
+        "relationship-data": [
+          {
+            "relationship-key": "tenant.tenant-id",
+            "relationship-value": "7dd5365547234ee8937416c65507d266"
+          }
+        ]
+      }
+    ]
+  }
+}

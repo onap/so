@@ -35,7 +35,7 @@ public class EmbeddedMariaDbConfig {
 
     @Bean
     MariaDB4jSpringService mariaDB4jSpringService() {
-        MariaDB4jSpringService service = new MariaDB4jSpringService();
+        MariaDB4jSpringService service = new SpringOwnedMariaDbService();
 
 
         service.getConfiguration().addArg("--lower_case_table_names=1");
