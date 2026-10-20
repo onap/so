@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -43,6 +44,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -51,7 +53,9 @@ import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.ISourceFileCoverage;
 import org.jacoco.core.tools.ExecFileLoader;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -67,6 +71,9 @@ public class GroovyVerificationEvidenceTest {
     private static final List<String> HELPERS = MODULES.subList(0, 2);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    @Rule
+    public TemporaryFolder temporary = new TemporaryFolder();
+
     @Test
     public void collectAndVerifyEvidence() throws Exception {
         Path root = Paths.get(System.getProperty("so.repository.root"));
@@ -81,13 +88,31 @@ public class GroovyVerificationEvidenceTest {
         evidence.put("generatedAt", Instant.now().toString());
         List<String> blockers = new ArrayList<>();
         List<String> shutdownDiagnostics = new ArrayList<>();
+        Map<String, List<String>> databaseDirectories = new TreeMap<>();
         Map<String, Type> types = compiledTests(root);
         Map<String, List<Map<String, Object>>> modules = new TreeMap<>();
         Map<String, Map<String, List<Map<String, Object>>>> executed = new TreeMap<>();
         ExecFileLoader execution = new ExecFileLoader();
         for (String module : MODULES) {
             Path directory = root.resolve("bpmn").resolve(module);
+            List<String> remainingDatabases = remainingTestDatabases(directory);
+            databaseDirectories.put(module, remainingDatabases);
+            if (!remainingDatabases.isEmpty()) {
+                blockers.add(module + ": test database resources remain: " + remainingDatabases);
+            }
+            for (String diagnostic : shutdownDiagnostics(directory)) {
+                shutdownDiagnostics.add(module + "/" + diagnostic);
+            }
             Map<String, List<Map<String, Object>>> reports = testReports(directory);
+            Set<String> compiledSources = new TreeSet<>();
+            for (Type type : types.values()) {
+                if (module.equals(type.module) && type.source != null) {
+                    compiledSources.add(sourceKey(type));
+                }
+            }
+            for (String missing : uncompiledTestSources(directory, compiledSources)) {
+                blockers.add(module + ": current test source has no compiled class: " + missing);
+            }
             executed.put(module, reports);
             List<Map<String, Object>> discovered = new ArrayList<>();
             for (Type type : types.values()) {
@@ -107,11 +132,16 @@ public class GroovyVerificationEvidenceTest {
                 entry.put("class", name);
                 entry.put("sourceFile", type.source);
                 entry.put("ignoredClass", type.ignored);
+                Set<String> intendedMethods = testMethods(type, types);
+                entry.put("intendedMethods", intendedMethods);
                 entry.put("testCases", cases == null ? new ArrayList<>() : cases);
                 discovered.add(entry);
                 if (cases == null || cases.isEmpty()) {
                     blockers.add(module + ": intended test was not reported: " + name);
                 } else {
+                    for (String missing : missingMethods(intendedMethods, cases, type.ignored)) {
+                        blockers.add(module + ": intended test method was not reported: " + name + "#" + missing);
+                    }
                     for (Map<String, Object> test : cases) {
                         if ("failed".equals(test.get("status")) || "retry-rescued".equals(test.get("status"))) {
                             blockers.add(
@@ -124,17 +154,6 @@ public class GroovyVerificationEvidenceTest {
                 blockers.add(module + ": no compiled test classes discovered");
             }
             modules.put(module, discovered);
-            Path reportsDirectory = directory.resolve("target/surefire-reports");
-            if (Files.isDirectory(reportsDirectory)) {
-                try (Stream<Path> diagnostics = Files.list(reportsDirectory)) {
-                    for (Path diagnostic : (Iterable<Path>) diagnostics
-                            .filter(path -> path.toString().endsWith(".dump"))::iterator) {
-                        if (Files.readString(diagnostic).contains("shutdown timeout")) {
-                            shutdownDiagnostics.add(module + "/" + diagnostic.getFileName());
-                        }
-                    }
-                }
-            }
             Path data = directory.resolve("target/groovy-migration/jacoco.exec");
             if (!Files.isRegularFile(data) || Files.size(data) == 0) {
                 blockers.add(module + ": missing coverage execution data");
@@ -143,6 +162,17 @@ public class GroovyVerificationEvidenceTest {
             }
         }
         evidence.put("discovery", modules);
+        evidence.put("remainingTestDatabaseDirectories", databaseDirectories);
+        for (String module : MODULES) {
+            Path classes = root.resolve("bpmn").resolve(module).resolve("target/test-classes");
+            if (Files.isDirectory(classes)) {
+                CoverageBuilder tests = new CoverageBuilder();
+                new Analyzer(execution.getExecutionDataStore(), tests).analyzeAll(classes.toFile());
+                for (IClassCoverage mismatch : tests.getNoMatchClasses()) {
+                    blockers.add(module + ": execution data does not match test bytecode: " + mismatch.getName());
+                }
+            }
+        }
         Path scenarioManifest =
                 root.resolve("bpmn/so-bpmn-infrastructure-flows/src/test/resources/groovy-migration-scenarios.json");
         JsonNode scenarios = MAPPER.readTree(scenarioManifest.toFile());
@@ -215,7 +245,11 @@ public class GroovyVerificationEvidenceTest {
             coverage.put(helper, helperEvidence);
         }
         evidence.put("groovySourceCoverage", coverage);
+        evidence.put("coverageSlices", GroovySliceCoverage.verify(scenarios, MAPPER.valueToTree(coverage), blockers));
         evidence.put("shutdownDiagnostics", shutdownDiagnostics);
+        if (!shutdownDiagnostics.isEmpty()) {
+            blockers.add("Test JVM shutdown timed out: " + shutdownDiagnostics);
+        }
         String probe = System.getProperty("groovy.migration.probeMinimumLineCoverage");
         if (probe != null) {
             double minimum = Double.parseDouble(probe);
@@ -288,6 +322,171 @@ public class GroovyVerificationEvidenceTest {
     }
 
     @Test
+    public void aReportedClassDoesNotHideAnUnreportedTestMethod() throws Exception {
+        Map<String, List<Map<String, Object>>> results = new TreeMap<>();
+        collectCases(parse(
+                new ByteArrayInputStream("<testsuite><testcase classname='example.Test' name='first'/></testsuite>"
+                        .getBytes(StandardCharsets.UTF_8))),
+                results);
+
+        assertEquals(new TreeSet<>(Arrays.asList("second")),
+                missingMethods(new TreeSet<>(Arrays.asList("first", "second")), results.get("example.Test"), false));
+    }
+
+    @Test
+    public void parameterizedResultsMatchTheirMethodWithoutMatchingAnotherMethodPrefix() throws Exception {
+        Map<String, List<Map<String, Object>>> results = new TreeMap<>();
+        String xml = "<testsuite><testcase classname='example.Test' name='first[0: false]'/>"
+                + "<testcase classname='example.Test' name='second(String)[1]'/></testsuite>";
+        collectCases(parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))), results);
+
+        assertEquals(new TreeSet<>(Arrays.asList("fir")), missingMethods(
+                new TreeSet<>(Arrays.asList("first", "second", "fir")), results.get("example.Test"), false));
+    }
+
+    @Test
+    public void anIgnoredClassCanHaveOneClassLevelSkipButAnIgnoredMethodMustStillBeReported() throws Exception {
+        Map<String, List<Map<String, Object>>> results = new TreeMap<>();
+        String xml = "<testsuite><testcase classname='example.Test' name='example.Test'>"
+                + "<skipped message='Known defect'/></testcase></testsuite>";
+        collectCases(parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))), results);
+        Set<String> expected = new TreeSet<>(Arrays.asList("first", "second"));
+
+        assertTrue(missingMethods(expected, results.get("example.Test"), true).isEmpty());
+        assertEquals(expected, missingMethods(expected, results.get("example.Test"), false));
+    }
+
+    @Test
+    public void inheritedAnnotatedMethodsAreDiscoveredAndLegacyMethodsRequireTestCaseAncestry() {
+        Type parent = new Type("module");
+        parent.name = "example/BaseTest";
+        parent.parent = "java/lang/Object";
+        parent.annotatedMethods.add("annotated");
+        parent.legacyMethods.add("testLegacy");
+        Type child = new Type("module");
+        child.name = "example/ChildTest";
+        child.parent = parent.name;
+        child.annotatedMethods.add("local");
+        Map<String, Type> types = new HashMap<>();
+        types.put("module/" + parent.name, parent);
+
+        assertEquals(new TreeSet<>(Arrays.asList("annotated", "local")), testMethods(child, types));
+        parent.parent = "junit/framework/TestCase";
+        assertEquals(new TreeSet<>(Arrays.asList("annotated", "local", "testLegacy")), testMethods(child, types));
+        parent.annotatedMethods.clear();
+        parent.legacyMethods.clear();
+        child.annotatedMethods.clear();
+        child.legacyMethods.add("testInGrandchild");
+        assertTrue(hasTests(child, types, new TreeSet<>()));
+    }
+
+    @Test
+    public void bytecodeVisitorRecordsAnnotatedAndLegacyMethodNames() throws Exception {
+        Type type = new Type("module");
+        try (InputStream input = MethodDiscoveryFixture.class
+                .getResourceAsStream("GroovyVerificationEvidenceTest$MethodDiscoveryFixture.class")) {
+            new ClassReader(input).accept(type, ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES);
+        }
+
+        assertEquals(new TreeSet<>(Arrays.asList("annotated")), testMethods(type, new TreeMap<>()));
+        assertEquals(new TreeSet<>(Arrays.asList("testLegacy")), type.legacyMethods);
+    }
+
+    @Test
+    public void aNewTestSourceCannotDisappearBecauseItWasNeverCompiled() throws Exception {
+        Path directory = temporary.newFolder("module").toPath();
+        Path source = directory.resolve("src/test/java/example/NewTest.java");
+        Files.createDirectories(source.getParent());
+        Files.writeString(source, "package example; public class NewTest {}", StandardCharsets.UTF_8);
+
+        assertEquals(Arrays.asList("src/test/java/example/NewTest.java"),
+                uncompiledTestSources(directory, new TreeSet<>()));
+        assertTrue(uncompiledTestSources(directory, new TreeSet<>(Arrays.asList("example/NewTest.java"))).isEmpty());
+    }
+
+    @Test
+    public void ownedDatabaseDirectoriesMustBeEmptyAfterTestForksExit() throws Exception {
+        Path module = temporary.newFolder("module").toPath();
+        assertTrue(remainingTestDatabases(module).isEmpty());
+        Path databases = module.resolve("target/groovy-migration-mariadb");
+        Files.createDirectories(databases);
+        assertTrue(remainingTestDatabases(module).isEmpty());
+
+        Files.createDirectories(databases.resolve("database-abandoned/data"));
+
+        assertEquals(Arrays.asList("database-abandoned"), remainingTestDatabases(module));
+    }
+
+    @Test
+    public void shutdownTimeoutsAreDetectedInSurefireAndFailsafeReports() throws Exception {
+        Path module = temporary.newFolder("module").toPath();
+        assertTrue(shutdownDiagnostics(module).isEmpty());
+        Path surefire = Files.createDirectories(module.resolve("target/surefire-reports"));
+        Path failsafe = Files.createDirectories(module.resolve("target/failsafe-reports"));
+        Files.writeString(surefire.resolve("fork.dump"), "Thread dump after 30 seconds shutdown timeout");
+        Files.writeString(failsafe.resolve("fork.dumpstream"),
+                "Surefire is going to kill self fork JVM. The exit has elapsed 30 seconds after System.exit(0).");
+        Files.writeString(failsafe.resolve("other.dump"), "A different diagnostic");
+
+        assertEquals(Arrays.asList("surefire-reports/fork.dump", "failsafe-reports/fork.dumpstream"),
+                shutdownDiagnostics(module));
+    }
+
+    static List<String> remainingTestDatabases(Path directory) throws IOException {
+        Path databases = directory.resolve("target/groovy-migration-mariadb");
+        if (!Files.isDirectory(databases)) {
+            return new ArrayList<>();
+        }
+        try (Stream<Path> entries = Files.list(databases)) {
+            return entries.map(path -> path.getFileName().toString()).sorted().collect(Collectors.toList());
+        }
+    }
+
+    static List<String> shutdownDiagnostics(Path directory) throws IOException {
+        List<String> result = new ArrayList<>();
+        for (String reports : Arrays.asList("surefire-reports", "failsafe-reports")) {
+            Path path = directory.resolve("target").resolve(reports);
+            if (!Files.isDirectory(path)) {
+                continue;
+            }
+            try (Stream<Path> entries = Files.list(path)) {
+                for (Path diagnostic : (Iterable<Path>) entries
+                        .filter(file -> file.toString().endsWith(".dump") || file.toString().endsWith(".dumpstream"))
+                        .sorted()::iterator) {
+                    String content = Files.readString(diagnostic);
+                    if (content.contains("shutdown timeout")
+                            || (content.contains("kill self fork JVM") && content.contains("exit has elapsed"))) {
+                        result.add(reports + "/" + diagnostic.getFileName());
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    @Test
+    public void compiledSourceMappingUsesTheGroovySourceNameWhenTheDeclaredClassNameDiffers() throws Exception {
+        Path directory = temporary.newFolder("module").toPath();
+        Path source = directory.resolve("src/test/groovy/example/ScaleCustomTest.groovy");
+        Files.createDirectories(source.getParent());
+        Files.writeString(source, "package example; class SacleCustomTest {}", StandardCharsets.UTF_8);
+        Type type = new Type("module");
+        type.name = "example/SacleCustomTest";
+        type.source = "ScaleCustomTest.groovy";
+
+        assertTrue(uncompiledTestSources(directory, new TreeSet<>(Arrays.asList(sourceKey(type)))).isEmpty());
+    }
+
+    public static class MethodDiscoveryFixture {
+        @Test
+        public void annotated() {}
+
+        public void testLegacy() {}
+
+        public static void testStaticHelper() {}
+    }
+
+    @Test
     public void requiredScenarioMustExecuteSuccessfullyWithoutRetries() throws Exception {
         JsonNode manifest = MAPPER.readTree("{\"scenarios\":[{\"id\":\"error-route\",\"module\":\"flows\","
                 + "\"test\":\"example.FlowTest#handlesError\"}]}");
@@ -336,6 +535,64 @@ public class GroovyVerificationEvidenceTest {
         return covered + missed > 0 && (double) covered / (covered + missed) >= minimum;
     }
 
+    private static Set<String> missingMethods(Set<String> intended, List<Map<String, Object>> cases,
+            boolean ignoredClass) {
+        Set<String> missing = new TreeSet<>(intended);
+        if (ignoredClass && !cases.isEmpty() && cases.stream().allMatch(test -> "skipped".equals(test.get("status")))) {
+            return new TreeSet<>();
+        }
+        for (Map<String, Object> test : cases) {
+            String reported = String.valueOf(test.get("name"));
+            missing.removeIf(method -> reported.equals(method) || reported.startsWith(method + "[")
+                    || reported.startsWith(method + "("));
+        }
+        return missing;
+    }
+
+    private static String sourceKey(Type type) {
+        return type.name.substring(0, type.name.lastIndexOf('/') + 1) + type.source;
+    }
+
+    private static List<String> uncompiledTestSources(Path module, Set<String> compiledSources) throws Exception {
+        List<String> missing = new ArrayList<>();
+        for (String language : Arrays.asList("java", "groovy")) {
+            Path sources = module.resolve("src/test/" + language);
+            if (!Files.isDirectory(sources)) {
+                continue;
+            }
+            try (Stream<Path> files = Files.walk(sources)) {
+                for (Path source : (Iterable<Path>) files.filter(Files::isRegularFile)::iterator) {
+                    String name = source.getFileName().toString();
+                    if ((name.endsWith(".java") || name.endsWith(".groovy")) && !"package-info.java".equals(name)
+                            && !"module-info.java".equals(name)
+                            && !compiledSources.contains(sources.relativize(source).toString().replace('\\', '/'))) {
+                        missing.add(module.relativize(source).toString().replace('\\', '/'));
+                    }
+                }
+            }
+        }
+        return missing;
+    }
+
+    private static Set<String> testMethods(Type type, Map<String, Type> types) {
+        Set<String> annotated = new TreeSet<>();
+        Set<String> legacy = new TreeSet<>();
+        Set<String> visited = new TreeSet<>();
+        while (type != null && visited.add(type.module + "/" + type.name)) {
+            annotated.addAll(type.annotatedMethods);
+            legacy.addAll(type.legacyMethods);
+            if ("junit/framework/TestCase".equals(type.parent)) {
+                annotated.addAll(legacy);
+            }
+            Type parent = types.get(type.module + "/" + type.parent);
+            if (parent == null) {
+                parent = types.get("MSOCommonBPMN/" + type.parent);
+            }
+            type = parent;
+        }
+        return annotated;
+    }
+
     private static Map<String, Type> compiledTests(Path root) throws Exception {
         Map<String, Type> types = new TreeMap<>();
         for (String module : MODULES) {
@@ -359,7 +616,7 @@ public class GroovyVerificationEvidenceTest {
         if (!visited.add(type.module + "/" + type.name)) {
             return false;
         }
-        if (type.annotatedTests || type.testCaseMethod && "junit/framework/TestCase".equals(type.parent)) {
+        if (type.annotatedTests || !testMethods(type, types).isEmpty()) {
             return true;
         }
         Type parent = types.get(type.module + "/" + type.parent);
@@ -468,8 +725,9 @@ public class GroovyVerificationEvidenceTest {
         private String source;
         private int access;
         private boolean annotatedTests;
-        private boolean testCaseMethod;
         private boolean ignored;
+        private final Set<String> annotatedMethods = new TreeSet<>();
+        private final Set<String> legacyMethods = new TreeSet<>();
 
         private Type(String module) {
             super(Opcodes.ASM9);
@@ -500,8 +758,9 @@ public class GroovyVerificationEvidenceTest {
         @Override
         public MethodVisitor visitMethod(int flags, String method, String descriptor, String signature,
                 String[] exceptions) {
-            if (method.startsWith("test") && "()V".equals(descriptor) && (flags & Opcodes.ACC_PUBLIC) != 0) {
-                testCaseMethod = true;
+            if (method.startsWith("test") && "()V".equals(descriptor) && (flags & Opcodes.ACC_PUBLIC) != 0
+                    && (flags & Opcodes.ACC_STATIC) == 0) {
+                legacyMethods.add(method);
             }
             return new MethodVisitor(Opcodes.ASM9) {
                 @Override
@@ -511,6 +770,7 @@ public class GroovyVerificationEvidenceTest {
                             "Lorg/junit/jupiter/api/TestFactory;", "Lorg/junit/jupiter/api/TestTemplate;")
                             .contains(annotation)) {
                         annotatedTests = true;
+                        annotatedMethods.add(method);
                     }
                     return null;
                 }

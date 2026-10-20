@@ -24,12 +24,14 @@
 package org.onap.so.bpmn.common;
 
 import static org.junit.Assert.assertEquals;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetVolumeGroupById;
+import static org.junit.Assert.assertNotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.junit.Test;
+import org.camunda.bpm.engine.history.HistoricVariableInstance;
 import org.onap.so.BaseIntegrationTest;
+import org.onap.so.bpmn.core.WorkflowException;
 
 /**
  * Please describe the ConfirmVolumeGroupTenantTest.java class
@@ -40,50 +42,54 @@ public class ConfirmVolumeGroupTenantIT extends BaseIntegrationTest {
 
     @Test
     public void testRemoveLayer3Service_success() {
-        MockGetVolumeGroupById(wireMockServer, "MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58",
-                "CRTGVNF_queryAAIResponseVolume.xml");
+        stubAaiVolumeGroup("MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58",
+                "volume-selection/volume-group-with-tenant.json", 200);
 
         Map<String, Object> variables = new HashMap<>();
         setVariables(variables);
 
         String processId = invokeSubProcess("ConfirmVolumeGroupTenant", variables);
 
-        String actualNameMatch =
-                BPMNUtil.getVariable(processEngine, "ConfirmVolumeGroupTenant", "groupNamesMatch", processId);
-        String actualIdMatch =
-                BPMNUtil.getVariable(processEngine, "ConfirmVolumeGroupTenant", "tenantIdsMatch", processId);
+        Object actualNameMatch = value(processId, "groupNamesMatch");
+        Object actualIdMatch = value(processId, "tenantIdsMatch");
         String actualResponse =
                 BPMNUtil.getVariable(processEngine, "ConfirmVolumeGroupTenant", "volumeHeatStackId", processId);
 
-        assertEquals("Response", "true", actualNameMatch);
-        assertEquals("Response", "true", actualIdMatch);
+        assertEquals(Boolean.TRUE, actualNameMatch);
+        assertEquals(Boolean.TRUE, actualIdMatch);
         assertEquals("Response", "MoG_CinderVolumes_2/19387dc6-060f-446e-b41f-dcfd29c73845", actualResponse);
     }
 
     @Test
     public void testRemoveLayer3Service_idsNotMatch() {
-        MockGetVolumeGroupById(wireMockServer, "MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58",
-                "CRTGVNF_queryAAIResponseVolume_idsNotMatch.xml");
+        stubAaiVolumeGroup("MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58",
+                "volume-selection/volume-group-with-tenant.json", 200);
 
         Map<String, Object> variables = new HashMap<>();
         setVariables(variables);
+        variables.put("tenantId", "different-tenant");
 
         String processId = invokeSubProcess("ConfirmVolumeGroupTenant", variables);
 
 
-        String actualNameMatch =
-                BPMNUtil.getVariable(processEngine, "ConfirmVolumeGroupTenant", "groupNamesMatch", processId);
-        String actualIdMatch =
-                BPMNUtil.getVariable(processEngine, "ConfirmVolumeGroupTenant", "tenantIdsMatch", processId);
-        String actualResponse =
-                BPMNUtil.getVariable(processEngine, "ConfirmVolumeGroupTenant", "WorkflowException", processId);
+        Object actualNameMatch = value(processId, "groupNamesMatch");
+        Object actualIdMatch = value(processId, "tenantIdsMatch");
+        WorkflowException actualResponse = (WorkflowException) value(processId, "WorkflowException");
 
-        assertEquals("Response", "true", actualNameMatch);
-        assertEquals("Response", "false", actualIdMatch);
-        assertEquals("Response",
-                "WorkflowException[processKey=ConfirmVolumeGroupTenant,errorCode=1,errorMessage=Volume Group a8399879-31b3-4973-be26-0a0cbe776b58 does not belong to your tenant,workStep=*]",
-                actualResponse);
+        assertEquals(Boolean.TRUE, actualNameMatch);
+        assertEquals(Boolean.FALSE, actualIdMatch);
+        assertEquals("ConfirmVolumeGroupTenant", actualResponse.getProcessKey());
+        assertEquals(1, actualResponse.getErrorCode());
+        assertEquals("Volume Group a8399879-31b3-4973-be26-0a0cbe776b58 does not belong to your tenant",
+                actualResponse.getErrorMessage());
 
+    }
+
+    private Object value(String processId, String name) {
+        HistoricVariableInstance variable = processEngine.getHistoryService().createHistoricVariableInstanceQuery()
+                .processInstanceId(processId).variableName(name).singleResult();
+        assertNotNull(name, variable);
+        return variable.getValue();
     }
 
     private void setVariables(Map<String, Object> variables) {

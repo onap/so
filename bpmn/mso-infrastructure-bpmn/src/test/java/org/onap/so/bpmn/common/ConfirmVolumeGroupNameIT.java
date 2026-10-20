@@ -21,10 +21,14 @@
 package org.onap.so.bpmn.common;
 
 import static org.junit.Assert.assertEquals;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetVolumeGroupById;
+import static org.junit.Assert.assertNotNull;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.camunda.bpm.engine.history.HistoricVariableInstance;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 
@@ -41,7 +45,7 @@ public class ConfirmVolumeGroupNameIT extends BaseIntegrationTest {
     @Test
     public void sunnyDay() throws Exception {
         logStart();
-        MockGetVolumeGroupById(wireMockServer, "MDTWNJ21", "VOLUME_GROUP_ID_1", "aai-volume-group-id-info.xml");
+        stubAaiVolumeGroup("MDTWNJ21", "VOLUME_GROUP_ID_1", "volume-selection/volume-group.json", 200);
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("isDebugLogEnabled", "true");
@@ -50,10 +54,9 @@ public class ConfirmVolumeGroupNameIT extends BaseIntegrationTest {
         variables.put("ConfirmVolumeGroupName_aicCloudRegion", "MDTWNJ21");
         variables.put("mso-request-id", UUID.randomUUID().toString());
         String processId = invokeSubProcess("ConfirmVolumeGroupName", variables);
-        String responseCode = BPMNUtil.getVariable(processEngine, "ConfirmVolumeGroupName",
-                "CVGN_queryVolumeGroupResponseCode", processId);
-
-        assertEquals("200", responseCode);
+        assertEquals(Integer.valueOf(200), value(processId, "CVGN_queryVolumeGroupResponseCode"));
+        assertEquals(Boolean.TRUE, value(processId, "CVGN_volumeGroupNameMatches"));
+        verifyVolumeLookup("VOLUME_GROUP_ID_1");
 
         logEnd();
     }
@@ -68,8 +71,8 @@ public class ConfirmVolumeGroupNameIT extends BaseIntegrationTest {
         logStart();
 
         // does not exist would return a 404 from AAI
-        MockGetVolumeGroupById(wireMockServer, "MDTWNJ21", "VOLUME_GROUP_ID_THAT_DOES_NOT_EXIST",
-                "aai-volume-group-id-info.xml", 404);
+        stubAaiVolumeGroup("MDTWNJ21", "VOLUME_GROUP_ID_THAT_DOES_NOT_EXIST", "volume-selection/volume-group.json",
+                404);
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("isDebugLogEnabled", "true");
@@ -78,10 +81,9 @@ public class ConfirmVolumeGroupNameIT extends BaseIntegrationTest {
         variables.put("ConfirmVolumeGroupName_volumeGroupName", "cee6d136-e378-4678-a024-2cd15f0ee0cg");
         variables.put("mso-request-id", UUID.randomUUID().toString());
         String processId = invokeSubProcess("ConfirmVolumeGroupName", variables);
-        String responseCode = BPMNUtil.getVariable(processEngine, "ConfirmVolumeGroupName",
-                "CVGN_queryVolumeGroupResponseCode", processId);
-
-        assertEquals("404", responseCode);
+        assertEquals(Integer.valueOf(404), value(processId, "CVGN_queryVolumeGroupResponseCode"));
+        assertEquals(Boolean.FALSE, value(processId, "CVGN_volumeGroupNameMatches"));
+        verifyVolumeLookup("VOLUME_GROUP_ID_THAT_DOES_NOT_EXIST");
 
         logEnd();
     }
@@ -96,7 +98,7 @@ public class ConfirmVolumeGroupNameIT extends BaseIntegrationTest {
     public void rainyDayNameDoesNotMatch() throws Exception {
         logStart();
 
-        MockGetVolumeGroupById(wireMockServer, "MDTWNJ21", "VOLUME_GROUP_ID_1", "aai-volume-group-id-info.xml", 200);
+        stubAaiVolumeGroup("MDTWNJ21", "VOLUME_GROUP_ID_1", "volume-selection/volume-group.json", 200);
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("isDebugLogEnabled", "true");
@@ -105,11 +107,24 @@ public class ConfirmVolumeGroupNameIT extends BaseIntegrationTest {
         variables.put("ConfirmVolumeGroupName_aicCloudRegion", "MDTWNJ21");
         variables.put("mso-request-id", UUID.randomUUID().toString());
         String processId = invokeSubProcess("ConfirmVolumeGroupName", variables);
-        String volumeGroupNameMatches =
-                BPMNUtil.getVariable(processEngine, "ConfirmVolumeGroupName", "CVGN_volumeGroupNameMatches", processId);
-
-        assertEquals("false", volumeGroupNameMatches);
+        assertEquals(Integer.valueOf(200), value(processId, "CVGN_queryVolumeGroupResponseCode"));
+        assertEquals(Boolean.FALSE, value(processId, "CVGN_volumeGroupNameMatches"));
+        verifyVolumeLookup("VOLUME_GROUP_ID_1");
 
         logEnd();
+    }
+
+    private Object value(String processId, String name) {
+        HistoricVariableInstance variable = processEngine.getHistoryService().createHistoricVariableInstanceQuery()
+                .processInstanceId(processId).variableName(name).singleResult();
+        assertNotNull(name, variable);
+        return variable.getValue();
+    }
+
+    private void verifyVolumeLookup(String volumeGroupId) {
+        wireMockServer.verify(1,
+                getRequestedFor(urlPathMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/"
+                        + "cloud-region/CloudOwner/MDTWNJ21/volume-groups/volume-group/" + volumeGroupId))
+                                .withHeader("Accept", equalTo("application/json")));
     }
 }
