@@ -78,7 +78,7 @@
     <so-etsi-sol003-adapter-version>1.9.0-SNAPSHOT</so-etsi-sol003-adapter-version>
     <onap-logging-version>1.7.0</onap-logging-version>
     <sdc-dist-client.version>2.3.0</sdc-dist-client.version>
-    <grpc.version>1.58.0</grpc.version>
+    <grpc.version>1.82.1</grpc.version>
     <httpclient4.version>4.5.14</httpclient4.version>
     <kafka.version>3.9.2</kafka.version>
     <aai-schema.version>1.14.0</aai-schema.version>
@@ -988,9 +988,8 @@
         <version>20250517</version>
       </dependency>
       <!-- oparent's dependencies BOM pins guava 28.1-jre, commons-beanutils 1.9.4 and xercesImpl
-           2.12.0 below what their requesters ask for, and ccsdk blueprint-proto drags protobuf
-           3.10.0 in ahead of grpc's 3.24. None of these is declared directly, so they need
-           entries here. -->
+           2.12.0 below what their requesters ask for. None of these is declared directly, so
+           they need entries here. -->
       <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
