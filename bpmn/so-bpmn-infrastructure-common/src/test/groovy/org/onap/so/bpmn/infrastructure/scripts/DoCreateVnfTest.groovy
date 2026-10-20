@@ -30,8 +30,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
@@ -43,9 +41,6 @@ import static org.mockito.Mockito.*
 @RunWith(MockitoJUnitRunner.Silent.class)
 class DoCreateVnfTest {
     def prefix = "DoCVNF_"
-
-    @Captor
-    static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
     @Before
     void init() throws IOException {
@@ -74,10 +69,17 @@ class DoCreateVnfTest {
         DoCreateVnf obj = new DoCreateVnf()
         obj.preProcessRequest(mockExecution)
 
-        Mockito.verify(mockExecution, times(31)).setVariable(captor.capture(), captor.capture())
-        List list = captor.getAllValues()
-        String str = list.get(51)
-        Assert.assertEquals("http://localhost:28080/mso/SDNCAdapterCallbackService", str)
+        Mockito.verify(mockExecution).setVariable("DoCVNF_sdncCallbackUrl",
+                "http://localhost:28080/mso/SDNCAdapterCallbackService")
+        Mockito.verify(mockExecution).setVariable("DoCVNF_requestId", "12345")
+        Mockito.verify(mockExecution).setVariable("mso-request-id", "12345")
+        Mockito.verify(mockExecution).setVariable("DoCVNF_serviceInstanceId", "MIS/1604/0026/SW_INTERNET")
+        Mockito.verify(mockExecution).setVariable("DoCVNF_vnfName", "skask-test")
+        Mockito.verify(mockExecution).setVariable("DoCVNF_cloudSiteId", "MDTWNJ21")
+        Mockito.verify(mockExecution).setVariable("DoCVNF_sdncVersion", "1702")
+        Mockito.verify(mockExecution).setVariable("DoCVNF_modelVersionId", "")
+        Mockito.verify(mockExecution).setVariable("DoCVNF_modelCustomizationId", "")
+        Mockito.verify(mockExecution).setVariable("SDNCInteractionEnabled", false)
     }
 
     private static ExecutionEntity setupMock() {
