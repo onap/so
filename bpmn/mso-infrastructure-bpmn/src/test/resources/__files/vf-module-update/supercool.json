@@ -1,0 +1,8 @@
+{
+  "vf-module-id": "supercool",
+  "vf-module-name": "PCRF::module-1-0",
+  "is-base-vf-module": false,
+  "heat-stack-id": "slowburn",
+  "orchestration-status": "pending-create",
+  "resource-version": "0000075"
+}

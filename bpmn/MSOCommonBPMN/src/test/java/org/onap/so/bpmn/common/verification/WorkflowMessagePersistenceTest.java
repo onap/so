@@ -34,7 +34,10 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
@@ -76,6 +79,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
+import org.onap.so.client.policy.PolicyClientImpl;
 import org.onap.so.bpmn.common.scripts.ReceiveWorkflowMessage;
 import org.onap.so.bpmn.common.scripts.TrinityExceptionUtil;
 import org.onap.so.bpmn.core.RollbackData;
@@ -89,6 +95,7 @@ public class WorkflowMessagePersistenceTest {
     private static Path mariaDataDirectory;
     private static byte[] productionBpmn;
     private static byte[] manualHandlingBpmn;
+    private static byte[] rainyDayBpmn;
     private ProcessEngine engine;
     private String database;
     private String jdbcUrl;
@@ -99,6 +106,7 @@ public class WorkflowMessagePersistenceTest {
         assertTrue("Expected h2 or mariadb persistence backend", Arrays.asList("h2", "mariadb").contains(backend));
         productionBpmn = productionResource("subprocess/ReceiveWorkflowMessage.bpmn");
         manualHandlingBpmn = productionResource("subprocess/BuildingBlock/ManualHandling.bpmn");
+        rainyDayBpmn = productionResource("subprocess/BuildingBlock/RainyDayHandler.bpmn");
         if ("mariadb".equals(backend)) {
             Path directory = Paths.get("target", "groovy-migration", "persistence").toAbsolutePath();
             Files.createDirectories(directory);
@@ -144,7 +152,8 @@ public class WorkflowMessagePersistenceTest {
         reopenEngine();
         engine.getRepositoryService().createDeployment()
                 .addInputStream("ReceiveWorkflowMessage.bpmn", new ByteArrayInputStream(productionBpmn))
-                .addInputStream("ManualHandling.bpmn", new ByteArrayInputStream(manualHandlingBpmn)).deploy();
+                .addInputStream("ManualHandling.bpmn", new ByteArrayInputStream(manualHandlingBpmn))
+                .addInputStream("RainyDayHandler.bpmn", new ByteArrayInputStream(rainyDayBpmn)).deploy();
     }
 
     @After
@@ -364,6 +373,125 @@ public class WorkflowMessagePersistenceTest {
         } finally {
             requests.stop();
         }
+    }
+
+    @Test
+    public void rainyDayManualCallMappingsSurviveRestartWithTaskLocalResponses() throws Exception {
+        WireMockServer requests = new WireMockServer(0);
+        requests.start();
+        try (MockedStatic<UrnPropertiesReader> properties = mockStatic(UrnPropertiesReader.class, CALLS_REAL_METHODS);
+                MockedConstruction<PolicyClientImpl> policy = mockConstruction(PolicyClientImpl.class)) {
+            properties.when(() -> UrnPropertiesReader.getVariable(anyString(), any(DelegateExecution.class)))
+                    .thenAnswer(call -> {
+                        String name = call.getArgument(0);
+                        DelegateExecution execution = call.getArgument(1);
+                        Object value = execution.getVariable(name);
+                        if (value != null) {
+                            return String.valueOf(value);
+                        }
+                        switch (name) {
+                            case "mso.adapters.openecomp.db.endpoint":
+                                return "http://localhost:" + requests.port() + "/requests";
+                            case "mso.adapters.db.auth":
+                                return "test:test";
+                            case "mso.msoKey":
+                                return "";
+                            default:
+                                return null;
+                        }
+                    });
+            requests.stubFor(post(urlEqualTo("/requests"))
+                    .willReturn(aResponse().withStatus(204).withHeader("Connection", "close")));
+            for (String response : new String[] {"retry", "abort"}) {
+                requests.resetRequests();
+                String requestId = "rainy-manual-" + response;
+                Map<String, Object> input = rainyDayRequest(requestId, "Manual");
+                ProcessInstance process = engine.getRuntimeService().startProcessInstanceByKey("RainyDayHandler",
+                        UUID.randomUUID().toString(), input);
+                ProcessInstance child = engine.getRuntimeService().createProcessInstanceQuery()
+                        .superProcessInstanceId(process.getId()).singleResult();
+                assertNotNull(child);
+                assertEquals("ManualHandling",
+                        engine.getRepositoryService().getProcessDefinition(child.getProcessDefinitionId()).getKey());
+                Task task = engine.getTaskService().createTaskQuery().processInstanceId(child.getId()).singleResult();
+                assertNotNull(task);
+                assertEquals(requestId, engine.getTaskService().getVariable(task.getId(), "originalRequestId"));
+                assertEquals("operator", engine.getTaskService().getVariable(task.getId(), "originalRequestorId"));
+                assertEquals("5300", engine.getTaskService().getVariable(task.getId(), "errorCode"));
+                assertEquals("rollback, skip, manual, abort",
+                        engine.getTaskService().getVariable(task.getId(), "validResponses"));
+                engine.getTaskService().claim(task.getId(), "operator");
+                engine.getTaskService().setVariableLocal(task.getId(), "responseValue", response);
+                assertNull(engine.getRuntimeService().getVariable(process.getId(), "responseValue"));
+                assertDatabaseUpdates(requests, requestId, "PENDING_MANUAL_TASK");
+                restart();
+                Task restored = engine.getTaskService().createTaskQuery().taskId(task.getId()).singleResult();
+                assertNotNull(restored);
+                assertEquals(child.getId(), restored.getProcessInstanceId());
+                assertEquals("operator", restored.getAssignee());
+                assertEquals(response, engine.getTaskService().getVariableLocal(restored.getId(), "responseValue"));
+                assertEquals("Manual", engine.getRuntimeService().getVariable(process.getId(), "handlingCode"));
+                assertDatabaseUpdates(requests, requestId, "PENDING_MANUAL_TASK");
+                engine.getTaskService().complete(restored.getId());
+                assertEnded(process.getId());
+                assertEnded(child.getId());
+                assertEquals("retry".equals(response) ? "Retry" : "Abort", historic(process.getId(), "handlingCode"));
+                assertEquals("RDH_", historic(process.getId(), "prefix"));
+                assertActivityCount(process.getId(), "preProcessRequest_ScriptTask", 1);
+                assertActivityCount(process.getId(), "QueryPolicyEngine", 1);
+                assertActivityCount(process.getId(), "Task_1qu3p0x", 1);
+                assertActivityCount(child.getId(), "ManualHandlingUserTask", 1);
+                assertDatabaseUpdates(requests, requestId, "PENDING_MANUAL_TASK", "IN_PROGRESS");
+            }
+            assertTrue("Configured disposition must bypass the policy client", policy.constructed().isEmpty());
+        } finally {
+            requests.stop();
+        }
+    }
+
+    @Test
+    public void rainyDayNonManualDispositionsUseTheProductionGatewayWithoutCreatingTasks() {
+        try (MockedConstruction<PolicyClientImpl> policy = mockConstruction(PolicyClientImpl.class)) {
+            for (String disposition : new String[] {"Retry", "Abort", "Skip", "Rollback"}) {
+                Map<String, Object> input = rainyDayRequest("default-" + disposition, disposition);
+                input.put("WorkflowException", new WorkflowException("DoCreateVnf", 5300, "Original request error"));
+                ProcessInstance process = engine.getRuntimeService().startProcessInstanceByKey("RainyDayHandler",
+                        UUID.randomUUID().toString(), input);
+                assertEnded(process.getId());
+                assertEquals(disposition, historic(process.getId(), "handlingCode"));
+                assertEquals("rollback, skip, manual, abort", historic(process.getId(), "validResponses"));
+                assertEquals("RDH_", historic(process.getId(), "prefix"));
+                Object stored = historic(process.getId(), "WorkflowException");
+                assertTrue(stored instanceof WorkflowException);
+                WorkflowException original = (WorkflowException) stored;
+                assertEquals("DoCreateVnf", original.getProcessKey());
+                assertEquals(5300, original.getErrorCode());
+                assertEquals("Original request error", original.getErrorMessage());
+                assertActivityCount(process.getId(), "preProcessRequest_ScriptTask", 1);
+                assertActivityCount(process.getId(), "QueryPolicyEngine", 1);
+                assertActivityCount(process.getId(), "ExclusiveGateway_0kqwevj", 1);
+                assertActivityCount(process.getId(), "Task_1qu3p0x", 0);
+                assertActivityCount(process.getId(), "EndEvent_3", 1);
+                assertEquals(0, engine.getTaskService().createTaskQuery().processInstanceId(process.getId()).count());
+            }
+            assertTrue("Configured dispositions must bypass the policy client", policy.constructed().isEmpty());
+        }
+    }
+
+    private Map<String, Object> rainyDayRequest(String requestId, String disposition) {
+        Map<String, Object> input = new HashMap<>();
+        input.put("msoRequestId", requestId);
+        input.put("policy.default.disposition", disposition);
+        input.put("serviceType", "Service");
+        input.put("vnfType", "router");
+        input.put("currentActivity", "allocate");
+        input.put("workStep", "create");
+        input.put("failedActivity", "Controller");
+        input.put("errorCode", "5300");
+        input.put("errorText", "東京 & controller failure");
+        input.put("requestorId", "operator");
+        input.put("isDebugLogEnabled", false);
+        return input;
     }
 
     private static void assertDatabaseUpdates(WireMockServer requests, String requestId, String... statuses)

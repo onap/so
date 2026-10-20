@@ -1,0 +1,38 @@
+{
+  "vnf-id": "2f6aee38-1e2a-11e6-82d1-ffc7d9ee8aa4",
+  "vnf-name": "STMTN5MMSC20",
+  "vnf-type": "mmsc-capacity",
+  "service-id": "SDN-MOBILITY",
+  "equipment-role": "vMMSC",
+  "orchestration-status": "pending-create",
+  "in-maint": false,
+  "is-closed-loop-disabled": false,
+  "resource-version": "1508691",
+  "vf-modules": {
+    "vf-module": [
+      {
+        "vf-module-id": "973ed047-d251-4fb9-bf1a-65b8949e0a73",
+        "vf-module-name": "STMTN5MMSC20-MMSC::module-0-0",
+        "persona-model-id": "973ed047-d251-4fb9-bf1a-65b8949e0a73",
+        "persona-model-version": "1.0",
+        "is-base-vf-module": true,
+        "heat-stack-id": "FILLED-IN-BY-MSO",
+        "orchestration-status": "pending-create",
+        "resource-version": "1508692"
+      },
+      {
+        "vf-module-id": "973ed047-d251-4fb9-bf1a-65b8949e0a74",
+        "vf-module-name": "STMTN5MMSC20-MMSC::module-1-0",
+        "persona-model-id": "973ed047-d251-4fb9-bf1a-65b8949e0a74",
+        "persona-model-version": "1.0",
+        "is-base-vf-module": false,
+        "heat-stack-id": "FILLED-IN-BY-MSO",
+        "orchestration-status": "pending-create",
+        "resource-version": "1508692"
+      }
+    ]
+  },
+  "relationship-list": {},
+  "l-interfaces": {},
+  "lag-interfaces": {}
+}
