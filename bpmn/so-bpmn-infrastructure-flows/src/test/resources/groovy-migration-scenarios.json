@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "baseline": {
+    "revision": "068fb17da3d5b4080553be3e1b95b821d78ddc3a",
+    "sha256": "fd04c59619c4dea911d3535c74e6dd0a9952e7c7bcdcbca5c341a804983bec9c",
+    "resources": 242,
+    "processes": 242,
+    "groovySurfaces": 1310
+  },
+  "protectedSurfaces": [],
+  "scenarios": [],
+  "retiredSurfaces": []
+}

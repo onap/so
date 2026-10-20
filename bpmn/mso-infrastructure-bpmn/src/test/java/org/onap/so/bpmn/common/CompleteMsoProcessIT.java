@@ -20,14 +20,21 @@
 
 package org.onap.so.bpmn.common;
 
-import static org.onap.so.bpmn.common.BPMNUtil.waitForWorkflowToFinish;
-import static org.onap.so.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
+import org.onap.so.bpmn.core.WorkflowException;
 
 /**
  * Unit test for CompleteMsoProcess.bpmn.
@@ -35,14 +42,21 @@ import org.onap.so.BaseIntegrationTest;
 
 public class CompleteMsoProcessIT extends BaseIntegrationTest {
 
-    private void executeFlow(String inputRequestFile) throws InterruptedException {
-        mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
+    private static final String REQUEST_PATH = "/infraActiveRequests/STUW105_5002";
+
+    private String executeFlow(String inputRequestFile) {
+        wireMockServer.stubFor(get(urlEqualTo(REQUEST_PATH)).willReturn(aResponse()
+                .withHeader("Content-Type", "application/json").withBody("{\"serviceInstanceId\":\"service-1\"}")));
+        wireMockServer.stubFor(put(urlEqualTo(REQUEST_PATH)).willReturn(aResponse().withStatus(204)));
+        wireMockServer.stubFor(get(urlEqualTo("/infraActiveRequests/")).willReturn(aResponse().withStatus(400)));
         Map<String, Object> variables = new HashMap<>();
         variables.put("CompleteMsoProcessRequest", inputRequestFile);
         variables.put("mso-request-id", UUID.randomUUID().toString());
         String processId = invokeSubProcess("CompleteMsoProcess", variables);
-        waitForWorkflowToFinish(processEngine, processId);
+        Assert.assertEquals(1,
+                historyService.createHistoricProcessInstanceQuery().processInstanceId(processId).finished().count());
         logEnd();
+        return processId;
     }
 
     @Test
@@ -50,13 +64,8 @@ public class CompleteMsoProcessIT extends BaseIntegrationTest {
         logStart();
 
         // Execute Flow
-        executeFlow(gMsoCompletionRequestWithNotificationurl());
-
-        // Verify Error
-        String CMSO_ResponseCode = BPMNUtil.getVariable(processEngine, "CompleteMsoProcess", "CMSO_ResponseCode");
-        Assert.assertEquals("200", CMSO_ResponseCode);
-        Assert.assertTrue(
-                (boolean) BPMNUtil.getRawVariable(processEngine, "CompleteMsoProcess", "CMSO_SuccessIndicator"));
+        String processId = executeFlow(gMsoCompletionRequestWithNotificationurl());
+        assertCompletionUpdate(processId);
         logEnd();
     }
 
@@ -65,13 +74,8 @@ public class CompleteMsoProcessIT extends BaseIntegrationTest {
         logStart();
 
         // Execute Flow
-        executeFlow(gMsoCompletionRequestWithNoNotificationurl());
-
-        // Verify Error
-        String CMSO_ResponseCode = BPMNUtil.getVariable(processEngine, "CompleteMsoProcess", "CMSO_ResponseCode");
-        Assert.assertEquals("200", CMSO_ResponseCode);
-        Assert.assertTrue(
-                (boolean) BPMNUtil.getRawVariable(processEngine, "CompleteMsoProcess", "CMSO_SuccessIndicator"));
+        String processId = executeFlow(gMsoCompletionRequestWithNoNotificationurl());
+        assertCompletionUpdate(processId);
         logEnd();
     }
 
@@ -80,13 +84,8 @@ public class CompleteMsoProcessIT extends BaseIntegrationTest {
         logStart();
 
         // Execute Flow
-        executeFlow(gMsoCompletionRequestWithNotificationurlNoRequestId());
-
-        // Verify Error
-        String CMSO_ResponseCode = BPMNUtil.getVariable(processEngine, "CompleteMsoProcess", "CMSO_ResponseCode");
-        Assert.assertEquals("200", CMSO_ResponseCode);
-        Assert.assertTrue(
-                (boolean) BPMNUtil.getRawVariable(processEngine, "CompleteMsoProcess", "CMSO_SuccessIndicator"));
+        String processId = executeFlow(gMsoCompletionRequestWithNotificationurlNoRequestId());
+        assertDatabaseError(processId);
         logEnd();
     }
 
@@ -95,25 +94,54 @@ public class CompleteMsoProcessIT extends BaseIntegrationTest {
         logStart();
 
         // Execute Flow
-        executeFlow(gMsoCompletionRequestWithNoNotificationurlNoRequestId());
-
-        // Verify Error
-        String CMSO_ResponseCode = BPMNUtil.getVariable(processEngine, "CompleteMsoProcess", "CMSO_ResponseCode");
-        Assert.assertEquals("200", CMSO_ResponseCode);
-        Assert.assertTrue(
-                (boolean) BPMNUtil.getRawVariable(processEngine, "CompleteMsoProcess", "CMSO_SuccessIndicator"));
+        String processId = executeFlow(gMsoCompletionRequestWithNoNotificationurlNoRequestId());
+        assertDatabaseError(processId);
         logEnd();
+    }
+
+    private void assertCompletionUpdate(String processId) throws Exception {
+        Assert.assertEquals(1, historyService.createHistoricActivityInstanceQuery().processInstanceId(processId)
+                .activityId("EndEvent_1").count());
+        Assert.assertEquals(0, historyService.createHistoricActivityInstanceQuery().processInstanceId(processId)
+                .activityId("startEventExceptionCompleteMSO").count());
+        wireMockServer.verify(1, getRequestedFor(urlEqualTo(REQUEST_PATH)));
+        wireMockServer.verify(1, putRequestedFor(urlEqualTo(REQUEST_PATH)));
+        JsonNode update = new ObjectMapper()
+                .readTree(wireMockServer.findAll(putRequestedFor(urlEqualTo(REQUEST_PATH))).get(0).getBodyAsString());
+        Assert.assertEquals("STUW105_5002", update.path("requestId").asText());
+        Assert.assertEquals("COMPLETE", update.path("requestStatus").asText());
+        Assert.assertEquals("Resource Completed Successfully", update.path("statusMessage").asText());
+        Assert.assertEquals("service-1", update.path("serviceInstanceId").asText());
+        Assert.assertEquals("BPMN", update.path("lastModifiedBy").asText());
+        Assert.assertTrue(update.path("progress").isIntegralNumber());
+        Assert.assertEquals(100, update.path("progress").asInt());
+    }
+
+    private void assertDatabaseError(String processId) {
+        Object stored = historyService.createHistoricVariableInstanceQuery().processInstanceId(processId)
+                .variableName("WorkflowException").singleResult().getValue();
+        Assert.assertTrue(stored instanceof WorkflowException);
+        WorkflowException error = (WorkflowException) stored;
+        Assert.assertEquals("CompleteMsoProcess", error.getProcessKey());
+        Assert.assertEquals(2000, error.getErrorCode());
+        Assert.assertEquals("Internal Error - Occured in update infra request db", error.getErrorMessage());
+        Assert.assertEquals(1, historyService.createHistoricActivityInstanceQuery().processInstanceId(processId)
+                .activityId("endEventExceptionCompleteMSO").count());
+        Assert.assertEquals(0, historyService.createHistoricActivityInstanceQuery().processInstanceId(processId)
+                .activityId("EndEvent_1").count());
+        wireMockServer.verify(1, getRequestedFor(urlEqualTo("/infraActiveRequests/")));
+        Assert.assertTrue(wireMockServer.findAll(putRequestedFor(urlEqualTo(REQUEST_PATH))).isEmpty());
     }
 
     public String gMsoCompletionRequestWithNotificationurl() {
         String xml = ""
                 + "<sdncadapterworkflow:MsoCompletionRequest xmlns:ns=\"http://openecomp.org/mso/request/types/v1\" xmlns:sdncadapterworkflow=\"http://ecomp.openecomp.org.com/mso/workflow/schema/v1\">"
-                + "		<ns:request-information>" + "			<ns:request-id>STUW105_5002</ns:request-id>"
+                + "<ns:request-info><ns:request-id>STUW105_5002</ns:request-id>"
                 + "			<ns:request-action>RequestAction</ns:request-action>"
                 + "			<ns:request-sub-action>COMPLETE</ns:request-sub-action>" + "			<ns:source>SOURCE</ns:source>"
                 + "			<ns:notification-url>https://t3nap1a1.snt.bst.bls.com:9004/sdncontroller-sdncontroller-inbound-ws-war/sdncontroller-sdncontroller-inbound-ws.wsdl</ns:notification-url>"
                 + "			<ns:order-number>10205000</ns:order-number>" + "			<ns:order-version>1</ns:order-version>"
-                + "		</ns:request-information>"
+                + "</ns:request-info>"
                 + "		<sdncadapterworkflow:mso-bpel-name>BPELNAME</sdncadapterworkflow:mso-bpel-name>"
                 + "</sdncadapterworkflow:MsoCompletionRequest>";
 
@@ -126,12 +154,12 @@ public class CompleteMsoProcessIT extends BaseIntegrationTest {
         // Generated the below XML from ActiveVOS moduler ... Using the generate sample XML feature in ActiveVOS
         String xml = ""
                 + "<sdncadapterworkflow:MsoCompletionRequest xmlns:ns=\"http://openecomp.org/mso/request/types/v1\" xmlns:sdncadapterworkflow=\"http://openecomp.org/mso/workflow/schema/v1\">"
-                + "		<ns:request-information>" + "			<ns:request-id>STUW105_5002</ns:request-id>"
+                + "<ns:request-info><ns:request-id>STUW105_5002</ns:request-id>"
                 + "			<ns:request-action>RequestAction</ns:request-action>"
                 + "			<ns:request-sub-action>COMPLETE</ns:request-sub-action>" + "			<ns:source>SOURCE</ns:source>"
                 + "			<ns:notification-url></ns:notification-url>"
                 + "			<ns:order-number>10205000</ns:order-number>" + "			<ns:order-version>1</ns:order-version>"
-                + "		</ns:request-information>"
+                + "</ns:request-info>"
                 + "		<sdncadapterworkflow:mso-bpel-name>BPELNAME</sdncadapterworkflow:mso-bpel-name>"
                 + "</sdncadapterworkflow:MsoCompletionRequest>";
 
@@ -142,12 +170,12 @@ public class CompleteMsoProcessIT extends BaseIntegrationTest {
         // Generated the below XML from ActiveVOS moduler ... Using the generate sample XML feature in ActiveVOS
         String xml = ""
                 + "<sdncadapterworkflow:MsoCompletionRequest xmlns:ns=\"http://openecomp.org/mso/request/types/v1\" xmlns:sdncadapterworkflow=\"http://openecomp.org/mso/workflow/schema/v1\">"
-                + "		<ns:request-information>" + "			<ns:request-id></ns:request-id>"
+                + "<ns:request-info><ns:request-id></ns:request-id>"
                 + "			<ns:request-action>RequestAction</ns:request-action>"
                 + "			<ns:request-sub-action>COMPLETE</ns:request-sub-action>" + "			<ns:source>SOURCE</ns:source>"
                 + "			<ns:notification-url></ns:notification-url>"
                 + "			<ns:order-number>10205000</ns:order-number>" + "			<ns:order-version>1</ns:order-version>"
-                + "		</ns:request-information>"
+                + "</ns:request-info>"
                 + "		<sdncadapterworkflow:mso-bpel-name>BPELNAME</sdncadapterworkflow:mso-bpel-name>"
                 + "</sdncadapterworkflow:MsoCompletionRequest>";
 
@@ -158,12 +186,12 @@ public class CompleteMsoProcessIT extends BaseIntegrationTest {
         // Generated the below XML from ActiveVOS moduler ... Using the generate sample XML feature in ActiveVOS
         String xml = ""
                 + "<sdncadapterworkflow:MsoCompletionRequest xmlns:ns=\"http://openecomp.org/mso/request/types/v1\" xmlns:sdncadapterworkflow=\"http://openecomp.org/mso/workflow/schema/v1\">"
-                + "		<ns:request-information>" + "			<ns:request-id></ns:request-id>"
+                + "<ns:request-info><ns:request-id></ns:request-id>"
                 + "			<ns:request-action>RequestAction</ns:request-action>"
                 + "			<ns:request-sub-action>COMPLETE</ns:request-sub-action>" + "			<ns:source>SOURCE</ns:source>"
                 + "			<ns:notification-url>https://t3nap1a1.snt.bst.bls.com:9004/sdncontroller-sdncontroller-inbound-ws-war/sdncontroller-sdncontroller-inbound-ws.wsdl</ns:notification-url>"
                 + "			<ns:order-number>10205000</ns:order-number>" + "			<ns:order-version>1</ns:order-version>"
-                + "		</ns:request-information>"
+                + "</ns:request-info>"
                 + "		<sdncadapterworkflow:mso-bpel-name>BPELNAME</sdncadapterworkflow:mso-bpel-name>"
                 + "</sdncadapterworkflow:MsoCompletionRequest>";
 

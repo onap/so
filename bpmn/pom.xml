@@ -90,4 +90,12 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>groovy-migration-verification</id>
+      <modules>
+        <module>groovy-migration-verification</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>

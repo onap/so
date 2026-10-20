@@ -235,4 +235,26 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>groovy-migration-verification</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.onap.so</groupId>
+          <artifactId>so-bpmn-moi</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>3.1.2</version>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
