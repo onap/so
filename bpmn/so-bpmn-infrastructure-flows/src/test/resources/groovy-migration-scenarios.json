@@ -1000,6 +1000,201 @@
       "module": "mso-infrastructure-bpmn",
       "test": "org.onap.so.bpmn.common.VolumeGroupNameFailureIT#inventoryNamesAreComparedWithTheirOriginalCase",
       "processId": "ConfirmVolumeGroupName"
+    },
+    {
+      "id": "cll-CloudLeasedLineInputContractTest-creationRetainsAnExplicitIdentifierAndTypedControllerInputs",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CloudLeasedLineInputContractTest#creationRetainsAnExplicitIdentifierAndTypedControllerInputs"
+    },
+    {
+      "id": "cll-CloudLeasedLineInputContractTest-creationGeneratesAUuidWhenTheAdditionalIdentifierIsAbsent",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CloudLeasedLineInputContractTest#creationGeneratesAUuidWhenTheAdditionalIdentifierIsAbsent"
+    },
+    {
+      "id": "cll-CloudLeasedLineInputContractTest-anOmittedControllerFlagUsesTheConfiguredStringValue",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CloudLeasedLineInputContractTest#anOmittedControllerFlagUsesTheConfiguredStringValue"
+    },
+    {
+      "id": "cll-CloudLeasedLineInputContractTest-creationRejectsMissingTransportNetworksWithTheValidationCode",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CloudLeasedLineInputContractTest#creationRejectsMissingTransportNetworksWithTheValidationCode"
+    },
+    {
+      "id": "cll-CloudLeasedLineInputContractTest-modificationRetainsItsIdentifierModelsAndNestedJsonTypes",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CloudLeasedLineInputContractTest#modificationRetainsItsIdentifierModelsAndNestedJsonTypes"
+    },
+    {
+      "id": "cll-CloudLeasedLineInputContractTest-modificationRejectsMissingIdentifiersBeforeCreatingAnOperation",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CloudLeasedLineInputContractTest#modificationRejectsMissingIdentifiersBeforeCreatingAnOperation"
+    },
+    {
+      "id": "cll-CloudLeasedLineInputContractTest-modificationRejectsMissingParametersBeforeCreatingAnOperation",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CloudLeasedLineInputContractTest#modificationRejectsMissingParametersBeforeCreatingAnOperation"
+    },
+    {
+      "id": "cll-CloudLeasedLineInputContractTest-modificationRejectsMissingTransportNetworksWithTheValidationCode",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CloudLeasedLineInputContractTest#modificationRejectsMissingTransportNetworksWithTheValidationCode"
+    },
+    {
+      "id": "cll-CloudLeasedLineInputContractTest-bothOperationsRejectMissingCallbacksBeforeAllocatingIdentifiers",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CloudLeasedLineInputContractTest#bothOperationsRejectMissingCallbacksBeforeAllocatingIdentifiers"
+    },
+    {
+      "id": "cll-CloudLeasedLineInputContractTest-unspecifiedAllottedResourcesSelectTheFirstDeclaredResource",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CloudLeasedLineInputContractTest#unspecifiedAllottedResourcesSelectTheFirstDeclaredResource"
+    },
+    {
+      "id": "cll-CloudLeasedLineInputContractTest-anExplicitAllottedResourceIsRetained",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CloudLeasedLineInputContractTest#anExplicitAllottedResourceIsRetained"
+    },
+    {
+      "id": "cll-CloudLeasedLineInputContractTest-anExistingEndpointIsDetectedOnlyWithinItsAllottedResource",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CloudLeasedLineInputContractTest#anExistingEndpointIsDetectedOnlyWithinItsAllottedResource"
+    },
+    {
+      "id": "cll-CloudLeasedLineInputContractTest-missingLinkStateAndMissingEndpointNamesDoNotMatch",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CloudLeasedLineInputContractTest#missingLinkStateAndMissingEndpointNamesDoNotMatch"
+    },
+    {
+      "id": "cll-CloudLeasedLineInputContractTest-missingResourceOrLinkArgumentsDoNotMatch",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CloudLeasedLineInputContractTest#missingResourceOrLinkArgumentsDoNotMatch"
+    },
+    {
+      "id": "cll-CloudLeasedLineInputContractTest-anUnknownAllottedResourceHasNoExistingLinks",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CloudLeasedLineInputContractTest#anUnknownAllottedResourceHasNoExistingLinks"
+    },
+    {
+      "id": "cll-CloudLeasedLineCreateProcessTest-disabledSdncCreatesTypedInventoryAndRecordsBothOperationStates",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineCreateProcessTest#disabledSdncCreatesTypedInventoryAndRecordsBothOperationStates",
+      "processId": "DoCloudLeasedLineCreate"
+    },
+    {
+      "id": "cll-CloudLeasedLineCreateProcessTest-anUnprotectedLogicalLinkOmitsItsOptionalProtectionIdentifier",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineCreateProcessTest#anUnprotectedLogicalLinkOmitsItsOptionalProtectionIdentifier",
+      "processId": "DoCloudLeasedLineCreate"
+    },
+    {
+      "id": "cll-CloudLeasedLineCreateProcessTest-rejectedServiceCreationStopsBeforeAllocatingNetworkResources",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineCreateProcessTest#rejectedServiceCreationStopsBeforeAllocatingNetworkResources",
+      "processId": "DoCloudLeasedLineCreate"
+    },
+    {
+      "id": "cll-CloudLeasedLineCreateProcessTest-rejectedNetworkResourceStopsBeforeCreatingPolicyOrLinks",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineCreateProcessTest#rejectedNetworkResourceStopsBeforeCreatingPolicyOrLinks",
+      "processId": "DoCloudLeasedLineCreate"
+    },
+    {
+      "id": "cll-CloudLeasedLineCreateProcessTest-missingSlaStopsBeforeTheAllottedResourceMutation",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineCreateProcessTest#missingSlaStopsBeforeTheAllottedResourceMutation",
+      "processId": "DoCloudLeasedLineCreate"
+    },
+    {
+      "id": "cll-CloudLeasedLineCreateProcessTest-missingCallbackStopsBeforeAnyOutboundAction",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineCreateProcessTest#missingCallbackStopsBeforeAnyOutboundAction",
+      "processId": "DoCloudLeasedLineCreate"
+    },
+    {
+      "id": "cll-CloudLeasedLineCreateProcessTest-initialStatusRejectionStopsBeforeInventoryMutation",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineCreateProcessTest#initialStatusRejectionStopsBeforeInventoryMutation",
+      "processId": "DoCloudLeasedLineCreate"
+    },
+    {
+      "id": "cll-CloudLeasedLineCreateProcessTest-finalStatusRejectionCannotCompleteTheWorkflowSuccessfully",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineCreateProcessTest#finalStatusRejectionCannotCompleteTheWorkflowSuccessfully",
+      "processId": "DoCloudLeasedLineCreate"
+    },
+    {
+      "id": "cll-CloudLeasedLineCreateProcessTest-theErrorRoutePreservesTheOriginalValidationCode",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineCreateProcessTest#theErrorRoutePreservesTheOriginalValidationCode",
+      "processId": "DoCloudLeasedLineCreate"
+    },
+    {
+      "id": "cll-CloudLeasedLineModifyProcessTest-anExistingLinkIsRetainedWhileZeroBandwidthAndCompletionAreWritten",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineModifyProcessTest#anExistingLinkIsRetainedWhileZeroBandwidthAndCompletionAreWritten",
+      "processId": "DoCloudLeasedLineModify"
+    },
+    {
+      "id": "cll-CloudLeasedLineModifyProcessTest-bandwidthOnlyModificationDoesNotRequireConnectionLinks",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineModifyProcessTest#bandwidthOnlyModificationDoesNotRequireConnectionLinks",
+      "processId": "DoCloudLeasedLineModify"
+    },
+    {
+      "id": "cll-CloudLeasedLineModifyProcessTest-aNewLinkIsCreatedAndAttachedToTheRequestedResource",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineModifyProcessTest#aNewLinkIsCreatedAndAttachedToTheRequestedResource",
+      "processId": "DoCloudLeasedLineModify"
+    },
+    {
+      "id": "cll-CloudLeasedLineModifyProcessTest-rejectedNewLinkStopsBeforeAttachmentPolicyAndCompletion",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineModifyProcessTest#rejectedNewLinkStopsBeforeAttachmentPolicyAndCompletion",
+      "processId": "DoCloudLeasedLineModify"
+    },
+    {
+      "id": "cll-CloudLeasedLineModifyProcessTest-rejectedServiceStatusStopsBeforeCompletion",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineModifyProcessTest#rejectedServiceStatusStopsBeforeCompletion",
+      "processId": "DoCloudLeasedLineModify"
+    },
+    {
+      "id": "cll-CloudLeasedLineModifyProcessTest-rejectedCompletionStatusCannotCompleteTheWorkflowSuccessfully",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineModifyProcessTest#rejectedCompletionStatusCannotCompleteTheWorkflowSuccessfully",
+      "processId": "DoCloudLeasedLineModify"
+    },
+    {
+      "id": "cll-CloudLeasedLineModifyProcessTest-rejectedPolicyUpdateStopsBeforeServiceStatusAndCompletion",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineModifyProcessTest#rejectedPolicyUpdateStopsBeforeServiceStatusAndCompletion",
+      "processId": "DoCloudLeasedLineModify"
+    },
+    {
+      "id": "cll-CloudLeasedLineModifyProcessTest-missingServiceStopsBeforeAnyInventoryMutation",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineModifyProcessTest#missingServiceStopsBeforeAnyInventoryMutation",
+      "processId": "DoCloudLeasedLineModify"
+    },
+    {
+      "id": "cll-CloudLeasedLineModifyProcessTest-missingPolicyRelationshipStopsBeforeAnyInventoryMutation",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineModifyProcessTest#missingPolicyRelationshipStopsBeforeAnyInventoryMutation",
+      "processId": "DoCloudLeasedLineModify"
+    },
+    {
+      "id": "cll-CloudLeasedLineModifyProcessTest-missingSlaStopsBeforeUpdatingThePolicy",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineModifyProcessTest#missingSlaStopsBeforeUpdatingThePolicy",
+      "processId": "DoCloudLeasedLineModify"
+    },
+    {
+      "id": "cll-CloudLeasedLineModifyProcessTest-missingCallbackStopsBeforeAnyExternalAction",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineModifyProcessTest#missingCallbackStopsBeforeAnyExternalAction",
+      "processId": "DoCloudLeasedLineModify"
     }
   ],
   "coverageSlices": [],

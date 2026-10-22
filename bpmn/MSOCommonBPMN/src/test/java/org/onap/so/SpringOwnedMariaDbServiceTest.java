@@ -27,23 +27,92 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import ch.vorburger.exec.ManagedProcess;
+import ch.vorburger.exec.ManagedProcessBuilder;
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfiguration;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.HashMap;
+import java.util.List;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 import org.junit.Test;
+import org.mockito.MockedConstruction;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class SpringOwnedMariaDbServiceTest {
+    @Rule
+    public TemporaryFolder temporary = new TemporaryFolder();
+
+    @Test
+    public void windowsStartupDisablesDomainAuthenticationOnlyForTheOwnedDatabase() throws Exception {
+        TestService service = new TestService();
+        service.getConfiguration().setOS("winx64");
+        try {
+            service.start();
+            assertTrue(service.configuration.getArgs().contains("--gssapi=OFF"));
+            assertEquals(service.directory.resolve("data").toString(), service.configuration.getDataDir());
+        } finally {
+            service.preDestroy();
+        }
+    }
+
+    @Test
+    public void linuxStartupRetainsTheDefaultAuthenticationConfiguration() throws Exception {
+        TestService service = new TestService();
+        service.getConfiguration().setOS("linux");
+        try {
+            service.start();
+            assertFalse(service.configuration.getArgs().contains("--gssapi=OFF"));
+        } finally {
+            service.preDestroy();
+        }
+    }
+
+    @Test
+    public void windowsBootstrapReceivesAnOwnedTemplateWithoutChangingTheSharedBinaryDirectory() throws Exception {
+        Path owned = temporary.newFolder("owned database").toPath();
+        Path binaries = temporary.newFolder("shared binaries").toPath();
+        DBConfiguration configuration = mock(DBConfiguration.class);
+        when(configuration.isWindows()).thenReturn(true);
+        when(configuration.getDataDir()).thenReturn(owned.resolve("data").toString());
+        when(configuration.getBaseDir()).thenReturn(binaries.toString());
+        when(configuration.getLibDir()).thenReturn(binaries.resolve("lib").toString());
+        when(configuration.getOSLibraryEnvironmentVarName()).thenReturn("PATH");
+        when(configuration.getExecutable(DBConfiguration.Executable.InstallDB))
+                .thenReturn(binaries.resolve("mariadb-install-db.exe").toFile());
+        ManagedProcess process = mock(ManagedProcess.class);
+        try (MockedConstruction<ManagedProcessBuilder> builders =
+                mockConstruction(ManagedProcessBuilder.class, (builder, context) -> {
+                    when(builder.getEnvironment()).thenReturn(new HashMap<>());
+                    when(builder.build()).thenReturn(process);
+                })) {
+            assertSame(process,
+                    new SpringOwnedMariaDbService.SpringOwnedDatabase(configuration).createDBInstallProcess());
+            ManagedProcessBuilder builder = builders.constructed().get(0);
+            verify(builder).addFileArgument("--config", owned.resolve("bootstrap.ini").toFile());
+            verify(builder).addFileArgument("--datadir", owned.resolve("data").toFile().getCanonicalFile());
+            verify(builder).setWorkingDirectory(binaries.toFile());
+            assertEquals(binaries.resolve("lib").toString(), builder.getEnvironment().get("PATH"));
+        }
+        assertEquals("[mysqld]\ngssapi=OFF\n",
+                new String(Files.readAllBytes(owned.resolve("bootstrap.ini")), StandardCharsets.UTF_8));
+        assertFalse(Files.exists(binaries.resolve("my.ini")));
+        assertFalse(Files.exists(binaries.resolve("bootstrap.ini")));
+    }
+
     @Test
     public void lifecycleStopKeepsTheDatabaseAvailableUntilDependentBeansAreDestroyed() throws Exception {
         TestService service = new TestService();
@@ -125,9 +194,11 @@ public class SpringOwnedMariaDbServiceTest {
         final AtomicBoolean running = new AtomicBoolean();
         final List<String> events = new ArrayList<>();
         Path directory;
+        DBConfiguration configuration;
 
         @Override
         protected DB createDatabase(DBConfiguration configuration) {
+            this.configuration = configuration;
             directory = Paths.get(configuration.getDataDir()).getParent();
             return database;
         }

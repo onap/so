@@ -19,19 +19,23 @@
  */
 package org.onap.so;
 
+import ch.vorburger.exec.ManagedProcess;
+import ch.vorburger.exec.ManagedProcessBuilder;
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfiguration;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 import jakarta.annotation.PreDestroy;
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.Files;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 
 public class SpringOwnedMariaDbService extends MariaDB4jSpringService {
     private Path ownedDirectory;
@@ -48,6 +52,9 @@ public class SpringOwnedMariaDbService extends MariaDB4jSpringService {
             DBConfigurationBuilder configuration = getConfiguration();
             configuration.setDataDir(ownedDirectory.resolve("data").toString());
             configuration.setTmpDir(ownedDirectory.resolve("tmp").toString());
+            if (configuration.isWindows()) {
+                configuration.addArg("--gssapi=OFF");
+            }
             db = createDatabase(configuration.build());
             db.start();
         } catch (Exception failure) {
@@ -102,7 +109,7 @@ public class SpringOwnedMariaDbService extends MariaDB4jSpringService {
         }
     }
 
-    private static class SpringOwnedDatabase extends DB {
+    static class SpringOwnedDatabase extends DB {
         SpringOwnedDatabase(DBConfiguration configuration) {
             super(configuration);
         }
@@ -111,6 +118,25 @@ public class SpringOwnedMariaDbService extends MariaDB4jSpringService {
             prepareDirectories();
             unpackEmbeddedDb();
             install();
+        }
+
+        @Override
+        protected ManagedProcess createDBInstallProcess() throws ManagedProcessException, IOException {
+            if (!configuration.isWindows()) {
+                return super.createDBInstallProcess();
+            }
+            // MariaDB4j does not forward server arguments to the Windows bootstrap.
+            // Its default GSSAPI initialization can wait on an unavailable domain controller.
+            Path template = Paths.get(configuration.getDataDir()).getParent().resolve("bootstrap.ini");
+            Files.write(template, "[mysqld]\ngssapi=OFF\n".getBytes(StandardCharsets.UTF_8));
+            ManagedProcessBuilder installer =
+                    new ManagedProcessBuilder(configuration.getExecutable(DBConfiguration.Executable.InstallDB));
+            installer.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql_install_db"));
+            installer.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), configuration.getLibDir());
+            installer.setWorkingDirectory(new File(configuration.getBaseDir()));
+            installer.addFileArgument("--datadir", new File(configuration.getDataDir()).getCanonicalFile());
+            installer.addFileArgument("--config", template.toFile());
+            return installer.build();
         }
 
         @Override
