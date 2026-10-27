@@ -40,6 +40,10 @@ if [ -z "${LOG_PATH}" ]; then
 	export LOG_PATH="logs/${APP}"
 fi
 
+# The ASDC/BPMN/MONITORING links below are working directories, not log
+# directories: sdc-controller writes the distributed CSARs through ASDC.
+mkdir -p "${LOG_PATH}"
+
 if [ ${APP} = "sdc-controller" ]; then
 	ln -s ${LOG_PATH} ASDC
 fi
