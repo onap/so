@@ -1,0 +1,4553 @@
+openapi: 3.0.2
+info:
+  title: AS Lifecycle Management interface
+  description: |
+    Describes AS Lifecycle Management interface between SO (Service Orchestrator)/SO CNFM Client and SO CNFM (CNF Manager)
+    This interface is based on the SOL003 API,which is written by forge.etsi.org.
+    Operations and attributes names are modified for AS LCM use cases.
+
+  contact:
+    name: ONAP CNF WG
+  license:
+    name: ONAP copyright notice
+    url: ''
+  version: ''
+externalDocs:
+  description: ONAP CNF
+  url: >-
+    
+servers:
+  - url: 'http://localhost'
+
+paths:
+  /api_versions:
+    parameters:
+      - name: Version
+        description: |
+          Version of the API requested to use when responding to this request.
+        in: header
+        required: true
+        schema:
+          type: string
+    get:
+      description: >
+        The GET method reads API version information.
+      responses:
+        '200':
+          $ref: '#/components/responses/ApiVersions.Get.200'               
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'        
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'        
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'        
+        '404':
+          $ref: '#/components/responses/ASInstances.Resp.404'        
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'        
+        '413':
+          $ref: '#/components/responses/ASInstances.Resp.413'        
+        '414':
+          $ref: '#/components/responses/ASInstances.Resp.414'        
+        '416':
+          $ref: '#/components/responses/ASInstances.Resp.416'            
+        '422':
+          $ref: '#/components/responses/ASInstances.Resp.422'           
+        '429':
+          $ref: '#/components/responses/ASInstances.Resp.429'              
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'              
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'              
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'              
+    post:
+      description: >
+        This method is not supported. When this method is requested on this
+        resource, the API producer shall return a "405 Method Not Allowed"
+        response.
+      responses:
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'              
+    put:
+      description: >
+        This method is not supported. When this method is requested on this
+        resource, the API producer shall return a "405 Method Not Allowed"
+        response.
+      responses:
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'             
+    patch:
+      description: >
+        This method is not supported. When this method is requested on this
+        resource, the API producer shall return a "405 Method Not Allowed"
+        response.
+      responses:
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'             
+    delete:
+      description: >
+        This method is not supported. When this method is requested on this
+        resource, the API producer shall return a "405 Method Not Allowed"
+        response.
+      responses:
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'             
+  /as_instances:
+    parameters:
+      - name: Accept
+        description: >
+          Content-Types that are acceptable for the response.
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        description: |
+          The authorization token for the request.
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: Version
+        description: |
+          Version of the API requested to use when responding to this request.
+        in: header
+        required: true
+        schema:
+          type: string
+    post:
+      description: >
+        The POST method creates a new AS instance resource based on a App
+        package that is onboarded and in "ENABLED" state. 
+      requestBody:
+        $ref: '#/components/requestBodies/CreateAsRequestBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/ASInstances.Post.201'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'        
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'            
+        '404':
+          $ref: '#/components/responses/ASInstances.Resp.404'           
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'         
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'          
+        '422':
+          $ref: '#/components/responses/ASInstances.Resp.422'
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'        
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'        
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'             
+    get:
+      description: >
+        The GET method queries information about multiple AS instances.
+      parameters:
+        - name: filter
+          description: >
+            The CNFM shall support receiving this parameter as
+            part of the URI query string. The API consumer may supply this
+            parameter. 
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: all_fields
+          description: >
+            Include all complex attributes in the response.
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: fields
+          description: >
+            Complex attributes to be included into the response. 
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: exclude_fields
+          description: >
+            Complex attributes to be excluded from the response. 
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: exclude_default
+          in: query
+          description: "Indicates to exclude the following complex attributes from the response. The CNFM shall support this parameter. The following attributes shall be excluded from the AsLcmOpOcc structure in the response body if this parameter is provided, or none of the parameters \"all_fields,\" \"fields\", \"exclude_fields\", \"exclude_default\" are provided: -\toperationParams -\terror -\tresourceChanges -\tchangedInfo -\tchangedExtConnectivity -\tlcmCoordinations -\tmodificationsTriggeredByAsPkgChange -\twarnings"
+          required: false
+          schema:
+            type: string
+        - name: nextpage_opaque_marker
+          description: >
+            Marker to obtain the next page of a paged response. Shall be
+            supported by the CNFM if the entity supports paging.
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ASInstances.Get.200'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'        
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'                
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'                 
+        '404':
+          $ref: '#/components/responses/ASInstances.Resp.404'         
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'        
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'           
+        '416':
+          $ref: '#/components/responses/ASInstances.Resp.416'            
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'             
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'            
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'                    
+  '/as_instances/{asInstanceId}':
+    parameters:
+      - $ref: '#/components/parameters/AsInstanceId'
+      - name: Authorization
+        description: |
+          The authorization token for the request.
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: Version
+        description: |
+          Version of the API requested to use when responding to this request.
+        in: header
+        required: true
+        schema:
+          type: string
+    get:
+      description: >
+        The GET method retrieves information about an AS instance by reading an
+        "Individual AS instance" resource.
+      parameters:
+        - name: Accept
+          description: >
+            Content-Types that are acceptable for the response.
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/IndividualAsInstance.Get.200'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'            
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'             
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'                     
+        '404':
+          $ref: '#/components/responses/ASInstances.Resp.404'                     
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'                     
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'                     
+        '416':
+          $ref: '#/components/responses/ASInstances.Resp.416'                     
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'                     
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'                     
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'                     
+    patch:
+      description: >
+        This method modifies an "Individual AS instance" resource.
+      requestBody:
+        $ref: '#/components/requestBodies/AsInfoModificationRequestBody'
+      responses:
+        '202':
+          $ref: '#/components/responses/IndividualAsInstance.Patch.202'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'                     
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'                     
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'                     
+        '404':
+          $ref: '#/components/responses/ASInstances.Resp.404'                     
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'                     
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'                     
+        '409':
+          $ref: '#/components/responses/IndividualAsInstance.Patch.409'
+        '412':
+          $ref: '#/components/responses/IndividualAsInstance.Patch.412'
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'                     
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'                     
+    delete:
+      description: >
+        This method deletes an "Individual AS instance" resource.
+      responses:
+        '204':
+          $ref: '#/components/responses/IndividualAsInstance.Delete.204'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'                     
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'                     
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'                     
+        '404':
+          $ref: '#/components/responses/ASInstances.Resp.404'                     
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'                     
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'                     
+        '409':
+          $ref: '#/components/responses/IndividualAsInstance.Delete.409'
+        '412':
+          $ref: '#/components/responses/IndividualAsInstance.Patch.412'        
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'              
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'              
+  '/as_instances/{asInstanceId}/instantiate':
+    parameters:
+      - $ref: '#/components/parameters/AsInstanceId'
+    post:
+      description: |
+        The POST method instantiates an AS instance.
+      parameters:
+        - name: Accept
+          description: >
+            Content-Types that are acceptable for the response.
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          description: |
+            The authorization token for the request.
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: Version
+          description: |
+            Version of the API requested to use when responding to this request.
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/InstantiateAsRequestBody'
+      responses:
+        '202':
+          $ref: '#/components/responses/InstantiateAsInstance.Post.202'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'              
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'              
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'              
+        '404':
+          $ref: '#/components/responses/ASInstances.Resp.404'              
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'              
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'              
+        '409':
+          $ref: '#/components/responses/InstantiateAsInstance.Post.409'
+        '416':
+          $ref: '#/components/responses/ASInstances.Resp.416'              
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'              
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'              
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'              
+  '/as_instances/{asInstanceId}/terminate':
+    parameters:
+      - $ref: '#/components/parameters/AsInstanceId'
+    post:
+      description: >
+        The POST method triggers the CNFM to terminate an AS instance and to
+        request to the Cloud Server to the release its used resources.
+      parameters:
+        - name: Accept
+          description: >
+            Content-Types that are acceptable for the response.
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          description: |
+            The authorization token for the request.
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: Version
+          description: |
+            Version of the API requested to use when responding to this request.
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/TerminateAsRequestBody'
+      responses:
+        '202':
+          $ref: '#/components/responses/TerminateAsInstance.Post.202'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'              
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'              
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'              
+        '404':
+          $ref: '#/components/responses/ASInstances.Resp.404'              
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'              
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'              
+        '409':
+          $ref: '#/components/responses/TerminateAsInstance.Post.409'
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'              
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'              
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'              
+  '/as_instances/{asInstanceId}/operate':
+    parameters:
+      - $ref: '#/components/parameters/AsInstanceId'
+    post:
+      description: >
+        The POST method changes the operational state of an AS instance.
+      parameters:
+        - name: Accept
+          description: >
+            Content-Types that are acceptable for the response.
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          description: |
+            The authorization token for the request.
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: Version
+          description: |
+            Version of the API requested to use when responding to this request.
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/OperateAsRequestBody'
+      responses:
+        '202':
+          $ref: '#/components/responses/OperateAsInstance.Post.202'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'         
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'              
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'              
+        '404':
+          $ref: '#/components/responses/OperateAsInstance.Post.404'
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'              
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'              
+        '409':
+          $ref: '#/components/responses/OperateAsInstance.Post.409'
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'              
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'              
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'              
+  /as_lcm_op_occs:
+    get:
+      description: >
+        The API consumer can use this method to query status information about
+        multiple AS lifecycle management operation occurrences. 
+      parameters:
+        - name: Accept
+          description: >
+            Content-Types that are acceptable for the response.
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          description: |
+            The authorization token for the request.
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: filter
+          description: >
+            The CNFM shall support receiving this parameter as
+            part of the URI query string. The API consumer may supply this
+            parameter. 
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: all_fields
+          description: >
+            Include all complex attributes in the response. 
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: fields
+          description: >
+            Complex attributes to be included into the response.
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: exclude_fields
+          description: >
+            Complex attributes to be excluded from the response. 
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: exclude_default
+          in: query
+          description: >
+            The CNFM shall support this parameter. The following attributes shall be excluded from the AsLcmOpOcc structure in the response body if this parameter is provided, or none of the parameters \"all_fields,\" \"fields\", \"exclude_fields\", \"exclude_default\" are provided: -\toperationParams -\terror -\tresourceChanges -\tchangedInfo -\tchangedExtConnectivity -\tlcmCoordinations -\tmodificationsTriggeredByAsPkgChange -\twarnings"
+          required: false
+          schema:
+            type: string
+        - name: nextpage_opaque_marker
+          description: >
+            Marker to obtain the next page of a paged response. Shall be
+            supported by the CNFM if the entity supports paging
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: Version
+          description: |
+            Version of the API requested to use when responding to this request.
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/AsLcmOpOccs.Get.200'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'              
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'          
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'         
+        '404':
+          $ref: '#/components/responses/ASInstances.Resp.404'         
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'         
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'         
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'         
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'         
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'         
+  '/as_lcm_op_occs/{asLcmOpOccId}':
+    parameters:
+      - $ref: '#/components/parameters/AsLcmOpOccId'
+    get:
+      description: >
+        The API consumer can use this method to retrieve status information
+        about an AS lifecycle management operation occurrence by reading 
+        an "Individual AS LCM operation occurrence"
+        resource.
+      parameters:
+        - name: Accept
+          description: >
+            Content-Types that are acceptable for the response.
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          description: |
+            The authorization token for the request.
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: Version
+          description: |
+            Version of the API requested to use when responding to this request.
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/IndividualAsLcmOpOcc.Get.200'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'         
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'         
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'         
+        '404':
+          $ref: '#/components/responses/ASInstances.Resp.404'         
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'         
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'         
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'         
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'         
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'         
+  '/as_lcm_op_occs/{asLcmOpOccId}/retry':
+    parameters:
+      - $ref: '#/components/parameters/AsLcmOpOccId'
+    post:
+      description: >
+        The POST method initiates retrying an AS lifecycle operation if that
+        operation has experienced a temporary failure, i.e. 
+        the related "Individual AS LCM operation occurrence"
+        resource is in "FAILED_TEMP" state.
+      parameters:
+        - name: Authorization
+          description: |
+            The authorization token for the request.
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: Version
+          description: |
+            Version of the API requested to use when responding to this request.
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '202':
+          $ref: '#/components/responses/RetryAsLcmOpOcc.Post.202'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'         
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'         
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'         
+        '404':
+          $ref: '#/components/responses/RetryAsLcmOpOcc.Post.404'
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'         
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'          
+        '409':
+          $ref: '#/components/responses/RetryAsLcmOpOcc.Post.409'
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'          
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'          
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'          
+  '/as_lcm_op_occs/{asLcmOpOccId}/rollback':
+    parameters:
+      - $ref: '#/components/parameters/AsLcmOpOccId'
+    post:
+      description: >
+        The POST method initiates rolling back an AS lifecycle operation if that
+        operation has experienced a temporary failure, 
+        i.e. the related "Individual AS LCM operation occurrence"
+        resource is in "FAILED_TEMP" state.
+      parameters:
+        - name: Authorization
+          description: |
+            The authorization token for the request.
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: Version
+          description: |
+            Version of the API requested to use when responding to this request.
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '202':
+          $ref: '#/components/responses/RollbackAsLcmOpOcc.Post.202'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'          
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'          
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'          
+        '404':
+          $ref: '#/components/responses/RollbackAsLcmOpOcc.Post.404'
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'          
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'          
+        '409':
+          $ref: '#/components/responses/RollbackAsLcmOpOcc.Post.409'
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'          
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'          
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'          
+  '/as_lcm_op_occs/{asLcmOpOccId}/fail':
+    parameters:
+      - $ref: '#/components/parameters/AsLcmOpOccId'
+    post:
+      description: >
+        The POST method marks an AS lifecycle management operation occurrence as
+        "finally failed" if that operation occurrence is in "FAILED_TEMP" state.
+      parameters:
+        - name: Accept
+          description: >
+            Content-Types that are acceptable for the response.
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          description: |
+            The authorization token for the request.
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: Version
+          description: |
+            Version of the API requested to use when responding to this request.
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/FailAsLcmOpOcc.Post.200'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'          
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'          
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'          
+        '404':
+          $ref: '#/components/responses/FailAsLcmOpOcc.Post.404'
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'          
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'          
+        '409':
+          $ref: '#/components/responses/FailAsLcmOpOcc.Post.409'
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'          
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'          
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'          
+  '/as_lcm_op_occs/{asLcmOpOccId}/cancel':
+    parameters:
+      - $ref: '#/components/parameters/AsLcmOpOccId'
+    post:
+      description: >
+        The POST method initiates cancelling an ongoing AS lifecycle operation
+        while it is being executed or rolled back, 
+        i.e. the related "Individual AS LCM operation occurrence"
+        resource is either in "STARTING" or "PROCESSING" or "ROLLING_BACK" state.
+      parameters:
+        - name: Authorization
+          description: |
+            The authorization token for the request.
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: Version
+          description: |
+            Version of the API requested to use when responding to this request.
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '202':
+          $ref: '#/components/responses/CancelAsLcmOpOcc.Post.202'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'          
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'          
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'          
+        '404':
+          $ref: '#/components/responses/CancelAsLcmOpOcc.Post.404'
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'          
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'          
+        '409':
+          $ref: '#/components/responses/CancelAsLcmOpOcc.Post.409'
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'          
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'          
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'          
+  /subscriptions:
+    parameters:
+      - name: Accept
+        description: >
+          Content-Types that are acceptable for the response.
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        description: |
+          The authorization token for the request.
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: Version
+        description: |
+          Version of the API requested to use when responding to this request.
+        in: header
+        required: true
+        schema:
+          type: string
+    post:
+      description: |
+        The POST method creates a new subscription.
+      requestBody:
+        $ref: '#/components/requestBodies/LccnSubscriptionRequestBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/Subscriptions.Post.201'
+        '303':
+          $ref: '#/components/responses/Subscriptions.Post.303'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'          
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'          
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'          
+        '404':
+          $ref: '#/components/responses/ASInstances.Resp.404'          
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'          
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'          
+        '422':
+          $ref: '#/components/responses/Subscriptions.Post.422'
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'          
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'          
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'          
+    get:
+      description: >
+        The GET method queries the list of active subscriptions of the
+        functional block that invokes the method.
+        It can be used e.g. for resynchronization after error situations. 
+      parameters:
+        - name: filter
+          description: >
+            Attribute-based filtering expression. The CNFM shall support receiving 
+            this parameter as part of the URI query string. The API consumer may 
+            supply this parameter.
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: nextpage_opaque_marker
+          description: >
+            Marker to obtain the next page of a paged response. Shall be
+            supported by the CNFM if the entity supports alternative 2 (paging).
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Subscriptions.Get.200'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'         
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'         
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'         
+        '404':
+          $ref: '#/components/responses/ASInstances.Resp.404'         
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'         
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'         
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'         
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'         
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'         
+  '/subscriptions/{subscriptionId}':
+    parameters:
+      - $ref: '#/components/parameters/SubscriptionId'
+      - name: Authorization
+        description: |
+          The authorization token for the request.
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: Version
+        description: |
+          Version of the API requested to use when responding to this request.
+        in: header
+        required: true
+        schema:
+          type: string
+    get:
+      description: >
+        The GET method retrieves information about a subscription by reading an
+        "Individual subscription" resource.
+      parameters:
+        - name: Accept
+          description: >
+            Content-Types that are acceptable for the response.
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/IndividualSubscription.Get.200'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'         
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'         
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'         
+        '404':
+          $ref: '#/components/responses/ASInstances.Resp.404'         
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'         
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'         
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'         
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'         
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'         
+    delete:
+      description: >
+        The DELETE method terminates an individual subscription. 
+      responses:
+        '204':
+          $ref: '#/components/responses/IndividualSubscription.Delete.204'
+        '400':
+          $ref: '#/components/responses/ASInstances.Resp.400'         
+        '401':
+          $ref: '#/components/responses/ASInstances.Resp.401'         
+        '403':
+          $ref: '#/components/responses/ASInstances.Resp.403'         
+        '404':
+          $ref: '#/components/responses/ASInstances.Resp.404'         
+        '405':
+          $ref: '#/components/responses/ASInstances.Resp.405'         
+        '406':
+          $ref: '#/components/responses/ASInstances.Resp.406'         
+        '500':
+          $ref: '#/components/responses/ASInstances.Resp.500'         
+        '503':
+          $ref: '#/components/responses/ASInstances.Resp.503'         
+        '504':
+          $ref: '#/components/responses/ASInstances.Resp.504'         
+components:
+  parameters:
+    AsInstanceId:
+      name: asInstanceId
+      in: path
+      description: >
+        Identifier of the As instance for the AS snapshot to be reverted to.
+        This identifier can be retrieved from the resource 
+        referenced by the "Location" HTTP header in the response to a POST
+        request creating a new "Individual AS instance" resource. 
+
+        It can also be retrieved from the "id" attribute in the payload body of
+        that response.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    AsLcmOpOccId:
+      name: asLcmOpOccId
+      in: path
+      description: >
+        Identifier of an AS lifecycle management operation occurrence. This
+        identifier can be retrieved from the resource
+        referenced by the "Location" HTTP header in the response to a PATCH or
+        POST request triggering an AS LCM operation.
+
+        It can also be retrieved from the "asLcmOpOccId" attribute in the
+        AsLcmOperationOccurrenceNotification.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    SubscriptionId:
+      name: subscriptionId
+      in: path
+      description: >
+        Identifier of this subscription. This identifier can be retrieved from
+        the resource referenced by the "Location"
+        HTTP header in the response to a POST request creating a new
+        subscription resource. It can also be retrieved from
+        the "id" attribute in the payload body of that response.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    Range:
+      name: Range
+      in: header
+      description: |
+        The request may contain a "Range" HTTP header to obtain single
+        range of bytes from an AS state snapshot file. This can be used to
+        continue an aborted transmission.
+        If the "Range" header is present in the request and the CNFM
+        does not support responding to range requests with a 206
+        response, it shall return a 200 OK response instead.
+      schema:
+        type: string
+  requestBodies:
+    CreateAsRequestBody:
+      description: The AS creation parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateAsRequest'
+      required: true
+    AsInfoModificationRequestBody:
+      description: Parameters for the AS instantiation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AsInfoModificationRequest'
+      required: true    
+    InstantiateAsRequestBody:
+      description: Parameters for the AS instantiation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InstantiateAsRequest'
+      required: true    
+    TerminateAsRequestBody:
+      description: Parameters for the AS termination.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TerminateAsRequest'
+      required: true
+    OperateAsRequestBody:
+      description: Parameters for the Operate AS operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperateAsRequest'
+      required: true
+    LccnSubscriptionRequestBody:
+      description: |
+        Details of the subscription to be created.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LccnSubscriptionRequest'
+      required: true
+  responses:
+    ASInstances.Post.201:
+      description: >
+        201 CREATED
+
+        Shall be returned when a new "Individual AS instance" resource and
+        the associated AS instance identifier washas been created successfully.
+        The response body shall contain a representation of the created AS
+        instance.
+
+        The HTTP response shall include a \"Location\" HTTP header that contains
+        the resource URI of the created AS instance.
+      headers:
+        Location:
+          description: |
+            The resource URI of the created subscription resource.
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: url
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response.
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AsInstance'          
+    ASInstances.Resp.400:
+      description: >
+        400 BAD REQUEST
+
+        400 code can be returned in the following specified cases, the
+        specific cause has to be proper specified in the "ProblemDetails"
+        structure to be returned.
+
+        If the request is malformed or syntactically incorrect (e.g. if the
+        request URI contains incorrect query parameters or the payload body
+        contains a syntactically incorrect data structure), the API producer
+        shall respond with this response code. The "ProblemDetails"
+        structure shall be provided, and should include in the "detail"
+        attribute more information about the source of the problem.
+
+        If the response to a GET request which queries a container resource
+        would be so big that the performance of the API producer is
+        adversely affected, and the API producer does not support paging for
+        the affected resource, it shall respond with this response code. The
+        "ProblemDetails" structure shall be provided, and should include in
+        the "detail" attribute more information about the source of the
+        problem.
+
+        If there is an application error related to the client's input that
+        cannot be easily mapped to any other HTTP response code ("catch all
+        error"), the API producer shall respond with this response code. The
+        "ProblemDetails" structure shall be provided, and shall include in
+        the "detail" attribute more information about the source of the
+        problem.
+
+        If the request contains a malformed access token, the API producer
+        should respond with this response. The details of the error shall be
+        returned in the WWW Authenticate HTTP header. 
+        The ProblemDetails structure may be provided.
+
+        The use of this HTTP error response code described above is
+        applicable to the use of the OAuth 2.0 for the authorization of API
+        requests and notifications.
+      headers:
+        Content-Type:
+          description: The MIME type of the body of the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP
+            request has provided an invalid authorization token.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 0
+        Version:
+          description: |
+            Version of the API used in the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    ASInstances.Resp.401:
+      description: >
+        401 UNAUTHORIZED
+
+        If the request contains no access token even though one is required,
+        or if the request contains an authorization token that is invalid
+        (e.g. expired or revoked), the API producer should respond with this
+        response. The details of the error shall be returned in the
+        WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF
+        RFC 7235. The ProblemDetails structure may be provided.
+      headers:
+        Content-Type:
+          description: The MIME type of the body of the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP
+            request has provided an invalid authorization token.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 0
+        Version:
+          description: |
+            Version of the API used in the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'              
+    ASInstances.Resp.403:
+      description: >
+        403 FORBIDDEN
+
+        If the API consumer is not allowed to perform a particular request
+        to a particular resource, the API producer shall respond with this
+        response code. The "ProblemDetails" structure shall be provided. It
+        should include in the "detail" attribute information about the
+        source of the problem, and may indicate how to solve it.
+      headers:
+        Content-Type:
+          description: The MIME type of the body of the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP
+            request has provided an invalid authorization token.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 0
+        Version:
+          description: |
+            Version of the API used in the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'              
+    ASInstances.Resp.404:
+      description: >
+        404 NOT FOUND
+
+        If the API producer did not find a current representation for the
+        resource addressed by the URI passed in the request or is not
+        willing to disclose that one exists, it shall respond with this
+        response code. The "ProblemDetails" structure may be provided,
+        including in the "detail" attribute information about the source of
+        the problem, e.g. a wrong resource URI variable.
+
+        This response code is not appropriate in case the resource addressed
+        by the URI is a container resource which is designed to contain
+        child resources, but does not contain any child resource at the time
+        the request is received. For a GET request to an existing empty
+        container resource, a typical response contains a 200 OK response
+        code and a payload body with an empty array.
+      headers:
+        Content-Type:
+          description: The MIME type of the body of the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP
+            request has provided an invalid authorization token.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 0
+        Version:
+          description: |
+            Version of the API used in the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'              
+    ASInstances.Resp.405:
+      description: >
+        405 METHOD NOT ALLOWED
+
+        If a particular HTTP method is not supported for a particular
+        resource, the API producer shall respond with this response code.
+        The "ProblemDetails" structure may be omitted.
+      headers:
+        Content-Type:
+          description: The MIME type of the body of the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP
+            request has provided an invalid authorization token.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 0
+        Version:
+          description: |
+            Version of the API used in the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'              
+    ASInstances.Resp.406:
+      description: >
+        406 NOT ACCEPTABLE
+
+        If the "Accept" HTTP header does not contain at least one name of a
+        content type that is acceptable to the API producer, the API
+        producer shall respond with this response code. The "ProblemDetails"
+        structure may be omitted.
+      headers:
+        Content-Type:
+          description: The MIME type of the body of the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP
+            request has provided an invalid authorization token.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 0
+        Version:
+          description: |
+            Version of the API used in the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'              
+    ASInstances.Resp.413:
+      description: >
+        413 PAYLOAD TOO LARGE
+
+        If the payload body of a request is larger than the amount of data
+        the API producer is willing or able to process, it shall respond
+        with this response code, following the provisions in IETF RFC 7231
+        for the use of the "Retry-After" HTTP header and for closing the
+        connection. The "ProblemDetails" structure may be omitted.
+      headers:
+        Content-Type:
+          description: The MIME type of the body of the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP
+            request has provided an invalid authorization token.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 0
+        Version:
+          description: |
+            Version of the API used in the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'              
+    ASInstances.Resp.414:
+      description: >
+        414 URI TOO LONG
+
+        If the request URI of a request is longer than the API producer is
+        willing or able to process, it shall respond with this response
+        code. This condition can e.g. be caused by passing long queries in
+        the request URI of a GET request. The "ProblemDetails" structure may
+        be omitted.
+      headers:
+        Content-Type:
+          description: The MIME type of the body of the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP
+            request has provided an invalid authorization token.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 0
+        Version:
+          description: |
+            Version of the API used in the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'              
+    ASInstances.Resp.416:
+      description: |
+        416 Range Not Satisfiable
+      headers:
+        Content-Type:
+          description: The MIME type of the body of the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP
+            request has provided an invalid authorization token.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 0
+        Version:
+          description: |
+            Version of the API used in the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'              
+    ASInstances.Resp.422:
+      description: |
+        422 Unprocessable Entity
+
+        Shall be returned upon the following error: The content
+        type of the payload body is supported and the payload
+        body of a request contains syntactically correct data
+        but the data cannot be processed.
+        The general cause for this error and its handling is
+        specified in clause 6.4 of ETSI GS NFV-SOL 013 [8],
+        including rules for the presence of the response body.
+        Specifically in case of this resource, the response
+        code 422 shall also be returned if the AS package
+        referenced by the "asdId" attribute in the
+        "CreateAsRequest" structure is not in the "ENABLED"
+        state or does not exist. In this case, the "detail"
+        attribute in the "ProblemDetails" structure shall convey
+        more information about the erro
+      headers:
+        Location:
+          description: |
+            The resource URI of the created subscription resource.
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: url
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response.
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'              
+    ASInstances.Resp.429:
+      description: >
+        429 TOO MANY REQUESTS
+
+        If the API consumer has sent too many requests in a defined period
+        of time and the API producer is able to detect that condition ("rate
+        limiting"), the API producer shall respond with this response code,
+        following the provisions in IETF RFC 6585 [17] for the use of the
+        "Retry-After" HTTP header. The "ProblemDetails" structure shall be
+        provided and shall include in the "detail" attribute more
+        information about the source of the problem.
+
+        The period of time and allowed number of requests are configured
+        within the API producer by means outside the scope of the present
+        document.
+      headers:
+        Content-Type:
+          description: The MIME type of the body of the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP
+            request has provided an invalid authorization token.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 0
+        Version:
+          description: |
+            Version of the API used in the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'              
+    ASInstances.Resp.500:
+      description: >
+        500 INTERNAL SERVER ERROR
+
+        If there is an application error not related to the client's input
+        that cannot be easily mapped to any other HTTP response code ("catch
+        all error"), the API producer shall respond with this response code.
+        The "ProblemDetails" structure shall be provided, and shall include
+        in the "detail" attribute more information about the source of the
+        problem.
+      headers:
+        Content-Type:
+          description: The MIME type of the body of the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP
+            request has provided an invalid authorization token.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 0
+        Version:
+          description: |
+            Version of the API used in the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'              
+    ASInstances.Resp.503:
+      description: >
+        503 SERVICE UNAVAILABLE
+
+        If the API producer encounters an internal overload situation of
+        itself or of a system it relies on, it should respond with this
+        response code, following the provisions in IETF RFC 7231 for the use
+        of the "Retry-After" HTTP header and for the alternative to refuse
+        the connection. The "ProblemDetails" structure may be omitted.
+      headers:
+        Content-Type:
+          description: The MIME type of the body of the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP
+            request has provided an invalid authorization token.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 0
+        Version:
+          description: |
+            Version of the API used in the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'              
+    ASInstances.Resp.504:
+      description: >
+        504 GATEWAY TIMEOUT
+
+        If the API producer encounters a timeout while waiting for a
+        response from an upstream server (i.e. a server that the API
+        producer communicates with when fulfilling a request), it should
+        respond with this response code.
+      headers:
+        Content-Type:
+          description: The MIME type of the body of the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP
+            request has provided an invalid authorization token.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 0
+        Version:
+          description: |
+            Version of the API used in the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'              
+    ApiVersions.Get.200:
+      description: >
+        API version information was read successfully. The response body
+        shall contain API version information.
+      headers:
+        Content-Type:
+          description: The MIME type of the body of the response.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+        Version:
+          description: The used API version.
+          schema:
+            type: string
+            maximum: 1
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            description: |
+              This type represents API version information.
+            type: object
+            required:
+              - uriPrefix
+              - apiVersions
+            properties:
+              uriPrefix:
+                description: >
+                  Specifies the URI prefix for the API, in the following
+                  form {apiRoot}/{apiName}/{apiMajorVersion}/.
+                type: string
+              apiVersions:
+                description: >
+                  Version(s) supported for the API signaled by the uriPrefix
+                  attribute.
+                type: array
+                items:
+                  type: object
+                  required:
+                    - version
+                  properties:
+                    version:
+                      description: >
+                        Identifies a supported version. The value of the
+                        version attribute shall be a version identifier.
+                      type: string
+                    isDeprecated:
+                      description: >
+                        If such information is available, this attribute
+                        indicates whether use of the version signaled by the
+                        version attribute is deprecated (true) or not
+                        (false).
+
+                        A deprecated version is still supported by the API
+                        producer but is recommended not to be used any
+                        longer. When a version is no longer supported, it
+                        does not appear in the response body.
+                      type: boolean
+                    retirementDate:
+                      description: >
+                        Date-time stamp. Representation: String formatted
+                        according to IETF RFC 3339.
+                      type: string
+                      format: date-time    
+    ASInstances.Get.200:
+      description: >
+        200 OK
+
+        Shall be returned when information about zero or more AS instances has
+        been queried successfully.
+
+        The response body shall contain in an array the representations of zero
+        or more AS instances,
+
+        If the CNFM supports alternative 2 (paging),
+        for this resource, inclusion of the Link HTTP header in this response
+        shall follow the provisions
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Link:
+          description: >
+            Reference to other resources. Used for paging in the present
+            document, see clause 4.7.2.1.
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/AsInstance'      
+    IndividualAsInstance.Get.200:
+      description: >
+        200 OK
+
+
+        Shall be returned when information about an individual AS instance has
+        been read successfully.
+
+        The response body shall contain a representation of the AS instance, as
+        defined in clause 5.5.2.2.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AsInstance'                    
+    IndividualAsInstance.Patch.202:
+      description: >
+        202 ACCEPTED
+
+        Shall be returned when the request has been accepted for processing.
+        On success, the HTTP response shall include a "Location" HTTP header
+        that contains the URI of the newly-created "Individual AS LCM operation
+        occurrence" resource corresponding to the operation.
+
+        The response body shall be empty.
+      headers:
+        Location:
+          description: |
+            The resource URI of the created subscription resource.
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: url
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AsInstance'                    
+    IndividualAsInstance.Patch.409:
+      description: |
+        409 CONFLICT
+
+        Shall be returned upon the following error: The
+        operation cannot be executed currently, due to a
+        conflict with the state of the "Individual AS
+        instance" resource.
+        Typically, this is due to the fact that another LCM
+        operation is ongoing.
+        The response body shall contain a ProblemDetails
+        structure, in which the "detail" attribute should
+        convey more information about the error
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    IndividualAsInstance.Patch.412:
+      description: |
+        412 Precondition Failed
+
+        Shall be returned upon the following error: A
+        precondition given in an HTTP request header is
+        not fulfilled.
+        Typically, this is due to an ETag mismatch,
+        indicating that the resource was modified by
+        another entity.
+        The response body should contain a
+        ProblemDetails structure, in which the "detail"
+        attribute should convey more information about the
+        error.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP request 
+            has provided an invalid authorization token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response.
+          style: simple
+          explode: false
+          schema:
+            type: string
+    IndividualAsInstance.Delete.204:
+      description: >
+        204 NO CONTENT
+
+        Shall be returned when the "Individual AS instance" resource and the
+        associated AS identifier were deleted successfully.
+
+        The response body shall be empty.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+    IndividualAsInstance.Delete.409:
+      description: |
+        409 CONFLICT
+
+        Shall be returned upon the following error: The
+        operation cannot be executed currently, due to a
+        conflict with the state of the resource.
+        Typically, this is due to the fact that the "Individual
+        AS instance" resource is in INSTANTIATED state.
+        The response body shall contain a ProblemDetails
+        structure, in which the "detail" attribute shall convey
+        more information about the error.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    InstantiateAsInstance.Post.202:
+      description: |
+        202 ACCEPTED
+
+        Shall be returned when the request has been accepted for processing
+        The response body shall be empty.
+        The HTTP response shall include a "Location" HTTP header that
+        contains the URI of the newly-created "Individual AS LCM operation
+        occurrence" resource corresponding to the operation.
+      headers:
+        Location:
+          description: |
+            The resource URI of the created subscription resource.
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: url
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+    InstantiateAsInstance.Post.409:
+      description: |
+        409 CONFLICT
+
+        Shall be returned upon the following error: The
+        operation cannot be executed currently, due to a
+        conflict with the state of the resource.
+        Typically, this is due to the fact that the "Individual
+        AS instance" resource is in INSTANTIATED state,
+        or that a required (see note) child attribute of the
+        "extensions" attribute has not been set.
+        The response body shall contain a ProblemDetails
+        structure, in which the "detail" attribute shall convey
+        more information about the error.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    OperateAsInstance.Post.202:
+      description: |
+        202 ACCEPTED
+
+        Shall be returned when the request has been accepted for processing.
+        The response body shall be empty.
+        The HTTP response shall include a "Location" HTTP header that
+        contains the URI of the newly-created "AS LCM operation
+        occurrence" resource corresponding to the operation.
+      headers:
+        Location:
+          description: |
+            The resource URI of the created subscription resource.
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: url
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+    OperateAsInstance.Post.404:
+      description: |
+        404 NOT FOUND
+
+        Shall be returned upon the following error: The API
+        producer did not find a current representation for
+        the target resource or is not willing to disclose that
+        one exists.
+        The general cause for this error and its handling is
+        specified in clause 6.4 of ETSI
+        GS NFV-SOL 013 [8], including rules for the
+        presence of the response body.
+        Specifically in case of this task resource, the
+        response code 404 shall also be returned if the
+        task is not supported for the AS instance
+        represented by the parent resource, which means
+        that the task resource consequently does not exist.
+        In this case, the response body shall be present,
+        and shall contain a ProblemDetails structure, in
+        which the "detail" attribute shall convey more
+        information about the error
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    OperateAsInstance.Post.409:
+      description: |
+        409 CONFLICT
+
+        Shall be returned upon the following error: The
+        operation cannot be executed currently, due to a
+        conflict with the state of the resource.
+        Typically, this is due to the fact that the AS
+        instance resource is in NOT_INSTANTIATED
+        state, that another lifecycle management operation
+        is ongoing, or that a required (see note) child
+        attribute of the "extensions" attribute has not been
+        set.
+        The response body shall contain a ProblemDetails
+        structure, in which the "detail" attribute shall convey
+        more information about the error.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response.
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    AsLcmOpOccs.Get.200:
+      description: >
+        200 OK
+
+        Shall be returned when status information for zero or more AS lifecycle
+        management operation occurrences has been queried successfully.
+
+        The response body shall contain in an array the status information about
+        zero or more AS lifecycle operation occurrences.
+
+        If the "filter" URI parameter or one of the "all_fields", "fields" (if
+        supported), "exclude_fields" (if supported) or "exclude_default" URI parameters was
+        supplied in the request, the data in the response body shall have been transformed 
+        according to the rules specified for this resource, inclusion of the Link HTTP header 
+        in this response shall follow the provisions.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Link:
+          description: >
+            Reference to other resources. Used for paging in the present
+            document, see clause 4.7.2.1.
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AsLcmOpOcc'                    
+    IndividualAsLcmOpOcc.Get.200:
+      description: >
+        200 OK
+
+        Shall be returned when information about an AS LCM operation occurrence
+        washas been read successfully.
+
+        The response body shall contain status information about an AS lifecycle
+        management operation occurrence.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AsLcmOpOcc'          
+    TerminateAsInstance.Post.202:
+      description: |
+        202 ACCEPTED
+
+        Shall be returned when the request has been accepted for processing.
+        The response body shall be empty.
+        The HTTP response shall include a "Location" HTTP header that
+        contains the URI of the newly-created "AS LCM operation
+        occurrence" resource corresponding to the operation.
+      headers:
+        Location:
+          description: |
+            The resource URI of the created subscription resource.
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: url
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+    TerminateAsInstance.Post.409:
+      description: |
+        409 CONFLICT
+
+        Shall be returned upon the following error: The
+        operation cannot be executed currently, due to a
+        conflict with the state of the resource.
+        Typically, this is due to the fact that the "Individual
+        AS instance" resource is in NOT_INSTANTIATED
+        state, that another lifecycle management operation is
+        ongoing, or that a required (see note) child attribute
+        of the "extensions" attribute has not been set.
+        The response body shall contain a ProblemDetails
+        structure, in which the "detail" attribute shall convey
+        more information about the error.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    RollbackAsLcmOpOcc.Post.202:
+      description: |
+        202 ACCEPTED
+
+        Shall be returned when the request has been accepted for processing.
+        The response shall have an empty payload body.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+    RollbackAsLcmOpOcc.Post.404:
+      description: |
+        404 NOT FOUND
+
+        Shall be returned upon the following error: The API
+        producer did not find a current representation for the
+        target resource or is not willing to disclose that one
+        exists.
+        The general cause for this error and its handling is
+        specified in clause 6.4 of ETSI GS NFV-SOL 013 [8],
+        including rules for the presence of the response body.
+        Specifically in case of this task resource, the response
+        code 404 shall also be returned if the task is not
+        supported for the AS LCM operation occurrence
+        represented by the parent resource, which means that
+        the task resource consequently does not exist.
+        In this case, the response body shall be present, and
+        shall contain a ProblemDetails structure, in which the
+        "detail" attribute shall convey more information about
+        the error.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    RollbackAsLcmOpOcc.Post.409:
+      description: |
+        409 CONFLICT
+
+        Shall be returned upon the following error: The
+        operation cannot be executed currently, due to a
+        conflict with the state of the AS LCM operation
+        occurrence.
+        Typically, this is due to the fact that the AS LCM
+        operation occurrence is not in FAILED_TEMP state, or
+        another error handling action is starting, such as retry
+        or fail.
+        The response body shall contain a ProblemDetails
+        structure, in which the "detail" attribute shall convey
+        more information about the error.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    RetryAsLcmOpOcc.Post.202:
+      description: |
+        202 ACCEPTED
+
+        Shall be returned when the request has been accepted for processing.
+        The response shall have an empty payload body.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding 
+            HTTP request has provided an invalid authorization token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+    RetryAsLcmOpOcc.Post.404:
+      description: |
+        404 NOT FOUND
+
+        Shall be returned upon the following error: The API
+        producer did not find a current representation for the
+        target resource or is not willing to disclose that one
+        exists.
+        The general cause for this error and its handling is
+        specified in clause 6.4 of ETSI GS NFV-SOL 013 [8],
+        including rules for the presence of the response body.
+        Specifically in case of this task resource, the response
+        code 404 shall also be returned if the task is not
+        supported for the AS LCM operation occurrence
+        represented by the parent resource, which means that
+        the task resource consequently does not exist.
+        In this case, the response body shall be present, and
+        shall contain a ProblemDetails structure, in which the
+        "detail" attribute shall convey more information about
+        the error.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    RetryAsLcmOpOcc.Post.409:
+      description: |
+        409 CONFLICT
+
+        Shall be returned upon the following error: The
+        operation cannot be executed currently, due to a
+        conflict with the state of the AS LCM operation
+        occurrence.
+        Typically, this is due to the fact that the AS LCM
+        operation occurrence is not in FAILED_TEMP state, or
+        another error handling action is starting, such as
+        rollback or fail.
+        The response body shall contain a ProblemDetails
+        structure, in which the "detail" attribute shall convey
+        more information about the error.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    FailAsLcmOpOcc.Post.200:
+      description: >
+        200 OK
+
+        Shall be returned when the state of the AS lifecycle management
+        operation occurrence has been changed successfully.
+
+        The response bofyshall include a representation of the "Individual AS
+        lifecycle operation occurrence" resource.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP request 
+            has provided an invalid authorization token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AsLcmOpOcc'                    
+    FailAsLcmOpOcc.Post.404:
+      description: |
+        404 NOT FOUND
+
+        Shall be returned upon the following error: The API
+        producer did not find a current representation for the
+        target resource or is not willing to disclose that one
+        exists.
+        The general cause for this error and its handling is
+        specified in clause 6.4 of ETSI GS NFV-SOL 013 [8],
+        including rules for the presence of the response
+        body.
+        Specifically in case of this task resource, the
+        response code 404 shall also be returned if the task
+        is not supported for the AS LCM operation
+        occurrence represented by the parent resource,
+        which means that the task resource consequently
+        does not exist.
+        In this case, the response body shall be present, and
+        shall contain a ProblemDetails structure, in which the
+        "detail" attribute shall convey more information about
+        the error.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    FailAsLcmOpOcc.Post.409:
+      description: |
+        409 CONFLICT
+
+        Shall be returned upon the following error: The
+        operation cannot be executed currently, due to a
+        conflict with the state of the AS LCM operation
+        occurrence.
+        Typically, this is due to the fact that the AS LCM
+        operation occurrence is not in FAILED_TEMP state,
+        or another error handling action is starting, such as
+        retry or rollback.
+        The response body shall contain a ProblemDetails
+        structure, in which the "detail" attribute shall convey
+        more information about the error.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    CancelAsLcmOpOcc.Post.202:
+      description: |
+        202 ACCEPTED
+
+        Shall be returned when the request has been accepted for processing.
+        The response shall have an empty payload body.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP request 
+            has provided an invalid authorization token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+    CancelAsLcmOpOcc.Post.404:
+      description: |
+        404 NOT FOUND
+
+        Shall be returned upon the following error: The API
+        producer did not find a current representation for the
+        target resource or is not willing to disclose that one
+        exists.
+        The general cause for this error and its handling is
+        specified in clause 6.4 of ETSI GS NFV-SOL 013 [8],
+        including rules for the presence of the response
+        body.
+        Specifically in case of this task resource, the
+        response code 404 shall also be returned if the task
+        is not supported for the AS LCM operation
+        occurrence represented by the parent resource,
+        which means that the task resource consequently
+        does not exist.
+        In this case, the response body shall be present, and
+        shall contain a ProblemDetails structure, in which the
+        "detail" attribute shall convey more information about
+        the error.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    CancelAsLcmOpOcc.Post.409:
+      description: |
+        409 CONFLICT
+
+        Shall be returned upon the following error: The
+        operation cannot be executed currently, due to a
+        conflict with the state of the AS LCM operation
+        occurrence.
+        Typically, this is due to the fact that the operation
+        occurrence is not in STARTING, PROCESSING or
+        ROLLING_BACK state.
+        The response body shall contain a ProblemDetails
+        structure, in which the "detail" attribute shall convey
+        more information about the error.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    Subscriptions.Post.201:
+      description: >
+        201 CREATED
+
+        Shall be returned when the subscription has been created successfully.
+
+        The response body shall contain a representation of the created
+        "Individual subscription" resource.
+
+        The HTTP response shall include a "Location" HTTP header that points to
+        the created "Individual subscription" resource.
+      headers:
+        Location:
+          description: |
+            The resource URI of the created subscription resource.
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: url
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AsSubscriptionNotification'              
+    Subscriptions.Post.303:
+      description: |
+        303 See Other
+
+        Shall be returned if a subscription with the same
+        callback URI and the same filter already exists
+        and the policy of the CNFM is to not create
+        redundant subscriptions.
+        The HTTP response shall include a "Location"
+        HTTP header that contains the resource URI of
+        the existing "Individual subscription" resource.
+        The response body shall be empty.
+      headers:
+        Location:
+          description: |
+            The resource URI of the created subscription resource.
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: url
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response. Reference: IETF RFC 7231
+          style: simple
+          explode: false
+          schema:
+            type: string
+    Subscriptions.Post.422:
+      description: |
+        422 Unprocessable Entity
+
+        Shall be returned upon the following error: The
+        content type of the payload body is supported
+        and the payload body of a request contains
+        syntactically correct data but the data cannot be
+        processed.
+        The general cause for this error and its handling
+        is specified in clause 6.4 of ETSI
+        GS NFV-SOL 013 [8], including rules for the
+        presence of the response body.
+        Specifically in case of this resource, the response
+        code 422 shall also be returned if the CNFM has
+        tested the Notification endpoint as described in
+        clause 5.4.20.3.2 and the test has failed.
+        In this case, the "detail" attribute in the
+        "ProblemDetails" structure shall convey more
+        information about the error
+      headers:
+        Location:
+          description: |
+            The resource URI of the created subscription resource.
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: url
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP request 
+            has provided an invalid authorization token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response.
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'                    
+    Subscriptions.Get.200:
+      description: >
+        200 OK
+
+        Shall be returned when the list of subscriptions has been queried
+        successfully.
+
+        The response body shall contain in an array the representations of all
+        active subscriptions of the functional block that invokes the method, 
+        i.e. zero or more representations of lifecycle change
+        notification subscriptions.
+
+        If the "filter" URI parameter was supplied in the request, the data in
+        the response body shall have been transformed.
+
+        If the CNFM supports alternative 2 (paging) for this resource, 
+        inclusion of the Link HTTP header in this response
+        shall follow the provisions.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Link:
+          description: >
+            Reference to other resources. Used for paging in the present
+            document.
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AsSubscriptionNotification'              
+    IndividualSubscription.Get.200:
+      description: >
+        200 OK
+
+        Shall be returned when information about an individual subscription has
+        been read successfully.
+
+        The response body shall contain a representation of the "Individual
+        subscription" resource.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the
+
+            corresponding HTTP request has provided an invalid authorization
+            token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Content-Type:
+          description: |
+            The MIME type of the body of the response.
+          style: simple
+          explode: false
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AsSubscriptionNotification'              
+    IndividualSubscription.Delete.204:
+      description: >
+        204 NO CONTENT
+
+        Shall be returned when the "Individual subscription" resource has been
+        deleted successfully.
+
+        The response body shall be empty.
+      headers:
+        WWW-Authenticate:
+          description: >
+            Challenge if the corresponding HTTP request has not provided
+            authorization, or error details if the corresponding HTTP request 
+            has provided an invalid authorization token.
+          style: simple
+          explode: false
+          schema:
+            type: string
+        Version:
+          description: The used API version.
+          style: simple
+          explode: false
+          schema:
+            type: string
+  schemas:
+    CreateAsRequest:
+      type: object
+      required:
+        - asdId
+      properties:
+        asdId:
+          description: |
+                  An identifier that defines the ASD which defines the AS instance to be created.
+          type: string
+        asInstanceName:
+          description: |
+                  Human-readable name of the AS instance to be created.
+          type: string
+        asInstanceDescription:
+          description: |
+                  Human-readable description of the AS instance to be created.
+          type: string
+        additionalParams:
+          description: >
+            caontains additional input parameters for the instantiation process (this
+            is a place holder to hold any additional parameters for the server) This
+            type represents a list of key-value pairs. The order of the pairs in the
+            list is not significant. In JSON, a set of keyvalue pairs is represented
+            as an object. It shall comply with the provisions defined in clause 4 of
+            IETF RFC 8259. In the following example, a list of key-value pairs with
+            four keys ("aString", "aNumber", "anArray" and "anObject") is provided to
+            illustrate that the values associated with different keys can be of
+            different type.
+          type: object
+          additionalProperties:
+            type: object
+    AsInfoModificationRequest:
+      description: "This type represents request parameters for the \"Modification AS\" operation."
+      type: object
+      required:
+        - deploymentItems
+      properties:
+        deploymentItems:
+          description: contains lifecycle parameters for ASD deploymentItems.
+          type: object
+          required:
+            - deploymentItemsId
+          properties:
+            deploymentItemsId:
+              description: Identifies which deploymentItem.
+              type: string
+            lifecycleParameterKeyValues:
+              description: Provides lifecycle3 parameter keys and values
+              type: object
+        asdExtCpdInputParams:
+          description: contains ext cpd parameter instance-level values
+          type: object
+          required:
+            - extCpdId
+          properties:
+            extCpdId:
+              description: Identifier of ext cpd parameters
+              type: string
+            loadbalanceIP:
+              description: >
+                contains the IP address to configure teh loadBalancer of the K8S
+                service or Ingress controller that the ExtCpd represents
+              type: string
+            externalIPs:
+              description: contains external IPs
+              type: array
+              items:
+                description: IP address
+                type: string
+                format: IP
+            nadNames:
+              description: contains a list of nad names
+              type: array
+              items:
+                description: nad name
+                type: string
+            nadNamespace:
+              description: contains a nad namespace
+              type: string
+        additionalParams:
+          description: >
+            caontains additional input parameters for the instantiation process (this
+            is a place holder to hold any additional parameters for the server) This
+            type represents a list of key-value pairs. The order of the pairs in the
+            list is not significant. In JSON, a set of keyvalue pairs is represented
+            as an object. It shall comply with the provisions defined in clause 4 of
+            IETF RFC 8259. In the following example, a list of key-value pairs with
+            four keys ("aString", "aNumber", "anArray" and "anObject") is provided to
+            illustrate that the values associated with different keys can be of
+            different type.
+          type: object
+          additionalProperties:
+            type: object
+    InstantiateAsRequest:
+      description: "This type represents request parameters for the \"Instantiate AS\" operation."
+      type: object
+      required:
+        - deploymentItems
+      properties:
+        deploymentItems:
+          description: contains lifecycle parameters for ASD deploymentItems.
+          type: array
+          items:
+            $ref: '#/components/schemas/AsInfoModificationRequestDeploymentItems'
+        asdExtCpdInputParams:
+          description: contains ext cpd parameter instance-level values
+          type: object
+          required:
+            - extCpdId
+          properties:
+            extCpdId:
+              description: Identifier of ext cpd parameters
+              type: string
+            loadbalanceIP:
+              description: >-
+                contains the IP address to configure teh loadBalancer of the K8S
+                service or Ingress controller that the ExtCpd represents
+              type: string
+            externalIPs:
+              description: contains external IPs
+              type: array
+              items:
+                description: IP address
+                type: string
+                format: IP
+            nadNames:
+              description: contains a list of nad names
+              type: array
+              items:
+                description: nad name
+                type: string
+            nadNamespace:
+              description: contains a nad namespace
+              type: string
+        additionalParams:
+          description: >
+            caontains additional input parameters for the instantiation process (this
+            is a place holder to hold any additional parameters for the server) This
+            type represents a list of key-value pairs. The order of the pairs in the
+            list is not significant. In JSON, a set of keyvalue pairs is represented
+            as an object. It shall comply with the provisions defined in clause 4 of
+            IETF RFC 8259. In the following example, a list of key-value pairs with
+            four keys ("aString", "aNumber", "anArray" and "anObject") is provided to
+            illustrate that the values associated with different keys can be of
+            different type.
+          type: object
+    AsInfoModificationRequestDeploymentItems:
+      description: "This type contains lifecycle parameters for ASD deploymentItems."
+      type: object
+      required:
+        - deploymentItemsId
+      properties:
+        deploymentItemsId:
+          description: Identifies which deploymentItem.
+          type: string
+        lifecycleParameterKeyValues:
+          description: Provides lifecycle3 parameter keys and values
+          type: object
+    TerminateAsRequest:
+      description: "This type represents request parameters for the \"Terminate AS\" operation."
+      type: object
+      required:
+        - terminationType
+      properties:
+        terminationType:
+          description: >
+            Indicates whether forceful or graceful termination is requested.  See
+            note.
+      
+            Permitted values: - FORCEFUL: The CNFM will shut down the AS and release
+            the
+                        resources immediately after accepting the request.
+            - GRACEFUL: The CNFM will first arrange to take the AS out of
+                        service after accepting the request. Once the operation 
+                        of taking the AS out of service finishes (irrespective 
+                        of whether it has succeeded or failed) or once the timer 
+                        value specified in the "gracefulTerminationTimeout" 
+                        attribute expires, the CNFM will shut down the AS and 
+                        release the resources.
+          type: string
+          enum:
+            - FORCEFUL
+            - GRACEFUL
+        gracefulTerminationTimeout:
+          description: >
+            This attribute is only applicable in case of graceful termination. It
+            defines the time to wait for the AS to be taken out of service before
+            shutting down the AS and releasing the resources. The unit is seconds. If
+            not given and the "terminationType" attribute is set to "GRACEFUL", it is
+            expected that the CNFM waits for the successful taking out of service of
+            the AS, no matter how long it takes, before shutting down the CNF and
+            releasing the resources.
+          type: integer
+        additionalParams:
+          description: >
+            This type represents a list of key-value pairs. The order of the pairs in
+            the list is not significant. In JSON, a set of keyvalue pairs is
+            represented as an object. It shall comply with the provisions defined in
+            clause 4 of IETF RFC 8259. In the following example, a list of key-value
+            pairs with four keys ("aString", "aNumber", "anArray" and "anObject") is
+            provided to illustrate that the values associated with different keys can
+            be of different type.
+          type: object
+    OperateAsRequest:
+      description: >
+              This type represents request parameters for the \"Operate AS\" operation.
+      required:
+        - changeStateTo
+      properties:
+        changeStateTo:
+          description: >
+            STARTED: The AS instance is up and running. STOPPED: The AS instance has
+            been shut down.
+          type: string
+          enum:
+            - STARTED
+            - STOPPED
+        stopType:
+          description: |
+            * FORCEFUL: The CNFM will stop the AS instance immediately
+              after accepting the request.
+            * GRACEFUL: The CNFM instance will first arrange to take the AS out of
+              service after accepting the request. Once that operation is successful
+              or once the timer value specified in the \"gracefulStopTimeout\" attribute
+              expires, the CNFM will stop the AS instance.
+          type: string
+          enum:
+            - FORCEFUL
+            - GRACEFUL
+        gracefulStopTimeout:
+          description: >
+            The time interval (in seconds) to wait for the AS to be taken out of
+            service  during graceful stop, before stopping the AS. See note.
+          type: integer
+        additionalParams:
+          description: >
+            This type represents a list of key-value pairs. The order of the pairs in
+            the list is not significant. In JSON, a set of keyvalue pairs is
+            represented as an object. It shall comply with the provisions defined in
+            clause 4 of IETF RFC 8259. In the following example, a list of key-value
+            pairs with four keys (\"aString\", \"aNumber\", \"anArray\" and
+            \"anObject\") is provided to illustrate that the values associated with
+            different keys can be of different type.
+          type: object
+    LccnSubscriptionRequest:
+      description: >
+              This type represents a subscription request related to
+              notifications about AS lifecycle changes.
+      type: object
+      required:
+        - callbackUri
+      properties:
+        filter:
+          description: >
+            This type represents a subscription filter related to notifications about
+            AS lifecycle changes.
+          type: object
+          properties:
+            asInstanceSubscriptionFilter:
+              description: >
+                This type represents subscription filter criteria to match AS
+                instances. * NOTE 1:\tThe attributes \"asdIds\" and
+                \"asProductsFromProviders\"  are alternatives to reference to AS
+                instances\n           that are based on certain ASDs in a filter. They
+                should not be used both in the same filter instance,\n           but
+                one alternative should be chosen.\n  NOTE 2:\tThe attributes
+                \"asInstanceIds\" and \"asInstanceNames\"  are alternatives to
+                reference to particular AS\n instances in a filter.  They should not
+                be used both in the same filter instance, but one alternative\n should
+                be chosen.
+              type: object
+              anyOf:
+                - oneOf:
+                    - required:
+                        - asdId
+                    - required:
+                        - asProductsFromProviders
+                - oneOf:
+                    - required:
+                        - asInstanceIds
+                    - required:
+                        - asInstanceNames
+              properties:
+                asdIds:
+                  description: >
+                    If present, match AS instances that were created based on an ASD
+                    identified by one of the asdId values listed in this attribute.
+                  type: array
+                  items:
+                    description: |
+                      An identifier with the intention of being globally unique.
+                    type: string
+                asProductsFromProviders:
+                  description: >
+                    If present, match AS instances that belong to AS products from
+                    certain providers.
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - asProvider
+                    properties:
+                      asProvider:
+                        description: |
+                          Name of the AS provider to match.
+                        type: string
+                      asProducts:
+                        description: >
+                          If present, match AS instances that belong to AS products
+                          with certain product names, from one particular provider.
+                        type: array
+                        items:
+                          type: object
+                          required:
+                            - asProductName
+                          properties:
+                            asProductName:
+                              description: |
+                                Name of the AS product to match.
+                              type: string
+                            versions:
+                              description: >
+                                If present, match AS instances that belong to AS
+                                products with certain versions and a certain product
+                                name, from one particular provider.
+                              type: array
+                              items:
+                                type: object
+                                required:
+                                  - asSoftwareVersion
+                                properties:
+                                  asSoftwareVersion:
+                                    description: |
+                                      A version.
+                                    type: string
+                                  asdVersions:
+                                    description: >
+                                      If present, match AS instances that belong to AS
+                                      products with certain ASD versions, a certain
+                                      software version and a certain product name,
+                                      from one particular provider.
+                                    type: array
+                                    items:
+                                      description: |
+                                        A version.
+                                      type: string
+                asInstanceIds:
+                  description: >
+                    If present, match AS instances with an instance identifier listed
+                    in this attribute. See note 2.
+                  type: array
+                  items:
+                    description: |
+                      An identifier with the intention of being globally unique.
+                    type: string
+                asInstanceNames:
+                  description: >
+                    If present, match AS instances with an AS Instance Name listed in
+                    this attribute. See note 2.
+                  type: array
+                  items:
+                    type: string
+            notificationTypes:
+              description: >
+                Match particular notification types. \nPermitted values:
+                -\tAsLcmOperationOccurrenceNotification
+                -\tAsIdentifierCreationNotification
+                -\tAsIdentifierDeletionNotification  See note.
+              type: array
+              items:
+                type: string
+                enum:
+                  - AsLcmOperationOccurrenceNotification
+                  - AsIdentifierCreationNotification
+                  - AsIdentifierDeletionNotification
+            operationTypes:
+              description: >
+                Match particular AS lifecycle operation types for the notification of
+                type AsLcmOperationOccurrenceNotification. May be present if the
+                \"notificationTypes\" attribute contains the value
+                \"AsLcmOperationOccurrenceNotification\", and shall be absent
+                otherwise.
+              type: array
+              items:
+                description: >
+                  The enumeration LcmOpType defines the permitted values to represent 
+                  AS lifecycle operation types in AS lifecycle management operation 
+                  occurrence resources and AS lifecycle management operation
+                  occurrence  notifications.
+                type: string
+                enum:
+                  - INSTANTIATE
+                  - TERMINATE
+                  - OPERATE
+                  - CHANGE_EXT_CONN
+                  - MODIFY_INFO
+                  - CHANGE_ASPKG
+            operationStates:
+              description: >
+                Match particular LCM operation state values as reported in
+                notifications of type AsLcmOperationOccurrenceNotification. May be
+                present if the \"notificationTypes\" attribute contains the value
+                \"AsLcmOperationOccurrenceNotification\", and shall be absent
+                otherwise.
+              type: array
+              items:
+                description: >
+                  STARTING: The LCM operation is starting. PROCESSING: The LCM
+                  operation is currently in execution. COMPLETED: The LCM operation
+                  has been completed successfully. FAILED_TEMP: The LCM operation has
+                  failed and execution has stopped, but the execution of the operation
+                  is not considered to be closed. FAILED: The LCM operation has failed
+                  and it cannot be retried or rolled back, as it is determined that
+                  such action won't succeed. ROLLING_BACK: The LCM operation is
+                  currently being rolled back. ROLLED_BACK: The LCM operation has been
+                  successfully rolled back, i.e. The state of the AS prior to the
+                  original operation invocation has been restored as closely as
+                  possible.
+                type: string
+                enum:
+                  - STARTING
+                  - PROCESSING
+                  - COMPLETED
+                  - FAILED_TEMP
+                  - FAILED
+                  - ROLLING_BACK
+                  - ROLLED_BACK
+        callbackUri:
+          description: |
+            String formatted according to IETF RFC 3986.
+          type: string
+        authentication:
+          description: >
+            * NOTE: The clientId and clientPassword passed in a subscription shall not
+            be the same as the clientId and
+                    clientPassword that are used to obtain authorization for API requests. Client credentials may differ between
+                    subscriptions. The value of clientPassword should be generated by a random process
+          type: object
+          required:
+            - authType
+          properties:
+            authType:
+              description: >
+                Defines the types of Authentication / Authorization which the API
+                consumer is willing to accept when receiving a notification. Permitted
+                values: * BASIC: In every HTTP request to the notification endpoint,
+                use
+                  HTTP Basic authentication with the client credentials. 
+                * OAUTH2_CLIENT_CREDENTIALS: In every HTTP request to the
+                  notification endpoint, use an OAuth 2.0 Bearer token, obtained
+                  using the client credentials grant type.
+                * TLS_CERT: Every HTTP request to the notification endpoint is sent
+                  over a mutually authenticated TLS session, i.e. not only the
+                  server is authenticated, but also the client is authenticated
+                  during the TLS tunnel setup.
+              type: array
+              items:
+                type: string
+                enum:
+                  - BASIC
+                  - OAUTH2_CLIENT_CREDENTIALS
+                  - TLS_CERT
+            paramsBasic:
+              description: >
+                Parameters for authentication/authorization using BASIC. Shall be
+                present if authType is \"BASIC\" and the contained information has not
+                been provisioned out of band. Shall be absent otherwise.
+              type: object
+              properties:
+                userName:
+                  description: >
+                    Username to be used in HTTP Basic authentication. Shall be present
+                    if it has not been provisioned out of band.
+                  type: string
+                password:
+                  description: >
+                    Password to be used in HTTP Basic authentication. Shall be present
+                    if it has not been provisioned out of band.
+                  type: string
+            paramsOauth2ClientCredentials:
+              description: >
+                Parameters for authentication/authorization using
+                OAUTH2_CLIENT_CREDENTIALS. Shall be present if authType is
+                \"OAUTH2_CLIENT_CREDENTIALS\" and the contained information has not
+                been provisioned out of band. Shall be absent otherwise.
+              type: object
+              properties:
+                clientId:
+                  description: >
+                    Client identifier to be used in the access token request of the
+                    OAuth 2.0 client credentials grant type.  Shall be present if it
+                    has not been provisioned out of band. See note.
+                  type: string
+                clientPassword:
+                  description: >
+                    Client password to be used in the access token request of the
+                    OAuth 2.0 client credentials grant type.  Shall be present if it
+                    has not been provisioned out of band. See note.
+                  type: string
+                tokenEndpoint:
+                  description: |
+                    String formatted according to IETF RFC 3986.
+                  type: string
+        verbosity:
+          description: >
+            The enumeration LcmOpOccNotificationVerbosityType provides values to
+            control the verbosity of LCM operation occurrence notifications. * FULL:
+            This signals a full notification which contains all change details. *
+            SHORT: This signals a short notification which omits large-volume change
+            details to reduce the size of data to
+                     be sent via the notification mechanism.
+          type: string
+          enum:
+            - FULL
+            - SHORT
+    AsInstance:
+      description: "This type represents an AS instance."
+      type: object
+      required:
+        - asInstanceId
+        - asdId
+        - asVersion
+        - asSchemaVersion
+        - asProvider
+        - asApplicationName
+        - asApplicationVersion
+        - deploymentItems
+        - instantiationState
+      properties:
+        asInstanceid:
+          description: |
+            An identifier with the intention of being globally unique.
+          type: string
+        asInstanceName:
+          description: >
+            Name of the AS instance. This attribute can be modified with
+            the PATCH method.
+          type: string
+        asInstanceDescription:
+          description: >
+            Human-readable description of the AS instance. This attribute
+            can be modified with the PATCH method.
+          type: string
+        asdId:
+          description: |
+            An identifier with the intention of being globally unique.
+          type: string
+        asdVersion:
+          description: >
+            A version of as ASD
+          type: string
+        asdSchemaVersion:
+          description: >
+            A version of as ASD Schema
+          type: string
+        asProvider:
+          description: >
+            Provider of the AS and the ASD. The value is copied from the ASD.
+          type: string
+        asApplicationName:
+          description: |
+            Name to identify the AS product. The value is copied from the ASD.
+          type: string               
+        asApplicationVersion:
+          description: |
+            A version of as Application. The value is copied from the ASD.
+          type: string
+        asApplicationInfoName:
+          description: |
+            An Application Info name. The value is copied from the ASD.
+          type: string
+        asInfoDescription:
+          description: |
+            An AS information description. The value is copied from the ASD.
+          type: string 
+        deploymentItems:
+          description: contains lifecycle parameters for ASD deploymentItems.
+          type: object
+          required:
+            - deploymentItemsId
+          properties: 
+            deploymentItemsId:
+              description: Identifies which deploymentItem.
+              type: string
+            lifecycleParameterKeyValues:
+              description: Provides lifecycle3 parameter keys and values
+              type: object
+        asdExtCpdInputParams:
+          description: contains ext cpd parameter instance-level values
+          type: object
+          required:
+            - extCpdId
+          properties:
+            extCpdId:
+              description: Identifier of ext cpd parameters
+              type: string
+            loadbalanceIP:
+              description: contains the IP address to configure teh loadBalancer of the K8S service or Ingress controller that the ExtCpd represents
+              type: string                  
+            externalIPs:
+              description: contains external IPs
+              type: array
+              items: 
+                description: IP address
+                type: string
+                format: IP
+            nadNames:
+              description: contains a list of nad names
+              type: array
+              items:
+                description: nad name
+                type: string
+            nadNamespace:
+              description: contains a nad namespace
+              type: string
+        instantiationState:
+          description: |
+            The instantiation state of the AS.
+          type: string
+          enum:
+            - NOT_INSTANTIATED
+            - INSTANTIATED
+        instantiatedAsInfo:
+          description: >
+            Information specific to an instantiated AS instance. This
+            attribute shall be present if the instantiateState attribute
+            value is INSTANTIATED.
+          type: object
+          required:
+            - asState
+          properties:
+            asState:
+              description: >
+                STARTED: The AS instance is up and running. STOPPED: The
+                AS instance has been shut down.
+              type: string
+              enum:
+                - STARTED
+                - STOPPED
+            localizationLanguage:
+              description: >
+                Information about localization language of the AS
+                (includes e.g. strings in the ASD). 
+              type: string
+        metadata:
+          description: >
+            This type represents a list of key-value pairs. The order of
+            the pairs in the list is not significant. In JSON, a set of
+            keyvalue pairs is represented as an object. 
+          type: object
+        extensions:
+          description: >
+            Additional AS-specific attributes that affect the lifecycle
+            management of this AS instance.
+
+            These attributes represent values that are stored persistently
+            in the AsInstance structure for  consumption by the CNFM or
+            the lifecycle management scripts during the execution of AS
+            lifecycle  management operations. 
+
+            All extensions that are allowed for the AS are declared in
+            the ASD. The declaration of an extension  in the ASD
+            contains information on whether its presence is optional or
+            required, and optionally can  specify an initial value. See
+            notes 2 and 4. The CNFM shall reject requests to write
+            extension attributes  that are not declared in the ASD with a
+            "422 Unprocessable entity" error response as defined in
+            clause  6.4 of ETSI GS NFV-SOL 013.
+
+            Modifying the values of these attributes has no direct effect
+            on the AS instance; however, the modified  attribute values
+            can be considered during subsequent AS lifecycle management
+            operations, which means that  the modified values can
+            indirectly affect the configuration of the AS instance.
+
+            These attributes can be initialized with default values from
+            the ASD (see note 4).
+
+            These attributes can be modified with values passed in the
+            request structures of certain LCM operations,  such as the
+            InstantiateAsRequest structure.
+
+            Further, these attributes can be created, modified or deleted
+            with the PATCH method.
+
+            In addition, the provisions in clause 5.7 shall apply.
+        _links:
+          description: |
+            Links to resources related to this resource.
+          type: object
+          required:
+            - self
+          properties:
+            self:
+              description: >
+                This type represents a link to a resource using an
+                absolute URI.
+              type: object
+              required:
+                - href
+              properties:
+                href:
+                  description: |
+                    String formatted according to IETF RFC 3986.
+                  type: string
+            indicators:
+              description: >
+                This type represents a link to a resource using an
+                absolute URI.
+              type: object
+              required:
+                - href
+              properties:
+                href:
+                  description: |
+                    String formatted according to IETF RFC 3986.
+                  type: string
+            instantiate:
+              description: >
+                This type represents a link to a resource using an
+                absolute URI.
+              type: object
+              required:
+                - href
+              properties:
+                href:
+                  description: |
+                    String formatted according to IETF RFC 3986.
+                  type: string
+            terminate:
+              description: >
+                This type represents a link to a resource using an
+                absolute URI.
+              type: object
+              required:
+                - href
+              properties:
+                href:
+                  description: |
+                    String formatted according to IETF RFC 3986.
+                  type: string
+            operate:
+              description: >
+                This type represents a link to a resource using an
+                absolute URI.
+              type: object
+              required:
+                - href
+              properties:
+                href:
+                  description: |
+                    String formatted according to IETF RFC 3986.
+                  type: string    
+    ErrorDetails:
+      description: >
+        The definition of the general "ProblemDetails" data structure. the "status"
+        and "detail" attributes are mandated to be included by the
+        present document, to ensure that the response contains
+        additional textual information about an error.
+      type: object
+      required:
+        - status
+        - detail
+      properties:
+        type:
+          description: >
+            A URI reference according to IETF RFC 3986 that identifies
+            the problem type. It is encouraged that the URI provides
+            human-readable documentation for the problem (e.g. using
+            HTML) when dereferenced. When this member is not present,
+            its value is assumed to be "about:blank".
+          type: string
+          format: URI
+        title:
+          description: >
+            A short, human-readable summary of the problem type. It
+            should not change from occurrence to occurrence of the
+            problem, except for purposes of localization. If type is
+            given and other than "about:blank", this attribute shall
+            also be provided. A short, human-readable summary of the
+            problem type.  It SHOULD NOT change from occurrence to
+            occurrence of the problem, except for purposes of
+            localization.
+          type: string
+        status:
+          description: >
+            The HTTP status code for this occurrence of the problem.
+            The HTTP status code ([RFC7231], Section 6) generated by
+            the origin server for this occurrence of the problem.
+          type: integer
+        detail:
+          description: >
+            A human-readable explanation specific to this occurrence
+            of the problem.
+          type: string
+        instance:
+          description: >
+            A URI reference that identifies the specific occurrence of
+            the problem. It may yield further information if
+            dereferenced.
+          type: string
+          format: URI
+    AsLcmOpOcc:
+      description: "This type represents an AS lifecycle management operation occurrence.  It shall comply with the provisions defined in table 5.5.2.13-1.\nNOTE 1:\tThis allows the NFVO to obtain the information contained in the latest \n        \"result\" notification if it has not received it due to an error or a \n        wrongly configured subscription filter.\nNOTE 2:\tNot more than one of changedInfo and modificationsTriggeredByAsPkgChange \n        shall be present.\nNOTE 3:\tFor a particular affected VL, there shall be as many \"AffectedVirtualLink\" \n        entries as needed for signalling the different types of changes, i.e. one \n        per virtual link and change type. For instance, in the case of signaling \n        affected VL instances involving the addition of a particular VL instance \n        with links ports, one \"AffectedVirtualLink\" entry signals the addition of \n        the VL by using the \"changeType\" attribute of \"AffectedVirtualLink\" structure \n        equal to \"ADDED\", and another \"AffectedVirtualLink\" entry signals the addition \n        of externally visible AS link ports of the VL by using the \"changeType\" equal \n        to \"LINK_PORT_ADDED\".\nNOTE 4:\tA coordination action has timed out if the CNFM has not been able to read the \n        \"Individual coordination action\" resource within a timeout interval after requesting \n        the coordination to be started or to be cancelled. The length of the timeout interval \n        is defined by means outside the scope of the present document.\nNOTE 5:   The list of rejected coordinations may be garbage collected if the LCM operation\n        occurrence has reached a terminal state, i.e. one of \"COMPLETED\", \"FAILED\" and \"ROLLED_BACK\".\n"
+      type: object
+      oneOf:
+        - required:
+            - changedInfo
+        - required:
+            - modificationsTriggeredByAsPkgChange
+      required:
+        - id
+        - operationState
+        - stateEnteredTime
+        - startTime
+        - asInstanceId
+        - operation
+        - isAutomaticInvocation
+        - isCancelPending
+      properties:
+        id:
+          description: |
+            An identifier with the intention of being globally unique.
+          type: string
+        operationState:
+          description: >
+            STARTING: The LCM operation is starting. PROCESSING: The LCM
+            operation is currently in execution. COMPLETED: The LCM
+            operation has been completed successfully. FAILED_TEMP: The
+            LCM operation has failed and execution has stopped, but the
+            execution of the operation is not considered to be closed.
+            FAILED: The LCM operation has failed and it cannot be retried
+            or rolled back, as it is determined that such action won't
+            succeed. ROLLING_BACK: The LCM operation is currently being
+            rolled back. ROLLED_BACK: The LCM operation has been
+            successfully rolled back, i.e. The state of the AS prior to
+            the original operation invocation has been restored as closely
+            as possible.
+          type: string
+          enum:
+            - STARTING
+            - PROCESSING
+            - COMPLETED
+            - FAILED_TEMP
+            - FAILED
+            - ROLLING_BACK
+            - ROLLED_BACK
+        stateEnteredTime:
+          description: >
+            Date-time stamp. Representation: String formatted according to
+            IETF RFC 3339.
+          type: string
+          format: date-time
+        startTime:
+          description: >
+            Date-time stamp. Representation: String formatted according to
+            IETF RFC 3339.
+          type: string
+          format: date-time
+        asInstanceId:
+          description: |
+            An identifier with the intention of being globally unique.
+          type: string
+        grantId:
+          description: |
+            An identifier with the intention of being globally unique.
+          type: string
+        operation:
+          description: >
+            The enumeration LcmOpType defines the permitted values to
+            represent  AS lifecycle operation types in AS lifecycle
+            management operation  occurrence resources and AS lifecycle
+            management operation occurrence  notifications.  It shall
+            comply with the provisions defined in table 5.5.4.5-1.
+          type: string
+          enum:
+            - INSTANTIATE
+            - TERMINATE
+            - OPERATE
+        isAutomaticInvocation:
+          description: |
+            The Boolean is a data type having two values (true and false).
+          type: boolean
+        operationParams:
+          description: >
+            Input parameters of the LCM operation. This attribute shall be
+            formatted according to the request data type of the related
+            LCM operation. In addition, the provisions in clause 5.7 shall
+            apply. 
+          type: object
+        isCancelPending:
+          description: |
+            The Boolean is a data type having two values (true and false).
+          type: boolean
+        cancelMode:
+          description: >
+            Cancellation mode. GRACEFUL: If the AS LCM operation
+            occurrence is in "PROCESSING" or "ROLLING_BACK" state, the
+            CNFM shall not start any new resource management operation and
+            shall wait for the ongoing resource management operations in
+            the underlying system, typically the VIM, to finish execution
+            or to time out. After that, the CNFM shall put the operation
+            occurrence into the FAILED_TEMP state. If the AS LCM
+            operation occurrence is in "STARTING" state, the CNFM shall
+            not start any resource management operation and shall wait for
+            the granting request to finish execution or time out. After
+            that, the CNFM shall put the operation occurrence into the
+            ROLLED_BACK state. FORCEFUL: If the AS LCM operation
+            occurrence is in "PROCESSING" or "ROLLING_BACK" state, the
+            CNFM shall not start any new resource management operation,
+            shall cancel the ongoing resource management operations in the
+            underlying system, typically the VIM, and shall wait for the
+            cancellation to finish or to time out. After that, the CNFM
+            shall put the operation occurrence into the FAILED_TEMP state.
+            If the AS LCM operation occurrence is in "STARTING" state,
+            the CNFM shall not start any resource management operation and
+            put the operation occurrence into the ROLLED_BACK state.
+          type: string
+          enum:
+            - GRACEFUL
+            - FORCEFUL
+        error:
+          description: >
+            The definition of the general "ProblemDetails" data structure
+            from IETF RFC 7807 is reproduced inthis structure. Compared to
+            the general framework defined in IETF RFC 7807, the "status"
+            and "detail" attributes are mandated to be included by the
+            present document, to ensure that the response contains
+            additional textual information about an error. IETF RFC 7807
+            foresees extensibility of the "ProblemDetails" type. It is
+            possible that particular APIs in the present document, or
+            particular implementations, define extensions to define
+            additional attributes that provide more information about the
+            error. The description column only provides some explanation
+            of the meaning to Facilitate understanding of the design. For
+            a full description, see IETF RFC 7807.
+          type: object
+          required:
+            - status
+            - detail
+          properties:
+            type:
+              description: >
+                A URI reference according to IETF RFC 3986 that identifies
+                the problem type. It is encouraged that the URI provides
+                human-readable documentation for the problem (e.g. using
+                HTML) when dereferenced. When this member is not present,
+                its value is assumed to be "about:blank".
+              type: string
+              format: URI
+            title:
+              description: >
+                A short, human-readable summary of the problem type. It
+                should not change from occurrence to occurrence of the
+                problem, except for purposes of localization. If type is
+                given and other than "about:blank", this attribute shall
+                also be provided. A short, human-readable summary of the
+                problem type.  It SHOULD NOT change from occurrence to
+                occurrence of the problem, except for purposes of
+                localization (e.g., using proactive content negotiation;
+                see [RFC7231], Section 3.4).
+              type: string
+            status:
+              description: >
+                The HTTP status code for this occurrence of the problem.
+                The HTTP status code ([RFC7231], Section 6) generated by
+                the origin server for this occurrence of the problem.
+              type: integer
+            detail:
+              description: >
+                A human-readable explanation specific to this occurrence
+                of the problem.
+              type: string
+            instance:
+              description: >
+                A URI reference that identifies the specific occurrence of
+                the problem. It may yield further information if
+                dereferenced.
+              type: string
+              format: URI
+        resourceChanges:
+          description: >
+            This attribute contains information about the cumulative
+            changes to virtualised resources that were performed so far by
+            the LCM operation since its start, if applicable.
+          type: object
+          properties:
+            affectedAscs:
+              description: >
+                Information about ASC instances that were affected during
+                the lifecycle operation.  See note 1.
+              type: array
+              items:
+                description: "This type provides information about added, deleted, modified and temporary ASCs.  It shall comply with the provisions in table 5.5.3.13-1.\nNOTE:\tThe \"resourceDefinitionId\" attribute provides information to the API consumer \n      (i.e. the NFVO) to assist in correlating the resource changes performed during \n      the LCM operation with the granted resources in a specific Grant exchange, which \n      is identified by the \"grantId\" available in the \"Individual AS lifecycle management \n      operation occurrence\" and the \"id\" in the \"Individual Grant\".\n"
+                type: object
+                required:
+                  - id
+                  - vduId
+                  - changeType
+                  - computeResource
+                properties:
+                  id:
+                    description: >
+                      An identifier that is unique for the respective type
+                      within an AS instance, but may not be globally
+                      unique.
+                    type: string
+                  vduId:
+                    description: >
+                      An identifier that is unique within an AS
+                      descriptor.
+                    type: string
+                  asdId:
+                    description: >
+                      An identifier with the intention of being globally
+                      unique.
+                    type: string
+                  changeType:
+                    description: >
+                      Signals the type of change. Permitted values: *
+                      ADDED * REMOVED * MODIFIED * TEMPORARY For a
+                      temporary resource, an AffectedAsc structure exists
+                      as long as the temporary resource exists.
+                    type: string
+                    enum:
+                      - ADDED
+                      - REMOVED
+                      - MODIFIED
+                      - TEMPORARY
+                  metadata:
+                    description: >
+                      This type represents a list of key-value pairs. The
+                      order of the pairs in the list is not significant.
+                      In JSON, a set of keyvalue pairs is represented as
+                      an object. It shall comply with the provisions
+                      defined in clause 4 of IETF RFC 8259. In the
+                      following example, a list of key-value pairs with
+                      four keys ("aString", "aNumber", "anArray" and
+                      "anObject") is provided to illustrate that the
+                      values associated with different keys can be of
+                      different type.
+                    type: object
+        warnings:
+          description: >
+            Warning messages that were generated while the operation was
+            executing.
+
+            If the operation has included LCM coordination actions and
+            these have resulted in warnings, such warnings should be added
+            to this attribute.
+          type: array
+          items:
+            type: string
+        _links:
+          description: |
+            Links to resources related to this resource.
+          type: object
+          required:
+            - self
+            - asInstance
+          properties:
+            self:
+              description: >
+                This type represents a link to a resource using an
+                absolute URI.
+              type: object
+              required:
+                - href
+              properties:
+                href:
+                  description: |
+                    String formatted according to IETF RFC 3986.
+                  type: string
+            asInstance:
+              description: >
+                This type represents a link to a resource using an
+                absolute URI.
+              type: object
+              required:
+                - href
+              properties:
+                href:
+                  description: |
+                    String formatted according to IETF RFC 3986.
+                  type: string
+            grant:
+              description: >
+                This type represents a link to a resource using an
+                absolute URI.
+              type: object
+              required:
+                - href
+              properties:
+                href:
+                  description: |
+                    String formatted according to IETF RFC 3986.
+                  type: string
+            cancel:
+              description: >
+                This type represents a link to a resource using an
+                absolute URI.
+              type: object
+              required:
+                - href
+              properties:
+                href:
+                  description: |
+                    String formatted according to IETF RFC 3986.
+                  type: string
+            retry:
+              description: >
+                This type represents a link to a resource using an
+                absolute URI.
+              type: object
+              required:
+                - href
+              properties:
+                href:
+                  description: |
+                    String formatted according to IETF RFC 3986.
+                  type: string
+            rollback:
+              description: >
+                This type represents a link to a resource using an
+                absolute URI.
+              type: object
+              required:
+                - href
+              properties:
+                href:
+                  description: |
+                    String formatted according to IETF RFC 3986.
+                  type: string
+            fail:
+              description: >
+                This type represents a link to a resource using an
+                absolute URI.
+              type: object
+              required:
+                - href
+              properties:
+                href:
+                  description: |
+                    String formatted according to IETF RFC 3986.
+                  type: string
+            asSnapshot:
+              description: >
+                This type represents a link to a resource using an
+                absolute URI.
+              type: object
+              required:
+                - href
+              properties:
+                href:
+                  description: |
+                    String formatted according to IETF RFC 3986.
+                  type: string       
+    AsSubscriptionNotification:
+      description: >
+        This type represents a subscription related to notifications about
+        AS lifecycle changes.
+      type: object
+      required:
+        - id
+        - callbackUri
+        - verbosity
+        - _links
+      properties:
+        id:
+          description: |
+            An identifier with the intention of being globally unique.
+          type: string
+        filter:
+          description: "This type represents a subscription filter related to notifications about AS lifecycle changes.  It shall comply with the provisions defined in table 5.5.3.12-1.  At a particular nesting level in the filter structure, the following applies: All attributes shall  match in order for the filter to match (logical \"and\" between different filter attributes).  If an attribute is an array, the attribute shall match if at least one of the values in the array  matches (logical \"or\" between the values of one filter attribute).\nNOTE:\tThe permitted values of the \"notificationTypes\" attribute are spelled exactly as the names of \n      the notification types to facilitate automated code generation systems.\n"
+          type: object
+          properties:
+            asInstanceSubscriptionFilter:
+              description: "This type represents subscription filter criteria to match AS instances. * NOTE 1:\tThe attributes \"asdIds\" and \"asProductsFromProviders\" are alternatives to reference to AS instances\n          that are based on certain ASDs in a filter. They should not be used both in the same filter instance,\n          but one alternative should be chosen.\n  NOTE 2:\tThe attributes \"asInstanceIds\" and \"asInstanceNames\" are alternatives to reference to particular AS\n          instances in a filter. They should not be used both in the same filter instance, but one alternative\n          should be chosen.\n"
+              type: object
+              anyOf:
+                - oneOf:
+                    - required:
+                        - asdId
+                    - required:
+                        - asProductsFromProviders
+                - oneOf:
+                    - required:
+                        - asInstanceIds
+                    - required:
+                        - asInstanceNames
+              properties:
+                asdIds:
+                  description: >
+                    If present, match AS instances that were created
+                    based on an ASD identified by one of the asdId values
+                    listed in this attribute. See note 1.
+                  type: array
+                  items:
+                    description: >
+                      An identifier with the intention of being globally
+                      unique.
+                    type: string
+                asProductsFromProviders:
+                  description: >
+                    If present, match AS instances that belong to AS
+                    products from certain providers. See note 1.
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - asProvider
+                    properties:
+                      asProvider:
+                        description: |
+                          Name of the AS provider to match.
+                        type: string
+                      asProducts:
+                        description: >
+                          If present, match AS instances that belong to
+                          AS products with certain product names, from
+                          one particular provider.
+                        type: array
+                        items:
+                          type: object
+                          required:
+                            - asProductName
+                          properties:
+                            asProductName:
+                              description: |
+                                Name of the AS product to match.
+                              type: string
+                            versions:
+                              description: >
+                                If present, match AS instances that
+                                belong to AS products with certain
+                                versions and a certain product name, from
+                                one particular provider.
+                              type: array
+                              items:
+                                type: object
+                                required:
+                                  - asSoftwareVersion
+                                properties:
+                                  asSoftwareVersion:
+                                    description: |
+                                      A version.
+                                    type: string
+                                  asdVersions:
+                                    description: >
+                                      If present, match AS instances that
+                                      belong to AS products with certain ASD
+                                      versions, a certain software version and
+                                      a certain product name, from one
+                                      particular provider.
+                                    type: array
+                                    items:
+                                      description: |
+                                        A version.
+                                      type: string
+                asInstanceIds:
+                  description: >
+                    If present, match AS instances with an instance
+                    identifier listed in this attribute. See note 2.
+                  type: array
+                  items:
+                    description: >
+                      An identifier with the intention of being globally
+                      unique.
+                    type: string
+                asInstanceNames:
+                  description: >
+                    If present, match AS instances with an AS Instance
+                    Name listed in this attribute. See note 2.
+                  type: array
+                  items:
+                    type: string
+            notificationTypes:
+              description: "Match particular notification types. \nPermitted values: -\tAsLcmOperationOccurrenceNotification -\tAsIdentifierCreationNotification -\tAsIdentifierDeletionNotification See note.\n"
+              type: array
+              items:
+                type: string
+                enum:
+                  - AsLcmOperationOccurrenceNotification
+                  - AsIdentifierCreationNotification
+                  - AsIdentifierDeletionNotification
+            operationTypes:
+              description: >
+                Match particular AS lifecycle operation types for the
+                notification of type
+                AsLcmOperationOccurrenceNotification. May be present if
+                the "notificationTypes" attribute contains the value
+                "AsLcmOperationOccurrenceNotification", and shall be
+                absent otherwise.
+              type: array
+              items:
+                description: >
+                  The enumeration LcmOpType defines the permitted values
+                  to represent  AS lifecycle operation types in AS
+                  lifecycle management operation  occurrence resources and
+                  AS lifecycle management operation occurrence 
+                  notifications.  It shall comply with the provisions
+                  defined in table 5.5.4.5-1.
+                type: string
+                enum:
+                  - INSTANTIATE
+                  - TERMINATE
+                  - OPERATE
+            operationStates:
+              description: >
+                Match particular LCM operation state values as reported in
+                notifications of type
+                AsLcmOperationOccurrenceNotification. May be present if
+                the "notificationTypes" attribute contains the value
+                "AsLcmOperationOccurrenceNotification", and shall be
+                absent otherwise.
+              type: array
+              items:
+                description: >
+                  STARTING: The LCM operation is starting. PROCESSING: The
+                  LCM operation is currently in execution. COMPLETED: The
+                  LCM operation has been completed successfully.
+                  FAILED_TEMP: The LCM operation has failed and execution
+                  has stopped, but the execution of the operation is not
+                  considered to be closed. FAILED: The LCM operation has
+                  failed and it cannot be retried or rolled back, as it is
+                  determined that such action won't succeed. ROLLING_BACK:
+                  The LCM operation is currently being rolled back.
+                  ROLLED_BACK: The LCM operation has been successfully
+                  rolled back, i.e. The state of the AS prior to the
+                  original operation invocation has been restored as
+                  closely as possible.
+                type: string
+                enum:
+                  - STARTING
+                  - PROCESSING
+                  - COMPLETED
+                  - FAILED_TEMP
+                  - FAILED
+                  - ROLLING_BACK
+                  - ROLLED_BACK
+        callbackUri:
+          description: |
+            String formatted according to IETF RFC 3986.
+          type: string
+        verbosity:
+          description: >
+            The enumeration LcmOpOccNotificationVerbosityType provides
+            values to control the verbosity of LCM operation occurrence
+            notifications. * FULL: This signals a full notification which
+            contains all change details. * SHORT: This signals a short
+            notification which omits large-volume change details to reduce
+            the size of data to
+                      be sent via the notification mechanism.
+          type: string
+          enum:
+            - FULL
+            - SHORT
+        _links:
+          description: |
+            Links to resources related to this resource.
+          type: object
+          required:
+            - self
+          properties:
+            self:
+              description: >
+                This type represents a link to a resource using an
+                absolute URI.
+              type: object
+              required:
+                - href
+              properties:
+                href:
+                  description: |
+                    String formatted according to IETF RFC 3986.
+                  type: string                                               
+      

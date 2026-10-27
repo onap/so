@@ -75,7 +75,6 @@
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>0.33.0</io.fabric8.version>
     <bowman.client.version>0.11.0</bowman.client.version>
-    <so-etsi-sol003-adapter-version>1.9.0-SNAPSHOT</so-etsi-sol003-adapter-version>
     <onap-logging-version>1.7.0</onap-logging-version>
     <sdc-dist-client.version>2.3.0</sdc-dist-client.version>
     <grpc.version>1.82.1</grpc.version>

@@ -1,0 +1,1897 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "SOL003 - VNF Lifecycle Management Notification interface\n\nIMPORTANT: Please note that this file might be not aligned to the current version of the ETSI Group Specification it refers to. In case of discrepancies the published ETSI Group Specification takes precedence.\n\nIn clause 4.3.2 of ETSI GS NFV-SOL 003 v2.4.1, an attribute-based filtering mechanism is defined. This mechanism is currently not included in the corresponding OpenAPI design for this GS version. Changes to the attribute-based filtering mechanism are being considered in v2.5.1 of this GS for inclusion in the corresponding future ETSI NFV OpenAPI design.\nPlease report bugs to https://forge.etsi.org/bugzilla/buglist.cgi?component=Nfv-Openapis&list_id=61&product=NFV&resolution=\n",
+    "version" : "1.1.1",
+    "title" : "SOL003 - VNF Lifecycle Management Notification interface",
+    "license" : {
+      "name" : "ETSI Forge copyright notice",
+      "url" : "https://forge.etsi.org/etsi-forge-copyright-notice.txt"
+    }
+  },
+  "basePath" : "/so/vnfm-adapter/v1/",
+  "schemes" : [ "https" ],
+  "consumes" : [ "application/json" ],
+  "produces" : [ "application/json" ],
+  "paths" : {
+    "/lcn/VnfLcmOperationOccurrenceNotification" : {
+      "post" : {
+        "description" : "Notify\n\nThe POST method delivers a notification from the server to the client.\n",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "VnfLcmOperationOccurrenceNotification",
+          "description" : "A notification about on-boarding of a VNF package.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/VnfLcmOperationOccurrenceNotification"
+          }
+        }, {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "The authorization token for the request. Reference: IETF RFC 7235\n",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "Content-Type",
+          "in" : "header",
+          "description" : "The MIME type of the body of the request. Reference: IETF RFC 7231\n",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content\nThe notification was delivered successfully.\n",
+            "headers" : {
+              "WWW-Authenticate" : {
+                "type" : "string",
+                "description" : "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request\nIf the request is malformed or syntactically incorrect (e.g. if the request URI contains incorrect query parameters or a syntactically incorrect payload body), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and should include in the \"detail\" attribute more information about the source of the problem.\n\n ---\n\nIf the request contains a malformed access token, the API producer should respond with this response. The details of the error shall be returned in the WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\n\n ---\n\nIf there is an application error related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond with this response code.The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              },
+              "WWW-Authenticate" : {
+                "type" : "string",
+                "description" : "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n"
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized\nIf the request contains no access token even though one is required, or if the request contains an authorization token that is invalid (e.g. expired or revoked), the API producer should respond with this response. The details of the error shall be returned in the WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              },
+              "WWW-Authenticate" : {
+                "type" : "string",
+                "description" : "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n"
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "403" : {
+            "description" : "Forbidden\nIf the API consumer is not allowed to perform a particular request to a particular resource, the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided.  It should include in the \"detail\" attribute information about the source of the problem, and may indicate how to solve it.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "404" : {
+            "description" : "Not Found\nIf the API producer did not find a current representation for the resource addressed by the URI passed in the request, or is not willing to disclose that one exists, it shall respond with this response code.  Specifically in case of this task resource, the reason can also be that the task is not supported for the VNF LCM operation occurrence represented by the parent resource, and that the task resource consequently does not exist. The \"ProblemDetails\" structure may be provided, including in the \"detail\" attribute information about the sourceof the problem, e.g. a wrong resource URI variable.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "405" : {
+            "description" : "Method Not Allowed\nIf a particular HTTP method is not supported for a particular resource, the API producer shall respond with this response code. The \"ProblemDetails\" structure may be omitted in that case.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "406" : {
+            "description" : "Not Acceptable\nIf the \"Accept\" HTTP header does not contain at least one name of a content type that is acceptable to the API producer, the API producer shall respond with this response code. The \"ProblemDetails\" structure may be omitted in that case.        \n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error\nIf there is an application error not related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond withthis response code. The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "503" : {
+            "description" : "Service Unavailable\nIf the API producer encounters an internal overload situation of itself or of a system it relies on, it should respond with this response code, following the provisions in IETF RFC 7231 [13] for the use of the \"Retry-After\" HTTP header and for the alternative to refuse the connection. The \"ProblemDetails\" structure may be omitted.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          }
+        }
+      }
+    },
+    "/lcn/VnfIdentifierCreationNotification" : {
+      "post" : {
+        "description" : "Notify\n\nThe POST method delivers a notification from the server to the client.\n",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "VnfIdentifierCreationNotification",
+          "description" : "A notification about the creation of a VNF identifier and the related VNF instance resource.\n",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/VnfIdentifierCreationNotification"
+          }
+        }, {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "The authorization token for the request. Reference: IETF RFC 7235\n",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "Content-Type",
+          "in" : "header",
+          "description" : "The MIME type of the body of the request. Reference: IETF RFC 7231\n",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content\nThe notification was delivered successfully.\n",
+            "headers" : {
+              "WWW-Authenticate" : {
+                "type" : "string",
+                "description" : "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request\nIf the request is malformed or syntactically incorrect (e.g. if the request URI contains incorrect query parameters or a syntactically incorrect payload body), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and should include in the \"detail\" attribute more information about the source of the problem.\n\n ---\n\nIf the request contains a malformed access token, the API producer should respond with this response. The details of the error shall be returned in the WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\n\n ---\n\nIf there is an application error related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond with this response code.The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              },
+              "WWW-Authenticate" : {
+                "type" : "string",
+                "description" : "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n"
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized\nIf the request contains no access token even though one is required, or if the request contains an authorization token that is invalid (e.g. expired or revoked), the API producer should respond with this response. The details of the error shall be returned in the WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              },
+              "WWW-Authenticate" : {
+                "type" : "string",
+                "description" : "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n"
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "403" : {
+            "description" : "Forbidden\nIf the API consumer is not allowed to perform a particular request to a particular resource, the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided.  It should include in the \"detail\" attribute information about the source of the problem, and may indicate how to solve it.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "404" : {
+            "description" : "Not Found\nIf the API producer did not find a current representation for the resource addressed by the URI passed in the request, or is not willing to disclose that one exists, it shall respond with this response code.  Specifically in case of this task resource, the reason can also be that the task is not supported for the VNF LCM operation occurrence represented by the parent resource, and that the task resource consequently does not exist. The \"ProblemDetails\" structure may be provided, including in the \"detail\" attribute information about the sourceof the problem, e.g. a wrong resource URI variable.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "405" : {
+            "description" : "Method Not Allowed\nIf a particular HTTP method is not supported for a particular resource, the API producer shall respond with this response code. The \"ProblemDetails\" structure may be omitted in that case.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "406" : {
+            "description" : "Not Acceptable\nIf the \"Accept\" HTTP header does not contain at least one name of a content type that is acceptable to the API producer, the API producer shall respond with this response code. The \"ProblemDetails\" structure may be omitted in that case.        \n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error\nIf there is an application error not related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond withthis response code. The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "503" : {
+            "description" : "Service Unavailable\nIf the API producer encounters an internal overload situation of itself or of a system it relies on, it should respond with this response code, following the provisions in IETF RFC 7231 [13] for the use of the \"Retry-After\" HTTP header and for the alternative to refuse the connection. The \"ProblemDetails\" structure may be omitted.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          }
+        }
+      }
+    },
+    "/lcn/VnfIdentifierDeletionNotification" : {
+      "post" : {
+        "description" : "Notify\n\nThe POST method delivers a notification from the server to the client.\n",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "VnfIdentifierDeletionNotification",
+          "description" : "A notification about the deletion of a VNF identifier and the related VNF instance resource.\n",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/VnfIdentifierDeletionNotification"
+          }
+        }, {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "The authorization token for the request. Reference: IETF RFC 7235\n",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "Content-Type",
+          "in" : "header",
+          "description" : "The MIME type of the body of the request. Reference: IETF RFC 7231\n",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content\nThe notification was delivered successfully.\n",
+            "headers" : {
+              "WWW-Authenticate" : {
+                "type" : "string",
+                "description" : "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request\nIf the request is malformed or syntactically incorrect (e.g. if the request URI contains incorrect query parameters or a syntactically incorrect payload body), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and should include in the \"detail\" attribute more information about the source of the problem.\n\n ---\n\nIf the request contains a malformed access token, the API producer should respond with this response. The details of the error shall be returned in the WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\n\n ---\n\nIf there is an application error related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond with this response code.The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              },
+              "WWW-Authenticate" : {
+                "type" : "string",
+                "description" : "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n"
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized\nIf the request contains no access token even though one is required, or if the request contains an authorization token that is invalid (e.g. expired or revoked), the API producer should respond with this response. The details of the error shall be returned in the WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              },
+              "WWW-Authenticate" : {
+                "type" : "string",
+                "description" : "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n"
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "403" : {
+            "description" : "Forbidden\nIf the API consumer is not allowed to perform a particular request to a particular resource, the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided.  It should include in the \"detail\" attribute information about the source of the problem, and may indicate how to solve it.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "404" : {
+            "description" : "Not Found\nIf the API producer did not find a current representation for the resource addressed by the URI passed in the request, or is not willing to disclose that one exists, it shall respond with this response code.  Specifically in case of this task resource, the reason can also be that the task is not supported for the VNF LCM operation occurrence represented by the parent resource, and that the task resource consequently does not exist. The \"ProblemDetails\" structure may be provided, including in the \"detail\" attribute information about the sourceof the problem, e.g. a wrong resource URI variable.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "405" : {
+            "description" : "Method Not Allowed\nIf a particular HTTP method is not supported for a particular resource, the API producer shall respond with this response code. The \"ProblemDetails\" structure may be omitted in that case.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "406" : {
+            "description" : "Not Acceptable\nIf the \"Accept\" HTTP header does not contain at least one name of a content type that is acceptable to the API producer, the API producer shall respond with this response code. The \"ProblemDetails\" structure may be omitted in that case.        \n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error\nIf there is an application error not related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond withthis response code. The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          },
+          "503" : {
+            "description" : "Service Unavailable\nIf the API producer encounters an internal overload situation of itself or of a system it relies on, it should respond with this response code, following the provisions in IETF RFC 7231 [13] for the use of the \"Retry-After\" HTTP header and for the alternative to refuse the connection. The \"ProblemDetails\" structure may be omitted.\n",
+            "headers" : {
+              "Content-Type" : {
+                "type" : "string",
+                "description" : "The MIME type of the body of the response."
+              }
+            },
+            "schema" : {
+              "type" : "object",
+              "required" : [ "detail", "status" ],
+              "properties" : {
+                "type" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+                },
+                "title" : {
+                  "type" : "string",
+                  "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+                },
+                "status" : {
+                  "type" : "integer",
+                  "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+                },
+                "detail" : {
+                  "type" : "string",
+                  "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+                },
+                "instance" : {
+                  "type" : "string",
+                  "format" : "URI",
+                  "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+                }
+              },
+              "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "lcnVnfLcmOperationOccurrenceNotification_changedInfo_vimConnectionInfo" : {
+      "required" : [ "id", "vimType" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "vimId" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "vimType" : {
+          "type" : "string",
+          "description" : "Discriminator for the different types of the VIM information. The value of this attribute determines the structure of the \"interfaceInfo\" and \"accessInfo\" attributes, based on the type of the VIM. The set of permitted values is expected to change over time as new types or versions of VIMs become available. The ETSI NFV registry of VIM-related information provides access to information about VimConnectionInfo definitions for various VIM types. The structure of the registry is defined in Annex C of SOL003.\n"
+        },
+        "interfaceInfo" : {
+          "type" : "object",
+          "description" : "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159. \n",
+          "properties" : { }
+        },
+        "accessInfo" : {
+          "type" : "object",
+          "description" : "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159. \n",
+          "properties" : { }
+        },
+        "extra" : {
+          "type" : "object",
+          "description" : "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159. \n",
+          "properties" : { }
+        }
+      },
+      "description" : "This type represents parameters to connect to a VIM for managing the resources of a VNF instance. This structure is used to convey VIM-related parameters over the Or-Vnfm interface. Additional parameters for a VIM may be configured into the VNFM by means outside the scope of the present document, and bound to the identifier of that VIM.\n",
+      "example" : {
+        "vimType" : "vimType",
+        "vimId" : "vimId",
+        "extra" : "{}",
+        "interfaceInfo" : "{}",
+        "id" : "id",
+        "accessInfo" : "{}"
+      }
+    },
+    "lcnVnfLcmOperationOccurrenceNotification_computeResource" : {
+      "required" : [ "resourceId", "vimConnectionId" ],
+      "properties" : {
+        "vimConnectionId" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "resourceProviderId" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "resourceId" : {
+          "type" : "string",
+          "description" : "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n"
+        },
+        "vimLevelResourceType" : {
+          "type" : "string",
+          "description" : "Type of the resource in the scope of the VIM or the resource provider.\n"
+        }
+      },
+      "description" : "This type represents the information that allows addressing a virtualised resource that is used by a VNF instance. Information about the resource is available from the VIM.\n",
+      "example" : {
+        "resourceId" : "resourceId",
+        "vimConnectionId" : "vimConnectionId",
+        "vimLevelResourceType" : "vimLevelResourceType",
+        "resourceProviderId" : "resourceProviderId"
+      }
+    },
+    "lcnVnfLcmOperationOccurrenceNotification_affectedVnfcs" : {
+      "required" : [ "changeType", "computeResource", "id", "vduId" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "An identifier that is unique for the respective type within a VNF instance, but may not be globally unique.\n"
+        },
+        "vduId" : {
+          "type" : "string",
+          "description" : "An identifier that is unique within a VNF descriptor.\n"
+        },
+        "changeType" : {
+          "type" : "string",
+          "description" : "Signals the type of change. Permitted values: * ADDED * REMOVED * MODIFIED * TEMPORARY For a temporary resource, an AffectedVnfc structure exists as long as the temporary resource exists.\n",
+          "enum" : [ "ADDED", "REMOVED", "MODIFIED", "TEMPORARY" ]
+        },
+        "computeResource" : {
+          "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification_computeResource"
+        },
+        "metadata" : {
+          "type" : "object",
+          "description" : "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159. \n",
+          "properties" : { }
+        },
+        "affectedVnfcCpIds" : {
+          "type" : "array",
+          "description" : "Identifiers of CP(s) of the VNFC instance that were affected by the change.  Shall be present for those affected CPs of the VNFC instance that are associated to an external CP of the VNF instance. May be present for further affected CPs of the VNFC instance.\n",
+          "items" : {
+            "type" : "string",
+            "description" : "An identifier that is unique for the respective type within a VNF instance, but may not be globally unique.\n"
+          }
+        },
+        "addedStorageResourceIds" : {
+          "type" : "array",
+          "description" : "References to VirtualStorage resources that have been added. Each value refers to a VirtualStorageResourceInfo item in the VnfInstance that was added to the VNFC. It shall be provided if at least one storage resource was added to the VNFC.\n",
+          "items" : {
+            "type" : "string",
+            "description" : "An identifier that is unique for the respective type within a VNF instance, but may not be globally unique.\n"
+          }
+        },
+        "removedStorageResourceIds" : {
+          "type" : "array",
+          "description" : "References to VirtualStorage resources that have been removed. The value contains the identifier of a VirtualStorageResourceInfo item that has been removed from the VNFC, and might no longer exist in the VnfInstance. It shall be provided if at least one storage resource was removed from the VNFC.\n",
+          "items" : {
+            "type" : "string",
+            "description" : "An identifier that is unique for the respective type within a VNF instance, but may not be globally unique.\n"
+          }
+        }
+      },
+      "description" : "This type provides information about added, deleted, modified and temporary VNFCs.  \n",
+      "example" : {
+        "addedStorageResourceIds" : [ "addedStorageResourceIds", "addedStorageResourceIds" ],
+        "metadata" : "{}",
+        "changeType" : "ADDED",
+        "affectedVnfcCpIds" : [ "affectedVnfcCpIds", "affectedVnfcCpIds" ],
+        "id" : "id",
+        "vduId" : "vduId",
+        "computeResource" : {
+          "resourceId" : "resourceId",
+          "vimConnectionId" : "vimConnectionId",
+          "vimLevelResourceType" : "vimLevelResourceType",
+          "resourceProviderId" : "resourceProviderId"
+        },
+        "removedStorageResourceIds" : [ "removedStorageResourceIds", "removedStorageResourceIds" ]
+      }
+    },
+    "lcnVnfLcmOperationOccurrenceNotification_changedExtConnectivity" : {
+      "required" : [ "id", "resourceHandle" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "resourceHandle" : {
+          "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification_computeResource"
+        },
+        "extLinkPorts" : {
+          "type" : "array",
+          "description" : "Link ports of this VL.\n",
+          "items" : {
+            "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification_extLinkPorts"
+          }
+        }
+      },
+      "example" : {
+        "resourceHandle" : {
+          "resourceId" : "resourceId",
+          "vimConnectionId" : "vimConnectionId",
+          "vimLevelResourceType" : "vimLevelResourceType",
+          "resourceProviderId" : "resourceProviderId"
+        },
+        "extLinkPorts" : [ {
+          "resourceHandle" : {
+            "resourceId" : "resourceId",
+            "vimConnectionId" : "vimConnectionId",
+            "vimLevelResourceType" : "vimLevelResourceType",
+            "resourceProviderId" : "resourceProviderId"
+          },
+          "id" : "id",
+          "cpInstanceId" : "cpInstanceId"
+        }, {
+          "resourceHandle" : {
+            "resourceId" : "resourceId",
+            "vimConnectionId" : "vimConnectionId",
+            "vimLevelResourceType" : "vimLevelResourceType",
+            "resourceProviderId" : "resourceProviderId"
+          },
+          "id" : "id",
+          "cpInstanceId" : "cpInstanceId"
+        } ],
+        "id" : "id"
+      }
+    },
+    "lcnVnfLcmOperationOccurrenceNotification_error" : {
+      "required" : [ "detail", "status" ],
+      "properties" : {
+        "type" : {
+          "type" : "string",
+          "format" : "URI",
+          "description" : "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n"
+        },
+        "title" : {
+          "type" : "string",
+          "description" : "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n"
+        },
+        "status" : {
+          "type" : "integer",
+          "description" : "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n"
+        },
+        "detail" : {
+          "type" : "string",
+          "description" : "A human-readable explanation specific to this occurrence of the problem.\n"
+        },
+        "instance" : {
+          "type" : "string",
+          "format" : "URI",
+          "description" : "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n"
+        }
+      },
+      "description" : "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+      "example" : {
+        "instance" : "instance",
+        "detail" : "detail",
+        "type" : "type",
+        "title" : "title",
+        "status" : 0
+      }
+    },
+    "VnfLcmOperationOccurrenceNotification" : {
+      "type" : "object",
+      "required" : [ "_links", "id", "isAutomaticInvocation", "notificationStatus", "notificationType", "operation", "operationState", "subscriptionId", "timeStamp", "vnfInstanceId", "vnfLcmOpOccId" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "notificationType" : {
+          "type" : "string",
+          "description" : "Discriminator for the different notification types. Shall be set to \"VnfLcmOperationOccurrenceNotification\" for this notification type.\n",
+          "enum" : [ "VnfLcmOperationOccurrenceNotification" ]
+        },
+        "subscriptionId" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "timeStamp" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Date-time stamp.  Representation: String formatted according to IETF RFC 3339.\n"
+        },
+        "notificationStatus" : {
+          "type" : "string",
+          "description" : "Indicates whether this notification reports about the start of a lifecycle operation or the result of a lifecycle operation. Permitted values: * START: Informs about the start of the VNF LCM operation\n  occurrence.\n* RESULT: Informs about the final or intermediate result of the VNF\n  LCM operation occurrence.\n",
+          "enum" : [ "START", "RESULT" ]
+        },
+        "operationState" : {
+          "type" : "string",
+          "description" : "Value | Description ------|------------ STARTING | The LCM operation is starting. PROCESSING | The LCM operation is currently in execution. COMPLETED | he LCM operation has been completed successfully. FAILED_TEMP | The LCM operation has failed and execution has stopped, but the execution of the operation is not considered to be closed. FAILED | The LCM operation has failed and it cannot be retried or rolled back, as it is determined that such action won't succeed. ROLLING_BACK | The LCM operation is currently being rolled back. ROLLED_BACK | The LCM operation has been successfully rolled back, i.e. The state of the VNF prior to the original operation invocation has been restored as closely as possible.\n",
+          "enum" : [ "STARTING", "PROCESSING", "COMPLETED", "FAILED_TEMP", "FAILED", "ROLLING_BACK", "ROLLED_BACK" ]
+        },
+        "vnfInstanceId" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "operation" : {
+          "type" : "string",
+          "description" : "Value | Description ------|------------ INSTANTIATE | Represents the \"Instantiate VNF\" LCM operation.    SCALE | Represents the \"Scale VNF\" LCM operation. SCALE_TO_LEVEL | Represents the \"Scale VNF to Level\" LCM operation. CHANGE_FLAVOUR | Represents the \"Change VNF Flavour\" LCM operation. TERMINATE | Represents the \"Terminate VNF\" LCM operation. HEAL | Represents the \"Heal VNF\" LCM operation. OPERATE | Represents the \"Operate VNF\" LCM operation. CHANGE_EXT_CONN | Represents the \"Change external VNF connectivity\" LCM operation. MODIFY_INFO | Represents the \"Modify VNF Information\" LCM operation.     \n",
+          "enum" : [ "INSTANTIATE", "SCALE", "SCALE_TO_LEVEL", "CHANGE_FLAVOUR", "TERMINATE", "HEAL", "OPERATE", "CHANGE_EXT_CONN", "MODIFY_INFO" ]
+        },
+        "isAutomaticInvocation" : {
+          "type" : "boolean",
+          "description" : "Set to true if this VNF LCM operation occurrence has been triggered by an automated procedure inside the VNFM  (i.e. ScaleVnf / ScaleVnfToLevel triggered by auto-scale, or HealVnf triggered by auto-heal). Set to false otherwise.\n"
+        },
+        "vnfLcmOpOccId" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "affectedVnfcs" : {
+          "type" : "array",
+          "description" : "Information about VNFC instances that were affected during the lifecycle operation. Shall be present if the \"notificationStatus\" is set to \"RESULT\" and the operation has performed any resource modification. Shall be absent otherwise. This attribute contains information about the cumulative changes to virtualised resources that were performed so far by the VNF LCM operation occurrence and by any of the error handling procedures for that operation occurrence.\n",
+          "items" : {
+            "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification_affectedVnfcs"
+          }
+        },
+        "affectedVirtualLinks" : {
+          "type" : "array",
+          "description" : "Information about VL instances that were affected during the lifecycle operation. Shall be present if the \"notificationStatus\" is set to \"RESULT\" and the operation has performed any resource modification. Shall be absent otherwise. This attribute contains information about the cumulative changes to virtualised resources that were performed so far by the VNF LCM operation occurrence and by any of the error handling procedures for that operation occurrence.\n",
+          "items" : {
+            "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification_affectedVirtualLinks"
+          }
+        },
+        "affectedVirtualStorages" : {
+          "type" : "array",
+          "description" : "Information about virtualised storage instances that were affected during the lifecycle operation. Shall be present if the \"notificationStatus\" is set to \"RESULT\" and the operation has performed any resource modification. Shall be absent otherwise. This attribute contains information about the cumulative changes to virtualised resources that were performed so far by the VNF LCM operation occurrence and by any of the error handling procedures for that operation occurrence.\n",
+          "items" : {
+            "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification_affectedVirtualStorages"
+          }
+        },
+        "changedInfo" : {
+          "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification_changedInfo"
+        },
+        "changedExtConnectivity" : {
+          "type" : "array",
+          "description" : "Information about changed external connectivity, if this notification represents the result of a lifecycle operation occurrence. Shall be present if the \"notificationStatus\" is set to \"RESULT\" and the \"operation\" is set to \"CHANGE_EXT_CONN\".  Shall be absent otherwise.\n",
+          "items" : {
+            "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification_changedExtConnectivity"
+          }
+        },
+        "error" : {
+          "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification_error"
+        },
+        "_links" : {
+          "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification__links"
+        }
+      },
+      "description" : "This type represents a VNF lifecycle management operation occurrence notification, which informs the receiver of changes in the VNF lifecycle caused by a VNF LCM operation occurrence. The support of the notification is mandatory. This notification shall be triggered by the VNFM when there is a change in the VNF lifecycle caused by a VNF LCM operation occurrence, including: * Instantiation of the VNF * Scaling of the VNF instance (including auto-scaling) * Healing of the VNF instance (including auto-healing) * Change of the state of the VNF instance (i.e. Operate VNF) * Change of the deployment flavour of the VNF instance * Change of the external connectivity of the VNF instance * Termination of the VNF instance * Modification of VNF instance information and/or VNF configurable\n  properties through the \"PATCH\" method on the \"Individual VNF instance\"\n  resource.\nIf this is the initial notification about the start of a VNF LCM operation occurrence, it is assumed that the notification is sent by the VNFM before any action (including sending the grant request) is taken as part of the LCM operation. Due to possible race conditions, the \"start\" notification, the grant request and the LCM operation acknowledgment can arrive in any order at the NFVO, and the NFVO shall be able to handle such a situation. If this is a notification about a final or intermediate result state of a VNF LCM operation occurrence, the notification shall be sent after all related actions of the LCM operation that led to this state have  been executed. The new state shall be set in the VnfLcmOpOcc resource before the notification about the state change is sent.\n",
+      "example" : {
+        "notificationStatus" : "START",
+        "affectedVirtualLinks" : [ {
+          "metadata" : "{}",
+          "networkResource" : {
+            "resourceId" : "resourceId",
+            "vimConnectionId" : "vimConnectionId",
+            "vimLevelResourceType" : "vimLevelResourceType",
+            "resourceProviderId" : "resourceProviderId"
+          },
+          "changeType" : "ADDED",
+          "virtualLinkDescId" : "virtualLinkDescId",
+          "id" : "id"
+        }, {
+          "metadata" : "{}",
+          "networkResource" : {
+            "resourceId" : "resourceId",
+            "vimConnectionId" : "vimConnectionId",
+            "vimLevelResourceType" : "vimLevelResourceType",
+            "resourceProviderId" : "resourceProviderId"
+          },
+          "changeType" : "ADDED",
+          "virtualLinkDescId" : "virtualLinkDescId",
+          "id" : "id"
+        } ],
+        "affectedVirtualStorages" : [ {
+          "metadata" : "{}",
+          "virtualStorageDescId" : "virtualStorageDescId",
+          "changeType" : "ADDED",
+          "id" : "id",
+          "storageResource" : {
+            "resourceId" : "resourceId",
+            "vimConnectionId" : "vimConnectionId",
+            "vimLevelResourceType" : "vimLevelResourceType",
+            "resourceProviderId" : "resourceProviderId"
+          }
+        }, {
+          "metadata" : "{}",
+          "virtualStorageDescId" : "virtualStorageDescId",
+          "changeType" : "ADDED",
+          "id" : "id",
+          "storageResource" : {
+            "resourceId" : "resourceId",
+            "vimConnectionId" : "vimConnectionId",
+            "vimLevelResourceType" : "vimLevelResourceType",
+            "resourceProviderId" : "resourceProviderId"
+          }
+        } ],
+        "affectedVnfcs" : [ {
+          "addedStorageResourceIds" : [ "addedStorageResourceIds", "addedStorageResourceIds" ],
+          "metadata" : "{}",
+          "changeType" : "ADDED",
+          "affectedVnfcCpIds" : [ "affectedVnfcCpIds", "affectedVnfcCpIds" ],
+          "id" : "id",
+          "vduId" : "vduId",
+          "computeResource" : {
+            "resourceId" : "resourceId",
+            "vimConnectionId" : "vimConnectionId",
+            "vimLevelResourceType" : "vimLevelResourceType",
+            "resourceProviderId" : "resourceProviderId"
+          },
+          "removedStorageResourceIds" : [ "removedStorageResourceIds", "removedStorageResourceIds" ]
+        }, {
+          "addedStorageResourceIds" : [ "addedStorageResourceIds", "addedStorageResourceIds" ],
+          "metadata" : "{}",
+          "changeType" : "ADDED",
+          "affectedVnfcCpIds" : [ "affectedVnfcCpIds", "affectedVnfcCpIds" ],
+          "id" : "id",
+          "vduId" : "vduId",
+          "computeResource" : {
+            "resourceId" : "resourceId",
+            "vimConnectionId" : "vimConnectionId",
+            "vimLevelResourceType" : "vimLevelResourceType",
+            "resourceProviderId" : "resourceProviderId"
+          },
+          "removedStorageResourceIds" : [ "removedStorageResourceIds", "removedStorageResourceIds" ]
+        } ],
+        "_links" : {
+          "subscription" : {
+            "href" : "http://example.com/aeiou"
+          },
+          "vnfLcmOpOcc" : {
+            "href" : "http://example.com/aeiou"
+          },
+          "vnfInstance" : {
+            "href" : "http://example.com/aeiou"
+          }
+        },
+        "operationState" : "STARTING",
+        "notificationType" : "VnfLcmOperationOccurrenceNotification",
+        "error" : {
+          "instance" : "instance",
+          "detail" : "detail",
+          "type" : "type",
+          "title" : "title",
+          "status" : 0
+        },
+        "timeStamp" : "2000-01-23T04:56:07.000+00:00",
+        "vnfInstanceId" : "vnfInstanceId",
+        "vnfLcmOpOccId" : "vnfLcmOpOccId",
+        "changedInfo" : {
+          "vnfProductName" : "vnfProductName",
+          "metadata" : "{}",
+          "extensions" : "{}",
+          "vimConnectionInfo" : [ {
+            "vimType" : "vimType",
+            "vimId" : "vimId",
+            "extra" : "{}",
+            "interfaceInfo" : "{}",
+            "id" : "id",
+            "accessInfo" : "{}"
+          }, {
+            "vimType" : "vimType",
+            "vimId" : "vimId",
+            "extra" : "{}",
+            "interfaceInfo" : "{}",
+            "id" : "id",
+            "accessInfo" : "{}"
+          } ],
+          "vnfdVersion" : "vnfdVersion",
+          "vnfProvider" : "vnfProvider",
+          "vnfConfigurableProperties" : "{}",
+          "vnfPkgId" : "vnfPkgId",
+          "vnfdId" : "vnfdId",
+          "vnfInstanceName" : "vnfInstanceName",
+          "vnfInstanceDescription" : "vnfInstanceDescription",
+          "vnfSoftwareVersion" : "vnfSoftwareVersion"
+        },
+        "changedExtConnectivity" : [ {
+          "resourceHandle" : {
+            "resourceId" : "resourceId",
+            "vimConnectionId" : "vimConnectionId",
+            "vimLevelResourceType" : "vimLevelResourceType",
+            "resourceProviderId" : "resourceProviderId"
+          },
+          "extLinkPorts" : [ {
+            "resourceHandle" : {
+              "resourceId" : "resourceId",
+              "vimConnectionId" : "vimConnectionId",
+              "vimLevelResourceType" : "vimLevelResourceType",
+              "resourceProviderId" : "resourceProviderId"
+            },
+            "id" : "id",
+            "cpInstanceId" : "cpInstanceId"
+          }, {
+            "resourceHandle" : {
+              "resourceId" : "resourceId",
+              "vimConnectionId" : "vimConnectionId",
+              "vimLevelResourceType" : "vimLevelResourceType",
+              "resourceProviderId" : "resourceProviderId"
+            },
+            "id" : "id",
+            "cpInstanceId" : "cpInstanceId"
+          } ],
+          "id" : "id"
+        }, {
+          "resourceHandle" : {
+            "resourceId" : "resourceId",
+            "vimConnectionId" : "vimConnectionId",
+            "vimLevelResourceType" : "vimLevelResourceType",
+            "resourceProviderId" : "resourceProviderId"
+          },
+          "extLinkPorts" : [ {
+            "resourceHandle" : {
+              "resourceId" : "resourceId",
+              "vimConnectionId" : "vimConnectionId",
+              "vimLevelResourceType" : "vimLevelResourceType",
+              "resourceProviderId" : "resourceProviderId"
+            },
+            "id" : "id",
+            "cpInstanceId" : "cpInstanceId"
+          }, {
+            "resourceHandle" : {
+              "resourceId" : "resourceId",
+              "vimConnectionId" : "vimConnectionId",
+              "vimLevelResourceType" : "vimLevelResourceType",
+              "resourceProviderId" : "resourceProviderId"
+            },
+            "id" : "id",
+            "cpInstanceId" : "cpInstanceId"
+          } ],
+          "id" : "id"
+        } ],
+        "id" : "id",
+        "subscriptionId" : "subscriptionId",
+        "isAutomaticInvocation" : true,
+        "operation" : "INSTANTIATE"
+      }
+    },
+    "lcnVnfLcmOperationOccurrenceNotification_extLinkPorts" : {
+      "required" : [ "id", "resourceHandle" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "resourceHandle" : {
+          "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification_computeResource"
+        },
+        "cpInstanceId" : {
+          "type" : "string",
+          "description" : "An identifier that is unique for the respective type within a VNF instance, but may not be globally unique.\n"
+        }
+      },
+      "description" : "This type represents information about a link port of an external VL, i.e. a port providing connectivity for the VNF to an NS VL. \n",
+      "example" : {
+        "resourceHandle" : {
+          "resourceId" : "resourceId",
+          "vimConnectionId" : "vimConnectionId",
+          "vimLevelResourceType" : "vimLevelResourceType",
+          "resourceProviderId" : "resourceProviderId"
+        },
+        "id" : "id",
+        "cpInstanceId" : "cpInstanceId"
+      }
+    },
+    "VnfIdentifierCreationNotification" : {
+      "type" : "object",
+      "required" : [ "_links", "id", "notificationType", "timeStamp", "vnfInstanceId" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "notificationType" : {
+          "type" : "string",
+          "description" : "Discriminator for the different notification types. Shall be set to \"VnfIdentifierCreationNotification\" for this notification type.\n",
+          "enum" : [ "VnfIdentifierCreationNotification" ]
+        },
+        "subscriptionId" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "timeStamp" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Date-time stamp.  Representation: String formatted according to IETF RFC 3339.\n"
+        },
+        "vnfInstanceId" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "_links" : {
+          "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification__links"
+        }
+      },
+      "description" : "This type represents a VNF identifier creation notification, which informs the receiver of the creation of a new VNF instance resource and the associated VNF instance identifier. This notification shall be triggered by the VNFM when it has created a VNF instance resource and the associated VNF instance identifier.\n",
+      "example" : {
+        "timeStamp" : "2000-01-23T04:56:07.000+00:00",
+        "vnfInstanceId" : "vnfInstanceId",
+        "_links" : {
+          "subscription" : {
+            "href" : "http://example.com/aeiou"
+          },
+          "vnfLcmOpOcc" : {
+            "href" : "http://example.com/aeiou"
+          },
+          "vnfInstance" : {
+            "href" : "http://example.com/aeiou"
+          }
+        },
+        "id" : "id",
+        "notificationType" : "VnfIdentifierCreationNotification",
+        "subscriptionId" : "subscriptionId"
+      }
+    },
+    "lcnVnfLcmOperationOccurrenceNotification__links_vnfInstance" : {
+      "required" : [ "href" ],
+      "properties" : {
+        "href" : {
+          "type" : "string",
+          "format" : "url",
+          "description" : "URI of the referenced resource.\n"
+        }
+      },
+      "description" : "This type represents a link to a resource.\n",
+      "example" : {
+        "href" : "http://example.com/aeiou"
+      }
+    },
+    "lcnVnfLcmOperationOccurrenceNotification_changedInfo" : {
+      "properties" : {
+        "vnfInstanceName" : {
+          "type" : "string",
+          "description" : "If present, this attribute signals modifications of the \"vnfInstanceName\" attribute in \"VnfInstance\".\n"
+        },
+        "vnfInstanceDescription" : {
+          "type" : "string",
+          "description" : "If present, this attribute signals modifications of the \"vnfInstanceDescription\" attribute in \"VnfInstance\".\n"
+        },
+        "vnfConfigurableProperties" : {
+          "type" : "object",
+          "description" : "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159. \n",
+          "properties" : { }
+        },
+        "metadata" : {
+          "type" : "object",
+          "description" : "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159. \n",
+          "properties" : { }
+        },
+        "extensions" : {
+          "type" : "object",
+          "description" : "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159. \n",
+          "properties" : { }
+        },
+        "vimConnectionInfo" : {
+          "type" : "array",
+          "description" : "If present, this attribute signals modifications of certain entries in the \"vimConnectionInfo\" attribute array in \"VnfInstance\".\n",
+          "items" : {
+            "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification_changedInfo_vimConnectionInfo"
+          }
+        },
+        "vnfPkgId" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "vnfdId" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "vnfProvider" : {
+          "type" : "string",
+          "description" : "If present, this attribute signals modifications of the \"vnfProvider\" attribute in \"VnfInstance\". If present, this attribute (which depends on the value of the \"vnfPkgId\" attribute) was modified implicitly following a request to modify the \"vnfPkgId\" attribute, by copying the value of this attribute from the VNFD in the VNF Package identified by the \"vnfPkgId” attribute.\n"
+        },
+        "vnfProductName" : {
+          "type" : "string",
+          "description" : "If present, this attribute signals modifications of the \"vnfProductName\" attribute in \"VnfInstance\". If present, this attribute (which depends on the value of the \"vnfPkgId\" attribute) was modified implicitly following a request to modify the \"vnfPkgId\" attribute, by copying the value of this attribute from the VNFD in the VNF Package identified by the \"vnfPkgId” attribute.\n"
+        },
+        "vnfSoftwareVersion" : {
+          "type" : "string",
+          "description" : "A Version.\n"
+        },
+        "vnfdVersion" : {
+          "type" : "string",
+          "description" : "A Version.\n"
+        }
+      },
+      "description" : "This type represents attribute modifications that were performed on an \"Individual VNF instance\" resource. The attributes that can be included consist of those requested to be modified explicitly in the \"VnfInfoModificationRequest\" data structure, and additional attributes of the \"VnfInstance\" data structure that were modified implicitly e.g. when modifying the referenced VNF package.\n",
+      "example" : {
+        "vnfProductName" : "vnfProductName",
+        "metadata" : "{}",
+        "extensions" : "{}",
+        "vimConnectionInfo" : [ {
+          "vimType" : "vimType",
+          "vimId" : "vimId",
+          "extra" : "{}",
+          "interfaceInfo" : "{}",
+          "id" : "id",
+          "accessInfo" : "{}"
+        }, {
+          "vimType" : "vimType",
+          "vimId" : "vimId",
+          "extra" : "{}",
+          "interfaceInfo" : "{}",
+          "id" : "id",
+          "accessInfo" : "{}"
+        } ],
+        "vnfdVersion" : "vnfdVersion",
+        "vnfProvider" : "vnfProvider",
+        "vnfConfigurableProperties" : "{}",
+        "vnfPkgId" : "vnfPkgId",
+        "vnfdId" : "vnfdId",
+        "vnfInstanceName" : "vnfInstanceName",
+        "vnfInstanceDescription" : "vnfInstanceDescription",
+        "vnfSoftwareVersion" : "vnfSoftwareVersion"
+      }
+    },
+    "lcnVnfLcmOperationOccurrenceNotification_affectedVirtualStorages" : {
+      "required" : [ "changeType", "id", "storageResource", "virtualStorageDescId" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "An identifier that is unique for the respective type within a VNF instance, but may not be globally unique.\n"
+        },
+        "virtualStorageDescId" : {
+          "type" : "string",
+          "description" : "An identifier that is unique within a VNF descriptor.\n"
+        },
+        "changeType" : {
+          "type" : "string",
+          "description" : "Signals the type of change. Permitted values: * ADDED * REMOVED * MODIFIED * TEMPORARY For a temporary resource, an AffectedVirtualStorage structure exists as long as the temporary resource exists.\n",
+          "enum" : [ "ADDED", "REMOVED", "MODIFIED", "TEMPORARY" ]
+        },
+        "storageResource" : {
+          "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification_computeResource"
+        },
+        "metadata" : {
+          "type" : "object",
+          "description" : "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159. \n",
+          "properties" : { }
+        }
+      },
+      "description" : "This type provides information about added, deleted, modified and temporary virtual storage resources.\n",
+      "example" : {
+        "metadata" : "{}",
+        "virtualStorageDescId" : "virtualStorageDescId",
+        "changeType" : "ADDED",
+        "id" : "id",
+        "storageResource" : {
+          "resourceId" : "resourceId",
+          "vimConnectionId" : "vimConnectionId",
+          "vimLevelResourceType" : "vimLevelResourceType",
+          "resourceProviderId" : "resourceProviderId"
+        }
+      }
+    },
+    "lcnVnfLcmOperationOccurrenceNotification__links" : {
+      "required" : [ "subscription", "vnfInstance" ],
+      "properties" : {
+        "vnfInstance" : {
+          "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification__links_vnfInstance"
+        },
+        "subscription" : {
+          "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification__links_vnfInstance"
+        },
+        "vnfLcmOpOcc" : {
+          "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification__links_vnfInstance"
+        }
+      },
+      "description" : "This type represents the links to resources that a notification can contain.\n",
+      "example" : {
+        "subscription" : {
+          "href" : "http://example.com/aeiou"
+        },
+        "vnfLcmOpOcc" : {
+          "href" : "http://example.com/aeiou"
+        },
+        "vnfInstance" : {
+          "href" : "http://example.com/aeiou"
+        }
+      }
+    },
+    "VnfIdentifierDeletionNotification" : {
+      "type" : "object",
+      "required" : [ "_links", "id", "notificationType", "timeStamp", "vnfInstanceId" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "notificationType" : {
+          "type" : "string",
+          "description" : "Discriminator for the different notification types. Shall be set to \"VnfIdentifierDeletionNotification\" for this notification type.\n",
+          "enum" : [ "VnfIdentifierDeletionNotification" ]
+        },
+        "subscriptionId" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "timeStamp" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Date-time stamp.  Representation: String formatted according to IETF RFC 3339.\n"
+        },
+        "vnfInstanceId" : {
+          "type" : "string",
+          "description" : "An identifier with the intention of being globally unique.\n"
+        },
+        "_links" : {
+          "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification__links"
+        }
+      },
+      "description" : "This type represents a VNF identifier deletion notification, which informs the receiver of the deletion of a new VNF instance resource and the associated VNF instance identifier. This notification shall be triggered by the VNFM when it has deleted a VNF instance resource and the associated VNF instance identifier.\n",
+      "example" : {
+        "timeStamp" : "2000-01-23T04:56:07.000+00:00",
+        "vnfInstanceId" : "vnfInstanceId",
+        "_links" : {
+          "subscription" : {
+            "href" : "http://example.com/aeiou"
+          },
+          "vnfLcmOpOcc" : {
+            "href" : "http://example.com/aeiou"
+          },
+          "vnfInstance" : {
+            "href" : "http://example.com/aeiou"
+          }
+        },
+        "id" : "id",
+        "notificationType" : "VnfIdentifierDeletionNotification",
+        "subscriptionId" : "subscriptionId"
+      }
+    },
+    "lcnVnfLcmOperationOccurrenceNotification_affectedVirtualLinks" : {
+      "required" : [ "changeType", "id", "networkResource", "virtualLinkDescId" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "An identifier that is unique for the respective type within a VNF instance, but may not be globally unique.\n"
+        },
+        "virtualLinkDescId" : {
+          "type" : "string",
+          "description" : "An identifier that is unique within a VNF descriptor.\n"
+        },
+        "changeType" : {
+          "type" : "string",
+          "description" : "Signals the type of change. Permitted values: * ADDED * REMOVED * MODIFIED * TEMPORARY * LINK_PORT_ADDED * LINK_PORT_REMOVED For a temporary resource, an AffectedVirtualLink structure exists as long as the temporary resource exists.\n",
+          "enum" : [ "ADDED", "REMOVED", "MODIFIED", "TEMPORARY", "LINK_PORT_ADDED", "LINK_PORT_REMOVED" ]
+        },
+        "networkResource" : {
+          "$ref" : "#/definitions/lcnVnfLcmOperationOccurrenceNotification_computeResource"
+        },
+        "metadata" : {
+          "type" : "object",
+          "description" : "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159. \n",
+          "properties" : { }
+        }
+      },
+      "description" : "This type provides information about added, deleted, modified and temporary VLs.\n",
+      "example" : {
+        "metadata" : "{}",
+        "networkResource" : {
+          "resourceId" : "resourceId",
+          "vimConnectionId" : "vimConnectionId",
+          "vimLevelResourceType" : "vimLevelResourceType",
+          "resourceProviderId" : "resourceProviderId"
+        },
+        "changeType" : "ADDED",
+        "virtualLinkDescId" : "virtualLinkDescId",
+        "id" : "id"
+      }
+    }
+  },
+  "externalDocs" : {
+    "description" : "ETSI GS NFV-SOL 003 V2.4.1",
+    "url" : "http://www.etsi.org/deliver/etsi_gs/NFV-SOL/001_099/003/02.04.01_60/gs_NFV-SOL003v020401p.pdf"
+  }
+}
