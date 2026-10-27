@@ -215,6 +215,11 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!-- Used at runtime by the Camunda REST API (Jersey), not by SO code; the starter's copy is excluded above. -->
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
