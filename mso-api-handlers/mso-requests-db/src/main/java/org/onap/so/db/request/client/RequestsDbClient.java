@@ -29,7 +29,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.UriBuilder;
 import org.apache.http.HttpStatus;
-import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.logging.jaxrs.filter.SOSpringClientPayloadFilter;
 import org.onap.so.client.ClientObservationRegistry;
 import org.onap.so.db.request.beans.ArchivedInfraRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -345,7 +345,7 @@ public class RequestsDbClient {
         RestTemplate template = new RestTemplate();
         template.setObservationRegistry(ClientObservationRegistry.get());
         template.getInterceptors().add(new SOSpringClientFilter());
-        template.getInterceptors().add(new SpringClientPayloadFilter());
+        template.getInterceptors().add(new SOSpringClientPayloadFilter());
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.AUTHORIZATION, basicAuth);
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);

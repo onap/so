@@ -104,7 +104,7 @@ if [ -n "${AAF_SSL_CERTS_ENABLED}" ]; then
 read_properties "$(head -n 4 /app/certs/.passphrases)"
 fi
 
-echo "JVM Arguments: ${jvmargs}"
+echo "JVM Arguments: $(echo "${jvmargs}" | sed -E 's/(Password=)[^ ]*/\1***REDACTED***/g')"
 
 java ${jvmargs} -jar app.jar
 rc=$?

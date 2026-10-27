@@ -17,7 +17,7 @@ import org.apache.hc.core5.util.Timeout;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricActivityInstanceEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
 import org.json.JSONObject;
-import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.logging.jaxrs.filter.SOSpringClientPayloadFilter;
 import org.onap.so.client.ClientObservationRegistry;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.slf4j.Logger;
@@ -244,7 +244,7 @@ public class CamundaRequestHandler {
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(factory));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());
-        restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));
+        restTemplate.getInterceptors().add((new SOSpringClientPayloadFilter()));
         return restTemplate;
     }
 }

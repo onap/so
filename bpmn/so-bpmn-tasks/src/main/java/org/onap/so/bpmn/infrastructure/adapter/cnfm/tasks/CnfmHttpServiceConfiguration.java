@@ -21,7 +21,7 @@
 package org.onap.so.bpmn.infrastructure.adapter.cnfm.tasks;
 
 import jakarta.ws.rs.core.MediaType;
-import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.logging.jaxrs.filter.SOSpringClientPayloadFilter;
 import org.onap.so.configuration.HttpComponentsClientConfiguration;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.onap.so.rest.service.HttpRestServiceProvider;
@@ -63,7 +63,7 @@ public class CnfmHttpServiceConfiguration {
                 new RestTemplate(new BufferingClientHttpRequestFactory(clientHttpRequestFactory));
         restTemplate.setObservationRegistry(observationRegistry.getIfAvailable(() -> ObservationRegistry.NOOP));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());
-        restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));
+        restTemplate.getInterceptors().add((new SOSpringClientPayloadFilter()));
         return restTemplate;
 
     }

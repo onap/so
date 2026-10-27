@@ -1,6 +1,6 @@
 package org.onap.so.client.orchestration;
 
-import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.logging.jaxrs.filter.SOSpringClientPayloadFilter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +19,7 @@ public class RestTemplateApiClientConfig {
         restTemplate.setObservationRegistry(observationRegistry.getIfAvailable(() -> ObservationRegistry.NOOP));
         restTemplate
                 .setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
-        restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));
+        restTemplate.getInterceptors().add((new SOSpringClientPayloadFilter()));
         return restTemplate;
     }
 

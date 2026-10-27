@@ -34,7 +34,7 @@ import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuil
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.util.Timeout;
-import org.onap.logging.filter.spring.SpringClientPayloadFilter;
+import org.onap.so.logging.jaxrs.filter.SOSpringClientPayloadFilter;
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.client.ClientObservationRegistry;
@@ -181,7 +181,7 @@ public class BPRestCallback {
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(factory));
         restTemplate.getInterceptors().add(new SOSpringClientFilter());
-        restTemplate.getInterceptors().add((new SpringClientPayloadFilter()));
+        restTemplate.getInterceptors().add((new SOSpringClientPayloadFilter()));
         return restTemplate;
     }
 }
