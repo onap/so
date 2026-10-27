@@ -7,6 +7,8 @@ mso:
     auditInventory: false
   camundaAuth: ${CAMUNDA_AUTH}
 spring:
+  application:
+    name: so-bpmn-infra
   datasource:
     hikari:
       jdbcUrl: jdbc:mariadb://${DB_HOST}:${DB_PORT}/camundabpmn

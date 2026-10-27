@@ -33,6 +33,8 @@ mso:
   camundaCleanupInterval: 30
                 
 spring:
+  application:
+    name: so-api-handler-infra
   datasource:
     hikari:
       jdbcUrl: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb
@@ -42,7 +44,7 @@ spring:
       pool-name: catdb-pool
       registerMbeans: true
   jpa:
-      show-sql: true
+      show-sql: false
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         ddl-auto: validate

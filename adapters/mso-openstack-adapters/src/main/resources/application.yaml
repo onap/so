@@ -18,6 +18,8 @@ mso:
       retryMultiplier: 60000
       retrySequence: 1, 1, 2, 3, 5, 8, 13, 20
 spring:
+  application:
+    name: so-openstack-adapter
   datasource:
     hikari:
       jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb

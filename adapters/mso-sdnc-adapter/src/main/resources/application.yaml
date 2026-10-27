@@ -12,6 +12,8 @@ mso:
     queue-capacity: 500
 
 spring:
+  application:
+    name: so-sdnc-adapter
   main:
     allow-bean-definition-overriding: true
 

@@ -14,7 +14,6 @@ RUN mkdir -p /app/logs
 RUN mkdir -p /app/ca-certificates
 
 COPY maven/app.jar /app
-COPY configs/logging/logback-spring.xml /app
 COPY scripts/start-app.sh /app
 COPY scripts/wait-for.sh /app
 COPY ca-certificates/onap-ca.crt /app/ca-certificates/onap-ca.crt

@@ -77,7 +77,7 @@ if [ ! -z "${TRUSTSTORE}" ]; then
 	jksargs="$jksargs -Djavax.net.ssl.trustStorePassword=${TRUSTSTORE_PASSWORD}"
 fi
 
-jvmargs="${JVM_ARGS} -Djava.security.egd=file:/dev/./urandom -Dlogs_dir=${LOG_PATH} -Dlogging.config=/app/logback-spring.xml $jksargs -Dspring.config.additional-location=$CONFIG_PATH ${SSL_DEBUG} ${DISABLE_SNI}"
+jvmargs="${JVM_ARGS} -Djava.security.egd=file:/dev/./urandom -Dlogs_dir=${LOG_PATH} -Dlogging.config=${LOGGING_CONFIG:-classpath:org/onap/so/logger/logback-so.xml} -Dspring.main.banner-mode=off $jksargs -Dspring.config.additional-location=$CONFIG_PATH ${SSL_DEBUG} ${DISABLE_SNI}"
 
 # optionally set the active spring profile
 if [ -n "${ACTIVE_PROFILE}" ]; then

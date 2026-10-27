@@ -17,6 +17,8 @@ mso:
       period: 180
 # H2
 spring:
+  application:
+    name: so-request-db-adapter
   datasource:
     hikari:
       jdbc-url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
