@@ -27,16 +27,6 @@ public class VnfVolumeAdapterRestPropertiesTest {
     private VnfVolumeAdapterRestProperties props = new VnfVolumeAdapterRestProperties();
 
     @Test
-    public void testGetAuth() {
-        assertEquals("mso.adapters.po.auth", VnfVolumeAdapterRestProperties.authProp);
-    }
-
-    @Test
-    public void testGetKey() {
-        assertEquals("mso.msoKey", VnfVolumeAdapterRestProperties.keyProp);
-    }
-
-    @Test
     public void testGetUrl() {
         assertEquals("mso.adapters.volume-groups.rest.endpoint", VnfVolumeAdapterRestProperties.endpointProp);
     }

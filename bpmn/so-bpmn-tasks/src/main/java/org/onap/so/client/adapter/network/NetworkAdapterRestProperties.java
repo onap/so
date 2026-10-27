@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.client.adapter.rest.AdapterRestProperties;
+import org.onap.so.utils.BasicAuth;
 
 
 public class NetworkAdapterRestProperties implements AdapterRestProperties {
@@ -31,13 +32,13 @@ public class NetworkAdapterRestProperties implements AdapterRestProperties {
     public NetworkAdapterRestProperties() {}
 
     @Override
-    public String getAuth() {
-        return UrnPropertiesReader.getVariable("mso.adapters.po.auth");
+    public String getUsername() {
+        return UrnPropertiesReader.getVariable(BasicAuth.SO_USERNAME_PROPERTY);
     }
 
     @Override
-    public String getKey() {
-        return UrnPropertiesReader.getVariable("mso.msoKey");
+    public String getPassword() {
+        return UrnPropertiesReader.getVariable(BasicAuth.SO_PASSWORD_PROPERTY);
     }
 
     @Override

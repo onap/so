@@ -8,7 +8,6 @@ ssl-enable: false
 mso:
   adapters:
     requestDb:
-      auth: Basic YnBlbDptc28tZGItMTUwNyE=
       endpoint: http://localhost:8081
   logPath: .logs/reqdb
   site-name: unkwon

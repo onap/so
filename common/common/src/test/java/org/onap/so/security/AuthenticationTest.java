@@ -48,6 +48,8 @@ public class AuthenticationTest {
 
     private static final String USERNAME = "test-user";
     private static final String PASSWORD = "test-password";
+    private static final String PLAINTEXT_USERNAME = "plaintext-user";
+    private static final String PLAINTEXT_PASSWORD = "plaintext-password";
     private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @DynamicPropertySource
@@ -56,6 +58,8 @@ public class AuthenticationTest {
         registry.add("spring.security.usercredentials[0].username", () -> USERNAME);
         registry.add("spring.security.usercredentials[0].role", () -> "test-role");
         registry.add("spring.security.usercredentials[0].password", () -> encoder.encode(PASSWORD));
+        registry.add("spring.security.usercredentials[1].username", () -> PLAINTEXT_USERNAME);
+        registry.add("spring.security.usercredentials[1].password", () -> PLAINTEXT_PASSWORD);
     }
 
     @LocalServerPort
@@ -75,6 +79,28 @@ public class AuthenticationTest {
         ResponseEntity<String> response =
                 restTemplate.exchange(new URI(baseUrl + "/"), HttpMethod.GET, entity, String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    @SneakyThrows
+    public void thatPlaintextConfiguredUserIsAuthenticated() {
+        assertEquals(HttpStatus.NOT_FOUND, requestRootAs(PLAINTEXT_USERNAME, PLAINTEXT_PASSWORD));
+    }
+
+    @Test
+    @SneakyThrows
+    public void thatPlaintextConfiguredUserWithWrongPasswordFails() {
+        assertEquals(HttpStatus.UNAUTHORIZED, requestRootAs(PLAINTEXT_USERNAME, PASSWORD));
+    }
+
+    private HttpStatus requestRootAs(String username, String password) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-ECOMP-RequestID", UUID.randomUUID().toString());
+        headers.set("X-ECOMP-InstanceID", "test");
+        headers.setBasicAuth(username, password);
+        ResponseEntity<String> response = new TestRestTemplate().exchange(new URI("http://localhost:" + port + "/"),
+                HttpMethod.GET, new HttpEntity<>(headers), String.class);
+        return HttpStatus.valueOf(response.getStatusCode().value());
     }
 
     @Test

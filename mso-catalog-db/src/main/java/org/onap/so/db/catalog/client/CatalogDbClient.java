@@ -72,6 +72,7 @@ import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
 import org.onap.so.rest.catalog.beans.Vnf;
+import org.onap.so.utils.BasicAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -307,8 +308,11 @@ public class CatalogDbClient {
     @Value("${mso.catalog.db.spring.endpoint:#{null}}")
     private String endpoint;
 
-    @Value("${mso.db.auth:#{null}}")
-    private String msoAdaptersAuth;
+    @Value("${so.auth.username:#{null}}")
+    private String username;
+
+    @Value("${so.auth.password:#{null}}")
+    private String password;
 
     @Autowired
     RestTemplate restTemplate;
@@ -410,7 +414,7 @@ public class CatalogDbClient {
 
                     restTemplate.getInterceptors().add((request, body, execution) -> {
 
-                        request.getHeaders().add(HttpHeaders.AUTHORIZATION, msoAdaptersAuth);
+                        request.getHeaders().add(HttpHeaders.AUTHORIZATION, getAuthHeader());
                         request.getHeaders().add(Constants.HttpHeaders.TARGET_ENTITY_HEADER, TARGET_ENTITY);
                         return execution.execute(request, body);
                     });
@@ -1255,7 +1259,7 @@ public class CatalogDbClient {
 
     private HttpHeaders getHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.AUTHORIZATION, msoAdaptersAuth);
+        headers.set(HttpHeaders.AUTHORIZATION, getAuthHeader());
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         headers.set(Constants.HttpHeaders.TARGET_ENTITY_HEADER, TARGET_ENTITY);
@@ -1265,5 +1269,9 @@ public class CatalogDbClient {
     private HttpEntity<?> getHttpEntity() {
         HttpHeaders headers = getHttpHeaders();
         return new HttpEntity<>(headers);
+    }
+
+    private String getAuthHeader() {
+        return BasicAuth.header(username, password);
     }
 }

@@ -64,6 +64,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 
 import static org.apache.commons.lang3.StringUtils.isBlank
+import org.onap.so.client.restproperties.AAIPropertiesImpl
 
 /**
  * This groovy class supports the <class>DoDeleteE2EServiceInstance.bpmn</class> process.
@@ -391,7 +392,7 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
 
 		URL url = new URL(serviceAaiPath)
 		HttpClient client = new HttpClientFactory().newXmlClient(url, ONAPComponents.AAI)
-        client.addBasicAuthHeader(UrnPropertiesReader.getVariable("aai.auth", execution), UrnPropertiesReader.getVariable("mso.msoKey", execution))
+        client.addBasicAuthHeader(new AAIPropertiesImpl().getAuth(), null)
         client.addAdditionalHeader("X-FromAppId", "MSO")
         client.addAdditionalHeader("X-TransactionId", utils.getRequestID())
         client.setAcceptType(MediaType.APPLICATION_XML)

@@ -1,5 +1,6 @@
 aai:
-  auth: D6F77EC78213EF2AA1685F7F05E4DE7C0D1A70AA8798EC68B691CEF81E9991E4A0A3DA4F70EC61C5EB6525134E
+  username: test
+  password: test
   dme2:
     timeout: '30000'
   endpoint: http://localhost:8443
@@ -35,11 +36,9 @@ mso:
   adapters:
     requestDb:
       endpoint: http://request-db-adapter:8083
-      auth: Basic bTA0NzY4QG5vbi1wcm9kLm1zby5lY29tcC5hdHQuY29tOkF0dG0wNDc2OExpZmUhQA==
     completemsoprocess:
       endpoint: http://localhost:30253/CompleteMsoProcess
     db:
-      auth: 5A1272FE739BECA4D4374A86B25C021DFE6745E3BB7BE6836BF64A6059B8220E586C21FD7567AF41DB42571EB7
       password: wLg4sjrAFUS8rfVfdvTXeQ==
       endpoint: http://localhost:30257/services/RequestsDbAdapter
       spring:
@@ -52,7 +51,6 @@ mso:
       db:
         endpoint: http://localhost:30257/services/RequestsDbAdapter
     po:
-      auth: test:test
       password: poBpmn:password1$
     sdnc:
       endpoint: http://localhost:30254/adapters/SDNCAdapter
@@ -79,8 +77,6 @@ mso:
       endpoint: http://localhost:30258/ecomp/mso/catalog
       spring:
         endpoint:  http://localhost:30258
-  db:
-    auth: Basic YnBlbDptc28tZGItMTUwNyE=
   default:
     adapter:
       namespace: http://com.att.mso
@@ -246,3 +242,7 @@ spring:
       username: mso_admin
       password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
       role: ACTUATOR
+so:
+  auth:
+    username: bpel
+    password: mso-db-1507!

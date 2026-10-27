@@ -23,8 +23,8 @@ import static org.junit.Assert.assertEquals;
 import static org.hamcrest.CoreMatchers.instanceOf;
 
 
-@TestPropertySource(properties = {"mso.adapters.apihandler.endpoint=http://localhost:",
-        "mso.adapters.apihandler.auth=Basic dGVzdDp0ZXN0Cg=="})
+@TestPropertySource(properties = {"mso.adapters.apihandler.endpoint=http://localhost:", "so.auth.username=test",
+        "so.auth.password=test"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ApiHandlerClientTest {
 

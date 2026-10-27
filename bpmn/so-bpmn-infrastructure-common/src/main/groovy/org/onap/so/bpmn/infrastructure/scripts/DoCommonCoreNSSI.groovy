@@ -290,22 +290,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
             // http://so.onap:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances/de6a0aa2-19f2-41fe-b313-a5a9f159acd7/vnfs/3abbb373-8d33-4977-aa4b-2bfee496b6d5
             String url = String.format("${nsmfЕndPoint}/serviceInstantiation/v7/serviceInstances/%s/vnfs/%s", networkServiceInstance.getServiceInstanceId(), constituteVnf.getVnfId())
 
-            String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
-
-            String basicAuth =  UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
-
-            def authHeader = utils.getBasicAuth(basicAuth, msoKey) // ""
-         /*   String basicAuthValue = encryptBasicAuth(basicAuth, msoKey) //utils.encrypt(basicAuth, msoKey)
-
-            String responseAuthHeader = getAuthHeader(execution, basicAuthValue, msoKey) //utils.getBasicAuth(basicAuthValue, msoKey)
-
-            String errorCode = jsonUtil.getJsonValue(responseAuthHeader, "errorCode")
-            if(errorCode == null || errorCode.isEmpty()) { // No error
-                authHeader = responseAuthHeader
-            }
-            else {
-                exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(errorCode), jsonUtil.getJsonValue(responseAuthHeader, "errorMessage"))
-            } */
+            def authHeader = UrnPropertiesReader.getSoBasicAuthHeader(execution)
 
             def requestDetails = ""
 
@@ -1327,12 +1312,7 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
 
         String url = currentNSSI['requestSelfLink']
 
-        String msoKey = UrnPropertiesReader.getVariable("mso.msoKey", execution)
-
-        String basicAuth =  UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
-
-        def authHeader = ""
-        String basicAuthValue = utils.getBasicAuth(basicAuth, msoKey)
+        String basicAuthValue = UrnPropertiesReader.getSoBasicAuthHeader(execution)
 
         getProgress(execution, url, basicAuthValue, "putStatus")
 

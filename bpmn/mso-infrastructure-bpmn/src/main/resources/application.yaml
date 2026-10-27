@@ -5,7 +5,6 @@ server:
 mso:
   infra:
     auditInventory: false
-  camundaAuth: ${CAMUNDA_AUTH}
 spring:
   application:
     name: so-bpmn-infra

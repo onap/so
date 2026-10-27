@@ -60,7 +60,8 @@ public class HandleOrchestrationTaskProcessTest extends BaseBPMNTest {
     @Before
     public void configureContracts() throws Exception {
         Map<String, Object> properties = new HashMap<>();
-        properties.put("mso.adapters.requestDb.auth", "Basic dGVzdDp0ZXN0");
+        properties.put("so.auth.username", "test");
+        properties.put("so.auth.password", "test");
         setWorkflowProperties(properties);
         wireMockServer.resetAll();
         ProcessDefinition definition = repositoryService.createProcessDefinitionQuery().processDefinitionKey(PROCESS)

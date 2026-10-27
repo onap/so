@@ -30,6 +30,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockStatic;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,6 +47,7 @@ import java.util.UUID;
 import java.util.jar.JarFile;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.ProcessEngineConfiguration;
 import org.camunda.bpm.engine.history.HistoricVariableInstance;
@@ -186,7 +188,7 @@ public class FalloutHandlerProcessTest {
                         + "'><w:request-info><w:request-id>request-1</w:request-id></w:request-info>" + details
                         + "</w:FalloutHandlerRequest>");
         try (MockedStatic<UrnPropertiesReader> properties = mockStatic(UrnPropertiesReader.class)) {
-            properties.when(() -> UrnPropertiesReader.getVariable("mso.adapters.requestDb.auth"))
+            properties.when(() -> UrnPropertiesReader.getSoBasicAuthHeader(any(DelegateExecution.class)))
                     .thenReturn("Basic test");
             properties.when(() -> UrnPropertiesReader.getVariable("mso.adapters.requestDb.endpoint"))
                     .thenReturn("http://localhost:" + requestsDb.port());

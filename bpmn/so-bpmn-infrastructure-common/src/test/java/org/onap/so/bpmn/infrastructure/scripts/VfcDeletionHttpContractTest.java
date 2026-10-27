@@ -68,7 +68,8 @@ public class VfcDeletionHttpContractTest {
         variables.put("resourceInstanceId", "ns-1");
         variables.put("nsInstanceId", "ns-1");
         variables.put("jobId", "job-previous");
-        variables.put("mso.db.auth", "Basic dGVzdDp0ZXN0");
+        variables.put("so.auth.username", "test");
+        variables.put("so.auth.password", "test");
         variables.put("vfcAdapterUrl", "http://localhost:" + adapter.port());
         operationKey = new JSONObject().put("globalSubscriberId", "customer-1").put("serviceType", "service-type")
                 .put("serviceId", "service-1").put("operationId", "operation-1").put("nodeTemplateUUID", "template-1")

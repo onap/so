@@ -71,7 +71,8 @@ public class VnfPreprocessingContractTest {
         variables.put("vnfResourceDecomposition", new VnfResource());
         variables.put("mso.workflow.sdncadapter.callback", "http://localhost/callback");
         variables.put("mso.catalog.db.spring.endpoint", "http://localhost:" + catalog.port());
-        variables.put("mso.db.auth", "Basic test");
+        variables.put("so.auth.username", "test");
+        variables.put("so.auth.password", "test");
         when(execution.getVariable(anyString())).thenAnswer(call -> variables.get(call.getArgument(0)));
         doAnswer(call -> {
             variables.put(call.getArgument(0), call.getArgument(1));

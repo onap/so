@@ -1,5 +1,6 @@
 aai:
-  auth: 5A1272FE739BECA4D4374A86B25C021DFE6745E3BB7BE6836BF64A6059B8220E586C21FD7567AF41DB42571EB7
+  username: test
+  password: test
   endpoint: http://localhost:${wiremock.server.port}
   #PnfCheckInputs
   pnfEntryNotificationTimeout: P14D
@@ -26,7 +27,6 @@ mso:
     completemsoprocess:
       endpoint: http://localhost:${wiremock.server.port}/CompleteMsoProcess
     db:
-      auth: test:test
       endpoint: http://localhost:${wiremock.server.port}/dbadapters/RequestsDbAdapter
       spring:
         endpoint: http://localhost:${wiremock.server.port}
@@ -38,7 +38,6 @@ mso:
       db:
         endpoint: http://localhost:${wiremock.server.port}/dbadapters/RequestsDbAdapter
     po:
-      auth: test:test
       password: poBpmn:password1$
     sdnc:
       endpoint: http://localhost:${wiremock.server.port}/SDNCAdapter
@@ -62,11 +61,9 @@ mso:
     #${mso.adapters.requestDb.endpoint}:BBInputSetupUtils,RequestsDBClient
     requestDb:
       #${mso.adapters.requestDb.auth}: BBInputSetup
-      auth: Basic YnBlbDptc28tZGItMTUwNyE=
       endpoint: http://localhost:${wiremock.server.port}
     apihandler:
       endpoint: http://localhost:8080
-      auth: Basic dGVzdDp0ZXN0Cg==
   async:
       core-pool-size: 50
       max-pool-size: 50
@@ -84,8 +81,6 @@ mso:
         endpoint: http://localhost:${wiremock.server.port}
   correlation:
         timeout: 60
-  db:
-    auth: Basic YnBlbDptc28tZGItMTUwNyE=
   default:
     adapter:
       namespace: http://org.onap.so
@@ -103,7 +98,6 @@ mso:
       endpoint: http://localhost:${wiremock.server.port}/
   #request DB endpoint
   requestDb:
-    auth: Basic YnBlbDptc28tZGItMTUwNyE=
     endpoint: http://localhost:${wiremock.server.port}
   rollback: 'true'
   sdnc:
@@ -232,3 +226,7 @@ cds:
   port: 11011
   auth: Basic Y2NzZGthcHBzOmNjc2RrYXBwcw==
   timeout: 60
+so:
+  auth:
+    username: bpel
+    password: mso-db-1507!

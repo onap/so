@@ -331,7 +331,6 @@ String deleteDBRequestErrorString =
 			when(mockExecution.getVariable(Prefix + "requestId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 			when(mockExecution.getVariable("WorkflowException")).thenReturn(sndcWorkflowExceptionObj)
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable("mso.adapters.db.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 			// preProcessRequest(DelegateExecution execution)

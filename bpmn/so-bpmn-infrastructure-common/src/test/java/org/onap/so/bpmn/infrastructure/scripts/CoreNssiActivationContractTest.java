@@ -78,7 +78,8 @@ public class CoreNssiActivationContractTest {
         variables.put("vnfId", "vnf-1");
         variables.put("requestPayload", "{\"requestDetails\":{\"name\":\"core & access\",\"enabled\":false}}");
         variables.put("mso.infra.endpoint.url", "http://localhost:" + macro.port());
-        variables.put("mso.adapters.po.auth", "test:test");
+        variables.put("so.auth.username", "test");
+        variables.put("so.auth.password", "test");
         variables.put("mso.msoKey", "unused-test-key");
         variables.put("mso.adapters.openecomp.db.endpoint", "http://localhost/status");
         variables.put("nsiId", "nsi-1");

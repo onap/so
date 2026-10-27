@@ -38,6 +38,7 @@ import org.junit.Test;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.data.controller.InstanceNameDuplicateCheckRequest;
 import org.onap.so.serviceinstancebeans.ModelType;
+import org.onap.so.utils.BasicAuth;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -55,8 +56,11 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
     @LocalServerPort
     private int port;
 
-    @Value("${mso.adapters.requestDb.auth}")
-    private String msoAdaptersAuth;
+    @Value("${so.auth.username}")
+    private String username;
+
+    @Value("${so.auth.password}")
+    private String password;
 
     private String createURLWithPort(String uri) {
         return "http://localhost:" + port + uri;
@@ -129,7 +133,7 @@ public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsA
 
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
-        headers.set("Authorization", msoAdaptersAuth);
+        headers.set("Authorization", BasicAuth.header(username, password));
 
         HttpEntity<String> entity = new HttpEntity(request, headers);
 

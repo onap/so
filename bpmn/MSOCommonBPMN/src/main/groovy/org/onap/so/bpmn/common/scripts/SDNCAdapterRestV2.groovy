@@ -145,25 +145,14 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 			execution.setVariable(prefix + 'sdncAdapterRequest', sdncAdapterRequest)
 			logger.debug(getProcessKey(execution) + ': ' + prefix + 'sdncAdapterRequest = \n' + sdncAdapterRequest)
 
-			// Get the Basic Auth credentials for the SDNCAdapter (yes... we ARE using the PO adapters credentials)
+			String basicAuthHeaderValue = UrnPropertiesReader.getSoBasicAuthHeader(execution)
 
-			String basicAuthValue = UrnPropertiesReader.getVariable("mso.adapters.po.auth",execution)
-
-			if (basicAuthValue == null || basicAuthValue.isEmpty()) {
-				logger.debug(getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined")
+			if (basicAuthHeaderValue == null) {
 				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-						getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined", "BPMN",
+						getProcessKey(execution) + ": so.auth.username is not defined", "BPMN",
 						ErrorCode.UnknownError.getValue())
 			} else {
-				try {
-					def encodedString = utils.getBasicAuth(basicAuthValue, UrnPropertiesReader.getVariable("mso.msoKey", execution))
-					execution.setVariable(prefix + 'basicAuthHeaderValue', encodedString)
-				} catch (IOException ex) {
-					logger.debug(getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter")
-					logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-							getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter",
-							"BPMN", ErrorCode.UnknownError.getValue(), ex)
-				}
+				execution.setVariable(prefix + 'basicAuthHeaderValue', basicAuthHeaderValue)
 			}
 
 			// Set the timeout value, e.g. PT5M. It may be specified in the request as the

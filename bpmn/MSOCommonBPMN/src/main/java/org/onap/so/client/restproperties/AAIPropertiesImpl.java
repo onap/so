@@ -26,13 +26,12 @@ import org.onap.aaiclient.client.aai.AAIProperties;
 import org.onap.aaiclient.client.aai.AAIVersion;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.client.CacheProperties;
+import org.onap.so.utils.BasicAuth;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AAIPropertiesImpl implements AAIProperties {
 
-    public static final String MSO_MSO_KEY = "mso.msoKey";
-    public static final String AAI_AUTH = "aai.auth";
     public static final String AAI_ENDPOINT = "aai.endpoint";
     public static final String AAI_READ_TIMEOUT = "aai.readTimeout";
     public static final String AAI_CONNECTION_TIMEOUT = "aai.connectionTimeout";
@@ -55,13 +54,13 @@ public class AAIPropertiesImpl implements AAIProperties {
     }
 
     @Override
-    public String getAuth() {
-        return UrnPropertiesReader.getVariable(AAI_AUTH);
+    public String getUsername() {
+        return UrnPropertiesReader.getVariable(BasicAuth.AAI_USERNAME_PROPERTY);
     }
 
     @Override
-    public String getKey() {
-        return UrnPropertiesReader.getVariable(MSO_MSO_KEY);
+    public String getPassword() {
+        return UrnPropertiesReader.getVariable(BasicAuth.AAI_PASSWORD_PROPERTY);
     }
 
     @Override

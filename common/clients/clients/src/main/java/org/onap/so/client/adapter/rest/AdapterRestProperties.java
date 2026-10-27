@@ -21,10 +21,30 @@
 package org.onap.so.client.adapter.rest;
 
 import org.onap.so.client.RestProperties;
+import org.onap.so.utils.BasicAuth;
 
 public interface AdapterRestProperties extends RestProperties {
 
-    public String getAuth();
+    default String getUsername() {
+        return null;
+    }
 
-    public String getKey();
+    default String getPassword() {
+        return null;
+    }
+
+    /**
+     * @return {@code username:password}, or {@code null} when no username is configured
+     */
+    default String getAuth() {
+        return BasicAuth.credentials(getUsername(), getPassword());
+    }
+
+    /**
+     * @deprecated credentials are no longer encrypted, so no key is needed
+     */
+    @Deprecated
+    default String getKey() {
+        return null;
+    }
 }

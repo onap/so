@@ -21,6 +21,8 @@
 package org.onap.so.client.restproperties;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import org.junit.Test;
 
 public class AAIPropertiesImplTest {
@@ -33,13 +35,10 @@ public class AAIPropertiesImplTest {
     }
 
     @Test
-    public void getAuthTest() {
-        String expectedAuth = "aai.auth";
-        assertEquals(expectedAuth, AAIPropertiesImpl.AAI_AUTH);
-    }
-
-    @Test
-    public void getKeyTest() {
-        assertEquals("mso.msoKey", AAIPropertiesImpl.MSO_MSO_KEY);
+    public void thatAuthIsBuiltFromUsernameAndPassword() {
+        AAIPropertiesImpl properties = spy(aaiPropertiesImpl);
+        doReturn("aai@aai.onap.org").when(properties).getUsername();
+        doReturn("demo123456!").when(properties).getPassword();
+        assertEquals("aai@aai.onap.org:demo123456!", properties.getAuth());
     }
 }

@@ -103,7 +103,8 @@ public class CamundaRequestHandlerUnitTest {
 
         doReturn("/sobpmnengine/history/process-instance").when(env).getProperty("mso.camunda.rest.history.uri");
         doReturn("/sobpmnengine/history/activity-instance").when(env).getProperty("mso.camunda.rest.activity.uri");
-        doReturn("auth").when(env).getRequiredProperty("mso.camundaAuth");
+        doReturn("user").when(env).getRequiredProperty("so.auth.username");
+        doReturn("password").when(env).getProperty("so.auth.password");
         doReturn("http://localhost:8089").when(env).getProperty("mso.camundaURL");
 
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
@@ -259,7 +260,7 @@ public class CamundaRequestHandlerUnitTest {
                 "http://localhost:8089/sobpmnengine/history/activity-instance?processInstanceId=c4c6b647-a26e-11e9-b144-0242ac14000b&maxResults=1";
         doReturn(activityInstanceResponse).when(restTemplate).exchange(targetUrl, HttpMethod.GET, requestEntity,
                 new ParameterizedTypeReference<List<HistoricActivityInstanceEntity>>() {});
-        doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("auth", "");
+        doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("user", "password");
         ResponseEntity<List<HistoricActivityInstanceEntity>> actualResponse =
                 camundaRequestHandler.getCamundaActivityHistory("c4c6b647-a26e-11e9-b144-0242ac14000b");
         assertEquals(activityInstanceResponse, actualResponse);
@@ -273,7 +274,7 @@ public class CamundaRequestHandlerUnitTest {
                 "http://localhost:8089/sobpmnengine/history/activity-instance?processInstanceId=c4c6b647-a26e-11e9-b144-0242ac14000b&maxResults=1";
         doThrow(new ResourceAccessException("IOException")).when(restTemplate).exchange(targetUrl, HttpMethod.GET,
                 requestEntity, new ParameterizedTypeReference<List<HistoricActivityInstanceEntity>>() {});
-        doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("auth", "");
+        doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("user", "password");
 
         thrown.expect(ResourceAccessException.class);
         camundaRequestHandler.getCamundaActivityHistory("c4c6b647-a26e-11e9-b144-0242ac14000b");
@@ -290,7 +291,7 @@ public class CamundaRequestHandlerUnitTest {
                 + REQUEST_ID + "&active=true&maxResults=1";
         doReturn(processInstanceResponse).when(restTemplate).exchange(targetUrl, HttpMethod.GET, requestEntity,
                 new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>() {});
-        doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("auth", "");
+        doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("user", "password");
 
         ResponseEntity<List<HistoricProcessInstanceEntity>> actualResponse =
                 camundaRequestHandler.getCamundaProcessInstanceHistory(REQUEST_ID, false, true, false);
@@ -305,7 +306,7 @@ public class CamundaRequestHandlerUnitTest {
                 + REQUEST_ID + "&active=true&maxResults=1";
         doThrow(new ResourceAccessException("I/O error")).when(restTemplateRetry).exchange(targetUrl, HttpMethod.GET,
                 requestEntity, new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>() {});
-        doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("auth", "");
+        doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("user", "password");
 
         thrown.expect(ResourceAccessException.class);
         camundaRequestHandler.getCamundaProcessInstanceHistory(REQUEST_ID, true, true, false);
@@ -322,7 +323,7 @@ public class CamundaRequestHandlerUnitTest {
                 + REQUEST_ID + "&sortBy=startTime&sortOrder=desc&maxResults=1";
         doThrow(HttpClientErrorException.class).when(restTemplate).exchange(targetUrl, HttpMethod.GET, requestEntity,
                 new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>() {});
-        doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("auth", "");
+        doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("user", "password");
 
         thrown.expect(HttpStatusCodeException.class);
         camundaRequestHandler.getCamundaProcessInstanceHistory(REQUEST_ID, false, false, true);
@@ -340,7 +341,7 @@ public class CamundaRequestHandlerUnitTest {
         when(restTemplateRetry.exchange(targetUrl, HttpMethod.GET, requestEntity,
                 new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>() {}))
                         .thenThrow(new ResourceAccessException("I/O Exception")).thenReturn(processInstanceResponse);
-        doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("auth", "");
+        doReturn(headers).when(camundaRequestHandler).setCamundaHeaders("user", "password");
 
         ResponseEntity<List<HistoricProcessInstanceEntity>> actualResponse =
                 camundaRequestHandler.getCamundaProcessInstanceHistory(REQUEST_ID, true, false, true);
@@ -352,10 +353,7 @@ public class CamundaRequestHandlerUnitTest {
 
     @Test
     public void setCamundaHeadersTest() {
-        String encryptedAuth = "user:password"; // user:password
-        String key = "07a7159d3bf51a0e53be7a8f89699be7";
-
-        HttpHeaders headers = camundaRequestHandler.setCamundaHeaders(encryptedAuth, key);
+        HttpHeaders headers = camundaRequestHandler.setCamundaHeaders("user", "password");
         List<org.springframework.http.MediaType> acceptedType = headers.getAccept();
 
         String expectedAcceptedType = "application/json";

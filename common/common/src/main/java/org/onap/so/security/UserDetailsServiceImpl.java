@@ -25,18 +25,32 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @ConfigurationProperties(prefix = "spring.security")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+    private static final Pattern BCRYPT_HASH = Pattern.compile("\\A\\$2[aby]?\\$\\d\\d\\$[./0-9A-Za-z]{53}\\z");
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private List<UserCredentials> usercredentials;
 
     public List<UserCredentials> getUsercredentials() {
         return usercredentials;
     }
 
+    /**
+     * Passwords may be configured in plaintext or as BCrypt hashes. Plaintext passwords are hashed once here, so that
+     * every authentication compares against a hash.
+     */
     public void setUsercredentials(List<UserCredentials> usercredentials) {
+        if (usercredentials != null) {
+            usercredentials.stream().filter(credentials -> credentials.getPassword() != null)
+                    .filter(credentials -> !BCRYPT_HASH.matcher(credentials.getPassword()).matches())
+                    .forEach(credentials -> credentials.setPassword(passwordEncoder.encode(credentials.getPassword())));
+        }
         this.usercredentials = usercredentials;
     }
 

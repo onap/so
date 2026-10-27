@@ -46,12 +46,12 @@ public class ExternalTaskServiceUtils {
     }
 
     protected ClientRequestInterceptor createClientInterceptor(String auth) {
-        return new BasicAuthProvider(env.getRequiredProperty("mso.auth.user"), auth);
+        return new BasicAuthProvider(env.getRequiredProperty(BasicAuth.SO_USERNAME_PROPERTY), auth);
     }
 
     protected String getAuth() throws Exception {
         try {
-            return env.getRequiredProperty("mso.auth.password");
+            return env.getRequiredProperty(BasicAuth.SO_PASSWORD_PROPERTY);
         } catch (IllegalStateException e) {
             logger.error("Error loading password", e);
             throw new Exception("Cannot load password");

@@ -23,7 +23,6 @@ package org.onap.so.apihandler.common;
 
 public final class CommonConstants {
 
-    public static final String DEFAULT_BPEL_AUTH = "admin:admin";
     public static final String ENCRYPTION_KEY_PROP = "org.onap.so.adapters.network.encryptionKey";
 
     public static final String REQUEST_ID_HEADER = "mso-request-id";
@@ -42,7 +41,6 @@ public final class CommonConstants {
     public static final String CAMUNDA_TYPE = "type";
     public static final String CAMUNDA_VALUE = "value";
     public static final String CAMUNDA_URL = "mso.camundaURL";
-    public static final String CAMUNDA_AUTH = "mso.camundaAuth";
     public static final String BPEL_SEARCH_STR = "active-bpel";
     public static final String TASK_SEARCH_STR = "task";
     public static final int BPEL = 0;

@@ -29,7 +29,6 @@ mso:
       activity:
         uri: /sobpmnengine/history/activity-instance
   camundaURL: http://localhost:8089
-  camundaAuth: ${CAMUNDA_AUTH}
   camundaCleanupInterval: 30
                 
 spring:

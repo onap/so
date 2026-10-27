@@ -325,7 +325,8 @@ public class WorkflowMessagePersistenceTest {
                 Map<String, Object> input = new HashMap<>();
                 input.put("msoRequestId", requestId);
                 input.put("mso.adapters.openecomp.db.endpoint", "http://localhost:" + requests.port() + "/requests");
-                input.put("mso.adapters.db.auth", "test:test");
+                input.put("so.auth.username", "test");
+                input.put("so.auth.password", "test");
                 input.put("mso.msoKey", "");
                 input.put("serviceType", "Service");
                 input.put("vnfType", "router");
@@ -397,14 +398,14 @@ public class WorkflowMessagePersistenceTest {
                         switch (name) {
                             case "mso.adapters.openecomp.db.endpoint":
                                 return "http://localhost:" + requests.port() + "/requests";
-                            case "mso.adapters.db.auth":
-                                return "test:test";
                             case "mso.msoKey":
                                 return "";
                             default:
                                 return null;
                         }
                     });
+            properties.when(() -> UrnPropertiesReader.getSoBasicAuthHeader(any(DelegateExecution.class)))
+                    .thenReturn("Basic dGVzdDp0ZXN0");
             requests.stubFor(post(urlEqualTo("/requests"))
                     .willReturn(aResponse().withStatus(204).withHeader("Connection", "close")));
             for (String response : new String[] {"retry", "abort"}) {

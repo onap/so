@@ -9,8 +9,6 @@ mso:
     db:
       spring:
         endpoint: "http://localhost:"
-  db:
-    auth: Basic YnBlbDptc28tZGItMTUwNyE=
 
 spring:
   datasource:
@@ -60,3 +58,7 @@ management:
   endpoint:
     info:
       enabled: true
+so:
+  auth:
+    username: bpel
+    password: mso-db-1507!

@@ -87,7 +87,8 @@ public class NssiDeallocationContractTest {
         variables.put("testProcessKey", "DoDeallocateNSSI");
         variables.put("scriptName", "deallocate-script");
         variables.put("mso.adapters.nssmf.endpoint", "http://localhost:" + adapter.port());
-        variables.put("mso.adapters.db.auth", "test:test");
+        variables.put("so.auth.username", "test");
+        variables.put("so.auth.password", "test");
         variables.put("mso.adapters.openecomp.db.endpoint", "http://localhost/status");
         when(execution.getVariable(anyString())).thenAnswer(call -> variables.get(call.getArgument(0)));
         doAnswer(call -> {

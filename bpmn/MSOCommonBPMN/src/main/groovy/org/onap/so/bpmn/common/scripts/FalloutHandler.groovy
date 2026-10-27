@@ -103,7 +103,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
     public String updateInfraRequestDB(DelegateExecution execution){
         try {
             RequestsDbClient client = getDbClient()
-            InfraActiveRequests infraRequest = client.getInfraActiveRequests(execution.getVariable("FH_request_id"), UrnPropertiesReader.getVariable("mso.adapters.requestDb.auth"), UrnPropertiesReader.getVariable("mso.adapters.requestDb.endpoint"))
+            InfraActiveRequests infraRequest = client.getInfraActiveRequests(execution.getVariable("FH_request_id"), UrnPropertiesReader.getSoBasicAuthHeader(execution), UrnPropertiesReader.getVariable("mso.adapters.requestDb.endpoint"))
             if(infraRequest == null){
                 infraRequest = new InfraActiveRequests();
                 infraRequest.setRequestId(execution.getVariable("CMSO_request_id"))
@@ -112,7 +112,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
             infraRequest.setStatusMessage(MsoUtils.xmlEscape(execution.getVariable("FH_ErrorMessage")))
             infraRequest.setRequestStatus("FAILED")
             infraRequest.setProgress(100)
-            client.updateInfraActiveRequests(infraRequest, UrnPropertiesReader.getVariable("mso.adapters.requestDb.auth"), UrnPropertiesReader.getVariable("mso.adapters.requestDb.endpoint"))
+            client.updateInfraActiveRequests(infraRequest, UrnPropertiesReader.getSoBasicAuthHeader(execution), UrnPropertiesReader.getVariable("mso.adapters.requestDb.endpoint"))
         } catch (Exception e) {
             execution.setVariable("FH_success", false)
             logger.error("Exception Occured while updating infra request db", e)

@@ -34,7 +34,6 @@ public class TestConstants {
 
     public static final String EXT_VIRTUAL_LINK_ID = "ac1ed33d-8dc1-4800-8ce8-309b99c38eec";
     public static final String DUMMY_GENERIC_VND_ID = "5956a99d-9736-11e8-8caf-022ac9304eeb";
-    public static final String DUMMY_BASIC_AUTH = "Basic 123abc";
     public static final String DUMMY_URL = "http://localhost:30406/so/vnfm-adapter/v1/";
     public static final String EXPECTED_URL = DUMMY_URL + "vnfs/" + DUMMY_GENERIC_VND_ID;
 
@@ -55,13 +54,12 @@ public class TestConstants {
 
 
     public static VnfmBasicHttpConfigProvider getVnfmBasicHttpConfigProvider() {
-        return getVnfmBasicHttpConfigProvider(DUMMY_URL, DUMMY_BASIC_AUTH);
+        return getVnfmBasicHttpConfigProvider(DUMMY_URL);
     }
 
-    public static VnfmBasicHttpConfigProvider getVnfmBasicHttpConfigProvider(final String url, final String auth) {
+    public static VnfmBasicHttpConfigProvider getVnfmBasicHttpConfigProvider(final String url) {
         final VnfmBasicHttpConfigProvider vnfmBasicHttpConfigProvider = new VnfmBasicHttpConfigProvider();
         vnfmBasicHttpConfigProvider.setUrl(url);
-        vnfmBasicHttpConfigProvider.setAuth(auth);
         return vnfmBasicHttpConfigProvider;
     }
 

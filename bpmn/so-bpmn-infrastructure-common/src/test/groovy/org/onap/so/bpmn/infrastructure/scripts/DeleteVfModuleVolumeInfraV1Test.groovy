@@ -154,7 +154,6 @@ class DeleteVfModuleVolumeInfraV1Test extends MsoGroovyTest {
 		ExecutionEntity mockExecution = setupMock('DeleteVfModuleVolumeInfraV1')
 		when(mockExecution.getVariable("DELVfModVol_requestId")).thenReturn('TEST-REQUEST-ID-0123')
 		when(mockExecution.getVariable("DELVfModVol_volumeOutputs")).thenReturn('')
-		when(mockExecution.getVariable("mso.adapters.db.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 		when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 		DeleteVfModuleVolumeInfraV1 myproc = new DeleteVfModuleVolumeInfraV1()

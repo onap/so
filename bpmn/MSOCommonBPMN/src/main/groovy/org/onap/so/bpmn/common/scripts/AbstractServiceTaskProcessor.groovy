@@ -665,15 +665,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	}
 
 	public void setBasicDBAuthHeader(DelegateExecution execution, isDebugLogEnabled) {
-		try {
-			String basicAuthValueDB = UrnPropertiesReader.getVariable("mso.adapters.db.auth", execution)
-			def encodedString = utils.getBasicAuth(basicAuthValueDB, UrnPropertiesReader.getVariable("mso.msoKey", execution))
-			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
-		} catch (IOException ex) {
-			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
-			logger.debug(dataErrorMessage)
-			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-		}
+		execution.setVariable("BasicAuthHeaderValueDB", UrnPropertiesReader.getSoBasicAuthHeader(execution))
 	}
     public AAIResourcesClient getAAIClient(){
         return  new AAIResourcesClient();

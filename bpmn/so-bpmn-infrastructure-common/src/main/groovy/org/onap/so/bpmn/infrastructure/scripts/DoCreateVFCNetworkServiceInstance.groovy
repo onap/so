@@ -257,9 +257,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
 
 			URL url = new URL(urlString);
             
-            // Get the Basic Auth credentials for the VFCAdapter, username is 'bpel', auth is '07a7159d3bf51a0e53be7a8f89699be7'
-            // user 'bepl' authHeader is the same with mso.db.auth
-            String basicAuthValuedb =  UrnPropertiesReader.getVariable("mso.db.auth", execution)
+            String basicAuthValuedb = UrnPropertiesReader.getSoBasicAuthHeader(execution)
             HttpClient httpClient = new HttpClientFactory().newJsonClient(url, ONAPComponents.VNF_ADAPTER)
             httpClient.addAdditionalHeader("Accept", "application/json")
             httpClient.addAdditionalHeader("Authorization", basicAuthValuedb)

@@ -29,7 +29,6 @@ public interface Constants {
 
     public static final String MY_URL_PROP = "org.onap.so.adapters.sdnc.myurl";
     public static final String SDNC_AUTH_PROP = "org.onap.so.adapters.sdnc.sdncauth";
-    public static final String BPEL_AUTH_PROP = "org.onap.so.adapters.sdnc.bpelauth";
 
     public static final String SDNC_HOST = "org.onap.so.adapters.sdnc.sdncHost";
 

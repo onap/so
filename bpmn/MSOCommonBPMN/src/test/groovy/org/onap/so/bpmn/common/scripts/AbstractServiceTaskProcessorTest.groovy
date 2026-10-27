@@ -173,7 +173,8 @@ public class AbstractServiceTaskProcessorTest extends MsoGroovyTest {
 	@Test
 	public void testSetBasicDBAuthHeader_Success() {
 		ExecutionEntity mockExecution = setupMock()
-		when(mockExecution.getVariable("mso.adapters.db.auth")).thenReturn('test:test')
+		when(mockExecution.getVariable("so.auth.username")).thenReturn('test')
+		when(mockExecution.getVariable("so.auth.password")).thenReturn('test')
 		when(mockExecution.getVariable("mso.msoKey")).thenReturn('07a7159d3bf51a0e53be7a8f89699be7')
 
 		AbstractServiceTaskProcessorImpl  serviceTaskProcessor = new AbstractServiceTaskProcessorImpl();

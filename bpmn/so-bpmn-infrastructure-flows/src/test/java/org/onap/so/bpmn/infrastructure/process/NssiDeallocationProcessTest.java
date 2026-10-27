@@ -81,7 +81,8 @@ public class NssiDeallocationProcessTest extends BaseBPMNTest {
         variables.clear();
         Map<String, Object> properties = new HashMap<>();
         properties.put("mso.adapters.nssmf.endpoint", "http://localhost:" + wireMockPort);
-        properties.put("mso.adapters.db.auth", "test:test");
+        properties.put("so.auth.username", "test");
+        properties.put("so.auth.password", "test");
         setWorkflowProperties(properties);
         Map<String, Object> nssi = new HashMap<>();
         nssi.put("modelInvariantId", "invariant-1");
@@ -101,7 +102,8 @@ public class NssiDeallocationProcessTest extends BaseBPMNTest {
         variables.put("serviceInstanceId", "nssi-1");
         variables.put("scriptName", "deallocation-script");
         variables.put("mso.adapters.nssmf.endpoint", "http://localhost:" + wireMockPort);
-        variables.put("mso.adapters.db.auth", "test:test");
+        variables.put("so.auth.username", "test");
+        variables.put("so.auth.password", "test");
         variables.put("mso.adapters.openecomp.db.endpoint", "http://localhost:" + wireMockPort + STATUS_PATH);
         JSONObject service = new JSONObject().put("modelInfo", new JSONObject().put("modelUuid", "model-2"))
                 .put("serviceRole", "vendor-1").put("serviceCategory", "CN").put("serviceVnfs", new JSONArray())

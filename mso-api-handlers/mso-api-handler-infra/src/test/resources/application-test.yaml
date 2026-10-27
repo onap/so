@@ -29,15 +29,12 @@ mso:
   adapters:
     requestDb:
       endpoint:  http://localhost:${wiremock.server.port}
-      auth: Basic YnBlbDptc28tZGItMTUwNyE=
   logPath: logs
   site-name: mtanj
   catalog:
     db:
       spring:
         endpoint: http://localhost:${wiremock.server.port}
-  db:
-    auth: Basic YnBlbDptc28tZGItMTUwNyE=
   config:
     path: /src/main/resources/
   infra:
@@ -54,7 +51,6 @@ mso:
         apiMinorVersion: 0
         apiPatchVersion: 0
   camundaURL: http://localhost:${wiremock.server.port}
-  camundaAuth: user:password
   async:
     core-pool-size: 50
     max-pool-size: 50
@@ -133,12 +129,11 @@ management:
       exposure:
         include: "*"
 
-org:
-  onap:
-    so:
-      adapters:
-        network:
 
 subnetCapability:
   config:
       file: src/test/resources/Onap3gppServiceInstancesTest/subnetCapability.json
+so:
+  auth:
+    username: bpel
+    password: mso-db-1507!

@@ -3031,7 +3031,8 @@ String sdncAdapterWorkflowAssignResponse =
 			when(mockExecution.getVariable("subscriptionServiceType")).thenReturn("MSO-dev-service-type")
 			when(mockExecution.getVariable("globalSubscriberId")).thenReturn("globalId_45678905678")
 
-			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("poBpmn:password1\$")
+			when(mockExecution.getVariable("so.auth.username")).thenReturn("poBpmn")
+			when(mockExecution.getVariable("so.auth.password")).thenReturn("password1\$")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 			when(mockExecution.getVariable("mso.rollback")).thenReturn("true")
@@ -3093,7 +3094,8 @@ String sdncAdapterWorkflowAssignResponse =
 			when(mockExecution.getVariable("sdncVersion")).thenReturn("1610")                      // 1610 default
 			when(mockExecution.getVariable("disableRollback")).thenReturn(true)
 
-			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("poBpmn:password1\$")
+			when(mockExecution.getVariable("so.auth.username")).thenReturn("poBpmn")
+			when(mockExecution.getVariable("so.auth.password")).thenReturn("password1\$")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 			when(mockExecution.getVariable("mso.rollback")).thenReturn("true")
@@ -3147,7 +3149,8 @@ String sdncAdapterWorkflowAssignResponse =
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("bpmnRequest")).thenReturn(xmlIncomingRequest)                      // XML format
 
-			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("poBpmn:password1\$")
+			when(mockExecution.getVariable("so.auth.username")).thenReturn("poBpmn")
+			when(mockExecution.getVariable("so.auth.password")).thenReturn("password1\$")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 			when(mockExecution.getVariable("mso.rollback")).thenReturn("true")
@@ -3636,7 +3639,6 @@ String sdncAdapterWorkflowAssignResponse =
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
 			// preProcessRequest(DelegateExecution execution)
 			DoCreateNetworkInstance DoCreateNetworkInstance = new DoCreateNetworkInstance()
@@ -3672,7 +3674,6 @@ String sdncAdapterWorkflowAssignResponse =
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
 			// preProcessRequest(DelegateExecution execution)
 			DoCreateNetworkInstance DoCreateNetworkInstance = new DoCreateNetworkInstance()
@@ -3708,7 +3709,6 @@ String sdncAdapterWorkflowAssignResponse =
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
 			// preProcessRequest(DelegateExecution execution)
 			DoCreateNetworkInstance DoCreateNetworkInstance = new DoCreateNetworkInstance()

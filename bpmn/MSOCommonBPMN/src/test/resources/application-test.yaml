@@ -1,5 +1,6 @@
 aai:
-  auth: 5A1272FE739BECA4D4374A86B25C021DFE6745E3BB7BE6836BF64A6059B8220E586C21FD7567AF41DB42571EB7
+  username: test
+  password: test
   endpoint: http://localhost:${wiremock.server.port}
 appc:
   client:
@@ -32,12 +33,10 @@ log:
 mso:
   adapters:
     requestDb:
-      auth: Basic YnBlbDptc28tZGItMTUwNyE=
       endpoint: http://localhost:8081  
     completemsoprocess:
       endpoint: http://localhost:${wiremock.server.port}/CompleteMsoProcess
     db:
-      auth: test:test
       endpoint: http://localhost:${wiremock.server.port}/dbadapters/RequestsDbAdapter
       att-endpoint: http://localhost:${wiremock.server.port}/dbadapters/AttRequestsDbAdapter
       spring:
@@ -50,7 +49,6 @@ mso:
       db:
         endpoint: http://localhost:${wiremock.server.port}/dbadapters/RequestsDbAdapter
     po:
-      auth: test:test
       password: poBpmn:password1$
     sdnc:
       endpoint: http://localhost:${wiremock.server.port}/SDNCAdapter
@@ -71,7 +69,6 @@ mso:
     workflow:
       message:
         endpoint: http://localhost:${wiremock.server.port}/workflows/messages/message
-  camundaAuth: apihBpmn:camunda-R1512!
 
   async:
       core-pool-size: 50
@@ -89,8 +86,6 @@ mso:
         endpoint: http://localhost:${wiremock.server.port} 
   correlation:
         timeout: 60
-  db:
-    auth: Basic YnBlbDptc28tZGItMTUwNyE=
   default:
     adapter:
       namespace: http://org.onap.so
@@ -227,8 +222,7 @@ camunda:
         # REPEATABLE_READ but Camunda wants READ_COMMITTED. Skip the check against the embedded test DB.
         skipIsolationLevelCheck: true
 
-org:
-  onap:
-    so:
-      adapters:
-        network:
+so:
+  auth:
+    username: bpel
+    password: mso-db-1507!

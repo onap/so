@@ -1,5 +1,6 @@
 aai:
-  auth: 5A1272FE739BECA4D4374A86B25C021DFE6745E3BB7BE6836BF64A6059B8220E586C21FD7567AF41DB42571EB7
+  username: test
+  password: test
   endpoint: http://localhost:28090
   pnfEntryNotificationTimeout: P14D
 appc:
@@ -39,7 +40,6 @@ mso:
     completemsoprocess:
       endpoint: http://localhost:28090/CompleteMsoProcess
     db:
-      auth: test:test
       endpoint: http://localhost:28090/dbadapters/RequestsDbAdapter
       spring:
         endpoint: http://localhost:28090
@@ -51,7 +51,6 @@ mso:
       db:
         endpoint: http://localhost:28090/dbadapters/RequestsDbAdapter
     po:
-      auth: test:test
       password: poBpmn:password1$
     sdnc:
       endpoint: http://localhost:28090/SDNCAdapter
@@ -73,11 +72,9 @@ mso:
       message:
         endpoint: http://localhost:28090/workflows/messages/message
     requestDb:
-      auth: Basic YnBlbDptc28tZGItMTUwNyE=
       endpoint: http://localhost:8081
     apihandler:
       endpoint: http://localhost:8080
-      auth: Basic dGVzdDp0ZXN0Cg==
   async:
       core-pool-size: 50
       max-pool-size: 50
@@ -94,8 +91,6 @@ mso:
         endpoint: http://localhost:28090
   correlation:
         timeout: 60
-  db:
-    auth: Basic YnBlbDptc28tZGItMTUwNyE=
   default:
     adapter:
       namespace: http://org.onap.so
@@ -229,3 +224,7 @@ pnf:
     consumerIdUpdate: so-bpmn-infra-pnfupdate
     kafkaBootstrapServers:  localhost:9092
     topicListenerDelayInSeconds: 5
+so:
+  auth:
+    username: bpel
+    password: mso-db-1507!

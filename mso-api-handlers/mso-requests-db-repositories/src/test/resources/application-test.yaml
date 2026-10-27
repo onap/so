@@ -9,7 +9,6 @@ ssl-enable: false
 mso:
   adapters:
     requestDb:
-      auth: Basic YnBlbDptc28tZGItMTUwNyE=
       endpoint: http://localhost:8081
   site-name: localDevEnv
   logPath: logs
@@ -45,3 +44,7 @@ management:
     enabled: false
     basic:
       enabled: false
+so:
+  auth:
+    username: bpel
+    password: mso-db-1507!

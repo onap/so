@@ -45,6 +45,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.onap.so.openpojo.rules.HasToStringRule
 import org.onap.logging.filter.base.ONAPComponents;
+import org.onap.so.client.restproperties.AAIPropertiesImpl
 
 @Deprecated
 class AaiUtil {
@@ -97,7 +98,7 @@ class AaiUtil {
 		try{
 			URL Url = new URL(url)
 			HttpClient client = new HttpClientFactory().newXmlClient(Url, ONAPComponents.AAI)
-			client.addBasicAuthHeader(UrnPropertiesReader.getVariable("aai.auth", execution), UrnPropertiesReader.getVariable("mso.msoKey", execution))
+			client.addBasicAuthHeader(new AAIPropertiesImpl().getAuth(), null)
 			client.addAdditionalHeader("X-FromAppId", "MSO")
 			client.addAdditionalHeader("X-TransactionId", utils.getRequestID())
 			client.addAdditionalHeader("Accept", MediaType.APPLICATION_XML)

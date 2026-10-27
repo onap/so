@@ -20,13 +20,12 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
-import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.VNFM_ADAPTER_DEFAULT_AUTH;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.VNFM_ADAPTER_DEFAULT_URL;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Provides VNFM adapter {@link java.net.URI} and basic authorization values
+ * Provides the VNFM adapter {@link java.net.URI}
  * 
  * @author waqas.ikram@est.tech
  */
@@ -35,8 +34,6 @@ import org.springframework.context.annotation.Configuration;
 public class VnfmBasicHttpConfigProvider {
 
     private String url = VNFM_ADAPTER_DEFAULT_URL;
-
-    private String auth = VNFM_ADAPTER_DEFAULT_AUTH;
 
     /**
      * @return the url
@@ -52,23 +49,9 @@ public class VnfmBasicHttpConfigProvider {
         this.url = url;
     }
 
-    /**
-     * @return the auth
-     */
-    public String getAuth() {
-        return auth;
-    }
-
-    /**
-     * @param auth the auth to set
-     */
-    public void setAuth(final String auth) {
-        this.auth = auth;
-    }
-
     @Override
     public String toString() {
-        return "EtsiVnfmAdapter [url=" + url + ", auth=" + auth + "]";
+        return "EtsiVnfmAdapter [url=" + url + "]";
     }
 
 }
