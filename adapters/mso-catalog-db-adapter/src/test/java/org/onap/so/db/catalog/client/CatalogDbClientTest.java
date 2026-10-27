@@ -56,6 +56,7 @@ import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.Workflow;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
+import org.onap.so.utils.BasicAuth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -68,8 +69,11 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     @LocalServerPort
     private int port;
 
-    @Value("${mso.db.auth}")
-    private String msoAdaptersAuth;
+    @Value("${so.auth.username}")
+    private String username;
+
+    @Value("${so.auth.password}")
+    private String password;
 
     @Autowired
     CatalogDbClientPortChanger client;
@@ -434,7 +438,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     @Test
     public void testCloudSiteClient() {
         CatalogDbClientPortChanger localClient = new CatalogDbClientPortChanger(
-                "http://localhost:" + client.wiremockPort, msoAdaptersAuth, client.wiremockPort);
+                "http://localhost:" + client.wiremockPort, BasicAuth.header(username, password), client.wiremockPort);
         CloudSite cloudSite = new CloudSite();
         cloudSite.setId("MTN6");
         cloudSite.setClli("TESTCLLI");
@@ -486,7 +490,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
     @Test
     public void testPostHomingInstance() {
         CatalogDbClientPortChanger localClient = new CatalogDbClientPortChanger(
-                "http://localhost:" + client.wiremockPort, msoAdaptersAuth, client.wiremockPort);
+                "http://localhost:" + client.wiremockPort, BasicAuth.header(username, password), client.wiremockPort);
         HomingInstance homingInstance = new HomingInstance();
         homingInstance.setServiceInstanceId("5df8d6be-2083-11e7-93ae-92361f232671");
         homingInstance.setCloudOwner("CloudOwner-1");

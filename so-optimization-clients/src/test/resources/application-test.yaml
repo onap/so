@@ -1,5 +1,6 @@
 aai:
-  auth: 5A1272FE739BECA4D4374A86B25C021DFE6745E3BB7BE6836BF64A6059B8220E586C21FD7567AF41DB42571EB7
+  username: test
+  password: test
   endpoint: http://localhost:${wiremock.server.port}
   pnfEntryNotificationTimeout: P14D
 appc:
@@ -46,12 +47,10 @@ mso:
     auth: Basic YnBlbDptc28tZGItMTUwNyE=
   adapters:
     requestDb:
-      auth: Basic YnBlbDptc28tZGItMTUwNyE=
       endpoint: http://localhost:8081
     completemsoprocess:
       endpoint: http://localhost:${wiremock.server.port}/CompleteMsoProcess
     db:
-      auth: test:test
       endpoint: http://localhost:${wiremock.server.port}/dbadapters/RequestsDbAdapter
       spring:
         endpoint: http://localhost:${wiremock.server.port}
@@ -63,7 +62,6 @@ mso:
       db:
         endpoint: http://localhost:${wiremock.server.port}/dbadapters/RequestsDbAdapter
     po:
-      auth: test:test
       password: poBpmn:password1$
     sdnc:
       endpoint: http://localhost:${wiremock.server.port}/SDNCAdapter
@@ -102,8 +100,6 @@ mso:
         endpoint: http://localhost:${wiremock.server.port}
   correlation:
         timeout: 60
-  db:
-    auth: Basic YnBlbDptc28tZGItMTUwNyE=
   default:
     adapter:
       namespace: http://org.onap.so
@@ -242,3 +238,7 @@ cds:
   port: 11012
   auth: Basic Y2NzZGthcHBzOmNjc2RrYXBwcw==
   timeout: 60
+so:
+  auth:
+    username: bpel
+    password: mso-db-1507!

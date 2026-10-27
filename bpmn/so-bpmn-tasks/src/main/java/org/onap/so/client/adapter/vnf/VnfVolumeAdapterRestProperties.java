@@ -24,24 +24,23 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.client.adapter.rest.AdapterRestProperties;
+import org.onap.so.utils.BasicAuth;
 
 
 public class VnfVolumeAdapterRestProperties implements AdapterRestProperties {
 
-    protected static final String authProp = "mso.adapters.po.auth";
-    protected static final String keyProp = "mso.msoKey";
     protected static final String endpointProp = "mso.adapters.volume-groups.rest.endpoint";
 
     public VnfVolumeAdapterRestProperties() {}
 
     @Override
-    public String getAuth() {
-        return UrnPropertiesReader.getVariable(authProp);
+    public String getUsername() {
+        return UrnPropertiesReader.getVariable(BasicAuth.SO_USERNAME_PROPERTY);
     }
 
     @Override
-    public String getKey() {
-        return UrnPropertiesReader.getVariable(keyProp);
+    public String getPassword() {
+        return UrnPropertiesReader.getVariable(BasicAuth.SO_PASSWORD_PROPERTY);
     }
 
     @Override

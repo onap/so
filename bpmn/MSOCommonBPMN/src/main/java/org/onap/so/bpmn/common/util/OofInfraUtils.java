@@ -43,7 +43,7 @@ public class OofInfraUtils {
      */
     public void createCloudSite(CloudSite cloudSite, DelegateExecution execution) {
         String endpoint = UrnPropertiesReader.getVariable("mso.catalog.db.spring.endpoint", execution);
-        String auth = UrnPropertiesReader.getVariable("mso.db.auth", execution);
+        String auth = UrnPropertiesReader.getSoBasicAuthHeader(execution);
         try {
             CloudSite getCloudsite;
 
@@ -76,7 +76,7 @@ public class OofInfraUtils {
      */
     public void createHomingInstance(HomingInstance homingInstance, DelegateExecution execution) {
         String endpoint = UrnPropertiesReader.getVariable("mso.catalog.db.spring.endpoint", execution);
-        String auth = UrnPropertiesReader.getVariable("mso.db.auth", execution);
+        String auth = UrnPropertiesReader.getSoBasicAuthHeader(execution);
 
         CatalogDbClient client = new CatalogDbClient(endpoint, auth);
         try {
@@ -97,7 +97,7 @@ public class OofInfraUtils {
      */
     public HomingInstance getHomingInstance(String serviceInstanceId, DelegateExecution execution) {
         String endpoint = UrnPropertiesReader.getVariable("mso.catalog.db.spring.endpoint", execution);
-        String auth = UrnPropertiesReader.getVariable("mso.db.auth", execution);
+        String auth = UrnPropertiesReader.getSoBasicAuthHeader(execution);
 
         CatalogDbClient client = new CatalogDbClient(endpoint, auth);
         try {

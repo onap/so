@@ -136,18 +136,9 @@ public class DoCreateNetworkInstanceRollback extends AbstractServiceTaskProcesso
             logger.debug("sdncVersion? : " + sdncVersion)
 
             // PO Authorization Info / headers Authorization=
-            String basicAuthValuePO = UrnPropertiesReader.getVariable("mso.adapters.po.auth",execution)
-            try {
-                def encodedString = utils.getBasicAuth(basicAuthValuePO, UrnPropertiesReader.getVariable("mso.msoKey", execution))
-                execution.setVariable("BasicAuthHeaderValuePO",encodedString)
-                execution.setVariable("BasicAuthHeaderValueSDNC", encodedString)
-
-            } catch (IOException ex) {
-                String exceptionMessage = "Exception Encountered in DoCreateNetworkInstance, PreProcessRequest() - "
-                String dataErrorMessage = exceptionMessage + " Unable to encode PO/SDNC user/password string - " + ex.getMessage()
-                logger.debug(dataErrorMessage )
-                exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
-            }
+            String encodedString = UrnPropertiesReader.getSoBasicAuthHeader(execution)
+            execution.setVariable("BasicAuthHeaderValuePO", encodedString)
+            execution.setVariable("BasicAuthHeaderValueSDNC", encodedString)
 
             if (execution.getVariable("SavedWorkflowException1") != null) {
                 execution.setVariable(Prefix + "WorkflowException", execution.getVariable("SavedWorkflowException1"))

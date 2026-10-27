@@ -76,7 +76,6 @@ class UpdateVfModuleVolumeInfraV1Test extends MsoGroovyTest{
         when(mockExecution.getVariable("UPDVfModVol_relatedVfModuleLink")).thenReturn("/aai/v8/network/generic-vnfs/generic-vnf/12345/vf-modules/vf-module/12345")
         when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
         when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-        when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
         UpdateVfModuleVolumeInfraV1 obj = spy(UpdateVfModuleVolumeInfraV1.class)
         when(obj.getAAIClient()).thenReturn(client)

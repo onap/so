@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import jakarta.ws.rs.core.UriBuilder;
-import jakarta.xml.bind.DatatypeConverter;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -20,6 +19,7 @@ import org.json.JSONObject;
 import org.onap.logging.filter.spring.SpringClientPayloadFilter;
 import org.onap.so.client.ClientObservationRegistry;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
+import org.onap.so.utils.BasicAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +76,8 @@ public class CamundaRequestHandler {
     public ResponseEntity<List<HistoricProcessInstanceEntity>> getCamundaProcessInstanceHistory(String requestId,
             boolean retry, boolean activeOnly, boolean sort) {
         String targetUrl = buildCamundaUrlString(true, sort, activeOnly, requestId);
-        HttpHeaders headers = setCamundaHeaders(env.getRequiredProperty("mso.camundaAuth"), "");
+        HttpHeaders headers = setCamundaHeaders(env.getRequiredProperty(BasicAuth.SO_USERNAME_PROPERTY),
+                env.getProperty(BasicAuth.SO_PASSWORD_PROPERTY));
 
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
 
@@ -107,7 +108,8 @@ public class CamundaRequestHandler {
     protected ResponseEntity<List<HistoricActivityInstanceEntity>> getCamundaActivityHistory(String processInstanceId) {
         RestTemplate restTemplate = getRestTemplate(false);
         String targetUrl = buildCamundaUrlString(false, false, false, processInstanceId);
-        HttpHeaders headers = setCamundaHeaders(env.getRequiredProperty("mso.camundaAuth"), "");
+        HttpHeaders headers = setCamundaHeaders(env.getRequiredProperty(BasicAuth.SO_USERNAME_PROPERTY),
+                env.getProperty(BasicAuth.SO_PASSWORD_PROPERTY));
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
 
         return restTemplate.exchange(targetUrl, HttpMethod.GET, requestEntity,
@@ -185,13 +187,14 @@ public class CamundaRequestHandler {
         return result;
     }
 
-    protected HttpHeaders setCamundaHeaders(String auth, String msoKey) {
+    protected HttpHeaders setCamundaHeaders(String username, String password) {
         HttpHeaders headers = new HttpHeaders();
         List<org.springframework.http.MediaType> acceptableMediaTypes = new ArrayList<>();
         acceptableMediaTypes.add(org.springframework.http.MediaType.APPLICATION_JSON);
         headers.setAccept(acceptableMediaTypes);
-        if (auth != null) {
-            headers.add(HttpHeaders.AUTHORIZATION, "Basic " + DatatypeConverter.printBase64Binary(auth.getBytes()));
+        String authHeader = BasicAuth.header(username, password);
+        if (authHeader != null) {
+            headers.add(HttpHeaders.AUTHORIZATION, authHeader);
         }
         return headers;
     }
@@ -207,7 +210,8 @@ public class CamundaRequestHandler {
 
     protected void sendCamundaMessages(JSONObject msgJson) {
         String url = env.getProperty("mso.camundaURL") + "/sobpmnengine/message";
-        HttpHeaders headers = setCamundaHeaders(env.getRequiredProperty("mso.camundaAuth"), "");
+        HttpHeaders headers = setCamundaHeaders(env.getRequiredProperty(BasicAuth.SO_USERNAME_PROPERTY),
+                env.getProperty(BasicAuth.SO_PASSWORD_PROPERTY));
         headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         // Workflow may take a long time so use non-blocking request
         Flux<String> flux = WebClient.create().post().uri(url).headers(httpHeaders -> {

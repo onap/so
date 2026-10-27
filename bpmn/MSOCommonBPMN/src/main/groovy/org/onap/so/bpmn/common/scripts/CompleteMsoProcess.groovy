@@ -82,7 +82,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
 
             RequestsDbClient dbClient = getDbClient()
 
-            InfraActiveRequests infraRequest = dbClient.getInfraActiveRequests(execution.getVariable("CMSO_request_id"), UrnPropertiesReader.getVariable("mso.adapters.requestDb.auth"), UrnPropertiesReader.getVariable("mso.adapters.requestDb.endpoint"))
+            InfraActiveRequests infraRequest = dbClient.getInfraActiveRequests(execution.getVariable("CMSO_request_id"), UrnPropertiesReader.getSoBasicAuthHeader(execution), UrnPropertiesReader.getVariable("mso.adapters.requestDb.endpoint"))
             if(infraRequest == null){
                 infraRequest = new InfraActiveRequests();
                 infraRequest.setRequestId(execution.getVariable("CMSO_request_id"))
@@ -108,7 +108,7 @@ public class CompleteMsoProcess extends AbstractServiceTaskProcessor {
                 infraRequest.setPnfName(utils.getNodeText(xml, "pnfName"))
             }
 
-            dbClient.updateInfraActiveRequests(infraRequest, UrnPropertiesReader.getVariable("mso.adapters.requestDb.auth"), UrnPropertiesReader.getVariable("mso.adapters.requestDb.endpoint"))
+            dbClient.updateInfraActiveRequests(infraRequest, UrnPropertiesReader.getSoBasicAuthHeader(execution), UrnPropertiesReader.getVariable("mso.adapters.requestDb.endpoint"))
 
         } catch (Exception e) {
             logger.error("Internal error while updating request db", e);

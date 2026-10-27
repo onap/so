@@ -22,9 +22,11 @@ package org.onap.so.security;
 
 public class UserCredentials {
 
+    public static final String DEFAULT_ROLE = "SO-Client";
+
     private String username;
     private String password;
-    private String role;
+    private String role = DEFAULT_ROLE;
 
     public String getUsername() {
         return username;

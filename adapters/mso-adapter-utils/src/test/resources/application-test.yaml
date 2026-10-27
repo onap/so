@@ -58,8 +58,6 @@ mso:
     db:
       spring:
         endpoint: http://localhost:${wiremock.server.port}
-  db:
-    auth: Basic YnBlbDptc28tZGItMTUwNyE=
   site-name: localDevEnv
   async:
     core-pool-size: 50
@@ -97,3 +95,7 @@ management:
   endpoint:
     info:
       enabled: true
+so:
+  auth:
+    username: bpel
+    password: mso-db-1507!

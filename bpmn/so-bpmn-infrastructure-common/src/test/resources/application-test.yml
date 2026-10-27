@@ -1,5 +1,6 @@
 aai:
-  auth: test:test
+  username: test
+  password: test
   dme2:
     timeout: '30000'
   endpoint: http://localhost:${wiremock.server.port}
@@ -39,7 +40,6 @@ mso:
     completemsoprocess:
       endpoint: http://localhost:30253/CompleteMsoProcess
     db:
-      auth: test:test
       password: wLg4sjrAFUS8rfVfdvTXeQ==
       endpoint: http://localhost:${wiremock.server.port}/services/RequestsDbAdapter
       spring:
@@ -52,7 +52,6 @@ mso:
       db:
         endpoint: http://localhost:${wiremock.server.port}/services/RequestsDbAdapter
     po:
-      auth: test:test
       password: poBpmn:password1$
     sdnc:
       endpoint: http://localhost:${wiremock.server.port}/adapters/SDNCAdapter
@@ -92,8 +91,6 @@ mso:
       applicationname: NetworkManagementEthernetOverFiber
       version: '212'
     usrname: mso
-  db:
-    auth: Basic YnBlbDptc28tZGItMTUwNyE=
   default:
     adapter:
       namespace: http://com.att.mso
@@ -287,3 +284,7 @@ appc:
     secret: lgjXraD1HutKxv8jEN6tVouu
     service: ueb
     poolMembers: localhost:3904,localhost:3904,localhost:3904
+so:
+  auth:
+    username: bpel
+    password: mso-db-1507!

@@ -7,7 +7,6 @@ org:
         default_keystone_url_version: /v2.0
         default_keystone_reg_ex: "/[vV][0-9]"
         vnf:
-          bpelauth: test:test
           checkRequiredParameters: true
           addGetFilesOnVolumeReq: false
           sockettimeout: 30
@@ -22,7 +21,6 @@ org:
               pollTimeout: 7500
               pollInterval: 15
         network:
-          bpelauth: test:test
           sockettimeout: 5
           connecttimeout: 5
           retrycount: 5
@@ -67,8 +65,6 @@ mso:
     db:
       spring:
         endpoint: http://localhost:${wiremock.server.port}
-  db:
-    auth: Basic YnBlbDptc28tZGItMTUwNyE=
   site-name: localDevEnv
   async:
     core-pool-size: 50
@@ -130,3 +126,7 @@ appc:
       sdnc:
         read: SDNC-LCM-READ
         write: SDNC-LCM-WRITE
+so:
+  auth:
+    username: bpel
+    password: mso-db-1507!

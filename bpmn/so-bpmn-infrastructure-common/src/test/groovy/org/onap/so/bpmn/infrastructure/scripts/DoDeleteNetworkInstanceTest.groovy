@@ -1036,7 +1036,8 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			when(mockExecution.getVariable("testMessageId")).thenReturn("7df689f9-7b93-430b-9b9e-28140d70cc7ad")
 			when(mockExecution.getVariable("mso-request-id")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 			when(mockExecution.getVariable("mso-service-instance-id")).thenReturn("FH/VLXM/003717//SW_INTERNET")
-			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("poBpmn:password1\$")
+			when(mockExecution.getVariable("so.auth.username")).thenReturn("poBpmn")
+			when(mockExecution.getVariable("so.auth.password")).thenReturn("password1\$")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.rollback")).thenReturn("true")
@@ -1106,7 +1107,8 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			when(mockExecution.getVariable("globalSubscriberId")).thenReturn("globalId_45678905678")
 			when(mockExecution.getVariable("testMessageId")).thenReturn("7df689f9-7b93-430b-9b9e-28140d70cc7ad")
 
-			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("poBpmn:password1\$")
+			when(mockExecution.getVariable("so.auth.username")).thenReturn("poBpmn")
+			when(mockExecution.getVariable("so.auth.password")).thenReturn("password1\$")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 			DoDeleteNetworkInstance DoDeleteNetworkInstance = new DoDeleteNetworkInstance()
@@ -1208,7 +1210,8 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 			when(mockExecution.getVariable("mso-request-id")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 			when(mockExecution.getVariable("mso-service-instance-id")).thenReturn("FH/VLXM/003717//SW_INTERNET")
-			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("poBpmn:password1\$")
+			when(mockExecution.getVariable("so.auth.username")).thenReturn("poBpmn")
+			when(mockExecution.getVariable("so.auth.password")).thenReturn("password1\$")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.rollback")).thenReturn("true")
@@ -1273,7 +1276,8 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 			when(mockExecution.getVariable("mso-request-id")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 			when(mockExecution.getVariable("mso-service-instance-id")).thenReturn("FH/VLXM/003717//SW_INTERNET")
-			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("poBpmn:password1\$")
+			when(mockExecution.getVariable("so.auth.username")).thenReturn("poBpmn")
+			when(mockExecution.getVariable("so.auth.password")).thenReturn("password1\$")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.rollback")).thenReturn("true")
@@ -1489,7 +1493,6 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
             String networkId = "bdc5efe8-404a-409b-85f6-0dcc9eebae30"
             DoDeleteNetworkInstance doDeleteNetworkInstance = spy(DoDeleteNetworkInstance.class)
             when(doDeleteNetworkInstance.getAAIClient()).thenReturn(client)
@@ -1527,7 +1530,6 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
             when(mockExecution.getVariable(Prefix + "lcpCloudRegion")).thenReturn(null)
 			String networkId = "bdc5efe8-404a-409b-85f6-0dcc9eebae30"
 			DoDeleteNetworkInstance doDeleteNetworkInstance = spy(DoDeleteNetworkInstance.class)
@@ -1560,7 +1562,6 @@ String sdncAdapterWorkflowFormattedResponse_404 =
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
         when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-        when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
         when(mockExecution.getVariable(Prefix + "lcpCloudRegion")).thenReturn(null)
         String networkId = "bdc5efe8-404a-409b-85f6-0dcc9eebae30"
         DoDeleteNetworkInstance doDeleteNetworkInstance = spy(DoDeleteNetworkInstance.class)
@@ -1630,7 +1631,6 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
 			DoDeleteNetworkInstance DoDeleteNetworkInstance = new DoDeleteNetworkInstance()
 			DoDeleteNetworkInstance.callRESTQueryAAICloudRegion(mockExecution)
@@ -1662,7 +1662,6 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
 			// preProcessRequest(DelegateExecution execution)
 			DoDeleteNetworkInstance DoDeleteNetworkInstance = new DoDeleteNetworkInstance()
@@ -1697,7 +1696,6 @@ String sdncAdapterWorkflowFormattedResponse_404 =
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
 			// preProcessRequest(DelegateExecution execution)
 			DoDeleteNetworkInstance DoDeleteNetworkInstance = new DoDeleteNetworkInstance()

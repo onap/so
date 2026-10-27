@@ -82,14 +82,14 @@ public class DefaultAAIPropertiesImpl implements AAIProperties {
     }
 
     @Override
-    public String getAuth() {
-        Object value = props.get("aai.auth");
+    public String getUsername() {
+        Object value = props.get("aai.username");
         return value == null ? null : value.toString();
     }
 
     @Override
-    public String getKey() {
-        Object value = props.get("mso.msoKey");
+    public String getPassword() {
+        Object value = props.get("aai.password");
         return value == null ? null : value.toString();
     }
 }

@@ -2,6 +2,7 @@ package org.onap.so.client.orchestration;
 
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
+import org.onap.so.utils.BasicAuth;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -21,8 +22,10 @@ public class ApiHandlerClient {
     private String serviceInstantiationEndpoint;
     @Value("${mso.adapters.apihandler.endpoint:http://localhost:8080}")
     private String baseUri;
-    @Value("${mso.adapters.apihandler.auth:Basic dGVzdDp0ZXN0Cg==}")
-    private String auth;
+    @Value("${so.auth.username:#{null}}")
+    private String username;
+    @Value("${so.auth.password:#{null}}")
+    private String password;
 
     private RestTemplate restTemplate;
 
@@ -64,7 +67,7 @@ public class ApiHandlerClient {
 
     private HttpEntity<ServiceInstancesRequest> createRequest(ServiceInstancesRequest serviceInstancesRequest) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, auth);
+        headers.add(HttpHeaders.AUTHORIZATION, BasicAuth.header(username, password));
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         headers.set(HttpHeaders.ACCEPT, String.valueOf(MediaType.APPLICATION_JSON));
 

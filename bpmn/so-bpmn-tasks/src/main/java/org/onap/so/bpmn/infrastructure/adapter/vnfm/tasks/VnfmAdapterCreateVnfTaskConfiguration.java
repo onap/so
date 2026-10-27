@@ -39,6 +39,7 @@ import org.onap.so.configuration.BasicHttpHeadersProvider;
 import org.onap.so.configuration.HttpHeadersProvider;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.onap.so.rest.service.HttpRestServiceProviderImpl;
+import org.onap.so.utils.BasicAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +77,12 @@ public class VnfmAdapterCreateVnfTaskConfiguration {
     @Value("${rest.http.client.configuration.ssl.keyStorePassword:#{null}}")
     private String keyStorePassword;
 
+    @Value("${so.auth.username:#{null}}")
+    private String username;
+
+    @Value("${so.auth.password:#{null}}")
+    private String password;
+
     @Bean
     @Qualifier(VNFM_HTTP_REST_SERVICE_PROVIDER_BEAN)
     public HttpRestServiceProvider vnfmHttpRestServiceProvider(
@@ -84,7 +91,8 @@ public class VnfmAdapterCreateVnfTaskConfiguration {
         if (trustStore != null) {
             setTrustStore(restTemplate);
         }
-        return getHttpRestServiceProvider(restTemplate, new BasicHttpHeadersProvider(etsiVnfmAdapter.getAuth()));
+        return getHttpRestServiceProvider(restTemplate,
+                new BasicHttpHeadersProvider(BasicAuth.header(username, password)));
     }
 
     private void setTrustStore(final RestTemplate restTemplate) {

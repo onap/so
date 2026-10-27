@@ -10,7 +10,6 @@ ssl-enable: false
 mso:
   adapters:
     requestDb:
-      auth: Basic YnBlbDptc28tZGItMTUwNyE=
       endpoint: http://localhost:8081
   logPath: logs
   site-name: localSite
@@ -76,3 +75,7 @@ management:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
         step: 1m # Step size (i.e. reporting frequency) to use.
+so:
+  auth:
+    username: bpel
+    password: mso-db-1507!

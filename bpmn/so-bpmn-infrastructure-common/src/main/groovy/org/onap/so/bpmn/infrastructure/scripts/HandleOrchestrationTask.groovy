@@ -63,7 +63,7 @@ class HandleOrchestrationTask extends AbstractServiceTaskProcessor {
         }
         execution.setVariable("url", orchestrationTaskEndpoint)
         logger.debug("DB Adapter Endpoint is: " + orchestrationTaskEndpoint)
-        def dbAdapterAuth = UrnPropertiesReader.getVariable("mso.adapters.requestDb.auth")
+        def dbAdapterAuth = UrnPropertiesReader.getSoBasicAuthHeader(execution)
         Map<String, String> headerMap = [:]
         headerMap.put("content-type", "application/json")
         headerMap.put("Authorization", dbAdapterAuth)

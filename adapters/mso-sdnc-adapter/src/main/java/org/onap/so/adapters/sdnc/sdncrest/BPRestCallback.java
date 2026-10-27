@@ -26,7 +26,6 @@ package org.onap.so.adapters.sdnc.sdncrest;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
-import jakarta.xml.bind.DatatypeConverter;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -41,6 +40,7 @@ import org.onap.so.client.ClientObservationRegistry;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
+import org.onap.so.utils.BasicAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,8 +131,11 @@ public class BPRestCallback {
     protected boolean setAuthorizationHeader(HttpHeaders headers) {
         boolean error = false;
         try {
-            String userCredentials = env.getProperty(Constants.BPEL_AUTH_PROP);
-            String authorization = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
+            String authorization = BasicAuth.header(env.getProperty(BasicAuth.SO_USERNAME_PROPERTY),
+                    env.getProperty(BasicAuth.SO_PASSWORD_PROPERTY));
+            if (authorization == null) {
+                throw new IllegalStateException(BasicAuth.SO_USERNAME_PROPERTY + " is not configured");
+            }
             headers.set("Authorization", authorization);
         } catch (Exception e) {
             logger.error(LoggingAnchor.FOUR, MessageEnum.RA_SET_CALLBACK_AUTH_EXC.toString(), CAMUNDA,

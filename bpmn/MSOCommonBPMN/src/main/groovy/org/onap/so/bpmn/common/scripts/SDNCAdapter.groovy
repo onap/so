@@ -69,16 +69,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 			}
 
 			// Authorization Info
-			String basicAuthValue = UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
-
-			try {
-				def encodedString = utils.getBasicAuth(basicAuthValue, UrnPropertiesReader.getVariable("mso.msoKey", execution))
-				execution.setVariable("BasicAuthHeaderValue",encodedString)
-			} catch (IOException ex) {
-				logger.error(LoggingAnchor.FOUR, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-						"Unable to encode username password string", "BPMN",
-						ErrorCode.UnknownError.getValue())
-			}
+			execution.setVariable("BasicAuthHeaderValue", UrnPropertiesReader.getSoBasicAuthHeader(execution))
 
 			// TODO Use variables instead of passing xml request - Huh?
 

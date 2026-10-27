@@ -22,14 +22,34 @@ package org.onap.aaiclient.client.aai;
 
 import org.onap.so.client.CacheProperties;
 import org.onap.so.client.RestProperties;
+import org.onap.so.utils.BasicAuth;
 
 public interface AAIProperties extends RestProperties {
 
     public AAIVersion getDefaultVersion();
 
-    public String getAuth();
+    default String getUsername() {
+        return null;
+    }
 
-    public String getKey();
+    default String getPassword() {
+        return null;
+    }
+
+    /**
+     * @return {@code username:password}, or {@code null} when no username is configured
+     */
+    default String getAuth() {
+        return BasicAuth.credentials(getUsername(), getPassword());
+    }
+
+    /**
+     * @deprecated credentials are no longer encrypted, so no key is needed
+     */
+    @Deprecated
+    default String getKey() {
+        return null;
+    }
 
     @Override
     public default boolean mapNotFoundToEmpty() {

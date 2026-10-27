@@ -497,17 +497,8 @@ class CatalogDbUtils {
 
 	private String getBasicDBAuthHeader(DelegateExecution execution) {
 
-		String encodedString = null
-		try {
-			String basicAuthValueDB = UrnPropertiesReader.getVariable("mso.adapters.db.auth", execution)
-			logger.debug("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB)
-
-			encodedString = utils.getBasicAuth(basicAuthValueDB, UrnPropertiesReader.getVariable("mso.msoKey", execution))
-			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
-		} catch (IOException ex) {
-			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
-			logger.error(dataErrorMessage)
-		}
+		String encodedString = UrnPropertiesReader.getSoBasicAuthHeader(execution)
+		execution.setVariable("BasicAuthHeaderValueDB", encodedString)
 		return encodedString
 	}
 

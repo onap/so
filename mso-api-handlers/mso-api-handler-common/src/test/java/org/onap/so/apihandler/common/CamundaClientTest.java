@@ -75,7 +75,8 @@ public class CamundaClientTest {
 
     @Before
     public void setup() {
-        when(env.getRequiredProperty("mso.camundaAuth")).thenReturn("user:password");
+        when(env.getRequiredProperty("so.auth.username")).thenReturn("user");
+        when(env.getProperty("so.auth.password")).thenReturn("password");
         when(env.getRequiredProperty("mso.camundaURL")).thenReturn("http://localhost:8080");
     }
 

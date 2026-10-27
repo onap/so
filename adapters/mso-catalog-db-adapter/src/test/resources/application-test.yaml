@@ -9,8 +9,6 @@ mso:
     db:
       spring:
         endpoint: http://localhost:${wiremock.server.port}
-  db:
-    auth: Basic YnBlbDptc28tZGItMTUwNyE=
 
 spring:
   datasource:
@@ -103,3 +101,7 @@ cloud_config:
       username: "user"
       password: "password"
       version: "2.0"
+so:
+  auth:
+    username: bpel
+    password: mso-db-1507!

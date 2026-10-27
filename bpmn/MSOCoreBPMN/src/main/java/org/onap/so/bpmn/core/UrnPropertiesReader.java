@@ -24,6 +24,7 @@ package org.onap.so.bpmn.core;
 
 import java.util.Optional;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.onap.so.utils.BasicAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,6 +105,29 @@ public class UrnPropertiesReader {
         } else {
             return null;
         }
+    }
+
+    /**
+     * @return the {@code Authorization} header for calls to other SO components
+     */
+    public static String getSoBasicAuthHeader() {
+        return BasicAuth.header(getVariable(BasicAuth.SO_USERNAME_PROPERTY),
+                getVariable(BasicAuth.SO_PASSWORD_PROPERTY));
+    }
+
+    /**
+     * Like {@link #getSoBasicAuthHeader()}, but credentials set on the execution take precedence. Unlike
+     * {@link #getVariable(String, DelegateExecution)}, the credentials are not copied into the execution, so they are
+     * not persisted with the process variables.
+     */
+    public static String getSoBasicAuthHeader(DelegateExecution execution) {
+        return BasicAuth.header(getVariableWithoutCaching(BasicAuth.SO_USERNAME_PROPERTY, execution),
+                getVariableWithoutCaching(BasicAuth.SO_PASSWORD_PROPERTY, execution));
+    }
+
+    private static String getVariableWithoutCaching(String variableName, DelegateExecution execution) {
+        Object value = execution.getVariable(variableName);
+        return value != null ? String.valueOf(value) : getVariable(variableName);
     }
 
     public static String getVariable(String variableName, String defaultValue) {

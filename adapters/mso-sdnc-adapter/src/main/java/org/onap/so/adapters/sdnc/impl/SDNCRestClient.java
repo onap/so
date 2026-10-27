@@ -52,6 +52,7 @@ import org.onap.so.adapters.sdnc.client.SDNCAdapterCallbackRequest;
 import org.onap.so.adapters.sdnc.client.SDNCCallbackAdapterPortType;
 import org.onap.so.adapters.sdnc.client.SDNCCallbackAdapterService;
 import org.onap.so.logger.MessageEnum;
+import org.onap.so.utils.BasicAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -311,9 +312,11 @@ public class SDNCRestClient {
             try {
                 Map<String, Object> reqCtx = bp.getRequestContext();
                 Map<String, List<String>> headers = new HashMap<>();
-                String userCredentials = env.getProperty(Constants.BPEL_AUTH_PROP);
-
-                String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
+                String basicAuth = BasicAuth.header(env.getProperty(BasicAuth.SO_USERNAME_PROPERTY),
+                        env.getProperty(BasicAuth.SO_PASSWORD_PROPERTY));
+                if (basicAuth == null) {
+                    throw new IllegalStateException(BasicAuth.SO_USERNAME_PROPERTY + " is not configured");
+                }
                 reqCtx.put(MessageContext.HTTP_REQUEST_HEADERS, headers);
                 headers.put("Authorization", Collections.singletonList(basicAuth));
             } catch (Exception e2) {

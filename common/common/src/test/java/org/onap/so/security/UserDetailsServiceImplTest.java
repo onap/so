@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.List;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class UserDetailsServiceImplTest {
 
@@ -20,7 +21,29 @@ public class UserDetailsServiceImplTest {
         testedObject.setUsercredentials(prepareUserCredentials());
         UserDetails result = testedObject.loadUserByUsername(USERNAME);
         assertThat(result.getUsername()).isEqualTo(USERNAME);
-        assertThat(result.getPassword()).isEqualTo(PASSWORD);
+        assertThat(new BCryptPasswordEncoder().matches(PASSWORD, result.getPassword())).isTrue();
+    }
+
+    @Test
+    public void loadUserByUsername_keepsBcryptHash() {
+        String hash = new BCryptPasswordEncoder().encode(PASSWORD);
+        List<UserCredentials> credentials = prepareUserCredentials();
+        credentials.get(0).setPassword(hash);
+        UserDetailsServiceImpl testedObject = new UserDetailsServiceImpl();
+        testedObject.setUsercredentials(credentials);
+        assertThat(testedObject.loadUserByUsername(USERNAME).getPassword()).isEqualTo(hash);
+    }
+
+    @Test
+    public void loadUserByUsername_defaultsRole() {
+        UserCredentials userCredentials = new UserCredentials();
+        userCredentials.setUsername(USERNAME);
+        userCredentials.setPassword(PASSWORD);
+        UserDetailsServiceImpl testedObject = new UserDetailsServiceImpl();
+        testedObject.setUsercredentials(new ArrayList<>(List.of(userCredentials)));
+        assertThat(testedObject.loadUserByUsername(USERNAME).getAuthorities())
+                .extracting(authority -> authority.getAuthority())
+                .containsExactly("ROLE_" + UserCredentials.DEFAULT_ROLE);
     }
 
     @Test

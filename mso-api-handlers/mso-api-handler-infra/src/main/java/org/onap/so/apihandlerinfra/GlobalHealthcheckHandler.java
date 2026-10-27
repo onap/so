@@ -25,6 +25,7 @@ package org.onap.so.apihandlerinfra;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.List;
 import java.util.stream.Collectors;
 import jakarta.annotation.PostConstruct;
@@ -42,6 +43,7 @@ import org.apache.http.HttpStatus;
 import org.onap.so.apihandlerinfra.HealthCheckConfig.Endpoint;
 import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
+import org.onap.so.utils.BasicAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +78,6 @@ public class GlobalHealthcheckHandler {
     protected static final String BPMN_PROPERTY = PROPERTY_DOMAIN + ".endpoints.bpmn";
     protected static final String ASDC_PROPERTY = PROPERTY_DOMAIN + ".endpoints.asdc";
     protected static final String REQUESTDBATTSVC_PROPERTY = PROPERTY_DOMAIN + ".endpoints.requestdbattsvc";
-    protected static final String MSO_AUTH_PROPERTY = PROPERTY_DOMAIN + ".auth";
     protected static final String DEFAULT_PROPERTY_VALUE = "";
 
     // e.g. /manage
@@ -98,7 +99,8 @@ public class GlobalHealthcheckHandler {
     @PostConstruct
     protected void init() {
         actuatorContextPath = env.getProperty(CONTEXTPATH_PROPERTY, String.class, DEFAULT_PROPERTY_VALUE);
-        msoAuth = env.getProperty(MSO_AUTH_PROPERTY, String.class, DEFAULT_PROPERTY_VALUE);
+        msoAuth = Objects.requireNonNullElse(BasicAuth.header(env.getProperty(BasicAuth.SO_USERNAME_PROPERTY),
+                env.getProperty(BasicAuth.SO_PASSWORD_PROPERTY)), DEFAULT_PROPERTY_VALUE);
     }
 
     @GET

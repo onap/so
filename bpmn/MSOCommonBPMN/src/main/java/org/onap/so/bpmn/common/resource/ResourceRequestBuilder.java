@@ -396,7 +396,7 @@ public class ResourceRequestBuilder {
                 ONAPComponents.CATALOG_DB);
 
         client.addAdditionalHeader("Accept", "application/json");
-        client.addAdditionalHeader("Authorization", UrnPropertiesReader.getVariable("mso.db.auth"));
+        client.addAdditionalHeader("Authorization", UrnPropertiesReader.getSoBasicAuthHeader());
 
         Response apiResponse = client.get();
 

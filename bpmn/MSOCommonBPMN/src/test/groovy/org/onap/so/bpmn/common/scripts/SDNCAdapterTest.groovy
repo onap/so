@@ -819,7 +819,8 @@ def sdncAdapterResponseError =
 
 		String sdncAdapterWorkflowRequest = FileUtil.readResourceFile("__files/SDN-ETHERNET-INTERNET/SDNCAdapterV1/sdncadapterworkflowrequest.xml");
 		ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-		when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("test:test")
+		when(mockExecution.getVariable("so.auth.username")).thenReturn("test")
+		when(mockExecution.getVariable("so.auth.password")).thenReturn("test")
 		when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 		when(mockExecution.getVariable("mso-request-id")).thenReturn("testReqId")
 		when(mockExecution.getVariable("sdncAdapterWorkflowRequest")).thenReturn(sdncAdapterWorkflowRequest)

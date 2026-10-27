@@ -45,6 +45,7 @@ import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogServiceModVerIdLookup;
 import org.onap.so.db.request.data.controller.InstanceNameDuplicateCheckRequest;
 import org.onap.so.logging.jaxrs.filter.SOSpringClientFilter;
+import org.onap.so.utils.BasicAuth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -76,8 +77,11 @@ public class RequestsDbClient {
     @Value("${mso.adapters.requestDb.endpoint:#{null}}")
     protected String endpoint;
 
-    @Value("${mso.adapters.requestDb.auth:#{null}}")
-    protected String msoAdaptersAuth;
+    @Value("${so.auth.username:#{null}}")
+    protected String username;
+
+    @Value("${so.auth.password:#{null}}")
+    protected String password;
 
     private String getOrchestrationFilterURI = "/infraActiveRequests/getOrchestrationFiltersFromInfraActive/";
     private static final String OPERATION_STATUS_SEARCH = "/operationStatus/search";
@@ -522,7 +526,7 @@ public class RequestsDbClient {
 
     private HttpHeaders getHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.AUTHORIZATION, msoAdaptersAuth);
+        headers.set(HttpHeaders.AUTHORIZATION, getAuthHeader());
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         return headers;
@@ -569,4 +573,7 @@ public class RequestsDbClient {
         }
     }
 
+    private String getAuthHeader() {
+        return BasicAuth.header(username, password);
+    }
 }

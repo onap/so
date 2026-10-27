@@ -29,9 +29,11 @@ import org.onap.so.client.adapter.cnf.entities.InstanceRequest;
 import org.onap.so.client.adapter.cnf.entities.InstanceResponse;
 import org.onap.so.client.adapter.cnf.entities.UpgradeInstanceResponse;
 import org.onap.so.client.adapter.cnf.entities.UpgradeInstanceRequest;
+import org.onap.so.utils.BasicAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -55,6 +57,12 @@ public class CnfAdapterClient {
 
     @Autowired
     private Environment env;
+
+    @Value("${so.auth.username:#{null}}")
+    private String username;
+
+    @Value("${so.auth.password:#{null}}")
+    private String password;
 
     private static final String INSTANCE_CREATE_PATH = "/api/cnf-adapter/v1/instance";
 
@@ -142,12 +150,10 @@ public class CnfAdapterClient {
         acceptableMediaTypes.add(MediaType.APPLICATION_JSON);
         headers.setAccept(acceptableMediaTypes);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        /*
-         * try { String userCredentials = CryptoUtils.decrypt(env.getRequiredProperty("mso.cnf.adapter.auth"),
-         * env.getRequiredProperty("mso.msoKey")); if (userCredentials != null) { headers.add(HttpHeaders.AUTHORIZATION,
-         * "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes())); } } catch
-         * (GeneralSecurityException e) { logger.error("Security exception", e); }
-         */
+        String authHeader = BasicAuth.header(username, password);
+        if (authHeader != null) {
+            headers.set(HttpHeaders.AUTHORIZATION, authHeader);
+        }
         return headers;
     }
 

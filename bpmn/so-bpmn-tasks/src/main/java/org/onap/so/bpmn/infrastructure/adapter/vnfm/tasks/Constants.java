@@ -47,7 +47,6 @@ public class Constants {
     public static final String SPACE = "\\s+";
 
     public static final String VNFM_ADAPTER_DEFAULT_URL = "https://so-vnfm-adapter.onap:9092/so/vnfm-adapter/v1/";
-    public static final String VNFM_ADAPTER_DEFAULT_AUTH = "Basic dm5mbTpwYXNzd29yZDEk";
 
     public static final String FORWARD_SLASH = "/";
     public static final String PRELOAD_VNFS_URL = "/restconf/config/VNF-API:preload-vnfs/vnf-preload-list/";

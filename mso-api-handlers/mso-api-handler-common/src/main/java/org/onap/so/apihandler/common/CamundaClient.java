@@ -27,7 +27,6 @@ package org.onap.so.apihandler.common;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.xml.bind.DatatypeConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.camundabeans.CamundaBooleanInput;
@@ -39,6 +38,7 @@ import org.onap.so.apihandler.camundabeans.CamundaVIDRequest;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.BPMNFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ClientConnectionException;
+import org.onap.so.utils.BasicAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +57,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @Component
 public class CamundaClient {
     private static Logger logger = LoggerFactory.getLogger(CamundaClient.class);
-    private static final String BASIC = "Basic ";
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final ObjectMapper wrapMapper;
 
@@ -264,15 +263,9 @@ public class CamundaClient {
         acceptableMediaTypes.add(org.springframework.http.MediaType.APPLICATION_JSON);
         headers.setAccept(acceptableMediaTypes);
         headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-        headers.add(HttpHeaders.AUTHORIZATION, addAuthorizationHeader(env.getRequiredProperty("mso.camundaAuth"), ""));
+        headers.add(HttpHeaders.AUTHORIZATION, BasicAuth.header(env.getRequiredProperty(BasicAuth.SO_USERNAME_PROPERTY),
+                env.getProperty(BasicAuth.SO_PASSWORD_PROPERTY)));
         return headers;
-    }
-
-    protected String addAuthorizationHeader(String auth, String msoKey) {
-        if (auth != null) {
-            return BASIC + DatatypeConverter.printBase64Binary(auth.getBytes());
-        }
-        return null;
     }
 
     protected BPMNFailureException createBPMNFailureException(HttpStatusCodeException e) {

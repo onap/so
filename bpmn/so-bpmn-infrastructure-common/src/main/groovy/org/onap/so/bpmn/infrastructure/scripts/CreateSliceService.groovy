@@ -204,7 +204,7 @@ public class CreateSliceService extends AbstractServiceTaskProcessor {
             def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint",execution)
             execution.setVariable("CSSOS_dbAdapterEndpoint", dbAdapterEndpoint)
             logger.debug("DB Adapter Endpoint is: " + dbAdapterEndpoint)
-            def dbAdapterAuth = UrnPropertiesReader.getVariable("mso.requestDb.auth")
+            def dbAdapterAuth = UrnPropertiesReader.getSoBasicAuthHeader(execution)
             Map<String, String> CSSOS_headerMap = [:]
             CSSOS_headerMap.put("content-type", "application/soap+xml")
             CSSOS_headerMap.put("Authorization", dbAdapterAuth)

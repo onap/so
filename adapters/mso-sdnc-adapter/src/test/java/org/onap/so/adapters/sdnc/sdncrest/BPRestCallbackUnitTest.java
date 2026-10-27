@@ -16,7 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.adapters.sdnc.impl.Constants;
+import org.onap.so.utils.BasicAuth;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -124,7 +124,8 @@ public class BPRestCallbackUnitTest {
     @Test
     public void setAuthorizationHeaderTest() {
         HttpHeaders authHeaders = new HttpHeaders();
-        when(env.getProperty(Constants.BPEL_AUTH_PROP)).thenReturn("test:test");
+        when(env.getProperty(BasicAuth.SO_USERNAME_PROPERTY)).thenReturn("test");
+        when(env.getProperty(BasicAuth.SO_PASSWORD_PROPERTY)).thenReturn("test");
         boolean result = bpRestCallback.setAuthorizationHeader(authHeaders);
         assertFalse(result);
     }
@@ -132,7 +133,7 @@ public class BPRestCallbackUnitTest {
     @Test
     public void setAuthorizationHeaderErrorTest() {
         HttpHeaders authHeaders = new HttpHeaders();
-        when(env.getProperty(Constants.BPEL_AUTH_PROP)).thenReturn(null);
+        when(env.getProperty(BasicAuth.SO_USERNAME_PROPERTY)).thenReturn(null);
         boolean result = bpRestCallback.setAuthorizationHeader(authHeaders);
         assertTrue(result);
     }

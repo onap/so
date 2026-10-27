@@ -61,7 +61,6 @@ management:
 mso:
   adapters:
     requestDb:
-      auth: Basic YnBlbDptc28tZGItMTUwNyE=
       endpoint: http://localhost:8081
   logPath: logs
   catalog:
@@ -69,8 +68,6 @@ mso:
       spring:
         endpoint: "http://localhost:"
   camundaURL: http://localhost:${wiremock.server.port}/
-  db:
-    auth: Basic YnBlbDptc28tZGItMTUwNyE=
   site-name: siteName
   asdc-connections:
     asdc-controller1:
@@ -105,3 +102,7 @@ mso:
 
 sdc:
   endpoint: http://localhost:${wiremock.server.port}
+so:
+  auth:
+    username: bpel
+    password: mso-db-1507!

@@ -50,7 +50,8 @@ public class SDNCAdapterRestV2Test {
 		when(mockExecution.getVariable("prefix")).thenReturn("SDNCREST_")
 		when(mockExecution.getVariable("mso-request-id")).thenReturn("testMsoRequestId")
 		when(mockExecution.getVariable("SDNCREST_Request")).thenReturn(sdncAdapterWorkflowRequest)
-		when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("test:test")
+		when(mockExecution.getVariable("so.auth.username")).thenReturn("test")
+		when(mockExecution.getVariable("so.auth.password")).thenReturn("test")
 		when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 		when(mockExecution.getVariable("mso.adapters.sdnc.rest.endpoint")).thenReturn("http://localhost:18080/adapters/rest/v1/sdnc/")
@@ -87,7 +88,8 @@ public class SDNCAdapterRestV2Test {
 		when(mockExecution.getVariable("prefix")).thenReturn("SDNCREST_")
 		when(mockExecution.getVariable("mso-request-id")).thenReturn("testMsoRequestId")
 		when(mockExecution.getVariable("SDNCREST_Request")).thenReturn(sdncAdapterWorkflowRequest)
-		when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("test:test")
+		when(mockExecution.getVariable("so.auth.username")).thenReturn("test")
+		when(mockExecution.getVariable("so.auth.password")).thenReturn("test")
 		when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 		when(mockExecution.getVariable("mso.adapters.sdnc.rest.endpoint")).thenReturn("http://localhost:18080/adapters/rest/v1/sdnc/")
@@ -123,7 +125,8 @@ public class SDNCAdapterRestV2Test {
 		when(mockExecution.getVariable("prefix")).thenReturn("SDNCREST_")
 		when(mockExecution.getVariable("mso-request-id")).thenReturn("testMsoRequestId")
 		when(mockExecution.getVariable("SDNCREST_Request")).thenReturn(sdncAdapterWorkflowRequest)
-		when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("poBpmn:password1\$")
+		when(mockExecution.getVariable("so.auth.username")).thenReturn("poBpmn")
+		when(mockExecution.getVariable("so.auth.password")).thenReturn("password1\$")
 		when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 		when(mockExecution.getVariable("mso.adapters.sdnc.rest.endpoint")).thenReturn("http://localhost:18080/adapters/rest/v1/sdnc/")

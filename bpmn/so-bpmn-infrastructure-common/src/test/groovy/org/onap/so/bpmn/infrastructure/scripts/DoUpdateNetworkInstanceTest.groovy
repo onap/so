@@ -826,8 +826,8 @@ String rollbackNetworkRequest =
         when(mockExecution.getVariable("bpmnRequest")).thenReturn(jsonIncomingRequest)
         when(mockExecution.getVariable("sdncVersion")).thenReturn("1610")
         when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
-        when(mockExecution.getVariable("mso.adapters.po.auth")).
-                thenReturn("test:test")
+        when(mockExecution.getVariable("so.auth.username")).thenReturn("test")
+        when(mockExecution.getVariable("so.auth.password")).thenReturn("test")
         when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 
@@ -893,8 +893,8 @@ String rollbackNetworkRequest =
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn("globalId_45678905678")
         when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
 
-        when(mockExecution.getVariable("mso.adapters.po.auth")).
-                thenReturn("test:test")
+        when(mockExecution.getVariable("so.auth.username")).thenReturn("test")
+        when(mockExecution.getVariable("so.auth.password")).thenReturn("test")
         when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
         when(mockExecution.getVariable("mso.rollback")).thenReturn("true")
@@ -957,7 +957,8 @@ String rollbackNetworkRequest =
 			when(mockExecution.getVariable("sdncVersion")).thenReturn("1610")
 
 			when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
-			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("poBpmn:password1\$")
+			when(mockExecution.getVariable("so.auth.username")).thenReturn("poBpmn")
+			when(mockExecution.getVariable("so.auth.password")).thenReturn("password1\$")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.rollback")).thenReturn("true")
@@ -1013,7 +1014,8 @@ String rollbackNetworkRequest =
 
 			when(mockExecution.getVariable("bpmnRequest")).thenReturn(jsonIncomingRequest_MissingCloudRegion)
 			when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
-			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("poBpmn:password1\$")
+			when(mockExecution.getVariable("so.auth.username")).thenReturn("poBpmn")
+			when(mockExecution.getVariable("so.auth.password")).thenReturn("password1\$")
 			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.rollback")).thenReturn("true")
@@ -1199,7 +1201,6 @@ String rollbackNetworkRequest =
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
         when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-        when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
         DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
         DoUpdateNetworkInstance.callRESTQueryAAICloudRegion(mockExecution)
@@ -1227,7 +1228,6 @@ String rollbackNetworkRequest =
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
         when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-        when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
         DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
         DoUpdateNetworkInstance.callRESTQueryAAICloudRegion(mockExecution)
@@ -1254,7 +1254,6 @@ String rollbackNetworkRequest =
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
         when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-        when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
 
         DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
         DoUpdateNetworkInstance.callRESTQueryAAICloudRegion(mockExecution)

@@ -23,7 +23,6 @@
 package org.onap.so.bpmn.common.recipe;
 
 import java.io.IOException;
-import jakarta.xml.bind.DatatypeConverter;
 import org.onap.so.logger.LoggingAnchor;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -53,13 +52,7 @@ public class BpmnRestClient {
 
     private static Logger logger = LoggerFactory.getLogger(BpmnRestClient.class);
 
-    public static final String DEFAULT_BPEL_AUTH = "admin:admin";
-
-    public static final String ENCRYPTION_KEY_PROP = "org.onap.so.adapters.network.encryptionKey";
-
     public static final String CONTENT_TYPE_JSON = "application/json";
-
-    public static final String CAMUNDA_AUTH = "mso.camundaAuth";
 
     @Autowired
     private UrnPropertiesReader urnPropertiesReader;
@@ -102,15 +95,9 @@ public class BpmnRestClient {
 
         StringEntity input = new StringEntity(jsonReq);
         input.setContentType(CONTENT_TYPE_JSON);
-        String encryptedCredentials;
-        encryptedCredentials = urnPropertiesReader.getVariable(CAMUNDA_AUTH);
-        if (encryptedCredentials != null) {
-            String userCredentials =
-                    getEncryptedPropValue(encryptedCredentials, DEFAULT_BPEL_AUTH, ENCRYPTION_KEY_PROP);
-            if (userCredentials != null) {
-                post.addHeader("Authorization",
-                        "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes()));
-            }
+        String authHeader = UrnPropertiesReader.getSoBasicAuthHeader();
+        if (authHeader != null) {
+            post.addHeader("Authorization", authHeader);
         }
 
         post.setEntity(input);
@@ -180,22 +167,6 @@ public class BpmnRestClient {
                     ErrorCode.BusinessProcessError.getValue(), "Error in APIH Warp request", e);
         }
         return jsonReq;
-    }
-
-    /**
-     * <br>
-     * 
-     * @param prop
-     * @param defaultValue
-     * @param encryptionKey
-     * @return
-     * @since ONAP Beijing Release
-     */
-    protected String getEncryptedPropValue(String prop, String defaultValue, String encryptionKey) {
-        if (prop != null && !prop.isEmpty()) {
-            return prop;
-        }
-        return defaultValue;
     }
 
 }
