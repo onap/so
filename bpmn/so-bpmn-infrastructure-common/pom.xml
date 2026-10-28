@@ -185,17 +185,6 @@
       <groupId>jakarta.annotation</groupId>
       <artifactId>jakarta.annotation-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.onap.msb.java-sdk</groupId>
-      <artifactId>msb-java-sdk</artifactId>
-      <version>1.2.0</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.eclipsesource.jaxrs</groupId>
-          <artifactId>jersey-all</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
