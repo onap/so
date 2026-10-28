@@ -39,11 +39,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.json.JSONObject;
-import org.onap.msb.sdk.discovery.common.RouteException;
-import org.onap.msb.sdk.httpclient.RestServiceCreater;
-import org.onap.msb.sdk.httpclient.msb.MSBServiceClient;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
-import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.GenericResourceApi;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
@@ -68,11 +64,8 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
 
     @Autowired
     private Environment env;
-    private static final String DEFAULT_MSB_IP = "127.0.0.1";
-    private static final int DEFAULT_MSB_PORT = 80;
     private static final String SDCADAPTOR_INPUTS = "resourceParameters";
     private static final String TOPOLOGY_PROPERTIES = "topology.properties";
-    public static final String ONAP_IP = "ONAP_IP";
 
     private static final String POST_BODY_TEMPLATE =
             "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://org.onap.so/requestsdb\"><soapenv:Header/><soapenv:Body>\n"
@@ -96,7 +89,7 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
                     + "     </ns:getResourceOperationStatus></soapenv:Body></soapenv:Envelope>";
 
 
-    private void updateResOperStatus(ResourceOperationStatus resourceOperationStatus) throws RouteException {
+    private void updateResOperStatus(ResourceOperationStatus resourceOperationStatus) throws IOException {
         logger.info("AbstractSdncOperationTask.updateResOperStatus begin!");
         String requestsdbEndPoint = env.getProperty("mso.adapters.openecomp.db.endpoint");
         HttpPost httpPost = new HttpPost(requestsdbEndPoint);
@@ -118,11 +111,10 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
         return postBody;
     }
 
-    protected String httpPost(String url, HttpPost httpPost) throws RouteException {
+    protected String httpPost(String url, HttpPost httpPost) throws IOException {
         logger.info("AbstractSdncOperationTask.httpPost begin!");
         String result = null;
 
-        String errorMsg;
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpPost);
             result = EntityUtils.toString(closeableHttpResponse.getEntity());
@@ -130,24 +122,15 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
             if (closeableHttpResponse.getStatusLine().getStatusCode() != 200) {
                 logger.info("exception: fail for status code = {}",
                         closeableHttpResponse.getStatusLine().getStatusCode());
-                throw new RouteException(result, "SERVICE_GET_ERR");
+                throw new IOException(url + " returned status " + closeableHttpResponse.getStatusLine().getStatusCode()
+                        + ": " + result);
             }
 
             closeableHttpResponse.close();
-        } catch (IOException e) {
-            errorMsg = url + ":httpPostWithJSON connect faild";
-            logger.info("exception: POST_CONNECT_FAILD : {}", errorMsg);
-            throwsRouteException(errorMsg, e, "POST_CONNECT_FAILD");
         }
 
         logger.info("AbstractSdncOperationTask.httpPost end!");
         return result;
-    }
-
-    private static void throwsRouteException(String errorMsg, Exception e, String errorCode) throws RouteException {
-        String msg = errorMsg + ".errorMsg:" + e.getMessage();
-        logger.info("exception: {}", msg);
-        throw new RouteException(errorMsg, errorCode);
     }
 
     private String getPostStringBody(ResourceOperationStatus resourceOperationStatus) {
@@ -177,7 +160,7 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
     }
 
     private ResourceOperationStatus getResourceOperationStatus(String serviceId, String operationId,
-            String resourceTemplateUUID) throws RouteException {
+            String resourceTemplateUUID) throws IOException {
         logger.info("AbstractSdncOperationTask.getResourceOperationStatus begin!");
         String requestsdbEndPoint = env.getProperty("mso.adapters.openecomp.db.endpoint");
         HttpPost httpPost = new HttpPost(requestsdbEndPoint);
@@ -219,11 +202,10 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) {
         logger.info("AbstractSdncOperationTask.execute begin!");
-        GenericResourceApi genericResourceApiClient = getGenericResourceApiClient();
         try {
             Map<String, String> inputs = getInputs(execution);
 
-            sendRestrequestAndHandleResponse(execution, inputs, genericResourceApiClient);
+            sendRestrequestAndHandleResponse(execution, inputs);
             execution.setVariable("SDNCA_SuccessIndicator", true);
         } catch (Exception e) {
             logger.info("exception: AbstractSdncOperationTask.fail!");
@@ -254,8 +236,8 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
         return inputs;
     }
 
-    public abstract void sendRestrequestAndHandleResponse(DelegateExecution execution, Map<String, String> inputs,
-            GenericResourceApi genericResourceApiClient) throws Exception;
+    public abstract void sendRestrequestAndHandleResponse(DelegateExecution execution, Map<String, String> inputs)
+            throws Exception;
 
     public void updateProgress(DelegateExecution execution, String status, String errorCode, String progress,
             String statusDescription) {
@@ -294,18 +276,6 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
     }
 
 
-    protected boolean isSend2SdncDirectly() {
-        logger.info("AbstractSdncOperationTask.isSend2SdncDirectly begin!");
-        String sdncHost = UrnPropertiesReader.getVariable("sdnc.host");
-        if (!StringUtils.isBlank(sdncHost)) {
-            logger.info("AbstractSdncOperationTask.isSend2SdncDirectly = true.");
-            return true;
-        }
-
-        logger.info("AbstractSdncOperationTask.isSend2SdncDirectly = false.");
-        return false;
-    }
-
     protected String getSdncIp() {
         logger.info("AbstractSdncOperationTask.getSdncIp begin.");
         String sdncIp = null;
@@ -329,31 +299,8 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
         return sdncHost;
     }
 
-    private GenericResourceApi getGenericResourceApiClient() {
-        logger.info("AbstractSdncOperationTask.getGenericResourceApiClient begin!");
-        String msbIp = System.getenv().get(ONAP_IP);
-        int msbPort = DEFAULT_MSB_PORT;
-        if (StringUtils.isBlank(msbIp) || !isIp(msbIp)) {
-            msbIp = env.getProperty("msb-ip");
-            if (StringUtils.isBlank(msbIp)) {
-                msbIp = env.getProperty("msb.address", DEFAULT_MSB_IP);
-            }
-        }
-        String strMsbPort = env.getProperty("msb-port");
-        if (StringUtils.isBlank(strMsbPort)) {
-            strMsbPort = env.getProperty("msb.port", String.valueOf(DEFAULT_MSB_PORT));
-        }
-        msbPort = Integer.valueOf(strMsbPort);
-
-        logger.info("AbstractSdncOperationTask.getGenericResourceApiClient msbIp = {} msbPort = {}", msbIp, msbPort);
-        MSBServiceClient msbClient = new MSBServiceClient(msbIp, msbPort);
-        RestServiceCreater restServiceCreater = new RestServiceCreater(msbClient);
-        logger.info("AbstractSdncOperationTask.getGenericResourceApiClient end!");
-        return restServiceCreater.createService(GenericResourceApi.class);
-    }
-
-    protected boolean isIp(String msbIp) {
-        return !StringUtils.isBlank(msbIp) && msbIp.split("\\.").length == 4;
+    protected boolean isIp(String ip) {
+        return !StringUtils.isBlank(ip) && ip.split("\\.").length == 4;
     }
 
     public String getProcessKey(DelegateExecution execution) {

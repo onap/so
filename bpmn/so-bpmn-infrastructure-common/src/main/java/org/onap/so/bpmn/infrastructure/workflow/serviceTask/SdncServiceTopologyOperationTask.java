@@ -23,19 +23,16 @@
 package org.onap.so.bpmn.infrastructure.workflow.serviceTask;
 
 
+import java.io.IOException;
 import java.util.Map;
 import org.onap.so.logger.LoggingAnchor;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.onap.msb.sdk.discovery.common.RouteException;
-import org.onap.so.bpmn.core.WorkflowException;
-import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.GenericResourceApi;
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.HeaderUtil;
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.builder.ServiceRpcInputEntityBuilder;
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcServiceTopologyOperationInputEntity;
-import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcServiceTopologyOperationOutputEntity;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.requestsdb.RequestsDbConstant;
 import org.slf4j.Logger;
@@ -50,28 +47,20 @@ public class SdncServiceTopologyOperationTask extends AbstractSdncOperationTask 
     private static final String URL = "/restconf/operations/GENERIC-RESOURCE-API:service-topology-operation";
 
     @Override
-    public void sendRestrequestAndHandleResponse(DelegateExecution execution, Map<String, String> inputs,
-            GenericResourceApi genericResourceApiClient) throws Exception {
+    public void sendRestrequestAndHandleResponse(DelegateExecution execution, Map<String, String> inputs)
+            throws Exception {
         logger.info("SdncServiceTopologyOperationTask.sendRestrequestAndHandleResponse begin!");
         updateProgress(execution, null, null, "40", "sendRestrequestAndHandleResponse begin!");
         ServiceRpcInputEntityBuilder builder = new ServiceRpcInputEntityBuilder();
         RpcServiceTopologyOperationInputEntity inputEntity = builder.build(execution, inputs);
         updateProgress(execution, null, null, "50", "RequestBody build finished!");
-        RpcServiceTopologyOperationOutputEntity outputEntity;
-        if (!isSend2SdncDirectly()) {
-            outputEntity = genericResourceApiClient.postServiceTopologyOperation(HeaderUtil.DefaulAuth, inputEntity)
-                    .execute().body();
-            updateProgress(execution, null, null, "90", "sendRestrequestAndHandleResponse finished!");
-            saveOutput(execution, outputEntity);
-        } else {
-            send2SdncDirectly(HeaderUtil.DefaulAuth, inputEntity);
-        }
+        send2SdncDirectly(HeaderUtil.DefaulAuth, inputEntity);
         logger.info("SdncServiceTopologyOperationTask.sendRestrequestAndHandleResponse end!");
 
     }
 
     private void send2SdncDirectly(String defaulAuth, RpcServiceTopologyOperationInputEntity inputEntity)
-            throws RouteException {
+            throws IOException {
         logger.info("SdncServiceTopologyOperationTask.send2SdncDirectly begin!");
         String url = getSdncHost() + URL;
         HttpPost httpPost = new HttpPost(url);
@@ -82,22 +71,5 @@ public class SdncServiceTopologyOperationTask extends AbstractSdncOperationTask 
         httpPost.setEntity(new StringEntity(postBody, ContentType.APPLICATION_XML));
         httpPost(url, httpPost);
         logger.info("SdncServiceTopologyOperationTask.send2SdncDirectly end!");
-    }
-
-    private void saveOutput(DelegateExecution execution, RpcServiceTopologyOperationOutputEntity output)
-            throws Exception {
-        logger.info("SdncServiceTopologyOperationTask.saveOutput begin!");
-        String responseCode = output.getOutput().getResponseCode();
-        if (!"200".equals(responseCode)) {
-            String processKey = getProcessKey(execution);
-            int errorCode = Integer.parseInt(responseCode);
-            String errorMessage = output.getOutput().getResponseMessage();
-            WorkflowException workflowException = new WorkflowException(processKey, errorCode, errorMessage);
-            execution.setVariable("SDNCA_SuccessIndicator", workflowException);
-            updateProgress(execution, RequestsDbConstant.Status.ERROR, String.valueOf(errorCode), null, errorMessage);
-            logger.info("exception: SdncServiceTopologyOperationTask.saveOutput fail!");
-            throw new RouteException();
-        }
-        logger.info("SdncServiceTopologyOperationTask.saveOutput end!");
     }
 }
