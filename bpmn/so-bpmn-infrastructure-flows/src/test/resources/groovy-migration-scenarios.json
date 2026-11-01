@@ -13,52 +13,62 @@
     {
       "id": "query-job-finished",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#finishedJobExecutesAllProductionScriptsAndCompletesWithoutATimer"
+      "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#finishedJobExecutesAllProductionScriptsAndCompletesWithoutATimer",
+      "processId": "QueryJobStatus"
     },
     {
       "id": "query-job-failed",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#failedJobIsATerminalDescriptorRatherThanAnotherPoll"
+      "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#failedJobIsATerminalDescriptorRatherThanAnotherPoll",
+      "processId": "QueryJobStatus"
     },
     {
       "id": "query-job-polling",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#processingJobWaitsForItsTimerBeforeQueryingAgain"
+      "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#processingJobWaitsForItsTimerBeforeQueryingAgain",
+      "processId": "QueryJobStatus"
     },
     {
       "id": "query-job-timeout",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#timedOutProcessingJobUsesTheProductionTimeoutDescriptorAndCompletionRoute"
+      "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#timedOutProcessingJobUsesTheProductionTimeoutDescriptorAndCompletionRoute",
+      "processId": "QueryJobStatus"
     },
     {
       "id": "query-job-unknown-status",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#unknownNonterminalStatusTakesTheTimerRouteAndCanLaterFail"
+      "test": "org.onap.so.bpmn.infrastructure.process.QueryJobStatusProcessTest#unknownNonterminalStatusTakesTheTimerRouteAndCanLaterFail",
+      "processId": "QueryJobStatus"
     },
     {
       "id": "fallout-successfulFailureRecordingPreservesIdentityAndWritesTheFailureContract",
       "module": "MSOCommonBPMN",
-      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#successfulFailureRecordingPreservesIdentityAndWritesTheFailureContract"
+      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#successfulFailureRecordingPreservesIdentityAndWritesTheFailureContract",
+      "processId": "FalloutHandler"
     },
     {
       "id": "fallout-failedRequestLookupProducesAFailedHandlerResponseWithoutAnUpdate",
       "module": "MSOCommonBPMN",
-      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#failedRequestLookupProducesAFailedHandlerResponseWithoutAnUpdate"
+      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#failedRequestLookupProducesAFailedHandlerResponseWithoutAnUpdate",
+      "processId": "FalloutHandler"
     },
     {
       "id": "fallout-failedStatusWriteCannotBeReportedAsSuccessfulFailureHandling",
       "module": "MSOCommonBPMN",
-      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#failedStatusWriteCannotBeReportedAsSuccessfulFailureHandling"
+      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#failedStatusWriteCannotBeReportedAsSuccessfulFailureHandling",
+      "processId": "FalloutHandler"
     },
     {
       "id": "fallout-malformedSuccessfulLookupResponseFailsBeforeWritingTheRequest",
       "module": "MSOCommonBPMN",
-      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#malformedSuccessfulLookupResponseFailsBeforeWritingTheRequest"
+      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#malformedSuccessfulLookupResponseFailsBeforeWritingTheRequest",
+      "processId": "FalloutHandler"
     },
     {
       "id": "fallout-omittedErrorFieldsUseTheDefinedFallbackCodeAndMessage",
       "module": "MSOCommonBPMN",
-      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#omittedErrorFieldsUseTheDefinedFallbackCodeAndMessage"
+      "test": "org.onap.so.bpmn.common.verification.FalloutHandlerProcessTest#omittedErrorFieldsUseTheDefinedFallbackCodeAndMessage",
+      "processId": "FalloutHandler"
     },
     {
       "id": "persisted-workflow-callbackResumesAfterRestartWithTypedAndScopedVariables",
@@ -88,27 +98,32 @@
     {
       "id": "vnf-rollback-control-enabledRollbackWithNoCreatedResourcesReachesTheSuccessActivity",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#enabledRollbackWithNoCreatedResourcesReachesTheSuccessActivity"
+      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#enabledRollbackWithNoCreatedResourcesReachesTheSuccessActivity",
+      "processId": "DoCreateVnfAndModulesRollback"
     },
     {
       "id": "vnf-rollback-control-explicitlyDisabledRollbackExitsBeforeSuccessOrExternalCompensation",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#explicitlyDisabledRollbackExitsBeforeSuccessOrExternalCompensation"
+      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#explicitlyDisabledRollbackExitsBeforeSuccessOrExternalCompensation",
+      "processId": "DoCreateVnfAndModulesRollback"
     },
     {
       "id": "vnf-rollback-control-invalidCreatedModuleCountUsesTheProductionErrorSubprocess",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#invalidCreatedModuleCountUsesTheProductionErrorSubprocess"
+      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#invalidCreatedModuleCountUsesTheProductionErrorSubprocess",
+      "processId": "DoCreateVnfAndModulesRollback"
     },
     {
       "id": "vnf-rollback-control-absentRollbackDataUsesTheProductionErrorSubprocess",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#absentRollbackDataUsesTheProductionErrorSubprocess"
+      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#absentRollbackDataUsesTheProductionErrorSubprocess",
+      "processId": "DoCreateVnfAndModulesRollback"
     },
     {
       "id": "vnf-rollback-control-successfulNoopRollbackRetainsTheOriginalRequestError",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#successfulNoopRollbackRetainsTheOriginalRequestError"
+      "test": "org.onap.so.bpmn.infrastructure.process.VnfRollbackControlProcessTest#successfulNoopRollbackRetainsTheOriginalRequestError",
+      "processId": "DoCreateVnfAndModulesRollback"
     },
     {
       "id": "prepare-update-vf-module-success",
@@ -183,77 +198,92 @@
     {
       "id": "cloud-leased-line-delete-disabledSdncDeletesTheVersionedResourceAndRecordsCompletion",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineDeleteProcessTest#disabledSdncDeletesTheVersionedResourceAndRecordsCompletion"
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineDeleteProcessTest#disabledSdncDeletesTheVersionedResourceAndRecordsCompletion",
+      "processId": "DoCloudLeasedLineDelete"
     },
     {
       "id": "cloud-leased-line-delete-rejectedDeletionDoesNotRecordSuccessfulCompletion",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineDeleteProcessTest#rejectedDeletionDoesNotRecordSuccessfulCompletion"
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineDeleteProcessTest#rejectedDeletionDoesNotRecordSuccessfulCompletion",
+      "processId": "DoCloudLeasedLineDelete"
     },
     {
       "id": "cloud-leased-line-delete-missingInventoryStopsBeforeDeletionAndCompletion",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineDeleteProcessTest#missingInventoryStopsBeforeDeletionAndCompletion"
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineDeleteProcessTest#missingInventoryStopsBeforeDeletionAndCompletion",
+      "processId": "DoCloudLeasedLineDelete"
     },
     {
       "id": "cloud-leased-line-delete-missingCallbackStopsBeforeExternalMutation",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineDeleteProcessTest#missingCallbackStopsBeforeExternalMutation"
+      "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineDeleteProcessTest#missingCallbackStopsBeforeExternalMutation",
+      "processId": "DoCloudLeasedLineDelete"
     },
     {
       "id": "tn-transport-activationWithSdncDisabledUpdatesAaiAndRecordsTheFinishedJob",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.TnTransportLifecycleProcessTest#activationWithSdncDisabledUpdatesAaiAndRecordsTheFinishedJob"
+      "test": "org.onap.so.bpmn.infrastructure.process.TnTransportLifecycleProcessTest#activationWithSdncDisabledUpdatesAaiAndRecordsTheFinishedJob",
+      "processId": "DoActivateTransportNSSI"
     },
     {
       "id": "tn-transport-deactivationWithSdncDisabledUpdatesAaiAndRecordsTheFinishedJob",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.TnTransportLifecycleProcessTest#deactivationWithSdncDisabledUpdatesAaiAndRecordsTheFinishedJob"
+      "test": "org.onap.so.bpmn.infrastructure.process.TnTransportLifecycleProcessTest#deactivationWithSdncDisabledUpdatesAaiAndRecordsTheFinishedJob",
+      "processId": "DoActivateTransportNSSI"
     },
     {
       "id": "tn-transport-missingCallbackRetainsItsBusinessErrorThroughTheProductionErrorHandler",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.TnTransportLifecycleProcessTest#missingCallbackRetainsItsBusinessErrorThroughTheProductionErrorHandler"
+      "test": "org.onap.so.bpmn.infrastructure.process.TnTransportLifecycleProcessTest#missingCallbackRetainsItsBusinessErrorThroughTheProductionErrorHandler",
+      "processId": "DoActivateTransportNSSI"
     },
     {
       "id": "tn-transport-aaiUpdateFailureRetainsItsOriginalErrorAndPreventsACompletedStatusWrite",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.TnTransportLifecycleProcessTest#aaiUpdateFailureRetainsItsOriginalErrorAndPreventsACompletedStatusWrite"
+      "test": "org.onap.so.bpmn.infrastructure.process.TnTransportLifecycleProcessTest#aaiUpdateFailureRetainsItsOriginalErrorAndPreventsACompletedStatusWrite",
+      "processId": "DoActivateTransportNSSI"
     },
     {
       "id": "tn-transport-rejectedStatusWriteUsesTheWorkflowErrorRoute",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.TnTransportLifecycleProcessTest#rejectedStatusWriteUsesTheWorkflowErrorRoute"
+      "test": "org.onap.so.bpmn.infrastructure.process.TnTransportLifecycleProcessTest#rejectedStatusWriteUsesTheWorkflowErrorRoute",
+      "processId": "DoActivateTransportNSSI"
     },
     {
       "id": "model-version-comparison-equivalentModelsUseBothRealDecompositionCallsAndProduceNoChanges",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#equivalentModelsUseBothRealDecompositionCallsAndProduceNoChanges"
+      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#equivalentModelsUseBothRealDecompositionCallsAndProduceNoChanges",
+      "processId": "DoCompareModelVersions"
     },
     {
       "id": "model-version-comparison-changedModelsPreserveAdditionAndDeletionOrderAcrossCallMappings",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#changedModelsPreserveAdditionAndDeletionOrderAcrossCallMappings"
+      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#changedModelsPreserveAdditionAndDeletionOrderAcrossCallMappings",
+      "processId": "DoCompareModelVersions"
     },
     {
       "id": "model-version-comparison-unavailableTargetCatalogStopsBeforeTheOriginalQueryOrComparison",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#unavailableTargetCatalogStopsBeforeTheOriginalQueryOrComparison"
+      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#unavailableTargetCatalogStopsBeforeTheOriginalQueryOrComparison",
+      "processId": "DoCompareModelVersions"
     },
     {
       "id": "model-version-comparison-missingOriginalCatalogStopsBeforeComparison",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#missingOriginalCatalogStopsBeforeComparison"
+      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#missingOriginalCatalogStopsBeforeComparison",
+      "processId": "DoCompareModelVersions"
     },
     {
       "id": "model-version-comparison-malformedSuccessfulTargetDecompositionStopsBeforeTheOriginalQuery",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#malformedSuccessfulTargetDecompositionStopsBeforeTheOriginalQuery"
+      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#malformedSuccessfulTargetDecompositionStopsBeforeTheOriginalQuery",
+      "processId": "DoCompareModelVersions"
     },
     {
       "id": "model-version-comparison-missingModelIdentityStopsBeforeAnyCatalogRequest",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#missingModelIdentityStopsBeforeAnyCatalogRequest"
+      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#missingModelIdentityStopsBeforeAnyCatalogRequest",
+      "processId": "DoCompareModelVersions"
     },
     {
       "id": "allotted-sdnc-rollback-brgRollbackWaitsForEachControllerCallbackBeforeDeletingInventory",
@@ -328,32 +358,38 @@
     {
       "id": "nssi-deallocation-completedJobDeletesOnlyItsProfileAndProfileServiceAfterBothRealCallActivities",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.NssiDeallocationProcessTest#completedJobDeletesOnlyItsProfileAndProfileServiceAfterBothRealCallActivities"
+      "test": "org.onap.so.bpmn.infrastructure.process.NssiDeallocationProcessTest#completedJobDeletesOnlyItsProfileAndProfileServiceAfterBothRealCallActivities",
+      "processId": "DoDeallocateNSSIV1"
     },
     {
       "id": "nssi-deallocation-adapterRejectionStopsBeforePollingStatusUpdatesOrInventoryDeletion",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.NssiDeallocationProcessTest#adapterRejectionStopsBeforePollingStatusUpdatesOrInventoryDeletion"
+      "test": "org.onap.so.bpmn.infrastructure.process.NssiDeallocationProcessTest#adapterRejectionStopsBeforePollingStatusUpdatesOrInventoryDeletion",
+      "processId": "DoDeallocateNSSIV1"
     },
     {
       "id": "nssi-deallocation-failedPollingStopsBeforeStatusUpdatesAndInventoryDeletion",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.NssiDeallocationProcessTest#failedPollingStopsBeforeStatusUpdatesAndInventoryDeletion"
+      "test": "org.onap.so.bpmn.infrastructure.process.NssiDeallocationProcessTest#failedPollingStopsBeforeStatusUpdatesAndInventoryDeletion",
+      "processId": "DoDeallocateNSSIV1"
     },
     {
       "id": "nssi-deallocation-rejectedProfileDeletionStopsBeforeDeletingItsService",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.NssiDeallocationProcessTest#rejectedProfileDeletionStopsBeforeDeletingItsService"
+      "test": "org.onap.so.bpmn.infrastructure.process.NssiDeallocationProcessTest#rejectedProfileDeletionStopsBeforeDeletingItsService",
+      "processId": "DoDeallocateNSSIV1"
     },
     {
       "id": "nssi-deallocation-rejectedServiceDeletionDoesNotRepeatTheAlreadyDeletedProfile",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.NssiDeallocationProcessTest#rejectedServiceDeletionDoesNotRepeatTheAlreadyDeletedProfile"
+      "test": "org.onap.so.bpmn.infrastructure.process.NssiDeallocationProcessTest#rejectedServiceDeletionDoesNotRepeatTheAlreadyDeletedProfile",
+      "processId": "DoDeallocateNSSIV1"
     },
     {
       "id": "nssi-deallocation-missingCurrentNssiStopsBeforeAnyExternalRequest",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.NssiDeallocationProcessTest#missingCurrentNssiStopsBeforeAnyExternalRequest"
+      "test": "org.onap.so.bpmn.infrastructure.process.NssiDeallocationProcessTest#missingCurrentNssiStopsBeforeAnyExternalRequest",
+      "processId": "DoDeallocateNSSIV1"
     },
     {
       "id": "aai-volume-group-success",
@@ -458,42 +494,50 @@
     {
       "id": "orchestration-task-post-uses-the-collection-and-executes-the-groovy-header-input-script",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#postUsesTheCollectionAndExecutesTheGroovyHeaderInputScript"
+      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#postUsesTheCollectionAndExecutesTheGroovyHeaderInputScript",
+      "processId": "HandleOrchestrationTask"
     },
     {
       "id": "orchestration-task-put-targets-the-task-and-preserves-string-flags-and-nested-parameter-types",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#putTargetsTheTaskAndPreservesStringFlagsAndNestedParameterTypes"
+      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#putTargetsTheTaskAndPreservesStringFlagsAndNestedParameterTypes",
+      "processId": "HandleOrchestrationTask"
     },
     {
       "id": "orchestration-task-get-needs-no-mutation-fields-and-retains-the-response",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#getNeedsNoMutationFieldsAndRetainsTheResponse"
+      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#getNeedsNoMutationFieldsAndRetainsTheResponse",
+      "processId": "HandleOrchestrationTask"
     },
     {
       "id": "orchestration-task-rejected-responses-use-the-business-error-after-one-connector-action",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#rejectedResponsesUseTheBusinessErrorAfterOneConnectorAction"
+      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#rejectedResponsesUseTheBusinessErrorAfterOneConnectorAction",
+      "processId": "HandleOrchestrationTask"
     },
     {
       "id": "orchestration-task-unsupported-methods-fail-before-the-connector",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#unsupportedMethodsFailBeforeTheConnector"
+      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#unsupportedMethodsFailBeforeTheConnector",
+      "processId": "HandleOrchestrationTask"
     },
     {
       "id": "orchestration-task-absent-or-blank-task-ids-fail-before-the-connector",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#absentOrBlankTaskIdsFailBeforeTheConnector"
+      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#absentOrBlankTaskIdsFailBeforeTheConnector",
+      "processId": "HandleOrchestrationTask"
     },
     {
       "id": "orchestration-task-each-mutation-field-is-required-for-both-post-and-put",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#eachMutationFieldIsRequiredForBothPostAndPut"
+      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#eachMutationFieldIsRequiredForBothPostAndPut",
+      "processId": "HandleOrchestrationTask"
     },
     {
       "id": "orchestration-task-empty-no-content-response",
       "module": "so-bpmn-infrastructure-flows",
-      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#emptyNoContentResponseUsesTheBusinessErrorRoute"
+      "test": "org.onap.so.bpmn.infrastructure.process.HandleOrchestrationTaskProcessTest#emptyNoContentResponseUsesTheBusinessErrorRoute",
+      "processId": "HandleOrchestrationTask"
     },
     {
       "id": "legacy-brg-creation-success",
@@ -1195,6 +1239,2030 @@
       "module": "so-bpmn-infrastructure-flows",
       "test": "org.onap.so.bpmn.infrastructure.process.CloudLeasedLineModifyProcessTest#missingCallbackStopsBeforeAnyExternalAction",
       "processId": "DoCloudLeasedLineModify"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackContractTest-absentRollbackDataSkipsBothFamiliesWithoutClaimingSuccess",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.E2EServiceRollbackContractTest#absentRollbackDataSkipsBothFamiliesWithoutClaimingSuccess"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackContractTest-anUnrelatedRollbackSectionDoesNotAuthorizeServiceCleanup",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.E2EServiceRollbackContractTest#anUnrelatedRollbackSectionDoesNotAuthorizeServiceCleanup"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackContractTest-creationUsesTypedFlagsAndRetainsTheControllerPayloads",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.E2EServiceRollbackContractTest#creationUsesTypedFlagsAndRetainsTheControllerPayloads"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackContractTest-explicitDisableOverridesTheRequestedCleanupFlags",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.E2EServiceRollbackContractTest#explicitDisableOverridesTheRequestedCleanupFlags"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackContractTest-updateReversesTheResourceListsAndRestoresTheirOriginalReferences",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.E2EServiceRollbackContractTest#updateReversesTheResourceListsAndRestoresTheirOriginalReferences"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackContractTest-failedInventoryCleanupCannotBeReportedAsSuccessfulRollback",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.E2EServiceRollbackContractTest#failedInventoryCleanupCannotBeReportedAsSuccessfulRollback"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackContractTest-noRequestedCleanupLeavesTheResultAbsent",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.E2EServiceRollbackContractTest#noRequestedCleanupLeavesTheResultAbsent"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackContractTest-updateInventoryPayloadRestoresTheOriginalModelRatherThanTheTargetModel",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.E2EServiceRollbackContractTest#updateInventoryPayloadRestoresTheOriginalModelRatherThanTheTargetModel"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackContractTest-creationJavaFailureClearsRollbackDataButKeepsTheOriginalRequestError",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.E2EServiceRollbackContractTest#creationJavaFailureClearsRollbackDataButKeepsTheOriginalRequestError"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackContractTest-updateJavaFailureClearsRollbackDataButKeepsTheOriginalRequestError",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.E2EServiceRollbackContractTest#updateJavaFailureClearsRollbackDataButKeepsTheOriginalRequestError"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackContractTest-creationBpmnFailureKeepsTheOriginalRequestError",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.E2EServiceRollbackContractTest#creationBpmnFailureKeepsTheOriginalRequestError"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackContractTest-updateBpmnFailureKeepsTheOriginalRequestError",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.E2EServiceRollbackContractTest#updateBpmnFailureKeepsTheOriginalRequestError"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackProcessTest-creationWithoutRecordedResourcesSkipsEveryExternalAction",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.E2EServiceRollbackProcessTest#creationWithoutRecordedResourcesSkipsEveryExternalAction",
+      "processId": "DoCreateE2EServiceInstanceRollback",
+      "entryActivity": "preProcessRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackProcessTest-updateWithoutRecordedResourcesSkipsEveryExternalAction",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.E2EServiceRollbackProcessTest#updateWithoutRecordedResourcesSkipsEveryExternalAction",
+      "processId": "DoUpdateE2EServiceInstanceRollback",
+      "entryActivity": "preProcessRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackProcessTest-disabledCreationRollbackDoesNotDeleteResources",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.E2EServiceRollbackProcessTest#disabledCreationRollbackDoesNotDeleteResources",
+      "processId": "DoCreateE2EServiceInstanceRollback",
+      "entryActivity": "preProcessRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackProcessTest-disabledUpdateRollbackDoesNotMutateInventory",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.E2EServiceRollbackProcessTest#disabledUpdateRollbackDoesNotMutateInventory",
+      "processId": "DoUpdateE2EServiceInstanceRollback",
+      "entryActivity": "preProcessRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackProcessTest-creationCleanupDeletesOnlyTheRecordedServiceAndKeepsTheOriginalRequestError",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.E2EServiceRollbackProcessTest#creationCleanupDeletesOnlyTheRecordedServiceAndKeepsTheOriginalRequestError",
+      "processId": "DoCreateE2EServiceInstanceRollback",
+      "entryActivity": "preProcessRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackProcessTest-successfulCreationCleanupIsReportedAsRolledBack",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.E2EServiceRollbackProcessTest#successfulCreationCleanupIsReportedAsRolledBack",
+      "processId": "DoCreateE2EServiceInstanceRollback",
+      "entryActivity": "preProcessRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackProcessTest-rejectedCreationCleanupCannotBeReportedAsSuccessfulRollback",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.E2EServiceRollbackProcessTest#rejectedCreationCleanupCannotBeReportedAsSuccessfulRollback",
+      "processId": "DoCreateE2EServiceInstanceRollback",
+      "entryActivity": "preProcessRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackProcessTest-disabledCreationCleanupDoesNotClaimThatItRolledBack",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.E2EServiceRollbackProcessTest#disabledCreationCleanupDoesNotClaimThatItRolledBack",
+      "processId": "DoCreateE2EServiceInstanceRollback",
+      "entryActivity": "preProcessRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackProcessTest-disabledUpdateCleanupDoesNotClaimThatItRolledBack",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.E2EServiceRollbackProcessTest#disabledUpdateCleanupDoesNotClaimThatItRolledBack",
+      "processId": "DoUpdateE2EServiceInstanceRollback",
+      "entryActivity": "preProcessRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-E2EServiceRollbackProcessTest-inventoryOnlyUpdateRestoresTheOriginalModelBeforeDeclaringRollbackComplete",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.E2EServiceRollbackProcessTest#inventoryOnlyUpdateRestoresTheOriginalModelBeforeDeclaringRollbackComplete",
+      "processId": "DoUpdateE2EServiceInstanceRollback",
+      "entryActivity": "preProcessRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-OofRequestProcessTest-acceptedRequestWaitsForTheMatchingCallbackAndPreservesTypedPayloads",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.OofRequestProcessTest#acceptedRequestWaitsForTheMatchingCallbackAndPreservesTypedPayloads",
+      "processId": "DoHandleOofRequest",
+      "entryActivity": "Activity_0tki17o"
+    },
+    {
+      "id": "remaining-OofRequestProcessTest-anEmptyAcceptedHttpBodyStillWaitsForAndReturnsAnEmptyCallback",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.OofRequestProcessTest#anEmptyAcceptedHttpBodyStillWaitsForAndReturnsAnEmptyCallback",
+      "processId": "DoHandleOofRequest",
+      "entryActivity": "Activity_0tki17o"
+    },
+    {
+      "id": "remaining-OofRequestProcessTest-outOfOrderCallbacksResumeOnlyTheMatchingRequest",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.OofRequestProcessTest#outOfOrderCallbacksResumeOnlyTheMatchingRequest",
+      "processId": "DoHandleOofRequest",
+      "entryActivity": "Activity_0tki17o"
+    },
+    {
+      "id": "remaining-OofRequestProcessTest-theProductionTimerEndsTheWaitAndRejectsALateCallback",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.OofRequestProcessTest#theProductionTimerEndsTheWaitAndRejectsALateCallback",
+      "processId": "DoHandleOofRequest",
+      "entryActivity": "Activity_0tki17o"
+    },
+    {
+      "id": "remaining-OofRequestProcessTest-aRejectedClientRequestStopsBeforeCreatingACallbackWait",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.OofRequestProcessTest#aRejectedClientRequestStopsBeforeCreatingACallbackWait",
+      "processId": "DoHandleOofRequest",
+      "entryActivity": "Activity_0tki17o"
+    },
+    {
+      "id": "remaining-OofRequestProcessTest-aRejectedServerRequestStopsBeforeCreatingACallbackWait",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.OofRequestProcessTest#aRejectedServerRequestStopsBeforeCreatingACallbackWait",
+      "processId": "DoHandleOofRequest",
+      "entryActivity": "Activity_0tki17o"
+    },
+    {
+      "id": "remaining-OofRequestProcessTest-missingApiPathStopsBeforeAnyOutboundAction",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.OofRequestProcessTest#missingApiPathStopsBeforeAnyOutboundAction",
+      "processId": "DoHandleOofRequest",
+      "entryActivity": "Activity_0tki17o"
+    },
+    {
+      "id": "remaining-OofRequestProcessTest-missingCorrelatorStopsBeforeAnyOutboundAction",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.OofRequestProcessTest#missingCorrelatorStopsBeforeAnyOutboundAction",
+      "processId": "DoHandleOofRequest",
+      "entryActivity": "Activity_0tki17o"
+    },
+    {
+      "id": "remaining-OofRequestProcessTest-missingMessageTypeStopsBeforeAnyOutboundAction",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.OofRequestProcessTest#missingMessageTypeStopsBeforeAnyOutboundAction",
+      "processId": "DoHandleOofRequest",
+      "entryActivity": "Activity_0tki17o"
+    },
+    {
+      "id": "remaining-OofRequestProcessTest-blankRequiredInputsStopBeforeAnyOutboundAction",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.OofRequestProcessTest#blankRequiredInputsStopBeforeAnyOutboundAction",
+      "processId": "DoHandleOofRequest",
+      "entryActivity": "Activity_0tki17o"
+    },
+    {
+      "id": "remaining-OofRequestProcessTest-configuredOofTimeoutReachesTheRealCallbackSubprocess",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.OofRequestProcessTest#configuredOofTimeoutReachesTheRealCallbackSubprocess",
+      "processId": "DoHandleOofRequest",
+      "entryActivity": "Activity_0tki17o"
+    },
+    {
+      "id": "remaining-OofRequestProcessTest-theDefaultOofTimeoutReachesTheRealCallbackSubprocess",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.OofRequestProcessTest#theDefaultOofTimeoutReachesTheRealCallbackSubprocess",
+      "processId": "DoHandleOofRequest",
+      "entryActivity": "Activity_0tki17o"
+    },
+    {
+      "id": "remaining-OofRequestProcessTest-theErrorRoutePreservesTheRejectedHttpStatusCode",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.OofRequestProcessTest#theErrorRoutePreservesTheRejectedHttpStatusCode",
+      "processId": "DoHandleOofRequest",
+      "entryActivity": "Activity_0tki17o"
+    },
+    {
+      "id": "remaining-GenericNotificationProcessTest-theShippedNotificationScriptCompletesWithoutRequiringInputs",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.GenericNotificationProcessTest#theShippedNotificationScriptCompletesWithoutRequiringInputs",
+      "processId": "GenericNotificationService",
+      "entryActivity": "Task_1tj48xt"
+    },
+    {
+      "id": "remaining-GenericNotificationProcessTest-theNotificationPreservesTypedAndExplicitlyEmptyCallerState",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.GenericNotificationProcessTest#theNotificationPreservesTypedAndExplicitlyEmptyCallerState",
+      "processId": "GenericNotificationService",
+      "entryActivity": "Task_1tj48xt"
+    },
+    {
+      "id": "remaining-PnfResponseContractTest-theAcceptedResponseRetainsBothRequestAndPnfIdentities",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.PnfResponseContractTest#theAcceptedResponseRetainsBothRequestAndPnfIdentities"
+    },
+    {
+      "id": "remaining-PnfResponseContractTest-quotedPnfIdentitiesRemainValidJsonStringValues",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.PnfResponseContractTest#quotedPnfIdentitiesRemainValidJsonStringValues"
+    },
+    {
+      "id": "remaining-PnfResponseContractTest-aHealthyStringFlagReturnsTheUnmodifiedSuccessBody",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.PnfResponseContractTest#aHealthyStringFlagReturnsTheUnmodifiedSuccessBody"
+    },
+    {
+      "id": "remaining-PnfResponseContractTest-anUnhealthyStringFlagReturnsServiceUnavailable",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.PnfResponseContractTest#anUnhealthyStringFlagReturnsServiceUnavailable"
+    },
+    {
+      "id": "remaining-PnfResponseContractTest-anAbsentHealthFlagCannotProduceASuccessResponse",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.PnfResponseContractTest#anAbsentHealthFlagCannotProduceASuccessResponse"
+    },
+    {
+      "id": "remaining-PnfResponseContractTest-completionXmlPreservesEscapedRequestIdentityAndProcessIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.PnfResponseContractTest#completionXmlPreservesEscapedRequestIdentityAndProcessIdentity"
+    },
+    {
+      "id": "remaining-PnfResponseContractTest-falloutXmlPreservesTheOriginalErrorWithoutSendingASecondResponse",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.PnfResponseContractTest#falloutXmlPreservesTheOriginalErrorWithoutSendingASecondResponse"
+    },
+    {
+      "id": "remaining-PnfResponseContractTest-falloutBeforeTheInitialResponseStillReturnsTheRequestReferences",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.PnfResponseContractTest#falloutBeforeTheInitialResponseStillReturnsTheRequestReferences"
+    },
+    {
+      "id": "remaining-PnfResponseContractTest-missingFalloutErrorProducesATypedPreparationFailure",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.PnfResponseContractTest#missingFalloutErrorProducesATypedPreparationFailure"
+    },
+    {
+      "id": "remaining-PnfResponseContractTest-contextLookupUsesTheCurrentRequestIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.PnfResponseContractTest#contextLookupUsesTheCurrentRequestIdentity"
+    },
+    {
+      "id": "remaining-OofWorkflowPersistenceTest-persistedOofParentsResumeOnlyTheirMatchingChildWithoutRepeatingHttp",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.OofWorkflowPersistenceTest#persistedOofParentsResumeOnlyTheirMatchingChildWithoutRepeatingHttp",
+      "processId": "DoHandleOofRequest",
+      "entryActivity": "Activity_0tki17o"
+    },
+    {
+      "id": "remaining-OofWorkflowPersistenceTest-persistedOofTimerResumesTheProductionErrorRouteWithoutRepeatingHttp",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.OofWorkflowPersistenceTest#persistedOofTimerResumesTheProductionErrorRouteWithoutRepeatingHttp",
+      "processId": "DoHandleOofRequest",
+      "entryActivity": "Activity_0tki17o"
+    },
+    {
+      "id": "remaining-SdncAdapterProcessPersistenceTest-concurrentRequestsResumeTheirOwnCallbacksWithoutRepeatingPosts",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.SdncAdapterProcessPersistenceTest#concurrentRequestsResumeTheirOwnCallbacksWithoutRepeatingPosts",
+      "processId": "SDNCAdapterRestV2",
+      "entryActivity": "ScriptTask_1"
+    },
+    {
+      "id": "remaining-SdncAdapterProcessPersistenceTest-interimNotificationRunsTheRealCallActivityBeforeTheFinalCallback",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.SdncAdapterProcessPersistenceTest#interimNotificationRunsTheRealCallActivityBeforeTheFinalCallback",
+      "processId": "SDNCAdapterRestV2",
+      "entryActivity": "ScriptTask_1"
+    },
+    {
+      "id": "remaining-SdncAdapterProcessPersistenceTest-malformedCallbackUsesTheProductionErrorSubprocess",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.SdncAdapterProcessPersistenceTest#malformedCallbackUsesTheProductionErrorSubprocess",
+      "processId": "SDNCAdapterRestV2",
+      "entryActivity": "ScriptTask_1"
+    },
+    {
+      "id": "remaining-SdncAdapterProcessPersistenceTest-rejectedHttpRequestFinishesWithoutWaitingForCallbacks",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.SdncAdapterProcessPersistenceTest#rejectedHttpRequestFinishesWithoutWaitingForCallbacks",
+      "processId": "SDNCAdapterRestV2",
+      "entryActivity": "ScriptTask_1"
+    },
+    {
+      "id": "remaining-SdncAdapterProcessPersistenceTest-persistedTimeoutKeepsItsDeadlineAndRejectsLateCallbacks",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.SdncAdapterProcessPersistenceTest#persistedTimeoutKeepsItsDeadlineAndRejectsLateCallbacks",
+      "processId": "SDNCAdapterRestV2",
+      "entryActivity": "ScriptTask_1"
+    },
+    {
+      "id": "remaining-SdncRestV2InputContractTest-requestPreparationPreservesThePayloadAndSeparatesItsCallbackId",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRestV2InputContractTest#requestPreparationPreservesThePayloadAndSeparatesItsCallbackId"
+    },
+    {
+      "id": "remaining-SdncRestV2InputContractTest-invalidOrMissingRequestTimeoutUsesConfiguredDuration",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRestV2InputContractTest#invalidOrMissingRequestTimeoutUsesConfiguredDuration"
+    },
+    {
+      "id": "remaining-SdncRestV2InputContractTest-missingTimeoutConfigurationUsesTheTenSecondFallback",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRestV2InputContractTest#missingTimeoutConfigurationUsesTheTenSecondFallback"
+    },
+    {
+      "id": "remaining-SdncRestV2InputContractTest-missingEndpointFailsBeforeProducingAnOutboundRequest",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRestV2InputContractTest#missingEndpointFailsBeforeProducingAnOutboundRequest"
+    },
+    {
+      "id": "remaining-SdncRestV2InputContractTest-invalidIdentityCallbackAndRequestTypeFailValidation",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRestV2InputContractTest#invalidIdentityCallbackAndRequestTypeFailValidation"
+    },
+    {
+      "id": "remaining-SdncRestV2InputContractTest-absentRequestAndMissingMsoRequestIdRetainValidationCodes",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRestV2InputContractTest#absentRequestAndMissingMsoRequestIdRetainValidationCodes"
+    },
+    {
+      "id": "remaining-SdncRestV2InputContractTest-nonfinalCallbacksSelectOnlyTheirMatchingInterimNotification",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRestV2InputContractTest#nonfinalCallbacksSelectOnlyTheirMatchingInterimNotification"
+    },
+    {
+      "id": "remaining-SdncRestV2InputContractTest-explicitErrorCallbacksRetainMappedCodesAndMessages",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRestV2InputContractTest#explicitErrorCallbacksRetainMappedCodesAndMessages"
+    },
+    {
+      "id": "remaining-VfModuleInventoryUpdateContractTest-updateFlagsIncludeExactlyTheirSelectedInventoryFields",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleInventoryUpdateContractTest#updateFlagsIncludeExactlyTheirSelectedInventoryFields"
+    },
+    {
+      "id": "remaining-VfModuleInventoryUpdateContractTest-inventoryIdentitiesRetainEscapedAndUnicodeText",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleInventoryUpdateContractTest#inventoryIdentitiesRetainEscapedAndUnicodeText"
+    },
+    {
+      "id": "remaining-VfModuleInventoryUpdateContractTest-statusUpdateLeavesVolumeStackAndFqdnUntouched",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleInventoryUpdateContractTest#statusUpdateLeavesVolumeStackAndFqdnUntouched"
+    },
+    {
+      "id": "remaining-VfModuleInventoryUpdateContractTest-createdUpdateIncludesTheAllocatedStackAndNonemptyFqdn",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleInventoryUpdateContractTest#createdUpdateIncludesTheAllocatedStackAndNonemptyFqdn"
+    },
+    {
+      "id": "remaining-VfModuleInventoryUpdateContractTest-createdUpdateOmitsTheExplicitlyEmptyOptionalFqdn",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleInventoryUpdateContractTest#createdUpdateOmitsTheExplicitlyEmptyOptionalFqdn"
+    },
+    {
+      "id": "remaining-VfModuleInventoryUpdateContractTest-volumeAssociationUpdatesOnlyTheVolumeGroupReference",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleInventoryUpdateContractTest#volumeAssociationUpdatesOnlyTheVolumeGroupReference"
+    },
+    {
+      "id": "remaining-VfModuleInventoryUpdateContractTest-bpmnFailurePreservesTheOriginalTypedWorkflowException",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleInventoryUpdateContractTest#bpmnFailurePreservesTheOriginalTypedWorkflowException"
+    },
+    {
+      "id": "remaining-VfModuleInventoryUpdateContractTest-bpmnFailureWithoutAnOriginalErrorCreatesTheDefinedFallback",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleInventoryUpdateContractTest#bpmnFailureWithoutAnOriginalErrorCreatesTheDefinedFallback"
+    },
+    {
+      "id": "remaining-VfModuleInventoryUpdateContractTest-optionalInventoryValuesRemainWellFormedXml",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleInventoryUpdateContractTest#optionalInventoryValuesRemainWellFormedXml"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonEdgeContractTest-validationComparesInvariantValuesAndPreservesBothVersions",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.ModelVersionComparisonEdgeContractTest#validationComparesInvariantValuesAndPreservesBothVersions"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonEdgeContractTest-requiredIdentifiersKeepTheirValidationErrorCode",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.ModelVersionComparisonEdgeContractTest#requiredIdentifiersKeepTheirValidationErrorCode"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonEdgeContractTest-differentInvariantsKeepTheirValidationErrorCode",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.ModelVersionComparisonEdgeContractTest#differentInvariantsKeepTheirValidationErrorCode"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonEdgeContractTest-identicalVersionsKeepTheirValidationErrorCode",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.ModelVersionComparisonEdgeContractTest#identicalVersionsKeepTheirValidationErrorCode"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonEdgeContractTest-decompositionRequestsKeepTargetAndOriginalIdentitiesSeparate",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.ModelVersionComparisonEdgeContractTest#decompositionRequestsKeepTargetAndOriginalIdentitiesSeparate"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonEdgeContractTest-quotedModelIdentitiesRemainValidJsonStrings",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.ModelVersionComparisonEdgeContractTest#quotedModelIdentitiesRemainValidJsonStrings"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonEdgeContractTest-decompositionResultsRetainTheirOwnObjectReferences",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.ModelVersionComparisonEdgeContractTest#decompositionResultsRetainTheirOwnObjectReferences"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonEdgeContractTest-identicalModelTriplesProduceNoChangesWithoutMutatingInputs",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.ModelVersionComparisonEdgeContractTest#identicalModelTriplesProduceNoChangesWithoutMutatingInputs"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonEdgeContractTest-changesToAnyModelIdentityRequireAnAdditionAndDeletion",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.ModelVersionComparisonEdgeContractTest#changesToAnyModelIdentityRequireAnAdditionAndDeletion"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonEdgeContractTest-emptyDecompositionsProduceTypedEmptyOrOneSidedChanges",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.ModelVersionComparisonEdgeContractTest#emptyDecompositionsProduceTypedEmptyOrOneSidedChanges"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonEdgeContractTest-unmatchedChangesRetainTheirInputOrderingAndReferences",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.ModelVersionComparisonEdgeContractTest#unmatchedChangesRetainTheirInputOrderingAndReferences"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonEdgeContractTest-nullAndEmptyCustomizationIdsRemainDistinct",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.ModelVersionComparisonEdgeContractTest#nullAndEmptyCustomizationIdsRemainDistinct"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonProcessTest-emptyDecompositionsReturnTypedEmptyChanges",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#emptyDecompositionsReturnTypedEmptyChanges",
+      "processId": "DoCompareModelVersions",
+      "entryActivity": "ScriptTask_0nie46r"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonProcessTest-customizationOnlyChangesSurviveBothProductionCallMappings",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#customizationOnlyChangesSurviveBothProductionCallMappings",
+      "processId": "DoCompareModelVersions",
+      "entryActivity": "ScriptTask_0nie46r"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonProcessTest-parentPreservesTheFailedDecompositionBusinessError",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.ModelVersionComparisonProcessTest#parentPreservesTheFailedDecompositionBusinessError",
+      "processId": "DoCompareModelVersions",
+      "entryActivity": "ScriptTask_0nie46r"
+    },
+    {
+      "id": "remaining-VfModuleAaiLookupContractTest-matchingInventoryRetainsTypedStatusIdentityAndRawResponse",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleAaiLookupContractTest#matchingInventoryRetainsTypedStatusIdentityAndRawResponse"
+    },
+    {
+      "id": "remaining-VfModuleAaiLookupContractTest-missingModuleClearsStatusAndKeepsTheNewlyAllocatedIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleAaiLookupContractTest#missingModuleClearsStatusAndKeepsTheNewlyAllocatedIdentity"
+    },
+    {
+      "id": "remaining-VfModuleAaiLookupContractTest-unauthorizedInventoryIsNotTreatedAsAnAbsentModule",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleAaiLookupContractTest#unauthorizedInventoryIsNotTreatedAsAnAbsentModule"
+    },
+    {
+      "id": "remaining-VfModuleAaiLookupContractTest-serverFailureIsNotTreatedAsAnAbsentModule",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleAaiLookupContractTest#serverFailureIsNotTreatedAsAnAbsentModule"
+    },
+    {
+      "id": "remaining-VfModuleAaiLookupContractTest-malformedSuccessfulInventoryFailsWithTheLookupError",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleAaiLookupContractTest#malformedSuccessfulInventoryFailsWithTheLookupError"
+    },
+    {
+      "id": "remaining-VfModuleAaiLookupContractTest-blankSuccessfulInventoryFailsWithTheLookupError",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleAaiLookupContractTest#blankSuccessfulInventoryFailsWithTheLookupError"
+    },
+    {
+      "id": "remaining-VfModuleAaiLookupContractTest-baseModuleLookupSelectsTheBaseRecordAndRetainsItsStackIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleAaiLookupContractTest#baseModuleLookupSelectsTheBaseRecordAndRetainsItsStackIdentity"
+    },
+    {
+      "id": "remaining-VfModuleAaiLookupContractTest-baseInventoryServerFailureDoesNotSilentlyContinueCreation",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleAaiLookupContractTest#baseInventoryServerFailureDoesNotSilentlyContinueCreation"
+    },
+    {
+      "id": "remaining-VfModuleAaiLookupContractTest-unavailableInventoryTransportFailsWithoutClaimingAStatusResponse",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleAaiLookupContractTest#unavailableInventoryTransportFailsWithoutClaimingAStatusResponse"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonEdgeContractTest-decompositionRequestStorageFailuresRetainTypedStageErrors",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.ModelVersionComparisonEdgeContractTest#decompositionRequestStorageFailuresRetainTypedStageErrors"
+    },
+    {
+      "id": "remaining-ModelVersionComparisonEdgeContractTest-unexpectedDecompositionTypesRetainTypedStageErrorsWithoutPublishingResults",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.ModelVersionComparisonEdgeContractTest#unexpectedDecompositionTypesRetainTypedStageErrorsWithoutPublishingResults"
+    },
+    {
+      "id": "remaining-SdncAdapterProcessPersistenceTest-configuredAuthorizationSurvivesRestartWithoutRepeatingTheRequest",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.verification.SdncAdapterProcessPersistenceTest#configuredAuthorizationSurvivesRestartWithoutRepeatingTheRequest",
+      "processId": "SDNCAdapterRestV2",
+      "entryActivity": "ScriptTask_1"
+    },
+    {
+      "id": "remaining-SdncRestV2InputContractTest-configuredCredentialsProduceTheBasicAuthorizationValue",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRestV2InputContractTest#configuredCredentialsProduceTheBasicAuthorizationValue"
+    },
+    {
+      "id": "remaining-DeviceResourceProcessTest-routerDeviceCompletesThroughTheProductionDefaultRoute",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.DeviceResourceProcessTest#routerDeviceCompletesThroughTheProductionDefaultRoute",
+      "processId": "CreateDeviceResource",
+      "entryActivity": "ScriptTask_14dav1d"
+    },
+    {
+      "id": "remaining-DeviceResourceProcessTest-blankDeviceClassDefaultsToOtherBeforeTheStatusUpdate",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.DeviceResourceProcessTest#blankDeviceClassDefaultsToOtherBeforeTheStatusUpdate",
+      "processId": "CreateDeviceResource",
+      "entryActivity": "ScriptTask_14dav1d"
+    },
+    {
+      "id": "remaining-DeviceResourceProcessTest-anEmptySuccessfulStatusResponseStillCompletesTheDefaultRoute",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.DeviceResourceProcessTest#anEmptySuccessfulStatusResponseStillCompletesTheDefaultRoute",
+      "processId": "CreateDeviceResource",
+      "entryActivity": "ScriptTask_14dav1d"
+    },
+    {
+      "id": "remaining-DeviceResourceProcessTest-rejectedStatusWritesMustNotReportSuccessfulDeviceCompletion",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.DeviceResourceProcessTest#rejectedStatusWritesMustNotReportSuccessfulDeviceCompletion",
+      "processId": "CreateDeviceResource",
+      "entryActivity": "ScriptTask_14dav1d"
+    },
+    {
+      "id": "remaining-DeviceResourceProcessTest-persistedDeviceInputsRetainFalseAndZeroValues",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.DeviceResourceProcessTest#persistedDeviceInputsRetainFalseAndZeroValues",
+      "processId": "CreateDeviceResource",
+      "entryActivity": "ScriptTask_14dav1d"
+    },
+    {
+      "id": "remaining-DeviceInventoryLookupContractTest-successfulInventoryFixtureDeserializesTheActualDeviceClassProperty",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DeviceInventoryLookupContractTest#successfulInventoryFixtureDeserializesTheActualDeviceClassProperty"
+    },
+    {
+      "id": "remaining-DeviceInventoryLookupContractTest-deletionLooksUpItsInventoryIdentityAndKeepsTheRequestContext",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DeviceInventoryLookupContractTest#deletionLooksUpItsInventoryIdentityAndKeepsTheRequestContext"
+    },
+    {
+      "id": "remaining-DeviceInventoryLookupContractTest-deletionSelectsTheInventoryClassInsteadOfTheJavaModelClass",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DeviceInventoryLookupContractTest#deletionSelectsTheInventoryClassInsteadOfTheJavaModelClass"
+    },
+    {
+      "id": "remaining-DeviceInventoryLookupContractTest-missingInventoryDoesNotInventADeviceClassOrRepeatTheLookup",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DeviceInventoryLookupContractTest#missingInventoryDoesNotInventADeviceClassOrRepeatTheLookup"
+    },
+    {
+      "id": "remaining-DeviceInventoryLookupContractTest-unavailableInventoryMustNotFallThroughToACompletedDeletion",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DeviceInventoryLookupContractTest#unavailableInventoryMustNotFallThroughToACompletedDeletion"
+    },
+    {
+      "id": "remaining-DeviceInventoryLookupContractTest-malformedSuccessfulInventoryMustNotFallThroughToACompletedDeletion",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DeviceInventoryLookupContractTest#malformedSuccessfulInventoryMustNotFallThroughToACompletedDeletion"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-singleTopologyRetainsIdentityContextsAndTheOptionalZeroIndex",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#singleTopologyRetainsIdentityContextsAndTheOptionalZeroIndex"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-requestParametersOverrideControllerValuesWithoutChangingTheDirectiveSnapshots",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#requestParametersOverrideControllerValuesWithoutChangingTheDirectiveSnapshots"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-combinedTopologiesUseModuleParametersAndVnfAvailabilityZones",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#combinedTopologiesUseModuleParametersAndVnfAvailabilityZones"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-explicitNetworkTagsTakePrecedenceOverVmRoleMappingsAndFallbackRoles",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#explicitNetworkTagsTakePrecedenceOverVmRoleMappingsAndFallbackRoles"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-vmNamesAddressesFloatingIpsAndRoutesKeepTheirControllerOrdering",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#vmNamesAddressesFloatingIpsAndRoutesKeepTheirControllerOrdering"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-combinedTopologiesMapVnfNetworksThroughTheModuleVmRoles",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#combinedTopologiesMapVnfNetworksThroughTheModuleVmRoles"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-namespaceQualifiedTopologiesProduceTheSameNamedParameterValues",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#namespaceQualifiedTopologiesProduceTheSameNamedParameterValues"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-malformedTopologyCannotProduceAnApparentlySuccessfulParameterList",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#malformedTopologyCannotProduceAnApparentlySuccessfulParameterList"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-singleTopologyDirectiveJsonPreservesQuotesBackslashesAndNewlines",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#singleTopologyDirectiveJsonPreservesQuotesBackslashesAndNewlines"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-combinedTopologyDirectiveJsonPreservesQuotesBackslashesAndNewlines",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#combinedTopologyDirectiveJsonPreservesQuotesBackslashesAndNewlines"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-vbngRetainsEscapedIdentityAndCallerParameters",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#vbngRetainsEscapedIdentityAndCallerParameters"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-vbngMapsNetworkRolesAndPreservesZoneAndVlanOrdering",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#vbngMapsNetworkRolesAndPreservesZoneAndVlanOrdering"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-vbngControllerParametersCannotReplaceReservedResourceIdentities",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#vbngControllerParametersCannotReplaceReservedResourceIdentities"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-vbngVmNamesAndAddressesMustReachTheAdapterParameterList",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#vbngVmNamesAndAddressesMustReachTheAdapterParameterList"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-controllerDirectivesPreserveSpecialCharactersInSingleTopologies",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#controllerDirectivesPreserveSpecialCharactersInSingleTopologies"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-controllerDirectivesPreserveSpecialCharactersInCombinedTopologies",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#controllerDirectivesPreserveSpecialCharactersInCombinedTopologies"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-vbngRetainsAddressOrderingWhenTheVmNameListIsEmpty",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#vbngRetainsAddressOrderingWhenTheVmNameListIsEmpty"
+    },
+    {
+      "id": "remaining-VfModuleParameterContractTest-vbngUsesTheNetworkRoleWhenThereIsNoVmTagMapping",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.VfModuleParameterContractTest#vbngUsesTheNetworkRoleWhenThereIsNoVmTagMapping"
+    },
+    {
+      "id": "remaining-DoAllocateNssiContractTest-aFreshNsiAllocatesEvenWhenTheInputCarriesAnExistingNssiId",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoAllocateNssiContractTest#aFreshNsiAllocatesEvenWhenTheInputCarriesAnExistingNssiId",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_0n2z0z7"
+    },
+    {
+      "id": "remaining-DoAllocateNssiContractTest-anAvailableNsiWithoutAnNssiIdentityStillAllocates",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoAllocateNssiContractTest#anAvailableNsiWithoutAnNssiIdentityStillAllocates",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_0n2z0z7"
+    },
+    {
+      "id": "remaining-DoAllocateNssiContractTest-anAvailableNsiWithAnNssiIdentitySelectsModification",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoAllocateNssiContractTest#anAvailableNsiWithAnNssiIdentitySelectsModification",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_0n2z0z7"
+    },
+    {
+      "id": "remaining-DoAllocateNssiContractTest-acceptedAllocationPostsTheTypedRequestAndRetainsTheAdapterIdentities",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoAllocateNssiContractTest#acceptedAllocationPostsTheTypedRequestAndRetainsTheAdapterIdentities",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_15a7mua"
+    },
+    {
+      "id": "remaining-DoAllocateNssiContractTest-rejectedAllocationDoesNotPublishAResultFromTheErrorBody",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoAllocateNssiContractTest#rejectedAllocationDoesNotPublishAResultFromTheErrorBody",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_15a7mua"
+    },
+    {
+      "id": "remaining-DoAllocateNssiContractTest-malformedSuccessfulAllocationResponsesAreRejectedBeforePublishingAResult",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoAllocateNssiContractTest#malformedSuccessfulAllocationResponsesAreRejectedBeforePublishingAResult",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_15a7mua"
+    },
+    {
+      "id": "remaining-DoAllocateNssiContractTest-pollingPostsTheKnownSliceIdentityAndRetainsTheTypedProgress",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoAllocateNssiContractTest#pollingPostsTheKnownSliceIdentityAndRetainsTheTypedProgress",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "Task_1ym947s"
+    },
+    {
+      "id": "remaining-DoAllocateNssiContractTest-pollingDiscoversAnInitiallyMissingNssiWithoutCompletingTheJob",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoAllocateNssiContractTest#pollingDiscoversAnInitiallyMissingNssiWithoutCompletingTheJob",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "Task_1ym947s"
+    },
+    {
+      "id": "remaining-DoAllocateNssiContractTest-completedPollingUsesABooleanFlagAndPreservesAnExistingNssiIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoAllocateNssiContractTest#completedPollingUsesABooleanFlagAndPreservesAnExistingNssiIdentity",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "Task_1ym947s"
+    },
+    {
+      "id": "remaining-DoAllocateNssiContractTest-rejectedPollingCannotPublishCompletionFromAnErrorResponse",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoAllocateNssiContractTest#rejectedPollingCannotPublishCompletionFromAnErrorResponse",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "Task_1ym947s"
+    },
+    {
+      "id": "remaining-DoAllocateNssiContractTest-malformedSuccessfulPollingCannotPublishAJobResult",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoAllocateNssiContractTest#malformedSuccessfulPollingCannotPublishAJobResult",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "Task_1ym947s"
+    },
+    {
+      "id": "remaining-DoAllocateNssiContractTest-orchestrationUpdatesSelectOnlyTheRequestedCoreAccessOrTransportDomain",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoAllocateNssiContractTest#orchestrationUpdatesSelectOnlyTheRequestedCoreAccessOrTransportDomain",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_0ki1c4k"
+    },
+    {
+      "id": "remaining-DoAllocateNssiContractTest-accessNetworkFunctionProgressReachesItsOwnOrchestrationSlot",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoAllocateNssiContractTest#accessNetworkFunctionProgressReachesItsOwnOrchestrationSlot",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_0ki1c4k"
+    },
+    {
+      "id": "remaining-DoAllocateNssiContractTest-anInterruptedDelayDoesNotConsumeAnotherPollingAttempt",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoAllocateNssiContractTest#anInterruptedDelayDoesNotConsumeAnotherPollingAttempt",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_1s7bt3s"
+    },
+    {
+      "id": "remaining-DoAllocateNssiProcessTest-eachSupportedDomainCompletesThroughTheRealOrchestrationSubprocess",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.DoAllocateNssiProcessTest#eachSupportedDomainCompletesThroughTheRealOrchestrationSubprocess",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_0n2z0z7"
+    },
+    {
+      "id": "remaining-DoAllocateNssiProcessTest-existingSlicesKeepTheirIdentityAndUseTheModificationActionAcrossTheCallMappings",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.DoAllocateNssiProcessTest#existingSlicesKeepTheirIdentityAndUseTheModificationActionAcrossTheCallMappings",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_0n2z0z7"
+    },
+    {
+      "id": "remaining-DoAllocateNssiProcessTest-pollingPublishesTheNssiIdentityWhenAllocationInitiallyReturnsOnlyAJob",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.DoAllocateNssiProcessTest#pollingPublishesTheNssiIdentityWhenAllocationInitiallyReturnsOnlyAJob",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_0n2z0z7"
+    },
+    {
+      "id": "remaining-DoAllocateNssiProcessTest-aTerminalAdapterFailureRetainsItsFailureDetailsInThePublishedProgress",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.DoAllocateNssiProcessTest#aTerminalAdapterFailureRetainsItsFailureDetailsInThePublishedProgress",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_0n2z0z7"
+    },
+    {
+      "id": "remaining-DoAllocateNssiProcessTest-rejectedAllocationCannotQueryAJobOrPublishSuccessfulProgress",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.DoAllocateNssiProcessTest#rejectedAllocationCannotQueryAJobOrPublishSuccessfulProgress",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_0n2z0z7"
+    },
+    {
+      "id": "remaining-DoAllocateNssiProcessTest-malformedAllocationCannotQueryAJobOrPublishSuccessfulProgress",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.DoAllocateNssiProcessTest#malformedAllocationCannotQueryAJobOrPublishSuccessfulProgress",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_0n2z0z7"
+    },
+    {
+      "id": "remaining-DoAllocateNssiProcessTest-rejectedOrchestrationWritesStopTheParentAndRetainTheChildBusinessError",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.DoAllocateNssiProcessTest#rejectedOrchestrationWritesStopTheParentAndRetainTheChildBusinessError",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_0n2z0z7"
+    },
+    {
+      "id": "remaining-DoAllocateNssiProcessTest-accessNetworkFunctionProgressMustReachThePublishedDomainSlot",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.DoAllocateNssiProcessTest#accessNetworkFunctionProgressMustReachThePublishedDomainSlot",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "ScriptTask_0n2z0z7"
+    },
+    {
+      "id": "remaining-DoAllocateNssiContractTest-completedPollingPublishesADiscoveredIdentityForNullOrBlankInitialIds",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoAllocateNssiContractTest#completedPollingPublishesADiscoveredIdentityForNullOrBlankInitialIds",
+      "processId": "DoAllocateNSSI",
+      "entryActivity": "Task_1ym947s"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInventoryContractTest-preprocessingEnablesTheTypedDebugFlagWithoutAnInventoryAction",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CreateSliceServiceInventoryContractTest#preprocessingEnablesTheTypedDebugFlagWithoutAnInventoryAction",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "PreprocessIncomingRequest_task"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInventoryContractTest-decompositionPreservesBothModelIdentitiesAndTheEmptyVersionField",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CreateSliceServiceInventoryContractTest#decompositionPreservesBothModelIdentitiesAndTheEmptyVersionField",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "ScriptTask_1g378se"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInventoryContractTest-instanceCreationRetainsModelLocationAndOwnershipDataInBothRollbackVariables",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CreateSliceServiceInventoryContractTest#instanceCreationRetainsModelLocationAndOwnershipDataInBothRollbackVariables",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "instantiate_NSTask"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInventoryContractTest-instanceCreationPreservesExistingCompensationEntries",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CreateSliceServiceInventoryContractTest#instanceCreationPreservesExistingCompensationEntries",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "instantiate_NSTask"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInventoryContractTest-rejectedInstanceCreationCannotClaimRollbackOwnership",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CreateSliceServiceInventoryContractTest#rejectedInstanceCreationCannotClaimRollbackOwnership",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "instantiate_NSTask"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInventoryContractTest-instanceCreationPropagatesAnAlreadyClassifiedBusinessError",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CreateSliceServiceInventoryContractTest#instanceCreationPropagatesAnAlreadyClassifiedBusinessError",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "instantiate_NSTask"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInventoryContractTest-profileCreationAcceptsNumericStringsAndNumbersAndPublishesItsGeneratedIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CreateSliceServiceInventoryContractTest#profileCreationAcceptsNumericStringsAndNumbersAndPublishesItsGeneratedIdentity",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "Task_09nzhwk"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInventoryContractTest-rejectedProfileCreationProducesTheDefinedWorkflowError",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CreateSliceServiceInventoryContractTest#rejectedProfileCreationProducesTheDefinedWorkflowError",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "Task_09nzhwk"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInventoryContractTest-profileCreationPropagatesAnAlreadyClassifiedBusinessError",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CreateSliceServiceInventoryContractTest#profileCreationPropagatesAnAlreadyClassifiedBusinessError",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "Task_09nzhwk"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInventoryContractTest-anEmptyAllottedResourceDecompositionDoesNotCreateInventoryOrIdentities",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CreateSliceServiceInventoryContractTest#anEmptyAllottedResourceDecompositionDoesNotCreateInventoryOrIdentities",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "ScriptTask_18rzwzb"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInventoryContractTest-allottedResourcesRetainTheirTypesRolesAndModelsInDecompositionOrder",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CreateSliceServiceInventoryContractTest#allottedResourcesRetainTheirTypesRolesAndModelsInDecompositionOrder",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "ScriptTask_18rzwzb"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInventoryContractTest-partialAllottedResourceFailureRetainsTheCreatedIdentityAndStopsLaterActions",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CreateSliceServiceInventoryContractTest#partialAllottedResourceFailureRetainsTheCreatedIdentityAndStopsLaterActions",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "ScriptTask_18rzwzb"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInventoryContractTest-allottedResourceCreationPreservesAnAlreadyClassifiedBusinessError",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.CreateSliceServiceInventoryContractTest#allottedResourceCreationPreservesAnAlreadyClassifiedBusinessError",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "ScriptTask_18rzwzb"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInstanceProcessTest-emptyResourceDecompositionCreatesTheInstanceAndTypedProfileThroughTheRealChild",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CreateSliceServiceInstanceProcessTest#emptyResourceDecompositionCreatesTheInstanceAndTypedProfileThroughTheRealChild",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "PreprocessIncomingRequest_task"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInstanceProcessTest-aCatalogAllottedResourceIsCreatedBeforeTheProfileWithItsModelIdentity",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CreateSliceServiceInstanceProcessTest#aCatalogAllottedResourceIsCreatedBeforeTheProfileWithItsModelIdentity",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "PreprocessIncomingRequest_task"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInstanceProcessTest-rejectedCatalogCannotCreateAnyInventoryResource",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CreateSliceServiceInstanceProcessTest#rejectedCatalogCannotCreateAnyInventoryResource",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "PreprocessIncomingRequest_task"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInstanceProcessTest-rejectedInstanceCreationCannotCreateAProfileOrClaimRollbackOwnership",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CreateSliceServiceInstanceProcessTest#rejectedInstanceCreationCannotCreateAProfileOrClaimRollbackOwnership",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "PreprocessIncomingRequest_task"
+    },
+    {
+      "id": "remaining-CreateSliceServiceInstanceProcessTest-rejectedProfileCreationRetainsTheInstanceRollbackContractAndStopsCompletion",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.CreateSliceServiceInstanceProcessTest#rejectedProfileCreationRetainsTheInstanceRollbackContractAndStopsCompletion",
+      "processId": "DoCreateSliceServiceInstance",
+      "entryActivity": "PreprocessIncomingRequest_task"
+    },
+    {
+      "id": "remaining-DecomposeServiceIT-testDecomposeService_success",
+      "module": "mso-infrastructure-bpmn",
+      "test": "org.onap.so.bpmn.common.DecomposeServiceIT#testDecomposeService_success",
+      "processId": "DecomposeService",
+      "entryActivity": "preProcessRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-DecomposeServiceIT-testDecomposeService_success_partial",
+      "module": "mso-infrastructure-bpmn",
+      "test": "org.onap.so.bpmn.common.DecomposeServiceIT#testDecomposeService_success_partial",
+      "processId": "DecomposeService",
+      "entryActivity": "preProcessRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-DoCreateAllottedResourceBRGIT-testDoCreateAllottedResourceBRG_Success",
+      "module": "mso-infrastructure-bpmn",
+      "test": "org.onap.so.bpmn.vcpe.DoCreateAllottedResourceBRGIT#testDoCreateAllottedResourceBRG_Success",
+      "processId": "DoCreateAllottedResourceBRG",
+      "entryActivity": "initialization"
+    },
+    {
+      "id": "remaining-DoCreateAllottedResourceTXCIT-testDoCreateAllottedResourceTXC_Success",
+      "module": "mso-infrastructure-bpmn",
+      "test": "org.onap.so.bpmn.vcpe.DoCreateAllottedResourceTXCIT#testDoCreateAllottedResourceTXC_Success",
+      "processId": "DoCreateAllottedResourceTXC",
+      "entryActivity": "initialization"
+    },
+    {
+      "id": "remaining-DoCreateAllottedResourceBRGRollbackIT-testDoCreateAllottedResourceBRGRollback_Success",
+      "module": "mso-infrastructure-bpmn",
+      "test": "org.onap.so.bpmn.vcpe.DoCreateAllottedResourceBRGRollbackIT#testDoCreateAllottedResourceBRGRollback_Success",
+      "processId": "DoCreateAllottedResourceBRGRollback",
+      "entryActivity": "initialization"
+    },
+    {
+      "id": "remaining-DoCreateAllottedResourceTXCRollbackIT-testDoCreateAllottedResourceTXCRollback_Success",
+      "module": "mso-infrastructure-bpmn",
+      "test": "org.onap.so.bpmn.vcpe.DoCreateAllottedResourceTXCRollbackIT#testDoCreateAllottedResourceTXCRollback_Success",
+      "processId": "DoCreateAllottedResourceTXCRollback",
+      "entryActivity": "initialization"
+    },
+    {
+      "id": "remaining-DoModifyRanNfNssiContractTest-supportedActionsPrepareTypedRoutingAndPreserveSnssaiOrder",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoModifyRanNfNssiContractTest#supportedActionsPrepareTypedRoutingAndPreserveSnssaiOrder",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_0bbh5uy"
+    },
+    {
+      "id": "remaining-DoModifyRanNfNssiContractTest-absentOrBlankActionsUseTheValidationErrorContract",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoModifyRanNfNssiContractTest#absentOrBlankActionsUseTheValidationErrorContract",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_0bbh5uy"
+    },
+    {
+      "id": "remaining-DoModifyRanNfNssiContractTest-unknownActionsAreRejectedBeforePreparingAnOutboundRequest",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoModifyRanNfNssiContractTest#unknownActionsAreRejectedBeforePreparingAnOutboundRequest",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_0bbh5uy"
+    },
+    {
+      "id": "remaining-DoModifyRanNfNssiContractTest-absentOrBlankProfileIdentitiesUseTheValidationErrorContract",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoModifyRanNfNssiContractTest#absentOrBlankProfileIdentitiesUseTheValidationErrorContract",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_0bbh5uy"
+    },
+    {
+      "id": "remaining-DoModifyRanNfNssiContractTest-anEmptySnssaiListUsesTheValidationErrorContract",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoModifyRanNfNssiContractTest#anEmptySnssaiListUsesTheValidationErrorContract",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_0bbh5uy"
+    },
+    {
+      "id": "remaining-DoModifyRanNfNssiContractTest-anAbsentSnssaiListUsesTheValidationErrorInsteadOfAnInternalError",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoModifyRanNfNssiContractTest#anAbsentSnssaiListUsesTheValidationErrorInsteadOfAnInternalError",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_0bbh5uy"
+    },
+    {
+      "id": "remaining-DoModifyRanNfNssiContractTest-allocationPreservesPayloadTypesAndMapsCapacityFieldsWithoutLosingTheOriginals",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoModifyRanNfNssiContractTest#allocationPreservesPayloadTypesAndMapsCapacityFieldsWithoutLosingTheOriginals",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_1rs1l5c"
+    },
+    {
+      "id": "remaining-DoModifyRanNfNssiContractTest-deallocationUsesTheRequestedProfileAndFirstSnssaiWithoutAllocationCapacityFields",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoModifyRanNfNssiContractTest#deallocationUsesTheRequestedProfileAndFirstSnssaiWithoutAllocationCapacityFields",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_1rs1l5c"
+    },
+    {
+      "id": "remaining-DoModifyRanNfNssiContractTest-reconfigurationPreservesNestedBooleanNumericUnicodeAndEmptyValues",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoModifyRanNfNssiContractTest#reconfigurationPreservesNestedBooleanNumericUnicodeAndEmptyValues",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_1rs1l5c"
+    },
+    {
+      "id": "remaining-DoModifyRanNfNssiContractTest-malformedAllocationProfilesCannotPublishARequestOrCallbackWaitMetadata",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoModifyRanNfNssiContractTest#malformedAllocationProfilesCannotPublishARequestOrCallbackWaitMetadata",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_1rs1l5c"
+    },
+    {
+      "id": "remaining-DoModifyRanNfNssiContractTest-successfulCallbacksPreserveIdentifierOrderAndTheActualStatusValue",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoModifyRanNfNssiContractTest#successfulCallbacksPreserveIdentifierOrderAndTheActualStatusValue",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_03xcmka"
+    },
+    {
+      "id": "remaining-DoModifyRanNfNssiContractTest-failedCallbacksRetainTheBusinessErrorAndCannotPublishSuccessfulIdentifiers",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoModifyRanNfNssiContractTest#failedCallbacksRetainTheBusinessErrorAndCannotPublishSuccessfulIdentifiers",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_03xcmka"
+    },
+    {
+      "id": "remaining-DoModifyRanNfNssiContractTest-nonSuccessCallbackStatusesCannotPublishIdentifiers",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoModifyRanNfNssiContractTest#nonSuccessCallbackStatusesCannotPublishIdentifiers",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_03xcmka"
+    },
+    {
+      "id": "remaining-DoModifyRanNfNssiContractTest-malformedCallbacksCannotPublishIdentifiers",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.DoModifyRanNfNssiContractTest#malformedCallbacksCannotPublishIdentifiers",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_03xcmka"
+    },
+    {
+      "id": "remaining-RanModificationProcessTest-allThreeActionsUseTheRealPublisherAndCallbackSubprocessWithTypedResults",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.RanModificationProcessTest#allThreeActionsUseTheRealPublisherAndCallbackSubprocessWithTypedResults",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_03xcmka"
+    },
+    {
+      "id": "remaining-RanModificationProcessTest-callbacksSelectOnlyTheMatchingWaitAndDuplicateDeliveryCannotRepeatPublishing",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.RanModificationProcessTest#callbacksSelectOnlyTheMatchingWaitAndDuplicateDeliveryCannotRepeatPublishing",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_1jpoqws"
+    },
+    {
+      "id": "remaining-RanModificationProcessTest-failedCallbacksRetainTheBusinessErrorAndNeverPublishSuccessfulIdentifiers",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.RanModificationProcessTest#failedCallbacksRetainTheBusinessErrorAndNeverPublishSuccessfulIdentifiers",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_03xcmka"
+    },
+    {
+      "id": "remaining-RanModificationProcessTest-malformedCallbacksRollBackCorrelationAndAllowACorrectedCallbackWithoutRepublishing",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.RanModificationProcessTest#malformedCallbacksRollBackCorrelationAndAllowACorrectedCallbackWithoutRepublishing",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_03xcmka"
+    },
+    {
+      "id": "remaining-RanModificationProcessTest-missingRequiredSliceInputsStopBeforePublishingOrCreatingCallbackWaits",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.RanModificationProcessTest#missingRequiredSliceInputsStopBeforePublishingOrCreatingCallbackWaits",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_0bbh5uy"
+    },
+    {
+      "id": "remaining-RanModificationProcessTest-timeoutPreservesTheCallbackBusinessErrorAndDoesNotRepublish",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.RanModificationProcessTest#timeoutPreservesTheCallbackBusinessErrorAndDoesNotRepublish",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_1jpoqws"
+    },
+    {
+      "id": "remaining-RanModificationProcessTest-rejectedBrokerWritesUseABusinessErrorBeforeCreatingCallbackWaits",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.RanModificationProcessTest#rejectedBrokerWritesUseABusinessErrorBeforeCreatingCallbackWaits",
+      "processId": "DoModifyRanNfNssi",
+      "entryActivity": "Activity_1jpoqws"
+    },
+    {
+      "id": "remaining-NetworkDeletionAdapterContractTest-adapterPayloadPreservesEscapedIdentityAndModelFields",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NetworkDeletionAdapterContractTest#adapterPayloadPreservesEscapedIdentityAndModelFields",
+      "processId": "DoDeleteNetworkInstance",
+      "entryActivity": "prepareNetworkRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-NetworkDeletionAdapterContractTest-absentEmptyAndLiteralNullStackIdsSelectForceDelete",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NetworkDeletionAdapterContractTest#absentEmptyAndLiteralNullStackIdsSelectForceDelete",
+      "processId": "DoDeleteNetworkInstance",
+      "entryActivity": "prepareNetworkRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-NetworkDeletionAdapterContractTest-modernRequestIdTakesPrecedenceAndTheLegacyIdRemainsSupported",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NetworkDeletionAdapterContractTest#modernRequestIdTakesPrecedenceAndTheLegacyIdRemainsSupported",
+      "processId": "DoDeleteNetworkInstance",
+      "entryActivity": "prepareNetworkRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-NetworkDeletionAdapterContractTest-theOlderModelCustomizationElementRemainsSupported",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NetworkDeletionAdapterContractTest#theOlderModelCustomizationElementRemainsSupported",
+      "processId": "DoDeleteNetworkInstance",
+      "entryActivity": "prepareNetworkRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-NetworkDeletionAdapterContractTest-deletionSendsThePreparedXmlAndAuthorizationExactlyOnce",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NetworkDeletionAdapterContractTest#deletionSendsThePreparedXmlAndAuthorizationExactlyOnce",
+      "processId": "DoDeleteNetworkInstance"
+    },
+    {
+      "id": "remaining-NetworkDeletionAdapterContractTest-downstreamStatusesAndEmptyBodiesRemainTypedForTheWorkflowGateway",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NetworkDeletionAdapterContractTest#downstreamStatusesAndEmptyBodiesRemainTypedForTheWorkflowGateway",
+      "processId": "DoDeleteNetworkInstance"
+    },
+    {
+      "id": "remaining-NetworkDeletionAdapterContractTest-malformedAdapterUrlsFailBeforeAnyDelete",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NetworkDeletionAdapterContractTest#malformedAdapterUrlsFailBeforeAnyDelete",
+      "processId": "DoDeleteNetworkInstance"
+    },
+    {
+      "id": "remaining-NetworkDeletionAdapterContractTest-brokenTransportReportsABusinessErrorWithoutPublishingASuccessfulStatus",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NetworkDeletionAdapterContractTest#brokenTransportReportsABusinessErrorWithoutPublishingASuccessfulStatus",
+      "processId": "DoDeleteNetworkInstance"
+    },
+    {
+      "id": "remaining-NetworkDeletionAdapterContractTest-missingInventoryFailsBeforePreparingAnAdapterRequest",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NetworkDeletionAdapterContractTest#missingInventoryFailsBeforePreparingAnAdapterRequest",
+      "processId": "DoDeleteNetworkInstance",
+      "entryActivity": "prepareNetworkRequest_ScriptTask"
+    },
+    {
+      "id": "remaining-NetworkDeletionAdapterContractTest-rollbackHandoffContainsOnlyPreparedCompensationsAndKeepsTheOriginalError",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NetworkDeletionAdapterContractTest#rollbackHandoffContainsOnlyPreparedCompensationsAndKeepsTheOriginalError",
+      "processId": "DoDeleteNetworkInstance",
+      "entryActivity": "ScriptTask_0n4ya47"
+    },
+    {
+      "id": "remaining-NetworkDeletionProcessTest-emptyNetworkIdentityStopsBeforeInventoryOrAdapterCalls",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.NetworkDeletionProcessTest#emptyNetworkIdentityStopsBeforeInventoryOrAdapterCalls",
+      "processId": "DoDeleteNetworkInstance",
+      "entryActivity": "ScriptTask_01w2cd9"
+    },
+    {
+      "id": "remaining-NetworkDeletionProcessTest-absentInventoryIsAnIdempotentSuccessWithoutCompensationOrExternalDeletes",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.NetworkDeletionProcessTest#absentInventoryIsAnIdempotentSuccessWithoutCompensationOrExternalDeletes",
+      "processId": "DoDeleteNetworkInstance",
+      "entryActivity": "ScriptTask_0dtzzht"
+    },
+    {
+      "id": "remaining-NetworkDeletionProcessTest-aVfModuleRelationshipPreventsDeletionAndRetainsItsValidationError",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.NetworkDeletionProcessTest#aVfModuleRelationshipPreventsDeletionAndRetainsItsValidationError",
+      "processId": "DoDeleteNetworkInstance",
+      "entryActivity": "callAAIQuery_scriptTask"
+    },
+    {
+      "id": "remaining-NetworkDeletionProcessTest-unavailableInventoryCannotBecomeASilentSuccessOrStartDeletion",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.NetworkDeletionProcessTest#unavailableInventoryCannotBecomeASilentSuccessOrStartDeletion",
+      "processId": "DoDeleteNetworkInstance",
+      "entryActivity": "callAAIQuery_scriptTask"
+    },
+    {
+      "id": "remaining-NetworkDeletionProcessTest-malformedSuccessfulInventoryResponsesCannotStartDeletion",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.NetworkDeletionProcessTest#malformedSuccessfulInventoryResponsesCannotStartDeletion",
+      "processId": "DoDeleteNetworkInstance",
+      "entryActivity": "callAAIQuery_scriptTask"
+    },
+    {
+      "id": "remaining-NetworkAdapterPayloadContractTest-namespacedModelInfoOverridesLegacyValuesForCreateAndUpdate",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.NetworkAdapterPayloadContractTest#namespacedModelInfoOverridesLegacyValuesForCreateAndUpdate"
+    },
+    {
+      "id": "remaining-NetworkAdapterPayloadContractTest-supportedContrailSpellingsSelectTheSameAdapterTechnology",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.NetworkAdapterPayloadContractTest#supportedContrailSpellingsSelectTheSameAdapterTechnology"
+    },
+    {
+      "id": "remaining-NetworkAdapterPayloadContractTest-absentEmptyAndLiteralNullStacksSelectForceUpdate",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.NetworkAdapterPayloadContractTest#absentEmptyAndLiteralNullStacksSelectForceUpdate"
+    },
+    {
+      "id": "remaining-NetworkAdapterPayloadContractTest-vlanAssignmentsKeepOrderAndZeroWhileAbsentCollectionsStayEmpty",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.NetworkAdapterPayloadContractTest#vlanAssignmentsKeepOrderAndZeroWhileAbsentCollectionsStayEmpty"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-accessRequestKeepsTypedProfileIdentityEndpointsAndZeroCapacity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#accessRequestKeepsTypedProfileIdentityEndpointsAndZeroCapacity",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0s8vhha"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-coreRequestKeepsItsOwnTypedProfileAndAdapterIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#coreRequestKeepsItsOwnTypedProfileAndAdapterIdentity",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0z0ec5b"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-sharedAccessSelectionKeepsItsNssiIdentityAndModelName",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#sharedAccessSelectionKeepsItsNssiIdentityAndModelName",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0s8vhha"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-sharedCoreSelectionRetainsItsIdentityAndCoreRequestName",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#sharedCoreSelectionRetainsItsIdentityAndCoreRequestName",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0z0ec5b"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-accessFallsBackToTheServiceSstForNullAndEmptyProfileValues",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#accessFallsBackToTheServiceSstForNullAndEmptyProfileValues",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0s8vhha"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-coreFallsBackToTheServiceSstForNullAndEmptyProfileValues",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#coreFallsBackToTheServiceSstForNullAndEmptyProfileValues",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0z0ec5b"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-explicitUrllcProfilesOverrideTheServiceSstAndSelectTheirOwnPerformanceRequests",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#explicitUrllcProfilesOverrideTheServiceSstAndSelectTheirOwnPerformanceRequests",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-requestProfilesAndEndpointsAreIndependentWithoutMutatingTheInputAdapters",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#requestProfilesAndEndpointsAreIndependentWithoutMutatingTheInputAdapters",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-singletonAndRepeatedNetworkListsRemainArraysInTheirInputOrder",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#singletonAndRepeatedNetworkListsRemainArraysInTheirInputOrder",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-nullAndEmptyOptionalNssiIdentifiersRemainDistinctInSerializedRequests",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#nullAndEmptyOptionalNssiIdentifiersRemainDistinctInSerializedRequests",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-backhaulRequestConnectsAccessToCoreWithoutReversingTheEndpoints",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#backhaulRequestConnectsAccessToCoreWithoutReversingTheEndpoints",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0ci5g6y"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-backhaulProfileRetainsItsDomainAndNumericZeroValues",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#backhaulProfileRetainsItsDomainAndNumericZeroValues",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0ci5g6y"
+    },
+    {
+      "id": "remaining-NsiRequestPersistenceTest-generatedRequestsAndSelectionStateResumeWithTheirJavaTypesAndIsolatedCallbacks",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.NsiRequestPersistenceTest#generatedRequestsAndSelectionStateResumeWithTheirJavaTypesAndIsolatedCallbacks",
+      "processId": "ReceiveWorkflowMessage",
+      "entryActivity": "ScriptTask_1"
+    },
+    {
+      "id": "remaining-NsiRequestPersistenceTest-persistedTimeoutKeepsTheRequestGraphsAndExactWorkflowError",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.NsiRequestPersistenceTest#persistedTimeoutKeepsTheRequestGraphsAndExactWorkflowError",
+      "processId": "ReceiveWorkflowMessage",
+      "entryActivity": "ScriptTask_1"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-accessLinksTheNsiProfilesAndEndpointBeforePublishingItsAllocatedIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#accessLinksTheNsiProfilesAndEndpointBeforePublishingItsAllocatedIdentity",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0mls87v"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-coreLinksOnlyItsOwnProfilesAndEndpointBeforePublishingItsAllocatedIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#coreLinksOnlyItsOwnProfilesAndEndpointBeforePublishingItsAllocatedIdentity",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0z9x5uh"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-backhaulLinksTheNsiAndProfilesWithoutInventingEndpointRelationships",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#backhaulLinksTheNsiAndProfilesWithoutInventingEndpointRelationships",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0sssiii"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-everyAccessWriteFailureStopsFurtherWritesAndKeepsThePreviousIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#everyAccessWriteFailureStopsFurtherWritesAndKeepsThePreviousIdentity",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0mls87v"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-everyCoreWriteFailureStopsFurtherWritesAndKeepsThePreviousIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#everyCoreWriteFailureStopsFurtherWritesAndKeepsThePreviousIdentity",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0z9x5uh"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-everyBackhaulWriteFailureStopsFurtherWritesAndKeepsThePreviousIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#everyBackhaulWriteFailureStopsFurtherWritesAndKeepsThePreviousIdentity",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0sssiii"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-aRelationshipBpmnErrorRetainsTheOriginalBusinessFailure",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#aRelationshipBpmnErrorRetainsTheOriginalBusinessFailure",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0mls87v"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-newNsiRelationshipConnectsTheProvidedResourcesWithoutReversingThem",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#newNsiRelationshipConnectsTheProvidedResourcesWithoutReversingThem",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_1r6kuwy"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-failedNewNsiConnectionUsesTheWorkflowErrorAndRetainsTheCauseDetail",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#failedNewNsiConnectionUsesTheWorkflowErrorAndRetainsTheCauseDetail",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_1r6kuwy"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-aNewNsiConnectionBpmnErrorKeepsTheOriginalWorkflowFailure",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#aNewNsiConnectionBpmnErrorKeepsTheOriginalWorkflowFailure",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_1r6kuwy"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-aSelectedNsiIsQueriedBeforeConnectingTheAllottedResource",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#aSelectedNsiIsQueriedBeforeConnectingTheAllottedResource",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_07sgklo"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-anAbsentSelectedNsiCannotCreateAnyRelationship",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#anAbsentSelectedNsiCannotCreateAnyRelationship",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_07sgklo"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-anUnavailableSelectedNsiLookupRetainsTheTransportFailureInsteadOfClaimingAbsence",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#anUnavailableSelectedNsiLookupRetainsTheTransportFailureInsteadOfClaimingAbsence",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_07sgklo"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-aSelectedNsiLookupBpmnErrorIsRethrownWithItsOriginalWorkflowDetail",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#aSelectedNsiLookupBpmnErrorIsRethrownWithItsOriginalWorkflowDetail",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_07sgklo"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-fronthaulLinksOnlyItsOwnNsiAndProfilesBeforePublishingItsIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#fronthaulLinksOnlyItsOwnNsiAndProfilesBeforePublishingItsIdentity",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Activity_0e7x5rm"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-midhaulLinksOnlyItsOwnNsiAndProfilesBeforePublishingItsIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#midhaulLinksOnlyItsOwnNsiAndProfilesBeforePublishingItsIdentity",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Activity_08n2y6k"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-everyFronthaulWriteFailureStopsFurtherWritesAndKeepsThePreviousIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#everyFronthaulWriteFailureStopsFurtherWritesAndKeepsThePreviousIdentity",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Activity_0e7x5rm"
+    },
+    {
+      "id": "remaining-NsiInventoryRelationshipContractTest-everyMidhaulWriteFailureStopsFurtherWritesAndKeepsThePreviousIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiInventoryRelationshipContractTest#everyMidhaulWriteFailureStopsFurtherWritesAndKeepsThePreviousIdentity",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Activity_08n2y6k"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-fronthaulRequestRetainsItsOwnServiceModelProfileAndTypedState",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#fronthaulRequestRetainsItsOwnServiceModelProfileAndTypedState",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Activity_14td7ux"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-midhaulRequestRetainsItsOwnServiceModelProfileAndTypedState",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#midhaulRequestRetainsItsOwnServiceModelProfileAndTypedState",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Activity_147twno"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-fronthaulAndMidhaulKeepNullEmptyIdentifiersAndSstFallbackDistinct",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#fronthaulAndMidhaulKeepNullEmptyIdentifiersAndSstFallbackDistinct",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiSubnetAllocationRequestContractTest-fronthaulAndMidhaulRequestsDoNotShareMutableProfilesOrOverwriteOtherDomains",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiSubnetAllocationRequestContractTest#fronthaulAndMidhaulRequestsDoNotShareMutableProfilesOrOverwriteOtherDomains",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiProfileInventoryContractTest-accessInstanceUsesItsOwnModelProfileAndGeneratedInventoryIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiProfileInventoryContractTest#accessInstanceUsesItsOwnModelProfileAndGeneratedInventoryIdentity",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Task_1tv7jy5"
+    },
+    {
+      "id": "remaining-NsiProfileInventoryContractTest-coreInstanceUsesItsOwnModelProfileAndGeneratedInventoryIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiProfileInventoryContractTest#coreInstanceUsesItsOwnModelProfileAndGeneratedInventoryIdentity",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Task_1en3luv"
+    },
+    {
+      "id": "remaining-NsiProfileInventoryContractTest-backhaulInstanceKeepsItsOwnDomainAndInventoryLocation",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiProfileInventoryContractTest#backhaulInstanceKeepsItsOwnDomainAndInventoryLocation",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0stnvp3"
+    },
+    {
+      "id": "remaining-NsiProfileInventoryContractTest-fronthaulInstanceKeepsItsExistingNameAndOwnDomain",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiProfileInventoryContractTest#fronthaulInstanceKeepsItsExistingNameAndOwnDomain",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Activity_0z1ympd"
+    },
+    {
+      "id": "remaining-NsiProfileInventoryContractTest-midhaulInstanceKeepsItsOwnNameModelAndDomain",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiProfileInventoryContractTest#midhaulInstanceKeepsItsOwnNameModelAndDomain",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Activity_0zlfgf5"
+    },
+    {
+      "id": "remaining-NsiProfileInventoryContractTest-accessProfileCanBeConstructedUsingTheCurrentInventoryModel",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiProfileInventoryContractTest#accessProfileCanBeConstructedUsingTheCurrentInventoryModel",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_1r2li91"
+    },
+    {
+      "id": "remaining-NsiProfileInventoryContractTest-coreProfileCanBeConstructedUsingTheCurrentInventoryModel",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiProfileInventoryContractTest#coreProfileCanBeConstructedUsingTheCurrentInventoryModel",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Task_1g8n8iz"
+    },
+    {
+      "id": "remaining-NsiProfileInventoryContractTest-transportProfilesKeepTheirOwnGeneratedIdsAndNumericPerformanceValues",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiProfileInventoryContractTest#transportProfilesKeepTheirOwnGeneratedIdsAndNumericPerformanceValues",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiProfileInventoryContractTest-transportProfileZerosRemainPresentNumericValues",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiProfileInventoryContractTest#transportProfileZerosRemainPresentNumericValues",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiProfileInventoryContractTest-instanceWriteFailuresPropagateTheOriginalCauseWithoutPublishingCompletion",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiProfileInventoryContractTest#instanceWriteFailuresPropagateTheOriginalCauseWithoutPublishingCompletion",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiProfileInventoryContractTest-transportProfileWriteFailuresKeepTheCauseAndStopAfterTheAttemptedWrite",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiProfileInventoryContractTest#transportProfileWriteFailuresKeepTheCauseAndStopAfterTheAttemptedWrite",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiProfileInventoryContractTest-inventoryBpmnErrorsRetainTheirOriginalWorkflowDetail",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiProfileInventoryContractTest#inventoryBpmnErrorsRetainTheirOriginalWorkflowDetail",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiProfileInventoryContractTest-sharedInstanceFactoryPreservesNullAndEmptyOptionalProfileValues",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiProfileInventoryContractTest#sharedInstanceFactoryPreservesNullAndEmptyOptionalProfileValues",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiEndpointInventoryContractTest-accessEndpointKeepsItsOwnAddressInterfaceRoleAndGeneratedRouteIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiEndpointInventoryContractTest#accessEndpointKeepsItsOwnAddressInterfaceRoleAndGeneratedRouteIdentity",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Task_0dkfe9n"
+    },
+    {
+      "id": "remaining-NsiEndpointInventoryContractTest-coreEndpointKeepsItsOwnAddressInterfaceAndPublishedRouteIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiEndpointInventoryContractTest#coreEndpointKeepsItsOwnAddressInterfaceAndPublishedRouteIdentity",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Task_0fwhsq2"
+    },
+    {
+      "id": "remaining-NsiEndpointInventoryContractTest-accessAndCoreEndpointsHaveIndependentRoutesAndKeepBothPublishedIdentities",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiEndpointInventoryContractTest#accessAndCoreEndpointsHaveIndependentRoutesAndKeepBothPublishedIdentities",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiEndpointInventoryContractTest-endpointOptionalValuesKeepNullAndEmptyDistinct",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiEndpointInventoryContractTest#endpointOptionalValuesKeepNullAndEmptyDistinct",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiEndpointInventoryContractTest-accessInventoryFailurePreservesTheCauseWithoutPublishingCompletion",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiEndpointInventoryContractTest#accessInventoryFailurePreservesTheCauseWithoutPublishingCompletion",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Task_0dkfe9n"
+    },
+    {
+      "id": "remaining-NsiEndpointInventoryContractTest-coreInventoryFailureRetainsThePreviouslyPublishedCoreEndpoint",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiEndpointInventoryContractTest#coreInventoryFailureRetainsThePreviouslyPublishedCoreEndpoint",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Task_0fwhsq2"
+    },
+    {
+      "id": "remaining-NsiEndpointInventoryContractTest-endpointBpmnErrorsRetainTheirOriginalWorkflowException",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiEndpointInventoryContractTest#endpointBpmnErrorsRetainTheirOriginalWorkflowException",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiEndpointInventoryContractTest-missingTypedSliceStateCannotWriteAnInventoryRoute",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiEndpointInventoryContractTest#missingTypedSliceStateCannotWriteAnInventoryRoute",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiEndpointInventoryContractTest-emptyTransportEndpointsReturnTheDefinedWorkflowValidationErrorBeforeAnyWrite",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiEndpointInventoryContractTest#emptyTransportEndpointsReturnTheDefinedWorkflowValidationErrorBeforeAnyWrite"
+    },
+    {
+      "id": "remaining-NsiEndpointInventoryContractTest-transportEndpointCreationCanUseTheSuppliedBackhaulExecutionContext",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.NsiEndpointInventoryContractTest#transportEndpointCreationCanUseTheSuppliedBackhaulExecutionContext"
+    },
+    {
+      "id": "remaining-NsiAllocationRoutingTest-fronthaulContinuesThroughMidhaulAndBackhaulWithIndependentIdentities",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.NsiAllocationRoutingTest#fronthaulContinuesThroughMidhaulAndBackhaulWithIndependentIdentities",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Activity_0z1ympd"
+    },
+    {
+      "id": "remaining-NsiAllocationRoutingTest-accessAndCoreJoinBeforeSelectingBackhaulOnly",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.NsiAllocationRoutingTest#accessAndCoreJoinBeforeSelectingBackhaulOnly",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiAllocationRoutingTest-accessAndCoreJoinBeforeSelectingFronthaulMidhaulAndBackhaul",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.NsiAllocationRoutingTest#accessAndCoreJoinBeforeSelectingFronthaulMidhaulAndBackhaul",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiAllocationPersistenceTest-backhaulCompletionPersistsTypedProfileAndAllocationState",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.NsiAllocationPersistenceTest#backhaulCompletionPersistsTypedProfileAndAllocationState",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "ScriptTask_0stnvp3"
+    },
+    {
+      "id": "remaining-NsiAllocationPersistenceTest-fronthaulMidhaulAndBackhaulCompletionPersistsTheFullOrchestrationStatus",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.NsiAllocationPersistenceTest#fronthaulMidhaulAndBackhaulCompletionPersistsTheFullOrchestrationStatus",
+      "processId": "DoAllocateNSIandNSSI",
+      "entryActivity": "Activity_0z1ympd"
+    },
+    {
+      "id": "remaining-NsiAllocationPersistenceTest-threeDomainCompletionPersistsTheFullOrchestrationStatus",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.NsiAllocationPersistenceTest#threeDomainCompletionPersistsTheFullOrchestrationStatus",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-NsiAllocationPersistenceTest-fiveDomainCompletionPersistsTheFullOrchestrationStatus",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.NsiAllocationPersistenceTest#fiveDomainCompletionPersistsTheFullOrchestrationStatus",
+      "processId": "DoAllocateNSIandNSSI"
+    },
+    {
+      "id": "remaining-SdncRequestPayloadContractTest-featureEnvelopeKeepsNamespaceUrisEscapedHeadersAndAllRequestFragments",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRequestPayloadContractTest#featureEnvelopeKeepsNamespaceUrisEscapedHeadersAndAllRequestFragments"
+    },
+    {
+      "id": "remaining-SdncRequestPayloadContractTest-featureBuilderUsesTheExplicitRequestVariable",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRequestPayloadContractTest#featureBuilderUsesTheExplicitRequestVariable"
+    },
+    {
+      "id": "remaining-SdncRequestPayloadContractTest-featureBuilderRemovesSourceDefaultNamespacesWithoutChangingValues",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRequestPayloadContractTest#featureBuilderRemovesSourceDefaultNamespacesWithoutChangingValues"
+    },
+    {
+      "id": "remaining-SdncRequestPayloadContractTest-activationEnvelopeKeepsItsMsoActionAndVnfInformation",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRequestPayloadContractTest#activationEnvelopeKeepsItsMsoActionAndVnfInformation"
+    },
+    {
+      "id": "remaining-SdncRequestPayloadContractTest-activationKeepsRepeatedVnfEntriesInTheirInputOrder",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRequestPayloadContractTest#activationKeepsRepeatedVnfEntriesInTheirInputOrder"
+    },
+    {
+      "id": "remaining-SdncRequestPayloadContractTest-generatedHeaderIdsRetainTheirParentRequestPrefixAcrossAllThreeBuilders",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRequestPayloadContractTest#generatedHeaderIdsRetainTheirParentRequestPrefixAcrossAllThreeBuilders"
+    },
+    {
+      "id": "remaining-SdncRequestPayloadContractTest-higherLayerAssignmentBuildsVpnDataAndDisablesTheInterface",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRequestPayloadContractTest#higherLayerAssignmentBuildsVpnDataAndDisablesTheInterface"
+    },
+    {
+      "id": "remaining-SdncRequestPayloadContractTest-higherLayerActivationUsesVniDataAndEnablesTheInterface",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRequestPayloadContractTest#higherLayerActivationUsesVniDataAndEnablesTheInterface"
+    },
+    {
+      "id": "remaining-SdncRequestPayloadContractTest-higherLayerDeletionUsesVniDataAndDisablesTheInterface",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRequestPayloadContractTest#higherLayerDeletionUsesVniDataAndDisablesTheInterface"
+    },
+    {
+      "id": "remaining-SdncRequestPayloadContractTest-supportedHigherLayerActionsSelectTheSameBodyWhenTheirCaseDiffers",
+      "module": "MSOCommonBPMN",
+      "test": "org.onap.so.bpmn.common.scripts.SdncRequestPayloadContractTest#supportedHigherLayerActionsSelectTheSameBodyWhenTheirCaseDiffers"
+    },
+    {
+      "id": "remaining-VfModuleDeletionResponseContractTest-successfulResponsePublishesBooleanCompletionWithoutInventingOutputs",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionResponseContractTest#successfulResponsePublishesBooleanCompletionWithoutInventingOutputs",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "PostProcessVNFAdapterRequest"
+    },
+    {
+      "id": "remaining-VfModuleDeletionResponseContractTest-namespacedOutputsRetainPolicyOrderUnicodeAndBothManagementAddresses",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionResponseContractTest#namespacedOutputsRetainPolicyOrderUnicodeAndBothManagementAddresses",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "PostProcessVNFAdapterRequest"
+    },
+    {
+      "id": "remaining-VfModuleDeletionResponseContractTest-emptyAndUnrelatedOutputsDoNotCreatePolicyCleanup",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionResponseContractTest#emptyAndUnrelatedOutputsDoNotCreatePolicyCleanup",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "PostProcessVNFAdapterRequest"
+    },
+    {
+      "id": "remaining-VfModuleDeletionResponseContractTest-absentResponsePreservesExactEmptyResponseBusinessError",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionResponseContractTest#absentResponsePreservesExactEmptyResponseBusinessError",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "PostProcessVNFAdapterRequest"
+    },
+    {
+      "id": "remaining-VfModuleDeletionResponseContractTest-emptyResponsePreservesExactAdapterError",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionResponseContractTest#emptyResponsePreservesExactAdapterError",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "PostProcessVNFAdapterRequest"
+    },
+    {
+      "id": "remaining-VfModuleDeletionResponseContractTest-wrongOperationResponseDoesNotPublishDeleteCompletion",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionResponseContractTest#wrongOperationResponseDoesNotPublishDeleteCompletion",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "PostProcessVNFAdapterRequest"
+    },
+    {
+      "id": "remaining-VfModuleDeletionResponseContractTest-malformedOutputsExposeInternalPostProcessingError",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionResponseContractTest#malformedOutputsExposeInternalPostProcessingError",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "PostProcessVNFAdapterRequest"
+    },
+    {
+      "id": "remaining-VfModuleDeletionResponseContractTest-inventoryModuleUpdateUsesEscapedIdentitiesAndDeleteSentinels",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionResponseContractTest#inventoryModuleUpdateUsesEscapedIdentitiesAndDeleteSentinels",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "UpdateAAIVfModulePrep"
+    },
+    {
+      "id": "remaining-VfModuleDeletionResponseContractTest-inventoryModuleDeletionRetainsBothEscapedIdentities",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionResponseContractTest#inventoryModuleDeletionRetainsBothEscapedIdentities",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "DeleteAAIVfModulePrep"
+    },
+    {
+      "id": "remaining-VfModuleDeletionResponseContractTest-managementCleanupOnlyDeletesAddressesPresentInAdapterOutputs",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionResponseContractTest#managementCleanupOnlyDeletesAddressesPresentInAdapterOutputs",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "PreProcessUpdateAAIGenericVnf"
+    },
+    {
+      "id": "remaining-VfModuleDeletionFailureProcessTest-absentAdapterResponseEndsBeforeInventoryCleanup",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.VfModuleDeletionFailureProcessTest#absentAdapterResponseEndsBeforeInventoryCleanup",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "PostProcessVNFAdapterRequest"
+    },
+    {
+      "id": "remaining-VfModuleDeletionFailureProcessTest-explicitNullAdapterResponseEndsBeforeInventoryCleanup",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.VfModuleDeletionFailureProcessTest#explicitNullAdapterResponseEndsBeforeInventoryCleanup",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "PostProcessVNFAdapterRequest"
+    },
+    {
+      "id": "remaining-VfModuleDeletionFailureProcessTest-emptyAdapterResponseEndsBeforeInventoryCleanup",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.VfModuleDeletionFailureProcessTest#emptyAdapterResponseEndsBeforeInventoryCleanup",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "PostProcessVNFAdapterRequest"
+    },
+    {
+      "id": "remaining-VfModuleDeletionFailureProcessTest-aDifferentAdapterOperationEndsBeforeInventoryCleanup",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.VfModuleDeletionFailureProcessTest#aDifferentAdapterOperationEndsBeforeInventoryCleanup",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "PostProcessVNFAdapterRequest"
+    },
+    {
+      "id": "remaining-VfModuleDeletionFailureProcessTest-malformedOutputsEndBeforePolicyAddressOrModuleCleanup",
+      "module": "so-bpmn-infrastructure-flows",
+      "test": "org.onap.so.bpmn.infrastructure.process.VfModuleDeletionFailureProcessTest#malformedOutputsEndBeforePolicyAddressOrModuleCleanup",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "PostProcessVNFAdapterRequest"
+    },
+    {
+      "id": "remaining-VfModuleDeletionRequestContractTest-adapterDeletionKeepsEscapedIdentitiesAndCorrelatesTheCallback",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionRequestContractTest#adapterDeletionKeepsEscapedIdentitiesAndCorrelatesTheCallback",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "VNFAdapterPrep"
+    },
+    {
+      "id": "remaining-VfModuleDeletionRequestContractTest-missingCallbackEndpointRaisesExactErrorBeforePublishingAnAdapterRequest",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionRequestContractTest#missingCallbackEndpointRaisesExactErrorBeforePublishingAnAdapterRequest",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "VNFAdapterPrep"
+    },
+    {
+      "id": "remaining-VfModuleDeletionRequestContractTest-sdncDeletionAndReleaseKeepHeaderModuleGenericVnfAndServiceIdentitiesDistinct",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionRequestContractTest#sdncDeletionAndReleaseKeepHeaderModuleGenericVnfAndServiceIdentitiesDistinct",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "SDNCAdapterPrep2"
+    },
+    {
+      "id": "remaining-VfModuleDeletionRequestContractTest-onlyRetainedResourcesEmitTheRetentionSubAction",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionRequestContractTest#onlyRetainedResourcesEmitTheRetentionSubAction",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "SDNCAdapterPrep2"
+    },
+    {
+      "id": "remaining-VfModuleDeletionRequestContractTest-absentOrEmptyRequestedNameFallsBackToTheInventoryModule",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionRequestContractTest#absentOrEmptyRequestedNameFallsBackToTheInventoryModule",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "SDNCAdapterPrep2"
+    },
+    {
+      "id": "remaining-VfModuleDeletionRequestContractTest-explicitRequestedNameTakesPrecedenceOverInventory",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionRequestContractTest#explicitRequestedNameTakesPrecedenceOverInventory",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "SDNCAdapterPrep2"
+    },
+    {
+      "id": "remaining-VfModuleDeletionRequestContractTest-generatedSdncRequestIdKeepsTheBusinessRequestPrefix",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModuleDeletionRequestContractTest#generatedSdncRequestIdKeepsTheBusinessRequestPrefix",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "SDNCAdapterPrep2"
+    },
+    {
+      "id": "remaining-VfModulePolicyCleanupContractTest-absentPolicyListDoesNotQueryInventoryOrPublishACount",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModulePolicyCleanupContractTest#absentPolicyListDoesNotQueryInventoryOrPublishACount",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "DeleteNetworkPoliciesFromAAI"
+    },
+    {
+      "id": "remaining-VfModulePolicyCleanupContractTest-emptyPolicyListPublishesAnIntegerZeroWithoutInventoryCalls",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModulePolicyCleanupContractTest#emptyPolicyListPublishesAnIntegerZeroWithoutInventoryCalls",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "DeleteNetworkPoliciesFromAAI"
+    },
+    {
+      "id": "remaining-VfModulePolicyCleanupContractTest-eachRequestedPolicyIsQueriedAndItsReturnedIdentityDeletedInOrder",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModulePolicyCleanupContractTest#eachRequestedPolicyIsQueriedAndItsReturnedIdentityDeletedInOrder",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "DeleteNetworkPoliciesFromAAI"
+    },
+    {
+      "id": "remaining-VfModulePolicyCleanupContractTest-missingInventoryDoesNotDeleteAnUnreturnedPolicyIdentity",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModulePolicyCleanupContractTest#missingInventoryDoesNotDeleteAnUnreturnedPolicyIdentity",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "DeleteNetworkPoliciesFromAAI"
+    },
+    {
+      "id": "remaining-VfModulePolicyCleanupContractTest-anEmptyInventoryCollectionDoesNotDeleteAnyPolicy",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModulePolicyCleanupContractTest#anEmptyInventoryCollectionDoesNotDeleteAnyPolicy",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "DeleteNetworkPoliciesFromAAI"
+    },
+    {
+      "id": "remaining-VfModulePolicyCleanupContractTest-aMissingFirstPolicyDoesNotPreventDeletingTheNextReturnedPolicy",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModulePolicyCleanupContractTest#aMissingFirstPolicyDoesNotPreventDeletingTheNextReturnedPolicy",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "DeleteNetworkPoliciesFromAAI"
+    },
+    {
+      "id": "remaining-VfModulePolicyCleanupContractTest-noRequestedPoliciesPreservesTheOriginalWorkflowFailure",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModulePolicyCleanupContractTest#noRequestedPoliciesPreservesTheOriginalWorkflowFailure",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "DeleteNetworkPoliciesFromAAI"
+    },
+    {
+      "id": "remaining-VfModulePolicyCleanupContractTest-aFailedFirstDeletionRaisesItsBusinessErrorBeforeTouchingTheNextPolicy",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModulePolicyCleanupContractTest#aFailedFirstDeletionRaisesItsBusinessErrorBeforeTouchingTheNextPolicy",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "DeleteNetworkPoliciesFromAAI"
+    },
+    {
+      "id": "remaining-VfModulePolicyCleanupContractTest-aFailedLastDeletionRaisesItsBusinessErrorAfterTheCompletedFirstDeletion",
+      "module": "so-bpmn-infrastructure-common",
+      "test": "org.onap.so.bpmn.infrastructure.scripts.VfModulePolicyCleanupContractTest#aFailedLastDeletionRaisesItsBusinessErrorAfterTheCompletedFirstDeletion",
+      "processId": "DoDeleteVfModule",
+      "entryActivity": "DeleteNetworkPoliciesFromAAI"
     }
   ],
   "coverageSlices": [],
