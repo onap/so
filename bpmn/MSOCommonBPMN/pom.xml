@@ -86,6 +86,7 @@
                 <exclude>**/bpmn/common/scripts/**/*Test.java</exclude>
                 <!-- ClockUtil is global; cached Spring engines must not observe these tests' clock. -->
                 <exclude>**/bpmn/common/verification/WorkflowMessagePersistenceTest.java</exclude>
+                <exclude>**/bpmn/common/verification/SdncAdapterProcessPersistenceTest.java</exclude>
               </excludes>
             </configuration>
           </execution>
@@ -280,6 +281,7 @@
                 <configuration>
                   <includes>
                     <include>**/bpmn/common/verification/WorkflowMessagePersistenceTest.java</include>
+                    <include>**/bpmn/common/verification/SdncAdapterProcessPersistenceTest.java</include>
                   </includes>
                   <failIfNoTests>true</failIfNoTests>
                   <forkCount>1</forkCount>
