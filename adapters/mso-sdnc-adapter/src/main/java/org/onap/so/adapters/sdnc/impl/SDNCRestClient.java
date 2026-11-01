@@ -51,6 +51,8 @@ import org.onap.so.adapters.sdnc.client.CallbackHeader;
 import org.onap.so.adapters.sdnc.client.SDNCAdapterCallbackRequest;
 import org.onap.so.adapters.sdnc.client.SDNCCallbackAdapterPortType;
 import org.onap.so.adapters.sdnc.client.SDNCCallbackAdapterService;
+import org.onap.so.adapters.sdnc.sdncrest.SdncRestCallbackClient;
+import org.onap.so.adapters.sdncrest.SdncRestCallback;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.utils.BasicAuth;
 import org.slf4j.Logger;
@@ -73,13 +75,40 @@ public class SDNCRestClient {
     @Autowired
     private MapRequestTunables tunablesMapper;
 
+    @Autowired
+    private SdncRestCallbackClient restCallbackClient;
+
     private static Logger logger = LoggerFactory.getLogger(SDNCRestClient.class);
 
     private static final String EXCEPTION_MSG = "Exception while evaluate xpath";
     private static final String CAMUNDA = "Camunda";
 
     @Async
+    public void executeRestRequest(SDNCAdapterRequest request) {
+        SDNCResponse response;
+        try {
+            response = executeControllerRequest(request);
+        } catch (Exception failure) {
+            logger.error("SDNC REST worker failed", failure);
+            response = new SDNCResponse(request.getRequestHeader().getRequestId());
+            response.setRespCode(HttpURLConnection.HTTP_INTERNAL_ERROR);
+            response.setRespMsg("Error processing request to SDNC");
+        }
+        SdncRestCallback callback = new SdncRestCallback();
+        callback.setRequestId(response.getReqId());
+        callback.setResponseCode(Integer.toString(response.getRespCode()));
+        callback.setResponseMessage(response.getRespMsg());
+        callback.setRequestDataXml(response.getSdncRespXml());
+        restCallbackClient.send(request.getRequestHeader().getCallbackUrl(), callback);
+    }
+
+    @Async
     public void executeRequest(SDNCAdapterRequest bpelRequest) {
+        SDNCResponse response = executeControllerRequest(bpelRequest);
+        sendRespToBpel(bpelRequest.getRequestHeader().getCallbackUrl(), response);
+    }
+
+    private SDNCResponse executeControllerRequest(SDNCAdapterRequest bpelRequest) {
 
         logger.debug("BPEL Request: {}", bpelRequest);
 
@@ -95,7 +124,6 @@ public class SDNCRestClient {
         }
 
         String bpelReqId = bpelRequest.getRequestHeader().getRequestId();
-        String callbackUrl = bpelRequest.getRequestHeader().getCallbackUrl();
         String msoAction = bpelRequest.getRequestHeader().getMsoAction();
 
         String sdncReqBody = null;
@@ -122,7 +150,7 @@ public class SDNCRestClient {
         }
         SDNCResponse sdncResp = getSdncResp(sdncReqBody, rt);
         logger.debug("Got the SDNC Response: {}", sdncResp.getSdncRespXml());
-        sendRespToBpel(callbackUrl, sdncResp);
+        return sdncResp;
     }
 
     public SDNCResponse getSdncResp(String sdncReqBody, RequestTunables rt) {

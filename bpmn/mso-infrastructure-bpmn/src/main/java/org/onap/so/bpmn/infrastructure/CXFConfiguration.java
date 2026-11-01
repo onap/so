@@ -33,6 +33,7 @@ import org.apache.cxf.jaxrs.openapi.OpenApiFeature;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.onap.so.bpmn.common.adapter.sdnc.SDNCCallbackAdapterPortType;
+import org.onap.so.bpmn.common.workflow.service.SdncHttpCallbackResource;
 import org.onap.so.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.onap.so.bpmn.common.workflow.service.WorkflowMessageResource;
 import org.onap.so.bpmn.common.workflow.service.WorkflowResource;
@@ -63,6 +64,9 @@ public class CXFConfiguration {
     private WorkflowAsyncResource workflowAsyncResource;
 
     @Autowired
+    private SdncHttpCallbackResource sdncHttpCallbackResource;
+
+    @Autowired
     private SOAuditLogContainerFilter soAuditLogContainerFilter;
 
     @Autowired
@@ -90,7 +94,8 @@ public class CXFConfiguration {
     public Server rsServer() {
         JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
         endpoint.setBus(bus);
-        endpoint.setServiceBeans(Arrays.<Object>asList(wmr, workflowResource, workflowAsyncResource));
+        endpoint.setServiceBeans(
+                Arrays.<Object>asList(wmr, workflowResource, workflowAsyncResource, sdncHttpCallbackResource));
         endpoint.setAddress("/");
         endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), new LoggingFeature()));
         endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper), soAuditLogContainerFilter));
