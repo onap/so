@@ -50,11 +50,10 @@ public class DoCreateAllottedResourceBRGRollbackIT extends AbstractTestBase {
     @Test
     public void testDoCreateAllottedResourceBRGRollback_Success() throws Exception {
         logStart();
-        MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID,
-                "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
-        MockPatchAllottedResource(wireMockServer, CUST, SVC, INST, ARID);
+        stubAllottedResourceLookup(INST, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
+        stubAllottedResourceRelationshipsAndUpdates(INST);
         MockDeleteAllottedResource(wireMockServer, CUST, SVC, INST, ARID, ARVERS);
-        mockSDNCAdapter(wireMockServer, 200);
+        stubControllerResponse(200);
         mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
         String businessKey = UUID.randomUUID().toString();
@@ -75,6 +74,7 @@ public class DoCreateAllottedResourceBRGRollbackIT extends AbstractTestBase {
         assertEquals(null, workflowException);
         assertEquals("true", BPMNUtil.getVariable(processEngine, PROCNAME, "rolledBack", processId));
         assertNull(BPMNUtil.getVariable(processEngine, PROCNAME, "rollbackError", processId));
+        assertRolledBackAllottedResource(INST);
         logEnd();
     }
 
@@ -311,7 +311,7 @@ public class DoCreateAllottedResourceBRGRollbackIT extends AbstractTestBase {
         rollbackData.put(RbType, "rollbackSDNCactivate", "true");
         rollbackData.put(RbType, "rollbackSDNCcreate", "true");
         rollbackData.put(RbType, "aaiARPath",
-                "business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC
+                "/business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC
                         + "/service-instances/service-instance/" + INST + "/allotted-resources/allotted-resource/"
                         + ARID);
 
