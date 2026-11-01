@@ -43,6 +43,7 @@ import org.onap.aai.domain.yang.VfModule
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
+import org.onap.so.bpmn.vcpe.scripts.GroovyTestBase
 import org.springframework.mock.env.MockEnvironment
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
@@ -61,7 +62,7 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
     static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
 
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090)
+    public WireMockRule wireMockRule = new WireMockRule(GroovyTestBase.PORT)
 
     @Spy
     DoUpdateVfModule doUpdateVfModule
@@ -74,7 +75,7 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
         MockEnvironment environment = new MockEnvironment()
         environment.setProperty("mso.workflow.global.default.aai.version", "14")
         environment.setProperty("mso.workflow.global.default.aai.namespace", "http://org.onap.aai.inventory/")
-        environment.setProperty("aai.endpoint", "http://localhost:28090")
+        environment.setProperty("aai.endpoint", GroovyTestBase.LOCAL_URI)
         new UrnPropertiesReader().setEnvironment(environment)
     }
 
@@ -107,14 +108,14 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
         when(mockExecution.getVariable(prefix + "aicCloudRegion")).thenReturn("CloudOwner")
         when(mockExecution.getVariable("mso.workflow.default.aai.v8.cloud-region.uri")).thenReturn("/aai/v8/cloud-infrastructure/cloud-regions/cloud-region")
         when(mockExecution.getVariable("mso.workflow.default.aai.cloud-region.version")).thenReturn("8")
-        when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
+        when(mockExecution.getVariable("aai.endpoint")).thenReturn(GroovyTestBase.LOCAL_URI)
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
 
         mockData()
         DoUpdateVfModule obj = new DoUpdateVfModule()
         obj.prepConfirmVolumeGroupTenant(mockExecution)
 
-        Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionRequest", "http://localhost:28090/aai/v14/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/CloudOwner")
+        Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionRequest", GroovyTestBase.LOCAL_URI + "/aai/v14/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/CloudOwner")
         Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionReturnCode", "200")
         Mockito.verify(mockExecution).setVariable(prefix + "cloudRegionForVolume", "AAIAIC25")
         Mockito.verify(mockExecution).setVariable(prefix + "isCloudRegionGood", true)

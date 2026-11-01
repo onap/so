@@ -20,6 +20,7 @@
 
 package org.onap.so.bpmn.infrastructure.process;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -98,6 +99,7 @@ public class GroovyExecutionInventoryTest {
         Inventory inventory = packagedInventory();
         Map<String, String> failures = new TreeMap<>();
         Set<String> deployed = new TreeSet<>();
+        Map<String, Set<String>> deployedProcesses = new TreeMap<>();
         ProcessEngineConfigurationImpl configuration = (ProcessEngineConfigurationImpl) ProcessEngineConfiguration
                 .createStandaloneInMemProcessEngineConfiguration();
         String name = "production-deployment-" + java.util.UUID.randomUUID();
@@ -111,15 +113,31 @@ public class GroovyExecutionInventoryTest {
         ProcessEngine engine = configuration.buildProcessEngine();
         try {
             for (Map.Entry<String, byte[]> resource : inventory.productionBytes.entrySet()) {
-                String resourceName = resource.getKey();
-                if (!resourceName.endsWith(".bpmn") && !resourceName.endsWith(".bpmn20.xml")) {
-                    resourceName += ".bpmn";
-                }
+                String resourceName = resource.getKey().substring(resource.getKey().indexOf('/') + 1);
                 try (InputStream content = new ByteArrayInputStream(resource.getValue())) {
-                    engine.getRepositoryService().createDeployment().name(resource.getKey())
-                            .addInputStream(resourceName, content).deploy();
+                    String deploymentId = engine.getRepositoryService().createDeployment().name(resource.getKey())
+                            .addInputStream(resourceName, content).deploy().getId();
+                    Set<String> expected = new TreeSet<>();
+                    inventory.processOwners.forEach((process, owner) -> {
+                        if (resource.getKey().equals(owner)) {
+                            expected.add(process);
+                        }
+                    });
+                    Set<String> actual = new TreeSet<>();
+                    engine.getRepositoryService().createProcessDefinitionQuery().deploymentId(deploymentId).list()
+                            .forEach(definition -> actual.add(definition.getKey()));
+                    assertEquals("Deployed process identities for " + resource.getKey(), expected, actual);
+                    assertEquals("Deployed resource name for " + resource.getKey(),
+                            Collections.singletonList(resourceName),
+                            engine.getRepositoryService().getDeploymentResourceNames(deploymentId));
+                    try (InputStream persisted =
+                            engine.getRepositoryService().getResourceAsStream(deploymentId, resourceName)) {
+                        assertArrayEquals("Deployed bytes for " + resource.getKey(), resource.getValue(),
+                                persisted.readAllBytes());
+                    }
+                    deployedProcesses.put(resource.getKey(), actual);
                     deployed.add(resource.getKey());
-                } catch (RuntimeException failure) {
+                } catch (RuntimeException | AssertionError failure) {
                     failures.put(resource.getKey(), failure.getMessage());
                 }
             }
@@ -128,6 +146,7 @@ public class GroovyExecutionInventoryTest {
             Map<String, Object> report = new TreeMap<>();
             report.put("resources", inventory.resources);
             report.put("deployedResources", deployed);
+            report.put("deployedProcessesByResource", deployedProcesses);
             report.put("failedResources", failures);
             long definitions = engine.getRepositoryService().createProcessDefinitionQuery().count();
             report.put("deployedProcessDefinitions", definitions);
