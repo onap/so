@@ -32,6 +32,8 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Assume;
 import org.junit.Test;
 import org.onap.aai.domain.yang.L3Network;
+import org.onap.aai.domain.yang.SegmentationAssignment;
+import org.onap.aai.domain.yang.SegmentationAssignments;
 import org.onap.aai.domain.yang.Subnet;
 import org.onap.aai.domain.yang.Subnets;
 import org.w3c.dom.Document;
@@ -94,9 +96,11 @@ public class NetworkAdapterPayloadContractTest {
         L3Network network = network();
         network.setIsSharedNetwork(null);
         network.setIsExternalNetwork(null);
-        Document payload = xml(request(false, REQUEST, network, "VID"));
-        assertText(payload, "shared", "false");
-        assertText(payload, "external", "false");
+        for (boolean update : Arrays.asList(false, true)) {
+            Document payload = xml(request(update, REQUEST, network, "VID"));
+            assertText(payload, "shared", "false");
+            assertText(payload, "external", "false");
+        }
     }
 
     @Test
@@ -127,6 +131,74 @@ public class NetworkAdapterPayloadContractTest {
                 false, "VID"));
         assertNull(script.UpdateNetworkRequestV2(execution, "request", "message", REQUEST, null, "", "", "", "region",
                 false, "VID"));
+        assertNull(script.CreateNetworkRequestV2(execution, "request", "message", REQUEST, null, "", "", "", "region",
+                false, "VID"));
+        assertNull(script.UpdateNetworkRequestV2(execution, "request", "message", null, network(), "", "", "", "region",
+                false, "VID"));
+    }
+
+    @Test
+    public void namespacedModelInfoOverridesLegacyValuesForCreateAndUpdate() throws Exception {
+        String input = "<request xmlns='urn:onap:test:network'><tenant-id>tenant &amp; SO</tenant-id>"
+                + "<service-instance-id>service &amp; SO</service-instance-id>"
+                + "<modelCustomizationId>legacy-model</modelCustomizationId><networkModelInfo>"
+                + "<modelName>model &lt;one&gt;</modelName>"
+                + "<modelCustomizationUuid>model &amp; \u96ea</modelCustomizationUuid></networkModelInfo></request>";
+        for (boolean update : Arrays.asList(false, true)) {
+            L3Network network = network();
+            network.setNetworkType("inventory-type");
+            Document payload = xml(request(update, input, network, "VID"));
+            assertText(payload, "networkType", "model <one>");
+            assertText(payload, "modelCustomizationUuid", "model & \u96ea");
+            assertText(payload, "tenantId", "tenant & SO");
+            assertText(payload, "serviceInstanceId", "service & SO");
+            assertEquals("inventory-type", network.getNetworkType());
+        }
+    }
+
+    @Test
+    public void supportedContrailSpellingsSelectTheSameAdapterTechnology() throws Exception {
+        for (String technology : Arrays.asList("Contrail", "contrail", "CONTRAIL")) {
+            L3Network network = network();
+            network.setNetworkTechnology(technology);
+            Document payload = xml(request(false, REQUEST, network, "VID"));
+            assertText(payload, "networkTechnology", "CONTRAIL");
+            assertEquals(1, payload.getElementsByTagNameNS("*", "contrailNetwork").getLength());
+            assertEquals(technology, network.getNetworkTechnology());
+        }
+    }
+
+    @Test
+    public void absentEmptyAndLiteralNullStacksSelectForceUpdate() throws Exception {
+        for (String stack : Arrays.asList(null, "", "null")) {
+            L3Network network = network();
+            network.setHeatStackId(stack);
+            Document payload = xml(request(true, REQUEST, network, "VID"));
+            assertText(payload, "networkStackId", "force_update");
+            assertEquals(stack, network.getHeatStackId());
+        }
+    }
+
+    @Test
+    public void vlanAssignmentsKeepOrderAndZeroWhileAbsentCollectionsStayEmpty() throws Exception {
+        for (boolean update : Arrays.asList(false, true)) {
+            L3Network network = network();
+            SegmentationAssignments assignments = new SegmentationAssignments();
+            for (String id : Arrays.asList("101", "0")) {
+                SegmentationAssignment assignment = new SegmentationAssignment();
+                assignment.setSegmentationId(id);
+                assignments.getSegmentationAssignment().add(assignment);
+            }
+            network.setSegmentationAssignments(assignments);
+            assertText(xml(request(update, REQUEST, network, "VID")), "vlans", "101,0");
+            assertEquals(2, assignments.getSegmentationAssignment().size());
+            assertEquals("101", assignments.getSegmentationAssignment().get(0).getSegmentationId());
+            assertEquals("0", assignments.getSegmentationAssignment().get(1).getSegmentationId());
+            network.setSegmentationAssignments(new SegmentationAssignments());
+            assertText(xml(request(update, REQUEST, network, "VID")), "vlans", "");
+            network.setSegmentationAssignments(null);
+            assertText(xml(request(update, REQUEST, network, "VID")), "vlans", "");
+        }
     }
 
     @Test
