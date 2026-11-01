@@ -41,45 +41,26 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
-import ch.vorburger.mariadb4j.DB;
-import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import java.io.ByteArrayInputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.time.Instant;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.stream.Stream;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
-import org.camunda.bpm.engine.ProcessEngine;
-import org.camunda.bpm.engine.ProcessEngineConfiguration;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.history.HistoricVariableInstance;
-import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.camunda.bpm.engine.impl.util.ClockUtil;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.variable.value.ObjectValue;
-import org.camunda.connect.plugin.impl.ConnectProcessEnginePlugin;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
@@ -91,98 +72,7 @@ import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.w3c.dom.Document;
 
-public class WorkflowMessagePersistenceTest {
-    private static final long START_TIME = Instant.parse("2020-01-01T00:00:00Z").toEpochMilli();
-    private static DB maria;
-    private static Path mariaDataDirectory;
-    private static byte[] productionBpmn;
-    private static byte[] manualHandlingBpmn;
-    private static byte[] rainyDayBpmn;
-    private static byte[] cnfAdapterBpmn;
-    private ProcessEngine engine;
-    private String database;
-    private String jdbcUrl;
-
-    @BeforeClass
-    public static void configureBackendAndProductionResource() throws Exception {
-        String backend = System.getProperty("groovy.migration.persistence.backend", "h2");
-        assertTrue("Expected h2 or mariadb persistence backend", Arrays.asList("h2", "mariadb").contains(backend));
-        productionBpmn = productionResource("subprocess/ReceiveWorkflowMessage.bpmn");
-        manualHandlingBpmn = productionResource("subprocess/BuildingBlock/ManualHandling.bpmn");
-        rainyDayBpmn = productionResource("subprocess/BuildingBlock/RainyDayHandler.bpmn");
-        cnfAdapterBpmn = productionResource("subprocess/CNFAdapterAsyncCall.bpmn");
-        if ("mariadb".equals(backend)) {
-            Path directory = Paths.get("target", "groovy-migration", "persistence").toAbsolutePath();
-            Files.createDirectories(directory);
-            DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
-            config.setPort(0);
-            config.setBaseDir(directory.resolve("mariadb-base").toString());
-            mariaDataDirectory = Files.createTempDirectory(directory, "db-");
-            config.setDataDir(mariaDataDirectory.toString());
-            config.addArg("--lower_case_table_names=1");
-            maria = DB.newEmbeddedDB(config.build());
-            maria.start();
-        }
-    }
-
-    @AfterClass
-    public static void stopBackend() throws Exception {
-        if (maria != null) {
-            maria.stop();
-            maria = null;
-        }
-        if (mariaDataDirectory != null) {
-            try (Stream<Path> files = Files.walk(mariaDataDirectory)) {
-                for (Path file : (Iterable<Path>) files.sorted(Comparator.reverseOrder())::iterator) {
-                    Files.delete(file);
-                }
-            }
-            mariaDataDirectory = null;
-        }
-    }
-
-    @Before
-    public void createEngine() throws Exception {
-        ClockUtil.setCurrentTime(new Date(START_TIME));
-        database = "groovy_" + UUID.randomUUID().toString().replace("-", "");
-        if (maria == null) {
-            jdbcUrl = "jdbc:h2:mem:" + database + ";DB_CLOSE_DELAY=-1";
-        } else {
-            try (Connection connection = DriverManager.getConnection(maria.getConfiguration().getURL(""), "root", "")) {
-                connection.createStatement().execute("CREATE DATABASE " + database);
-            }
-            jdbcUrl = maria.getConfiguration().getURL(database);
-        }
-        reopenEngine();
-        engine.getRepositoryService().createDeployment()
-                .addInputStream("ReceiveWorkflowMessage.bpmn", new ByteArrayInputStream(productionBpmn))
-                .addInputStream("ManualHandling.bpmn", new ByteArrayInputStream(manualHandlingBpmn))
-                .addInputStream("RainyDayHandler.bpmn", new ByteArrayInputStream(rainyDayBpmn))
-                .addInputStream("CNFAdapterAsyncCall.bpmn", new ByteArrayInputStream(cnfAdapterBpmn)).deploy();
-    }
-
-    @After
-    public void closeEngineAndDatabase() throws Exception {
-        try {
-            if (engine != null) {
-                engine.close();
-            }
-            if (jdbcUrl != null) {
-                if (maria == null) {
-                    try (Connection connection = DriverManager.getConnection(jdbcUrl, "sa", "")) {
-                        connection.createStatement().execute("SHUTDOWN");
-                    }
-                } else {
-                    try (Connection connection =
-                            DriverManager.getConnection(maria.getConfiguration().getURL(""), "root", "")) {
-                        connection.createStatement().execute("DROP DATABASE " + database);
-                    }
-                }
-            }
-        } finally {
-            ClockUtil.reset();
-        }
-    }
+public class WorkflowMessagePersistenceTest extends WorkflowPersistenceSupport {
 
     @Test
     public void callbackResumesAfterRestartWithTypedAndScopedVariables() {
@@ -754,33 +644,7 @@ public class WorkflowMessagePersistenceTest {
         assertEquals(expected, actual);
     }
 
-    private void reopenEngine() {
-        ProcessEngineConfigurationImpl configuration = (ProcessEngineConfigurationImpl) ProcessEngineConfiguration
-                .createStandaloneProcessEngineConfiguration();
-        configuration.setProcessEngineName(database);
-        configuration.setJdbcUrl(jdbcUrl);
-        configuration.setJdbcDriver(maria == null ? "org.h2.Driver" : "org.mariadb.jdbc.Driver");
-        configuration.setJdbcUsername(maria == null ? "sa" : "root");
-        configuration.setJdbcPassword("");
-        configuration.setDatabaseType(maria == null ? "h2" : "mysql");
-        configuration.setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
-        configuration.setHistory(ProcessEngineConfiguration.HISTORY_FULL);
-        configuration.setJdbcBatchProcessing(false);
-        configuration.setEnforceHistoryTimeToLive(false);
-        // SO's application.yaml keeps MariaDB's default isolation and disables this check.
-        configuration.setSkipIsolationLevelCheck(maria != null);
-        configuration.setJavaSerializationFormatEnabled(true);
-        configuration.setJobExecutorActivate(false);
-        configuration.setProcessEnginePlugins(Collections.singletonList(new ConnectProcessEnginePlugin()));
-        configuration.setBeans(Collections.singletonMap("UrnPropertiesReader", new UrnPropertiesReader()));
-        engine = configuration.buildProcessEngine();
-    }
 
-    private void restart() {
-        engine.close();
-        engine = null;
-        reopenEngine();
-    }
 
     private ProcessInstance start(Map<String, Object> input) {
         return engine.getRuntimeService().startProcessInstanceByKey("ReceiveWorkflowMessage", input);
@@ -841,18 +705,5 @@ public class WorkflowMessagePersistenceTest {
         return input;
     }
 
-    private static byte[] productionResource(String name) throws Exception {
-        Path location =
-                Paths.get(ReceiveWorkflowMessage.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-        if (Files.isDirectory(location)) {
-            return Files.readAllBytes(location.resolve(name));
-        }
-        try (JarFile jar = new JarFile(location.toFile())) {
-            JarEntry entry = jar.getJarEntry(name);
-            assertNotNull("Missing packaged production resource " + name, entry);
-            try (var input = jar.getInputStream(entry)) {
-                return input.readAllBytes();
-            }
-        }
-    }
+
 }
