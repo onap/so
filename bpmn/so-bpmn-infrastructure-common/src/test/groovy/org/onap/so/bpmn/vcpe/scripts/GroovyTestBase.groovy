@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*
 @RunWith(MockitoJUnitRunner.class)
 class GroovyTestBase {
 
-    static final int PORT = 28090
+    static final int PORT = Integer.getInteger("so.test.wiremock.port", 28090)
     static final String LOCAL_URI = "http://localhost:" + PORT
 
     static final String CUST = "SDN-ETHERNET-INTERNET"
