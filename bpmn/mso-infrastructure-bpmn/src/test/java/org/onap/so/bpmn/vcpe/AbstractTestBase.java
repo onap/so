@@ -17,9 +17,12 @@ package org.onap.so.bpmn.vcpe;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingXPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
@@ -91,13 +94,59 @@ public class AbstractTestBase extends BaseIntegrationTest {
     }
 
     protected void stubAllottedResourceRelationshipsAndUpdates() {
-        String resource = "/aai/v[0-9]+" + Pattern.quote(allottedResourcePath());
+        stubAllottedResourceRelationshipsAndUpdates(PARENT_INST);
+    }
+
+    protected void stubAllottedResourceRelationshipsAndUpdates(String instanceId) {
+        String resource = "/aai/v[0-9]+"
+                + Pattern.quote(serviceInstancePath(instanceId) + "/allotted-resources/allotted-resource/" + ARID);
         wireMockServer.stubFor(put(urlPathMatching(resource + "/relationship-list/relationship"))
                 .withRequestBody(matchingJsonPath("$['related-link']", equalTo(serviceInstancePath(INST))))
                 .willReturn(aResponse().withStatus(200)));
         wireMockServer.stubFor(post(urlPathMatching(resource)).withHeader("X-HTTP-Method-Override", equalTo("PATCH"))
                 .withHeader("Content-Type", equalTo("application/merge-patch+json"))
                 .willReturn(aResponse().withStatus(200)));
+    }
+
+    protected void stubAllottedResourceLookup(String instanceId, String fixture) {
+        JSONObject body = org.json.XML.toJSONObject(FileUtil.readResourceFile("__files/" + fixture), true)
+                .getJSONObject("allotted-resource");
+        body.remove("xmlns");
+        JSONObject relationships = body.optJSONObject("relationship-list");
+        if (relationships != null) {
+            // XML fixtures collapse singleton lists; the AAI JSON model requires arrays for these fields.
+            Object value = relationships.get("relationship");
+            JSONArray entries = value instanceof JSONArray ? (JSONArray) value : new JSONArray().put(value);
+            relationships.put("relationship", entries);
+            for (int index = 0; index < entries.length(); index++) {
+                JSONObject relationship = entries.getJSONObject(index);
+                for (String key : new String[] {"relationship-data", "related-to-property"}) {
+                    if (relationship.has(key) && !(relationship.get(key) instanceof JSONArray)) {
+                        relationship.put(key, new JSONArray().put(relationship.get(key)));
+                    }
+                }
+            }
+        }
+        String resource = serviceInstancePath(instanceId) + "/allotted-resources/allotted-resource/" + ARID;
+        wireMockServer.stubFor(get(urlPathMatching("/aai/v[0-9]+" + Pattern.quote(resource))).willReturn(
+                aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(body.toString())));
+    }
+
+    protected void assertRolledBackAllottedResource(String instanceId) {
+        String resource = "/aai/v[0-9]+"
+                + Pattern.quote(serviceInstancePath(instanceId) + "/allotted-resources/allotted-resource/" + ARID);
+        wireMockServer.verify(1,
+                postRequestedFor(urlPathMatching(resource)).withHeader("X-HTTP-Method-Override", equalTo("PATCH"))
+                        .withHeader("Content-Type", equalTo("application/merge-patch+json"))
+                        .withRequestBody(matchingJsonPath("$['orchestration-status']", equalTo("PendingDelete"))));
+        wireMockServer.verify(1,
+                deleteRequestedFor(urlPathMatching(resource)).withQueryParam("resource-version", equalTo(ARVERS)));
+        wireMockServer.verify(1, deleteRequestedFor(urlPathMatching("/aai/.*")));
+        wireMockServer.verify(3, postRequestedFor(urlPathMatching(".*/SDNCAdapter")));
+        for (String action : new String[] {"deactivate", "delete", "unassign"}) {
+            wireMockServer.verify(1, postRequestedFor(urlPathMatching(".*/SDNCAdapter"))
+                    .withRequestBody(matchingXPath("//*[local-name()='SvcAction' and text()='" + action + "']")));
+        }
     }
 
     protected void assertCreatedAllottedResource() {
