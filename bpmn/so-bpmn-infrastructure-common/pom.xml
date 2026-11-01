@@ -261,6 +261,26 @@
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>shared-integration-test-fixtures</id>
+                <goals>
+                  <goal>test-jar</goal>
+                </goals>
+                <configuration>
+                  <skip>false</skip>
+                  <includes>
+                    <include>__files/GenericFlows/**</include>
+                    <include>__files/VCPE/**</include>
+                    <include>__files/VfModularity/**</include>
+                  </includes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
             <version>3.1.2</version>
           </plugin>
