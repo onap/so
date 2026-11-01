@@ -17,28 +17,12 @@
       <bpmn2:outgoing>SequenceFlow_14</bpmn2:outgoing>
     </bpmn2:callActivity>
     <bpmn2:sequenceFlow id="SequenceFlow_14" name="" sourceRef="CallActivity_completionHandler" targetRef="ScriptTask_postProcessTemp" />
-    <bpmn2:serviceTask id="ServiceTask_callUpdateInfraDb" name="Call Update Infra DB">
-      <bpmn2:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}</camunda:inputParameter>
-            <camunda:inputParameter name="payload">${UPDVfModVol_updateInfraRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">aapplication/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="UPDVfModVol_createDBResponse">${response}</camunda:outputParameter>
-            <camunda:outputParameter name="UPDVfModVol_dbReturnCode">${statusCode}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn2:extensionElements>
+    <bpmn2:scriptTask scriptFormat="groovy" id="ServiceTask_callUpdateInfraDb" name="Call Update Infra DB">
       <bpmn2:incoming>SequenceFlow_11</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_12</bpmn2:outgoing>
-    </bpmn2:serviceTask>
+          <bpmn2:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, 'updateInfraRequest', 'UPDVfModVol_createDBResponse', 'UPDVfModVol_dbReturnCode', 'UPDVfModVol_updateInfraRequestHttp')</bpmn2:script>
+    </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_12" name="" sourceRef="ServiceTask_callUpdateInfraDb" targetRef="ScriptTask_prepCompletionHandlerRequest" />
     <bpmn2:scriptTask id="ScriptTask_prepVnfRest" name="Prepare VNF Adapter Rest Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_22</bpmn2:incoming>
@@ -73,7 +57,7 @@ uvmv.executeMethod('prepCompletionHandlerRequest', execution, UPDVfModVol_reques
       <bpmn2:outgoing>SequenceFlow_11</bpmn2:outgoing>
       <bpmn2:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def uvmv = new UpdateVfModuleVolumeInfraV1()
-uvmv.executeMethod('prepDbInfraDbRequest', execution, isDebugLogEnabled)</bpmn2:script>
+uvmv.executeMethod('prepDbInfraDbRequestHttp', execution, isDebugLogEnabled)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_11" name="" sourceRef="ScriptTask_prepDbInfraRequest" targetRef="ServiceTask_callUpdateInfraDb" />
     <bpmn2:scriptTask id="ScriptTask_postProcessTemp" name="Set Success" scriptFormat="groovy">

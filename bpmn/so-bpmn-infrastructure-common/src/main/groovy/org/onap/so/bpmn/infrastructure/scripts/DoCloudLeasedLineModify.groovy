@@ -50,6 +50,11 @@ public class DoCloudLeasedLineModify extends AbstractServiceTaskProcessor {
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
     RequestDBUtil requestDBUtil = new RequestDBUtil()
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     ServiceIntentUtils serviceIntentUtils = new ServiceIntentUtils()
     private static final Logger logger = LoggerFactory.getLogger(DoCloudLeasedLineModify.class)
 

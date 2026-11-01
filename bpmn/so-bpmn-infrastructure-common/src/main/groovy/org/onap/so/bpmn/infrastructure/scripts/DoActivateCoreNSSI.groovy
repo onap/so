@@ -65,6 +65,10 @@ class DoActivateCoreNSSI extends AbstractServiceTaskProcessor {
     private static final Logger logger = LoggerFactory.getLogger(DoActivateCoreNSSI.class);
     CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
     private RequestDBUtil requestDBUtil = new RequestDBUtil()
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     private static final ObjectMapper objectMapper = new ObjectMapper()
 

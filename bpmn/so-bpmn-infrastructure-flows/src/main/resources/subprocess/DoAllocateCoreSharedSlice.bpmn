@@ -14,6 +14,7 @@
       <bpmn:outgoing>Flow_1973d9m</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreSharedSlice()
+allocateNssi.useRequestDbHttp()
 allocateNssi.getNetworkInstanceAssociatedWithNssiId(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1r07vnu" sourceRef="Activity_1264hec" targetRef="Task_1htaioi" />
@@ -22,6 +23,7 @@ allocateNssi.getNetworkInstanceAssociatedWithNssiId(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1r07vnu</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreSharedSlice()
+allocateNssi.useRequestDbHttp()
 allocateNssi.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1973d9m" sourceRef="Task_1htaioi" targetRef="Activity_0no0sxa" />
@@ -30,6 +32,7 @@ allocateNssi.preProcessRequest(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1j1qqcs</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreSharedSlice()
+allocateNssi.useRequestDbHttp()
 allocateNssi.prepareSOMacroRequestPayload(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_12jcmzc" name="PUT SO Macro" scriptFormat="groovy">
@@ -37,6 +40,7 @@ allocateNssi.prepareSOMacroRequestPayload(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_08q2fd9</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreSharedSlice()
+allocateNssi.useRequestDbHttp()
 allocateNssi.sendPutRequestToSOMacro(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_0ge2y0l" name="Call Get SO PUT progress" scriptFormat="groovy">
@@ -45,6 +49,7 @@ allocateNssi.sendPutRequestToSOMacro(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1c9nkx4</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreSharedSlice()
+allocateNssi.useRequestDbHttp()
 allocateNssi.getSOPUTProgress(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1c9nkx4" sourceRef="Activity_0ge2y0l" targetRef="Gateway_1boyqt9" />
@@ -53,6 +58,7 @@ allocateNssi.getSOPUTProgress(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0da7dao</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreSharedSlice()
+allocateNssi.useRequestDbHttp()
 allocateNssi.getServiceVNFAndVFsFromCatalogDB(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_1t49t6c" name="Prepare Update Operation Status" scriptFormat="groovy">
@@ -60,31 +66,15 @@ allocateNssi.getServiceVNFAndVFsFromCatalogDB(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1re5jor</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreSharedSlice()
+allocateNssi.useRequestDbHttp()
 allocateNssi.prepareUpdateResourceOperationStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="Activity_0t6viuq" name="Update Resource Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Activity_0t6viuq" name="Update Resource Operation Status">
       <bpmn:incoming>SequenceFlow_1re5jor</bpmn:incoming>
       <bpmn:incoming>Flow_1nn15tq</bpmn:incoming>
       <bpmn:outgoing>Flow_09uu75h</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_09uu75h" sourceRef="Activity_0t6viuq" targetRef="EndEvent_1av4kxa" />
     <bpmn:sequenceFlow id="SequenceFlow_08q2fd9" sourceRef="Activity_12jcmzc" targetRef="Gateway_0sfmiku" />
     <bpmn:sequenceFlow id="SequenceFlow_1re5jor" sourceRef="Activity_1t49t6c" targetRef="Activity_0t6viuq" />
@@ -127,30 +117,14 @@ ex.processJavaException(execution)</bpmn:script>
         <bpmn:outgoing>Flow_0kadgoq</bpmn:outgoing>
         <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreSharedSlice()
+allocateNssi.useRequestDbHttp()
 allocateNssi.prepareFailedOperationStatusUpdate(execution)</bpmn:script>
       </bpmn:scriptTask>
-      <bpmn:serviceTask id="Activity_1btidug" name="Update Resource Operation Status">
-        <bpmn:extensionElements>
-          <camunda:connector>
-            <camunda:inputOutput>
-              <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-              <camunda:inputParameter name="headers">
-                <camunda:map>
-                  <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                  <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-                </camunda:map>
-              </camunda:inputParameter>
-              <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-              <camunda:inputParameter name="method">POST</camunda:inputParameter>
-              <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-              <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-            </camunda:inputOutput>
-            <camunda:connectorId>http-connector</camunda:connectorId>
-          </camunda:connector>
-        </bpmn:extensionElements>
+      <bpmn:scriptTask scriptFormat="groovy" id="Activity_1btidug" name="Update Resource Operation Status">
         <bpmn:incoming>Flow_0kadgoq</bpmn:incoming>
         <bpmn:outgoing>Flow_128o22z</bpmn:outgoing>
-      </bpmn:serviceTask>
+            <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
       <bpmn:sequenceFlow id="Flow_0y8rsb3" sourceRef="Activity_1150yu6" targetRef="Event_02arrfq" />
       <bpmn:sequenceFlow id="Flow_0nauwik" sourceRef="Event_07tr56z" targetRef="Activity_0sqggtb" />
       <bpmn:sequenceFlow id="Flow_0kadgoq" sourceRef="Activity_0sqggtb" targetRef="Activity_1btidug" />
@@ -170,6 +144,7 @@ allocateNssi.prepareFailedOperationStatusUpdate(execution)</bpmn:script>
       <bpmn:outgoing>Flow_163kxug</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreSharedSlice()
+allocateNssi.useRequestDbHttp()
 allocateNssi.timeDelay()</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_163kxug" sourceRef="Activity_1qm4des" targetRef="Activity_0ge2y0l" />

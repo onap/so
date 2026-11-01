@@ -951,6 +951,58 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
         logger.info("Exited " + method)
 	}
 
+	public void preUpdateServiceOperationStatusHttp(DelegateExecution execution){
+        def method = getClass().getSimpleName() + '.preUpdateServiceOperationStatus(' +'execution=' + execution.getId() +')'
+
+
+        try{
+            String serviceId = execution.getVariable("serviceInstanceId")
+            String operationId = execution.getVariable("operationId")
+            String serviceName = execution.getVariable("serviceInstanceName")
+            String operationType = "DELETE"
+            String userId = ""
+            String result = "processing"
+            String progress = execution.getVariable("progress")
+
+			if ("100".equalsIgnoreCase(progress))
+			{
+				result = "finished"
+			}
+            String reason = ""
+            String operationContent = "Prepare service delete: " + execution.getVariable("operationStatus")
+
+
+			serviceId = UriUtils.encode(serviceId,"UTF-8")
+            execution.setVariable("serviceInstanceId", serviceId)
+            execution.setVariable("operationId", operationId)
+            execution.setVariable("operationType", operationType)
+
+
+			Map payload = [
+                serviceId: "${serviceId}".toString(),
+                operationId: "${operationId}".toString(),
+                operationType: "${operationType}".toString(),
+                userId: "${userId}".toString(),
+                result: "${result}".toString(),
+                operationContent: "${operationContent}".toString(),
+                progress: "${progress}".toString(),
+                reason: "${reason}".toString()]
+
+            execution.setVariable('CVFMI_updateServiceOperStatusRequestHttp', payload)
+        execution.setVariable('CVFMI_updateServiceOperStatusRequestHttpOperation', 'updateOperationStatus')
+
+
+
+        }catch(Exception e){
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing preUpdateServiceOperationStatus.", "BPMN",
+					ErrorCode.UnknownError.getValue(), e);
+            execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preUpdateServiceOperationStatus Method:\n" + e.getMessage())
+        }
+
+
+	}
+
 	public void preInitResourcesOperStatus(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.preInitResourcesOperStatus(' +'execution=' + execution.getId() +')'
 		logger.info("Entered " + method)
@@ -1017,6 +1069,63 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
         logger.info("Exited " + method)
+    }
+
+	public void preInitResourcesOperStatusHttp(DelegateExecution execution){
+        def method = getClass().getSimpleName() + '.preInitResourcesOperStatus(' +'execution=' + execution.getId() +')'
+
+
+		String msg=""
+        try{
+            String serviceId = execution.getVariable("serviceInstanceId")
+            String operationId = execution.getVariable("operationId")
+            String operationType = "DELETE"
+            String resourceTemplateUUIDs = ""
+            String result = "processing"
+            String progress = "0"
+            String reason = ""
+            String operationContent = "Prepare service delete"
+
+
+			serviceId = UriUtils.encode(serviceId,"UTF-8")
+            execution.setVariable("serviceInstanceId", serviceId)
+            execution.setVariable("operationId", operationId)
+            execution.setVariable("operationType", operationType)
+
+            String serviceRelationShip = execution.getVariable("serviceRelationShip")
+
+			if (! isBlank(serviceRelationShip)) {
+                def jsonSlurper = new JsonSlurper()
+                def jsonOutput = new JsonOutput()
+                List relationShipList =  jsonSlurper.parseText(serviceRelationShip)
+
+                if (relationShipList != null) {
+                    relationShipList.each {
+                        resourceTemplateUUIDs  = resourceTemplateUUIDs + it.resourceInstanceId + ":"
+                    }
+                }
+            }
+
+
+            Map payload = [
+                serviceId: "${serviceId}".toString(),
+                operationId: "${operationId}".toString(),
+                operationType: "${operationType}".toString(),
+                resourceTemplateUUIDs: "${resourceTemplateUUIDs}".toString()]
+
+            execution.setVariable('CVFMI_initResOperStatusRequestHttp', payload)
+        execution.setVariable('CVFMI_initResOperStatusRequestHttpOperation', 'initResourceOperationStatus')
+
+
+
+		}catch (BpmnError e) {
+			throw e;
+		} catch (Exception ex) {
+			msg = "Exception in DoCustomDeleteE2EServiceInstanceV2.preInitResourcesOperStatus. " + ex.getMessage()
+
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
+		}
+
     }
 
 

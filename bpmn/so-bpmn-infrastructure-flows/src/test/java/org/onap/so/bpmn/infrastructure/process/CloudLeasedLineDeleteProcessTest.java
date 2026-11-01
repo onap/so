@@ -20,6 +20,9 @@
 package org.onap.so.bpmn.infrastructure.process;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -56,7 +59,7 @@ import org.w3c.dom.Document;
 public class CloudLeasedLineDeleteProcessTest extends BaseBPMNTest {
     private static final String PROCESS = "DoCloudLeasedLineDelete";
     private static final String RESOURCE = "subprocess/DoCloudLeasedLineDelete.bpmn";
-    private static final String STATUS_PATH = "/cll-status";
+    private static final String STATUS_PATH = "/v1/request-db/resource-operations";
     private static final String BUSINESS_PATH = "/business/customers/customer/customer-1/service-subscriptions/"
             + "service-subscription/service-type/service-instances/service-instance/";
     private String cllId;
@@ -81,10 +84,10 @@ public class CloudLeasedLineDeleteProcessTest extends BaseBPMNTest {
         variables.put("globalSubscriberId", "customer-1");
         variables.put("serviceIntentParams", "{\"enableSdnc\":false}");
         variables.put("mso.workflow.sdncadapter.callback", "http://localhost:" + wireMockPort + "/sdnc-callback");
-        variables.put("mso.adapters.openecomp.db.endpoint", "http://localhost:" + wireMockPort + STATUS_PATH);
+        variables.put("mso.adapters.requestDb.endpoint", "http://localhost:" + wireMockPort);
         stubRead(200);
         stubDelete(204);
-        stubStatusUpdate(200);
+        stubStatusUpdate(204);
     }
 
     @Test
@@ -98,7 +101,7 @@ public class CloudLeasedLineDeleteProcessTest extends BaseBPMNTest {
         assertTrue(historic(process, "startTime") instanceof Long);
         assertEquals(cllId, historic(process, "cllId"));
         assertEquals("leased Gr\u00fc\u00dfe & SO", historic(process, "cllName"));
-        assertEquals(Integer.valueOf(200), historic(process, "NSSMF_dbResponseCode"));
+        assertEquals(Integer.valueOf(204), historic(process, "NSSMF_dbResponseCode"));
         assertEquals("model-1", new JSONObject((String) historic(process, "serviceModelInfo")).getString("modelUuid"));
         assertActivity(process, "ScriptTask_1tc44ge", 1);
         assertActivity(process, "Activity_013rjwc", 1);
@@ -109,20 +112,17 @@ public class CloudLeasedLineDeleteProcessTest extends BaseBPMNTest {
         assertActivity(process, "Activity_1tw8eyy", 0);
         assertActivity(process, "Activity_0p20esb", 0);
         assertDeleteCall();
-        wireMockServer.verify(1, postRequestedFor(urlEqualTo(STATUS_PATH)).withHeader("Content-Type",
-                containing("application/soap+xml")));
-        Document payload =
-                xml(wireMockServer.findAll(postRequestedFor(urlEqualTo(STATUS_PATH))).get(0).getBodyAsString());
-        assertEquals("http://schemas.xmlsoap.org/soap/envelope/", payload.getDocumentElement().getNamespaceURI());
-        assertEquals(1, payload.getElementsByTagNameNS("http://org.onap.so/requestsdb", "updateResourceOperationStatus")
-                .getLength());
-        assertEquals("nsi-1", text(payload, "serviceId"));
-        assertEquals("job-1", text(payload, "operationId"));
-        assertEquals("model-1", text(payload, "resourceTemplateUUID"));
-        assertEquals(cllId, text(payload, "resourceInstanceID"));
-        assertEquals("DELETE", text(payload, "operType"));
-        assertEquals("FINISHED", text(payload, "status"));
-        assertEquals("100", text(payload, "progress"));
+        wireMockServer.verify(1, putRequestedFor(urlPathEqualTo(STATUS_PATH)).withHeader("Content-Type",
+                containing("application/json")));
+        var request = wireMockServer.findAll(putRequestedFor(urlPathEqualTo(STATUS_PATH))).get(0);
+        assertEquals("nsi-1", request.queryParameter("serviceId").firstValue());
+        assertEquals("job-1", request.queryParameter("operationId").firstValue());
+        assertEquals("model-1", request.queryParameter("resourceTemplateUUID").firstValue());
+        JSONObject payload = new JSONObject(request.getBodyAsString());
+        assertEquals(cllId, payload.getString("resourceInstanceID"));
+        assertEquals("DELETE", payload.getString("operType"));
+        assertEquals("FINISHED", payload.getString("status"));
+        assertEquals("100", payload.getString("progress"));
         assertEquals(3, wireMockServer.getAllServeEvents().size());
     }
 
@@ -162,7 +162,7 @@ public class CloudLeasedLineDeleteProcessTest extends BaseBPMNTest {
         assertActivity(process, "ScriptTask_1ssh2l9", 0);
         assertActivity(process, "Activity_0rgeefb", 0);
         assertActivity(process, "EndEvent_05h01gx", 0);
-        wireMockServer.verify(0, postRequestedFor(urlEqualTo(STATUS_PATH)));
+        wireMockServer.verify(0, putRequestedFor(urlPathEqualTo(STATUS_PATH)));
     }
 
     private void assertDeleteCall() {
@@ -203,9 +203,8 @@ public class CloudLeasedLineDeleteProcessTest extends BaseBPMNTest {
     }
 
     private void stubStatusUpdate(int status) {
-        wireMockServer.stubFor(post(urlEqualTo(STATUS_PATH))
-                .willReturn(aResponse().withStatus(status).withHeader("Connection", "close")
-                        .withHeader("Content-Type", "application/soap+xml").withBody("<updated/>")));
+        wireMockServer.stubFor(put(urlPathEqualTo(STATUS_PATH))
+                .willReturn(aResponse().withStatus(status).withHeader("Connection", "close")));
     }
 
     private void assertProductionResource() throws Exception {

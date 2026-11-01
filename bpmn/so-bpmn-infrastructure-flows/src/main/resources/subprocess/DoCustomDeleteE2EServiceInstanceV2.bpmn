@@ -100,7 +100,7 @@ ddsi.preProcessVFCResourceDelete(execution)]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_1wnkgpx</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1931m8u</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:serviceTask id="CallActivity_Del_SDNC_cust" name="Call Custom Delete SDNC Overlay" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncNetworkTopologyOperationTask">
+    <bpmn:serviceTask id="CallActivity_Del_SDNC_cust" name="Call Custom Delete SDNC Overlay" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncNetworkTopologyRequestDbHttpTask">
       <bpmn:incoming>SequenceFlow_0a1q5fw</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0rpu756</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -114,11 +114,11 @@ String resourceName = "underlay"
 def ddsi = new DoCustomDeleteE2EServiceInstanceV2()
 ddsi.preSDNCResourceDelete(execution, resourceName )]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="Task_1j1u666" name="Call Custom Delete SDNC Underlay" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncNetworkTopologyOperationTask">
+    <bpmn:serviceTask id="Task_1j1u666" name="Call Custom Delete SDNC Underlay" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncNetworkTopologyRequestDbHttpTask">
       <bpmn:incoming>SequenceFlow_0m7ks9t</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1g4djgh</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_0edkv0m" name="Call Delete SDNC Service Topology" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncServiceTopologyOperationTask">
+    <bpmn:serviceTask id="Task_0edkv0m" name="Call Delete SDNC Service Topology" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncServiceTopologyRequestDbHttpTask">
       <bpmn:incoming>SequenceFlow_0akcnw7</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0uc2beq</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -235,30 +235,14 @@ ddsi.prepareServiceDeleteResource(execution)]]></bpmn:script>
       <bpmn:outgoing>SequenceFlow_1sm5x5e</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def ddsi = new DoCustomDeleteE2EServiceInstanceV2()
-ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn:script>
+ddsi.preUpdateServiceOperationStatusHttp(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="ServiceTask_0kl5qtj" name="Update Service Oper Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_openecomp_adapters_db_endpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_updateServiceOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_0kl5qtj" name="Update Service Oper Status">
       <bpmn:incoming>SequenceFlow_1sm5x5e</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_18wibmi</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, execution.getVariable('CVFMI_updateServiceOperStatusRequestHttpOperation'), 'CVFMI_dbResponse', 'CVFMI_dbResponseCode', 'CVFMI_updateServiceOperStatusRequestHttp')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1sm5x5e" sourceRef="ScriptTask_1ut5zs5" targetRef="ServiceTask_0kl5qtj" />
     <bpmn:sequenceFlow id="SequenceFlow_18wibmi" sourceRef="ServiceTask_0kl5qtj" targetRef="ScriptTask_PrepareServiceResources" />
     <bpmn:scriptTask id="ScriptTask_1vlvb1r" name="Prepare Update Service Oper Status(100%)" scriptFormat="groovy">
@@ -268,30 +252,14 @@ ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn:script>
 execution.setVariable("progress", "100")
 execution.setVariable("operationStatus", "End")
 def ddsi = new DoCustomDeleteE2EServiceInstanceV2()
-ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn:script>
+ddsi.preUpdateServiceOperationStatusHttp(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="ServiceTask_0lint2e" name="Update Service Oper Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_openecomp_adapters_db_endpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_updateServiceOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_0lint2e" name="Update Service Oper Status">
       <bpmn:incoming>SequenceFlow_0l4qcge</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_06tonva</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, execution.getVariable('CVFMI_updateServiceOperStatusRequestHttpOperation'), 'CVFMI_dbResponse', 'CVFMI_dbResponseCode', 'CVFMI_updateServiceOperStatusRequestHttp')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0l4qcge" sourceRef="ScriptTask_1vlvb1r" targetRef="ServiceTask_0lint2e" />
     <bpmn:sequenceFlow id="SequenceFlow_06tonva" sourceRef="ServiceTask_0lint2e" targetRef="EndEvent_1uqzt26" />
     <bpmn:scriptTask id="ScriptTask_06sbvjm" name="Prepare Update Service Oper Status" scriptFormat="groovy">
@@ -299,31 +267,15 @@ ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn:script>
       <bpmn:outgoing>SequenceFlow_1i96ytk</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def ddsi = new DoCustomDeleteE2EServiceInstanceV2()
-ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn:script>
+ddsi.preUpdateServiceOperationStatusHttp(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1i96ytk" sourceRef="ScriptTask_06sbvjm" targetRef="ServiceTask_0bia9bb" />
-    <bpmn:serviceTask id="ServiceTask_0bia9bb" name="Update Service Oper Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_openecomp_adapters_db_endpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_updateServiceOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_0bia9bb" name="Update Service Oper Status">
       <bpmn:incoming>SequenceFlow_1i96ytk</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0eoibq3</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, execution.getVariable('CVFMI_updateServiceOperStatusRequestHttpOperation'), 'CVFMI_dbResponse', 'CVFMI_dbResponseCode', 'CVFMI_updateServiceOperStatusRequestHttp')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0eoibq3" sourceRef="ServiceTask_0bia9bb" targetRef="ExclusiveGateway_ServiceResourceIsFinish" />
     <bpmn:scriptTask id="ScriptTask_0mjvi2p" name="Prepare Update Service Oper Status" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1a5ki3p</bpmn:incoming>
@@ -331,7 +283,7 @@ ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn:script>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 
 def ddsi = new DoCustomDeleteE2EServiceInstanceV2()
-ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn:script>
+ddsi.preUpdateServiceOperationStatusHttp(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1oo4g4h" sourceRef="ScriptTask_0mjvi2p" targetRef="ServiceTask_0vk2b9b" />
     <bpmn:exclusiveGateway id="ExclusiveGateway_1kavnc9">
@@ -341,59 +293,27 @@ ddsi.preUpdateServiceOperationStatus(execution)]]></bpmn:script>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_1w2n8dn" sourceRef="ExclusiveGateway_1kavnc9" targetRef="ScriptTask_1g0tsto" />
     <bpmn:sequenceFlow id="SequenceFlow_15pzf5n" sourceRef="ExclusiveGateway_125wehq" targetRef="ExclusiveGateway_1kavnc9" />
-    <bpmn:serviceTask id="ServiceTask_0vk2b9b" name="Update Service Oper Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_openecomp_adapters_db_endpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_updateServiceOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_0vk2b9b" name="Update Service Oper Status">
       <bpmn:incoming>SequenceFlow_1oo4g4h</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1bx4es4</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, execution.getVariable('CVFMI_updateServiceOperStatusRequestHttpOperation'), 'CVFMI_dbResponse', 'CVFMI_dbResponseCode', 'CVFMI_updateServiceOperStatusRequestHttp')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1bx4es4" sourceRef="ServiceTask_0vk2b9b" targetRef="Task_preProcessVFCResourceDelete" />
     <bpmn:scriptTask id="ScriptTask_0w4scer" name="Prepare Resource Oper Status" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_11405m9</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_15d5odq</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def ddsi = new DoCustomDeleteE2EServiceInstanceV2()
-ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
+ddsi.preInitResourcesOperStatusHttp(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_15d5odq" sourceRef="ScriptTask_0w4scer" targetRef="ServiceTask_1mg7vnx" />
-    <bpmn:serviceTask id="ServiceTask_1mg7vnx" name="Init Resource Oper Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_initResOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_1mg7vnx" name="Init Resource Oper Status">
       <bpmn:incoming>SequenceFlow_15d5odq</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1qzxy2i</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, execution.getVariable('CVFMI_initResOperStatusRequestHttpOperation'), 'CVFMI_dbResponse', 'CVFMI_dbResponseCode', 'CVFMI_initResOperStatusRequestHttp')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1qzxy2i" sourceRef="ServiceTask_1mg7vnx" targetRef="IntermediateThrowEvent_1d5z35x" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">

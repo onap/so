@@ -41,8 +41,77 @@ import static org.mockito.Mockito.when
 @RunWith(MockitoJUnitRunner.Silent.class)
 class CreateVfModuleInfraTest {
 
+    @Rule
+    public WireMockRule requestDb = new WireMockRule(0)
+
+    @Test
+    void terminalUpdateUsesRestWithoutChangingTheLegacyProducer() {
+    def values = ['CVFMI_requestInfo': '<requestInfo><request-id>request%id</request-id></requestInfo>',
+        'CVFMI_vnfId': 'vnf-id', 'CVFMI_vfModuleId': 'module-id', 'CVFMI_vfModuleName': 'module & name',
+        'mso.adapters.requestDb.endpoint': 'http://localhost:' + requestDb.port(),
+        'so.auth.username': 'test-user', 'so.auth.password': UUID.randomUUID().toString()]
+    def execution = setupMock()
+    when(execution.getVariable(Mockito.anyString())).thenAnswer { values[it.getArgument(0)] }
+    Mockito.doAnswer { values[it.getArgument(0)] = it.getArgument(1); null }
+        .when(execution).setVariable(Mockito.anyString(), Mockito.any())
+    def workflow = new CreateVfModuleInfra()
+    workflow.prepareUpdateInfraRequestHttp(execution)
+    org.junit.Assert.assertTrue(requestDb.allServeEvents.empty)
+    def command = values['CVFMI_updateInfraRequestHttp']
+    org.junit.Assert.assertEquals('request%id', command.requestId)
+    org.junit.Assert.assertEquals('module & name', command.vfModuleName)
+    org.junit.Assert.assertEquals('COMPLETE', command.requestStatus)
+    org.junit.Assert.assertEquals('100', command.progress)
+    org.junit.Assert.assertFalse(command.vnfOutputs.contains('Envelope'))
+    [204, 404, 500].each { status ->
+        requestDb.resetAll()
+        requestDb.stubFor(com.github.tomakehurst.wiremock.client.WireMock.post(
+            com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo('/v1/request-db/infra-requests/request%25id/updates'))
+            .willReturn(com.github.tomakehurst.wiremock.client.WireMock.aResponse().withStatus(status)))
+        new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution,
+            'updateInfraRequest', 'restResponse', 'restStatus', 'CVFMI_updateInfraRequestHttp')
+        org.junit.Assert.assertEquals(status, values.restStatus)
+        requestDb.verify(1, com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor(
+            com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo('/v1/request-db/infra-requests/request%25id/updates'))
+            .withHeader('Content-Type', com.github.tomakehurst.wiremock.client.WireMock.containing('application/json'))
+            .withRequestBody(com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath('$.vfModuleName',
+                com.github.tomakehurst.wiremock.client.WireMock.equalTo('module & name'))))
+    }
+    workflow.prepareUpdateInfraRequest(execution)
+    org.junit.Assert.assertTrue(values['CVFMI_updateInfraRequest'].contains('soapenv:Envelope'))
+    }
+
     def prefix = "CVFMI_"
     def requestInfo = "<requestInfo><request-id>12345</request-id></requestInfo>"
+
+    @Test
+    void infraHttpPreparationsPreserveLegacyFieldsIncludingEmptyValues() {
+        def cases = [
+                [new CreateVfModuleVolumeInfraV1(), 'prepareDbInfraSuccessRequest', 'CVMVINFRAV1_createDBRequest', true],
+                [new DeleteVfModuleVolumeInfraV1(), 'prepareDBRequest', 'DELVfModVol_updateInfraRequest', true],
+                [new DeleteVfModuleInfra(), 'prepUpdateInfraRequest', 'DELVfModI_updateInfraRequest', false],
+                [new UpdateVfModuleVolumeInfraV1(), 'prepDbInfraDbRequest', 'UPDVfModVol_updateInfraRequest', true],
+                [new org.onap.so.bpmn.vcpe.scripts.CreateVcpeResCustService(), 'postProcessServiceInstanceCreate',
+                        'CVRCS_setUpdateDbInstancePayload', false]]
+        cases.each { scenario ->
+            [null, '', 'value%with/slash & text'].each { value ->
+                def values = ['mso-request-id': 'request%id', 'CVMVINFRAV1_volumeOutputs': value,
+                        'CVMVINFRAV1_volumeGroupId': value, 'DELVfModVol_requestId': 'request%id',
+                        'DELVfModVol_volumeOutputs': value, 'DELVfModI_requestId': 'request%id',
+                        'UPDVfModVol_requestId': 'request%id', 'serviceInstanceId': value, 'serviceInstanceName': value]
+                def execution = setupMock()
+                when(execution.getVariable(Mockito.anyString())).thenAnswer { values[it.getArgument(0)] }
+                Mockito.doAnswer { values[it.getArgument(0)] = it.getArgument(1); null }
+                        .when(execution).setVariable(Mockito.anyString(), Mockito.any())
+                def arguments = scenario[3] ? [execution, false] : [execution]
+                scenario[0].invokeMethod(scenario[1], arguments as Object[])
+                def envelope = new XmlSlurper().parseText(values[scenario[2]])
+                def expected = envelope.Body.children()[0].children().collectEntries { [(it.name()): it.text()] }
+                scenario[0].invokeMethod(scenario[1] + 'Http', arguments as Object[])
+                org.junit.Assert.assertEquals(scenario[0].class.simpleName, expected, values[scenario[2] + 'Http'])
+            }
+        }
+    }
 
     @Captor
     static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)

@@ -9,6 +9,7 @@
       <bpmn:outgoing>Flow_09sxq6k</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_00u5sgf" name="prepare OOF request for RAN NSS slice profiles" scriptFormat="groovy">
@@ -16,6 +17,7 @@ nss.preProcessRequest(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0714cfa</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.prepareOofRequestForRanNSS(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="Activity_1qswyrk" name="Call DoCreateSubnetOption" calledElement="DoHandleOofRequest">
@@ -36,6 +38,7 @@ nss.prepareOofRequestForRanNSS(execution)</bpmn:script>
       <bpmn:outgoing>Flow_14xj79h</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.processOofResponseForRanNSS(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1yfvjui" sourceRef="Event_1sy6p6u" targetRef="Activity_1eiktpg" />
@@ -58,6 +61,7 @@ nss.processOofResponseForRanNSS(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1ym755g</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.getSliceProfile(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_14xj79h" sourceRef="Activity_1w537ie" targetRef="Activity_0c8tzf1" />
@@ -69,6 +73,7 @@ nss.getSliceProfile(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1fpw4gf</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.getNssisFromAai(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1fpw4gf" sourceRef="Activity_0c8tzf1" targetRef="Activity_1so8vif" />
@@ -78,6 +83,7 @@ nss.getNssisFromAai(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1jwk3jy</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.updateRelationshipInAai(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_1so8vif" name="create slice profiles in AAI" scriptFormat="groovy">
@@ -85,6 +91,7 @@ nss.updateRelationshipInAai(execution)</bpmn:script>
       <bpmn:outgoing>Flow_05cl21h</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.createSliceProfiles(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1jwk3jy" sourceRef="Activity_0uxxkp1" targetRef="Event_1wm97cy" />
@@ -116,6 +123,7 @@ nss.createSliceProfiles(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0t8y3x5</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.processRanNfModifyRsp(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_19p3d5t" sourceRef="Activity_1nexxhu" targetRef="Activity_1rweifb" />
@@ -125,6 +133,7 @@ nss.processRanNfModifyRsp(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0cd38vb</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.prepareTnFhRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_0e0ldfk" name="prepare query job status" scriptFormat="groovy">
@@ -132,6 +141,7 @@ nss.prepareTnFhRequest(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1yfkps3</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.createFhAllocateNssiJobQuery(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="Activity_07kzsym" name="Query Job status" calledElement="QueryJobStatus ">
@@ -151,6 +161,7 @@ nss.createFhAllocateNssiJobQuery(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0ygfojp</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.processFhAllocateNssiJobStatusRsp(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0cd38vb" sourceRef="Activity_0dr4umy" targetRef="Activity_0e0ldfk" />
@@ -162,6 +173,7 @@ nss.processFhAllocateNssiJobStatusRsp(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1702ljm</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.prepareTnMhRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_11kv5jk" name="prepare query job status" scriptFormat="groovy">
@@ -169,6 +181,7 @@ nss.prepareTnMhRequest(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1hzswil</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.createMhAllocateNssiJobQuery(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="Activity_031x96n" name="Query Job status" calledElement="QueryJobStatus ">
@@ -188,6 +201,7 @@ nss.createMhAllocateNssiJobQuery(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0wgumc4</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.processMhAllocateNssiJobStatusRsp(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1702ljm" sourceRef="Activity_11ohmvk" targetRef="Activity_11kv5jk" />
@@ -214,6 +228,7 @@ nss.processMhAllocateNssiJobStatusRsp(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1mu3zgb</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.processRanNfModifyRsp(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0ks2ut4" sourceRef="Activity_1pqb2g0" targetRef="Activity_0mleulg" />
@@ -222,6 +237,7 @@ nss.processRanNfModifyRsp(execution)</bpmn:script>
       <bpmn:outgoing>Flow_01vilkh</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.prepareTnFhDeallocateRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_06meubi" name="prepare query job status" scriptFormat="groovy">
@@ -229,6 +245,7 @@ nss.prepareTnFhDeallocateRequest(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0r7bejs</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.createFhAllocateNssiJobQuery(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="Activity_0sjyngn" name="Query Job status" calledElement="QueryJobStatus ">
@@ -248,6 +265,7 @@ nss.createFhAllocateNssiJobQuery(execution)</bpmn:script>
       <bpmn:outgoing>Flow_120fe2z</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.processFhAllocateNssiJobStatusRsp(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_01vilkh" sourceRef="Activity_1xdke18" targetRef="Activity_06meubi" />
@@ -259,6 +277,7 @@ nss.processFhAllocateNssiJobStatusRsp(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1atfnov</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.getNssisFromAai(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_0m97fsi" name="send modify deallocate MH NSSI request" scriptFormat="groovy">
@@ -266,6 +285,7 @@ nss.getNssisFromAai(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1ueq9wo</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.prepareTnMhDeallocateRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_1wwt0yj" name="prepare query job status" scriptFormat="groovy">
@@ -273,6 +293,7 @@ nss.prepareTnMhDeallocateRequest(execution)</bpmn:script>
       <bpmn:outgoing>Flow_05junp8</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.createMhAllocateNssiJobQuery(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="Activity_18gqpmg" name="Query Job status" calledElement="QueryJobStatus ">
@@ -292,6 +313,7 @@ nss.createMhAllocateNssiJobQuery(execution)</bpmn:script>
       <bpmn:outgoing>Flow_11aacst</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.processMhAllocateNssiJobStatusRsp(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1ueq9wo" sourceRef="Activity_0m97fsi" targetRef="Activity_1wwt0yj" />
@@ -312,6 +334,7 @@ nss.processMhAllocateNssiJobStatusRsp(execution)</bpmn:script>
       <bpmn:outgoing>Flow_05gp3p7</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.deleteMhSliceProfile(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1489mpe" sourceRef="Activity_0w9oree" targetRef="Activity_0m97fsi" />
@@ -320,6 +343,7 @@ nss.deleteMhSliceProfile(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1489mpe</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.deleteFhSliceProfile(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_11aacst" sourceRef="Activity_1j4c00v" targetRef="Activity_09ku290" />
@@ -328,6 +352,7 @@ nss.deleteFhSliceProfile(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1nyp1l1</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.deleteAnSliceProfile(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_05gp3p7" sourceRef="Activity_09ku290" targetRef="Activity_121aiqf" />
@@ -351,30 +376,14 @@ ex.processJavaException(execution)</bpmn:script>
         <bpmn:outgoing>Flow_0jar916</bpmn:outgoing>
         <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.prepareFailedOperationStatusUpdate(execution)</bpmn:script>
       </bpmn:scriptTask>
-      <bpmn:serviceTask id="Activity_1h1crsr" name="Update Resource Operation Status">
-        <bpmn:extensionElements>
-          <camunda:connector>
-            <camunda:inputOutput>
-              <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-              <camunda:inputParameter name="headers">
-                <camunda:map>
-                  <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                  <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-                </camunda:map>
-              </camunda:inputParameter>
-              <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-              <camunda:inputParameter name="method">POST</camunda:inputParameter>
-              <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-              <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-            </camunda:inputOutput>
-            <camunda:connectorId>http-connector</camunda:connectorId>
-          </camunda:connector>
-        </bpmn:extensionElements>
+      <bpmn:scriptTask scriptFormat="groovy" id="Activity_1h1crsr" name="Update Resource Operation Status">
         <bpmn:incoming>Flow_0jar916</bpmn:incoming>
         <bpmn:outgoing>Flow_0dafrg8</bpmn:outgoing>
-      </bpmn:serviceTask>
+            <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
       <bpmn:sequenceFlow id="Flow_07c6g27" sourceRef="Activity_1awhkox" targetRef="Event_1hq0k3q" />
       <bpmn:sequenceFlow id="Flow_0yj2tlu" sourceRef="Event_0gr296x" targetRef="Activity_16up0r1" />
       <bpmn:sequenceFlow id="Flow_0jar916" sourceRef="Activity_16up0r1" targetRef="Activity_1h1crsr" />
@@ -400,6 +409,7 @@ nss.prepareFailedOperationStatusUpdate(execution)</bpmn:script>
       <bpmn:outgoing>Flow_17dxvu5</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.processRanNfModifyRsp(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0fkl1gv" sourceRef="Activity_0kcrid0" targetRef="Activity_05m354s" />
@@ -409,6 +419,7 @@ nss.processRanNfModifyRsp(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0hzibw4</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.getSubnetCapabilities(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1ym755g" sourceRef="Activity_0vki9dw" targetRef="Activity_1w8iqt0" />
@@ -418,6 +429,7 @@ nss.getSubnetCapabilities(execution)</bpmn:script>
       <bpmn:outgoing>Flow_09p79e6</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.getSliceProfilesFromAai(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1atfnov" sourceRef="Activity_10zcvcv" targetRef="Activity_137i4pg" />
@@ -431,30 +443,14 @@ nss.getSliceProfilesFromAai(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1giua78</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DoModifyAccessNSSI()
+nss.useRequestDbHttp()
 nss.prepareOperationStatusUpdate(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="Activity_125mjhq" name="Update Resource Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Activity_125mjhq" name="Update Resource Operation Status">
       <bpmn:incoming>Flow_1giua78</bpmn:incoming>
       <bpmn:outgoing>Flow_1oubjfe</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:endEvent id="Event_159m6y8">
       <bpmn:incoming>Flow_1oubjfe</bpmn:incoming>
     </bpmn:endEvent>

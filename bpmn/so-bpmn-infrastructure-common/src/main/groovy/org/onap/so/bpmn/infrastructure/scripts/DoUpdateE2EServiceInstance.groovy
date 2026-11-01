@@ -205,6 +205,52 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
         logger.info( "======== COMPLETED preInitResourcesOperStatus Process ======== ")
     }
 
+	public void preInitResourcesOperStatusHttp(DelegateExecution execution){
+        def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+
+        try{
+            String serviceId = execution.getVariable("serviceInstanceId")
+            String operationId = execution.getVariable("operationId")
+            String operationType = execution.getVariable("operationType")
+            String resourceTemplateUUIDs = ""
+            String result = "processing"
+            String progress = "0"
+            String reason = ""
+            String operationContent = "Prepare service updating"
+
+
+			serviceId = UriUtils.encode(serviceId,"UTF-8")
+            execution.setVariable("serviceInstanceId", serviceId)
+            execution.setVariable("operationId", operationId)
+            execution.setVariable("operationType", operationType)
+
+			List<Resource> resourceList = new ArrayList<String>()
+			List<Resource> addResourceList =  execution.getVariable("addResourceList")
+			List<Resource> delResourceList =  execution.getVariable("delResourceList")
+			resourceList.addAll(addResourceList)
+			resourceList.addAll(delResourceList)
+			for(Resource resource : resourceList){
+				resourceTemplateUUIDs  = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"
+			}
+
+
+			Map payload = [
+                serviceId: "${serviceId}".toString(),
+                operationId: "${operationId}".toString(),
+                operationType: "${operationType}".toString(),
+                resourceTemplateUUIDs: "${resourceTemplateUUIDs}".toString()]
+
+			execution.setVariable('CVFMI_initResOperStatusRequestHttp', payload)
+        execution.setVariable('CVFMI_initResOperStatusRequestHttpOperation', 'initResourceOperationStatus')
+
+
+        }catch(Exception e){
+
+            execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
+        }
+
+    }
+
 
     public void preProcessForAddResource(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")

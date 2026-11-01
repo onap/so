@@ -111,34 +111,18 @@ ddrs.preProcessRequest(execution)]]></bpmn:script>
     <bpmn:sequenceFlow id="SequenceFlow_098gain" name="yes" sourceRef="ExclusiveGateway_0khn1my" targetRef="ScriptTask_15zy0jf">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{(execution.getVariable("resourceInstanceId" )  != "" )}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:serviceTask id="ServiceTask_1bw1mjh" name="update progress update">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_updateResOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_1bw1mjh" name="update progress update">
       <bpmn:incoming>SequenceFlow_11bgbsh</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0djplpd</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, execution.getVariable('CVFMI_updateResOperStatusRequestHttpOperation'), 'CVFMI_dbResponse', 'CVFMI_dbResponseCode', 'CVFMI_updateResOperStatusRequestHttp')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_0shhhxr" name="Prepare progress finished for the resource" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_19ccmqv</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_11bgbsh</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def dcsi = new DoDeleteResourcesV1()
-dcsi.prepareFinishedProgressForResource(execution)]]></bpmn:script>
+dcsi.prepareFinishedProgressForResourceHttp(execution)]]></bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_11bgbsh" sourceRef="ScriptTask_0shhhxr" targetRef="ServiceTask_1bw1mjh" />
     <bpmn:sequenceFlow id="SequenceFlow_19ccmqv" name="no" sourceRef="ExclusiveGateway_0khn1my" targetRef="ScriptTask_0shhhxr" />

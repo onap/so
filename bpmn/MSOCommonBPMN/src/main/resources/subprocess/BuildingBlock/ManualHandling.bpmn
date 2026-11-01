@@ -50,64 +50,28 @@ mh.setTaskVariables(task)]]></camunda:script>
     <bpmn2:sequenceFlow id="SequenceFlow_0b84ki5" sourceRef="Task_1kuxfdu" targetRef="ManualHandlingUserTask" />
     <bpmn2:sequenceFlow id="SequenceFlow_0zer29a" sourceRef="Task_0r60vxk" targetRef="Task_02xybqx" />
     <bpmn2:sequenceFlow id="SequenceFlow_14cyk9v" sourceRef="Task_02xybqx" targetRef="EndEvent_3" />
-    <bpmn2:serviceTask id="Task_1kuxfdu" name="Update Infra DB Status to PENDING_MANUAL_TASK">
-      <bpmn2:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url"><![CDATA[${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}]]></camunda:inputParameter>
-            <camunda:inputParameter name="payload"><![CDATA[${execution.getVariable("setUpdateDBstatusPayload")}]]></camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="updateRequestResponse"><![CDATA[${statusCode == null || statusCode == 204 ? "" : response}]]></camunda:outputParameter>
-            <camunda:outputParameter name="updateRequestResponseCode">${statusCode}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>soap-http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn2:extensionElements>
+    <bpmn2:scriptTask id="Task_1kuxfdu" name="Update Infra DB Status to PENDING_MANUAL_TASK" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0mbjrvr</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0b84ki5</bpmn2:outgoing>
-    </bpmn2:serviceTask>
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
+new ManualHandling().updateRequestsDBStatusHttp(execution, execution.getVariable("requestDbHttpStatus"))]]></bpmn2:script>
+    </bpmn2:scriptTask>
     <bpmn2:scriptTask id="Task_137bzdi" name="Prepare Requests DB Status Update to PENDING_MANUAL_TASK" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0zgg47r</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0mbjrvr</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
-def mh = new ManualHandling()
-mh.prepareRequestsDBStatusUpdate(execution, "PENDING_MANUAL_TASK")]]></bpmn2:script>
+      <bpmn2:script><![CDATA[execution.setVariable("requestDbHttpStatus", "PENDING_MANUAL_TASK")]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:scriptTask id="Task_0r60vxk" name="Prepare Requests DB Status Update to IN_PROGRESS" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_192yimz</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0zer29a</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
-def mh = new ManualHandling()
-mh.prepareRequestsDBStatusUpdate(execution, "IN_PROGRESS")]]></bpmn2:script>
+      <bpmn2:script><![CDATA[execution.setVariable("requestDbHttpStatus", "IN_PROGRESS")]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:serviceTask id="Task_02xybqx" name="Update Infra DB Status to IN_PROGRESS">
-      <bpmn2:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url"><![CDATA[${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}]]></camunda:inputParameter>
-            <camunda:inputParameter name="payload"><![CDATA[${execution.getVariable("setUpdateDBstatusPayload")}]]></camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="updateRequestResponse"><![CDATA[${statusCode == null || statusCode == 204 ? "" : response}]]></camunda:outputParameter>
-            <camunda:outputParameter name="updateRequestResponseCode">${statusCode}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>soap-http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn2:extensionElements>
+    <bpmn2:scriptTask id="Task_02xybqx" name="Update Infra DB Status to IN_PROGRESS" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0zer29a</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_14cyk9v</bpmn2:outgoing>
-    </bpmn2:serviceTask>
+      <bpmn2:script><![CDATA[import org.onap.so.bpmn.common.scripts.*
+new ManualHandling().updateRequestsDBStatusHttp(execution, execution.getVariable("requestDbHttpStatus"))]]></bpmn2:script>
+    </bpmn2:scriptTask>
     <bpmn2:scriptTask id="Task_1qrt7xw" name="PreProcess Request" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_0jav6cu</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0zgg47r</bpmn2:outgoing>

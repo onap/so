@@ -148,11 +148,11 @@ csi.preProcessResourceRequestForController(execution)]]></bpmn2:script>
 def csi = new  DoCreateE2EServiceInstanceV2()
 csi.getServiceResources(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:serviceTask id="ServiceTask_1t9ln4p" name="Call Sync SDNC service Create " camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncServiceTopologyOperationTask">
+    <bpmn2:serviceTask id="ServiceTask_1t9ln4p" name="Call Sync SDNC service Create " camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncServiceTopologyRequestDbHttpTask">
       <bpmn2:incoming>SequenceFlow_1vio1tn</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_07pkpa0</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:serviceTask id="CallActivity_0x5g3pa" name="Call DoCreateSDNCNetworkInstance" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncNetworkTopologyOperationTask">
+    <bpmn2:serviceTask id="CallActivity_0x5g3pa" name="Call DoCreateSDNCNetworkInstance" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncNetworkTopologyRequestDbHttpTask">
       <bpmn2:incoming>SequenceFlow_0br9juy</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_06byir6</bpmn2:outgoing>
     </bpmn2:serviceTask>

@@ -369,6 +369,22 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	}
 
 
+	void prepareDBRequestHttp(DelegateExecution execution, isDebugLogEnabled) {
+		WorkflowException failure = execution.getVariable('WorkflowException')
+		String statusMessage = 'VolumeGroup successfully deleted'
+		if (failure != null) {
+			statusMessage = failure.getErrorMessage()
+			execution.setVariable('DELVfModVol_WorkflowExceptionMessage', statusMessage)
+			execution.setVariable('DELVfModVol_WorkflowExceptionCode', failure.getErrorCode())
+		}
+		execution.setVariable('DELVfModVol_updateInfraRequestHttp', [
+				requestId: String.valueOf(execution.getVariable('DELVfModVol_requestId')),
+				lastModifiedBy: 'BPMN', statusMessage: String.valueOf(statusMessage),
+				requestStatus: failure == null ? 'COMPLETE' : 'FAILURE',
+				progress: failure == null ? '100' : '',
+				vnfOutputs: String.valueOf(execution.getVariable('DELVfModVol_volumeOutputs'))])
+	}
+
 	public void prepareDBRequest (DelegateExecution execution, isDebugLogEnabled) {
 
 		WorkflowException workflowExceptionObj = execution.getVariable("WorkflowException")

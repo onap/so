@@ -205,6 +205,15 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
+	void prepareDbInfraSuccessRequestHttp(DelegateExecution execution, isDebugEnabled) {
+		execution.setVariable(prefix + 'createDBRequestHttp', [
+				requestId: String.valueOf(execution.getVariable('mso-request-id')),
+				lastModifiedBy: 'BPMN', statusMessage: 'VolumeGroup successfully created.',
+				responseBody: '', requestStatus: 'COMPLETED', progress: '100',
+				vnfOutputs: String.valueOf(execution.getVariable(prefix + 'volumeOutputs')),
+				volumeGroupId: String.valueOf(execution.getVariable(prefix + 'volumeGroupId'))])
+	}
+
 	public void prepareDbInfraSuccessRequest(DelegateExecution execution, isDebugEnabled) {
 		def dbVnfOutputs = execution.getVariable(prefix+'volumeOutputs')
 		def requestId = execution.getVariable('mso-request-id')

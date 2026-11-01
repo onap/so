@@ -46,6 +46,11 @@ public class DoActivateTnNssi extends AbstractServiceTaskProcessor {
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
     RequestDBUtil requestDBUtil = new RequestDBUtil()
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     TnNssmfUtils tnNssmfUtils = new TnNssmfUtils()
     JsonSlurper jsonSlurper = new JsonSlurper()
     private static final ObjectMapper objectMapper = new ObjectMapper()

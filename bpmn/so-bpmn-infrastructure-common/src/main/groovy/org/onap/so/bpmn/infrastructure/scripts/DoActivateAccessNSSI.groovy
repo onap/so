@@ -61,6 +61,11 @@ class DoActivateAccessNSSI extends AbstractServiceTaskProcessor {
 	String Prefix="DoActivateAccessNSSI"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	RequestDBUtil requestDBUtil = new RequestDBUtil()
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
 	JsonUtils jsonUtil = new JsonUtils()
 	AnNssmfUtils anNssmfUtils = new AnNssmfUtils()
 	private NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)

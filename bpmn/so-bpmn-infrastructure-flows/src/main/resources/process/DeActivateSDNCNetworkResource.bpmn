@@ -37,7 +37,7 @@ dcsi.preProcessRequest(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1pzm7qx</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcsi = new DeActivateSDNCNetworkResource()
-dcsi.prepareUpdateAfterDeActivateSDNCResource(execution)</bpmn:script>
+dcsi.prepareUpdateAfterDeActivateSDNCResourceHttp(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1fjtgq7" sourceRef="PreprocessIncomingRequest_deactivate" targetRef="Task_0n0lj30_deactivate" />
     <bpmn:callActivity id="Task_0n0lj30_deactivate" name="Call SDNC &#10; Adapter V1" calledElement="SDNCAdapterRestV1">
@@ -46,28 +46,12 @@ dcsi.prepareUpdateAfterDeActivateSDNCResource(execution)</bpmn:script>
     </bpmn:callActivity>
     <bpmn:sequenceFlow id="SequenceFlow_0c58p9k" sourceRef="Task_0n0lj30_deactivate" targetRef="Task_0tezqd4_deactivate" />
     <bpmn:sequenceFlow id="SequenceFlow_1pzm7qx" sourceRef="Task_0tezqd4_deactivate" targetRef="Task_1a6f0p9_deactivate" />
-    <bpmn:serviceTask id="Task_1a6f0p9_deactivate" name="update progress update">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_updateResOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Task_1a6f0p9_deactivate" name="update progress update">
       <bpmn:incoming>SequenceFlow_1pzm7qx</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_13gl3wv</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, execution.getVariable('CVFMI_updateResOperStatusRequestHttpOperation'), 'CVFMI_dbResponse', 'CVFMI_dbResponseCode', 'CVFMI_updateResOperStatusRequestHttp')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_13gl3wv" sourceRef="Task_1a6f0p9_deactivate" targetRef="Task_023hred_deactivate" />
     <bpmn:callActivity id="CallActivity_0a0txik_DeActivate" name="Call SDNC RSRC &#10; Adapter V1&#10;" calledElement="sdncAdapter">
       <bpmn:extensionElements>

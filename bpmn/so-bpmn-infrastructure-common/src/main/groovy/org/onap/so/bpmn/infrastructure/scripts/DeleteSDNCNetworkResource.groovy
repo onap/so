@@ -538,6 +538,34 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
     }
 
+    void prepareUpdateBeforeDeleteSDNCResourceHttp(DelegateExecution execution) {
+
+        String resourceInput = execution.getVariable(Prefix + "resourceInput");
+        ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
+        String operType = resourceInputObj.getOperationType()
+        String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
+        String serviceInstanceId = resourceInputObj.getServiceInstanceId()
+        String operationId = resourceInputObj.getOperationId()
+        String progress = "20"
+        String status = "processing"
+        String statusDescription = "SDCN resource delete invoked"
+
+
+        Map body = [
+                operType: "${operType}".toString(),
+                operationId: "${operationId}".toString(),
+                progress: "${progress}".toString(),
+                resourceTemplateUUID: "${resourceCustomizationUuid}".toString(),
+                serviceId: "${serviceInstanceId}".toString(),
+                status: "${status}".toString(),
+                statusDescription: "${statusDescription}".toString()];
+
+        execution.setVariable('CVFMI_updateResOperStatusRequestHttp', body)
+        execution.setVariable('CVFMI_updateResOperStatusRequestHttpOperation', 'updateResourceOperationStatus')
+
+
+    }
+
     void prepareUpdateAfterDeleteSDNCResource(DelegateExecution execution) {
         logger.debug(" *** prepareUpdateAfterDeleteSDNCResource *** ")
         String resourceInput = execution.getVariable(Prefix + "resourceInput");
@@ -571,6 +599,33 @@ public class DeleteSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
         setProgressUpdateVariables(execution, body)
         logger.debug(" ***** Exit prepareUpdateAfterDeleteSDNCResource *****")
+    }
+
+    void prepareUpdateAfterDeleteSDNCResourceHttp(DelegateExecution execution) {
+
+        String resourceInput = execution.getVariable(Prefix + "resourceInput");
+        ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
+        String operType = resourceInputObj.getOperationType()
+        String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
+        String serviceInstanceId = resourceInputObj.getServiceInstanceId()
+        String operationId = resourceInputObj.getOperationId()
+        String progress = "100"
+        String status = "finished"
+        String statusDescription = "SDCN resource delete and deactivation completed"
+
+
+        Map body = [
+                operType: "${operType}".toString(),
+                operationId: "${operationId}".toString(),
+                progress: "${progress}".toString(),
+                resourceTemplateUUID: "${resourceCustomizationUuid}".toString(),
+                serviceId: "${serviceInstanceId}".toString(),
+                status: "${status}".toString(),
+                statusDescription: "${statusDescription}".toString()];
+
+        execution.setVariable('CVFMI_updateResOperStatusRequestHttp', body)
+        execution.setVariable('CVFMI_updateResOperStatusRequestHttpOperation', 'updateResourceOperationStatus')
+
     }
 
     void postDeleteSDNCCall(DelegateExecution execution){

@@ -20,30 +20,14 @@ ddsi.preProcessRequest(execution)
       <bpmn:outgoing>SequenceFlow_0b5p6gy</bpmn:outgoing>
       <bpmn:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def ddsi = new DoScaleE2EServiceInstance()
-ddsi.preInitResourcesOperStatus(execution)]]></bpmn:script>
+ddsi.preInitResourcesOperStatusHttp(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="ServiceTask_17d588b" name="Init Resource Oper Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_openecomp_adapters_db_endpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_initResOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_17d588b" name="Init Resource Oper Status">
       <bpmn:incoming>SequenceFlow_0b5p6gy</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0nqrq1k</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, execution.getVariable('CVFMI_initResOperStatusRequestHttpOperation'), 'CVFMI_dbResponse', 'CVFMI_dbResponseCode', 'CVFMI_initResOperStatusRequestHttp')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:callActivity id="CallActivity_1jkl1i3" name="Call Network Service Scale" calledElement="DoScaleVFCServiceInstance">
       <bpmn:extensionElements>
         <camunda:in source="globalSubscriberId" target="globalSubscriberId" />

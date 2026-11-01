@@ -22,6 +22,8 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 
 import static org.mockito.Mockito.*
+import static com.github.tomakehurst.wiremock.client.WireMock.*
+import static org.junit.Assert.*
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.ProcessEngineServices
@@ -49,6 +51,55 @@ class DeleteNetworkInstanceTest  {
 	
 	String Prefix="DELNI_"
 	def utils = new MsoUtils()
+
+	@Test
+	void requestDbHttpFailureUpdateUsesJsonAndPreservesFallout() {
+		verifyHttpFailureUpdate(204)
+	}
+
+	@Test
+	void requestDbHttpMissingRequestPreservesFallout() {
+		verifyHttpFailureUpdate(404)
+	}
+
+	@Test
+	void requestDbHttpServerFailurePreservesFallout() {
+		verifyHttpFailureUpdate(500)
+	}
+
+	private void verifyHttpFailureUpdate(int status) {
+		def originalFailure = new WorkflowException('DeleteNetworkInstance', 5300, 'SDNC failed & rolled back')
+		def values = [
+			'DELNI_requestId': 'request%id',
+			'WorkflowException': originalFailure,
+			'mso.adapters.requestDb.endpoint': 'http://localhost:8090',
+			'so.auth.username': 'test-user',
+			'so.auth.password': UUID.randomUUID().toString()
+		]
+		DelegateExecution execution = mock(DelegateExecution)
+		when(execution.getVariable(anyString())).thenAnswer { values[it.getArgument(0)] }
+		doAnswer { values[it.getArgument(0)] = it.getArgument(1); null }.when(execution).setVariable(anyString(), any())
+		wireMockRule.stubFor(post(urlEqualTo('/v1/request-db/infra-requests/request%25id/updates'))
+				.willReturn(aResponse().withStatus(status)))
+
+		def workflow = new DeleteNetworkInstance()
+		workflow.prepareDBRequestErrorHttp(execution)
+		workflow.updateDBRequestErrorHttp(execution)
+
+		wireMockRule.verify(1, postRequestedFor(urlEqualTo('/v1/request-db/infra-requests/request%25id/updates'))
+				.withHeader('Content-Type', containing('application/json'))
+				.withHeader('Authorization', equalTo(org.onap.so.utils.BasicAuth.header(
+						values['so.auth.username'], values['so.auth.password'])))
+				.withRequestBody(equalToJson(groovy.json.JsonOutput.toJson([
+						lastModifiedBy: 'BPMN', statusMessage: 'SDNC failed & rolled back',
+						responseBody: '', requestStatus: 'FAILED', progress: '',
+						vnfOutputs: '<network-outputs xmlns="http://org.onap/so/infra/vnf-request/v1" xmlns:aetgt="http://org.onap/so/infra/vnf-request/v1" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"/>'
+				]), true, true)))
+		assertEquals(status, values['DELNI_dbReturnCode'])
+		assertEquals('', values['DELNI_deleteDBResponse'])
+		assertSame(originalFailure, values['WorkflowException'])
+		assertFalse(values['DELNI_deleteDBRequest'].contains('Envelope'))
+	}
 
 	String falloutHandlerRequest = 
     """<aetgt:FalloutHandlerRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"

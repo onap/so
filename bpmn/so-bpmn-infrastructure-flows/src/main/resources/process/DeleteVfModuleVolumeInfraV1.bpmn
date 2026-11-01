@@ -153,7 +153,7 @@ deleteVfMod.executeMethod('prepareFalloutHandler', execution, isDebugLogEnabled)
       <bpmn2:outgoing>SequenceFlow_37</bpmn2:outgoing>
       <bpmn2:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def deleteVfMod = new DeleteVfModuleVolumeInfraV1()
-deleteVfMod.executeMethod('prepareDBRequest', execution, isDebugLogEnabled)
+deleteVfMod.executeMethod('prepareDBRequestHttp', execution, isDebugLogEnabled)
 
 </bpmn2:script>
     </bpmn2:scriptTask>
@@ -193,28 +193,12 @@ execution.setVariable("DELVfModVol_TransactionSuccessIndicator", true)</bpmn2:sc
       <bpmn2:incoming>SequenceFlow_24</bpmn2:incoming>
       <bpmn2:terminateEventDefinition id="TerminateEventDefinition_3" />
     </bpmn2:endEvent>
-    <bpmn2:serviceTask id="callDBInfra_ServiceTask" name="Call DB Infra Update">
-      <bpmn2:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}</camunda:inputParameter>
-            <camunda:inputParameter name="payload">${DELVfModVol_updateInfraRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="DELVfModVol_createDBResponse">${response}</camunda:outputParameter>
-            <camunda:outputParameter name="DELVfModVol_dbReturnCode">${statusCode}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn2:extensionElements>
+    <bpmn2:scriptTask scriptFormat="groovy" id="callDBInfra_ServiceTask" name="Call DB Infra Update">
       <bpmn2:incoming>SequenceFlow_37</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_27</bpmn2:outgoing>
-    </bpmn2:serviceTask>
+          <bpmn2:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, 'updateInfraRequest', 'DELVfModVol_createDBResponse', 'DELVfModVol_dbReturnCode', 'DELVfModVol_updateInfraRequestHttp')</bpmn2:script>
+    </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_27" name="" sourceRef="callDBInfra_ServiceTask" targetRef="postProcessAndCompletionRequest_ScriptTask" />
     <bpmn2:scriptTask id="callRESTDeleteVolGrpId_ScriptTask" name="Call REST Delete AAI Vol Grp Id" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_vnfAdapterCallOK</bpmn2:incoming>

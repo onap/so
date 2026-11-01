@@ -378,6 +378,12 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
      *
      * @param execution The flow's execution instance.
      */
+    void prepDbInfraDbRequestHttp(DelegateExecution execution, isDebugLogEnabled) {
+        execution.setVariable('UPDVfModVol_updateInfraRequestHttp', [
+                requestId: String.valueOf(execution.getVariable('UPDVfModVol_requestId')),
+                lastModifiedBy: 'BPEL', requestStatus: 'COMPLETE', progress: '100'])
+    }
+
     public void prepDbInfraDbRequest(DelegateExecution execution, isDebugLogEnabled) {
 
         def requestId = execution.getVariable('UPDVfModVol_requestId')

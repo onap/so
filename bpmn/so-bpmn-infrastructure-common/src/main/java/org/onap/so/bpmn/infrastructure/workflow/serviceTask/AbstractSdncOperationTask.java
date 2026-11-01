@@ -41,6 +41,8 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.json.JSONObject;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
+import org.onap.so.db.request.client.RequestDbCommands;
+import org.onap.so.db.request.client.RequestDbOperationsClient;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.requestsdb.RequestsDbConstant;
@@ -250,8 +252,10 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
         resourceTemplateId = StringUtils.isBlank(resourceTemplateId) ? "" : resourceTemplateUUID;
         resourceTemplateUUID = StringUtils.isBlank(resourceTemplateUUID) ? resourceTemplateId : resourceTemplateUUID;
         try {
+            RequestDbOperationsClient requestDbClient = getRequestDbOperationsClient(execution);
             ResourceOperationStatus resourceOperationStatus =
-                    getResourceOperationStatus(serviceId, operationId, resourceTemplateUUID);
+                    requestDbClient == null ? getResourceOperationStatus(serviceId, operationId, resourceTemplateUUID)
+                            : requestDbClient.getResourceOperationStatus(serviceId, operationId, resourceTemplateUUID);
             if (!StringUtils.isBlank(status)) {
                 resourceOperationStatus.setStatus(status);
             }
@@ -264,7 +268,20 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
             if (!StringUtils.isBlank(statusDescription)) {
                 resourceOperationStatus.setStatusDescription(statusDescription);
             }
-            updateResOperStatus(resourceOperationStatus);
+            if (requestDbClient == null) {
+                updateResOperStatus(resourceOperationStatus);
+            } else {
+                RequestDbCommands.ResourceOperationUpdate command = new RequestDbCommands.ResourceOperationUpdate();
+                command.setOperType(StringUtils.defaultString(resourceOperationStatus.getOperType()));
+                command.setJobId(StringUtils.defaultString(resourceOperationStatus.getJobId()));
+                command.setStatus(StringUtils.defaultString(resourceOperationStatus.getStatus()));
+                command.setProgress(StringUtils.defaultString(resourceOperationStatus.getProgress()));
+                command.setErrorCode(StringUtils.defaultString(resourceOperationStatus.getErrorCode()));
+                command.setStatusDescription(StringUtils.defaultString(resourceOperationStatus.getStatusDescription()));
+                requestDbClient.updateResourceOperationStatus(resourceOperationStatus.getServiceId(),
+                        resourceOperationStatus.getOperationId(), resourceOperationStatus.getResourceTemplateUUID(),
+                        command);
+            }
             logger.info("AbstractSdncOperationTask.updateProgress end!");
         } catch (Exception exception) {
             logger.info("exception: AbstractSdncOperationTask.updateProgress fail!");
@@ -275,6 +292,10 @@ public abstract class AbstractSdncOperationTask implements JavaDelegate {
         }
     }
 
+
+    protected RequestDbOperationsClient getRequestDbOperationsClient(DelegateExecution execution) {
+        return null;
+    }
 
     protected String getSdncIp() {
         logger.info("AbstractSdncOperationTask.getSdncIp begin.");

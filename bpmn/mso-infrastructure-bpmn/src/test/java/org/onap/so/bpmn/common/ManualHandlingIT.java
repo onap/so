@@ -23,13 +23,16 @@
 package org.onap.so.bpmn.common;
 
 import static org.onap.so.bpmn.mock.StubResponseDatabase.MockPostRequestDB;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.camunda.bpm.engine.TaskService;
+import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
-import org.camunda.bpm.engine.task.TaskQuery;
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
@@ -45,6 +48,8 @@ public class ManualHandlingIT extends BaseIntegrationTest {
     @Test
     public void TestManualHandlingSuccess() {
         MockPostRequestDB(wireMockServer);
+        String updatePath = "/v1/request-db/infra-requests/testRequestId/updates";
+        wireMockServer.stubFor(post(urlPathEqualTo(updatePath)).willReturn(aResponse().withStatus(204)));
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("isDebugLogEnabled", "true");
@@ -62,36 +67,16 @@ public class ManualHandlingIT extends BaseIntegrationTest {
 
 
         String businessKey = UUID.randomUUID().toString();
-        invokeSubProcess("ManualHandling", businessKey, variables);
-
-        try {
-            Thread.sleep(5);
-        } catch (Exception e) {
-
-        }
-
-        TaskService taskService = processEngine.getTaskService();
-
-        TaskQuery q = taskService.createTaskQuery();
-
-        List<Task> tasks = q.orderByTaskCreateTime().asc().list();
-
-        for (Task task : tasks) {
-            logger.debug("TASK ID: {}", task.getId());
-            logger.debug("TASK NAME: {}", task.getName());
-
-            try {
-                logger.debug("Completing the task");
-                Map<String, Object> completeVariables = new HashMap<>();
-                completeVariables.put("responseValue", "skip");
-                taskService.complete(task.getId(), completeVariables);
-            } catch (Exception e) {
-                logger.debug("GOT EXCEPTION: {}", e.getMessage());
-            }
-        }
-
-        waitForProcessEnd(businessKey, 100000);
-
-        Assert.assertTrue(isProcessEnded(businessKey));
+        ProcessInstance instance =
+                processEngine.getRuntimeService().startProcessInstanceByKey("ManualHandling", businessKey, variables);
+        Task task = processEngine.getTaskService().createTaskQuery().processInstanceId(instance.getId()).singleResult();
+        Assert.assertNotNull(task);
+        processEngine.getTaskService().complete(task.getId(), Map.of("responseValue", "skip"));
+        Assert.assertEquals(0, processEngine.getRuntimeService().createProcessInstanceQuery()
+                .processInstanceId(instance.getId()).count());
+        wireMockServer.verify(postRequestedFor(urlPathEqualTo(updatePath)).withRequestBody(
+                equalToJson("{\"lastModifiedBy\":\"ManualHandling\",\"requestStatus\":\"PENDING_MANUAL_TASK\"}")));
+        wireMockServer.verify(postRequestedFor(urlPathEqualTo(updatePath)).withRequestBody(
+                equalToJson("{\"lastModifiedBy\":\"ManualHandling\",\"requestStatus\":\"IN_PROGRESS\"}")));
     }
 }

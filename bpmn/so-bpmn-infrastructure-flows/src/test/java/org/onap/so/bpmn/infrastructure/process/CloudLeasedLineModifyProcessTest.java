@@ -20,6 +20,7 @@
 package org.onap.so.bpmn.infrastructure.process;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -57,7 +58,7 @@ import org.w3c.dom.Document;
 public class CloudLeasedLineModifyProcessTest extends BaseBPMNTest {
     private static final String PROCESS = "DoCloudLeasedLineModify";
     private static final String RESOURCE = "subprocess/DoCloudLeasedLineModify.bpmn";
-    private static final String STATUS = "/cll-modify-status";
+    private static final String STATUS = "/v1/request-db/resource-operations";
     private static final String BUSINESS = "/business/customers/customer/customer-1/service-subscriptions/"
             + "service-subscription/service-type/service-instances/service-instance/";
     private String id;
@@ -85,7 +86,7 @@ public class CloudLeasedLineModifyProcessTest extends BaseBPMNTest {
         variables.put("serviceType", "leased-line");
         variables.put("globalSubscriberId", "customer-1");
         variables.put("mso.workflow.sdncadapter.callback", "http://localhost:" + wireMockPort + "/callback");
-        variables.put("mso.adapters.openecomp.db.endpoint", "http://localhost:" + wireMockPort + STATUS);
+        variables.put("mso.adapters.requestDb.endpoint", "http://localhost:" + wireMockPort);
         network = new JSONObject().put("id", "network-1").put("sla", new JSONObject().put("maxBandwidth", 0))
                 .put("connectionLinks", new JSONArray().put(new JSONObject().put("transportEndpointA", "endpoint-A")
                         .put("transportEndpointB", "endpoint-B")));
@@ -108,9 +109,8 @@ public class CloudLeasedLineModifyProcessTest extends BaseBPMNTest {
                 new JSONObject().put("link-id", "link-1").put("link-name", "endpoint-A"));
         stubUpdate(policyPath, 200);
         stubUpdate(servicePath, 200);
-        wireMockServer.stubFor(post(urlEqualTo(STATUS))
-                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/soap+xml")
-                        .withHeader("Connection", "close").withBody("<updated/>")));
+        wireMockServer.stubFor(
+                put(urlPathEqualTo(STATUS)).willReturn(aResponse().withStatus(204).withHeader("Connection", "close")));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class CloudLeasedLineModifyProcessTest extends BaseBPMNTest {
         assertEquals(Integer.valueOf(0), updateBody(policyPath).get("max-bandwidth"));
         assertEquals(1, updateBody(policyPath).length());
         assertEquals("modified", updateBody(servicePath).getString("orchestration-status"));
-        wireMockServer.verify(0, putRequestedFor(anyUrl()));
+        wireMockServer.verify(0, putRequestedFor(urlPathMatching("/aai/.*")));
         wireMockServer.verify(0, deleteRequestedFor(anyUrl()));
         assertCompletion();
     }
@@ -131,7 +131,7 @@ public class CloudLeasedLineModifyProcessTest extends BaseBPMNTest {
         inputs(true);
         assertSuccess(start());
         assertEquals(Integer.valueOf(0), updateBody(policyPath).get("max-bandwidth"));
-        wireMockServer.verify(0, putRequestedFor(anyUrl()));
+        wireMockServer.verify(0, putRequestedFor(urlPathMatching("/aai/.*")));
         assertCompletion();
     }
 
@@ -181,7 +181,7 @@ public class CloudLeasedLineModifyProcessTest extends BaseBPMNTest {
     public void rejectedCompletionStatusCannotCompleteTheWorkflowSuccessfully() {
         Assume.assumeTrue("SO-4456: CLL modification ignores rejected final request-database status",
                 Boolean.getBoolean("groovy.migration.verification"));
-        wireMockServer.stubFor(post(urlEqualTo(STATUS))
+        wireMockServer.stubFor(put(urlPathEqualTo(STATUS))
                 .willReturn(aResponse().withStatus(500).withHeader("Connection", "close").withBody("<rejected/>")));
         ProcessInstance process = start();
         assertNotNull("A rejected completion write must fail the workflow", historic(process, "WorkflowException"));
@@ -282,7 +282,7 @@ public class CloudLeasedLineModifyProcessTest extends BaseBPMNTest {
         assertNotNull(historic(process, "WorkflowException"));
         assertActivity(process, "ScriptTask_1swzdpw", 1);
         assertActivity(process, "EndEvent_05h01gx", 0);
-        wireMockServer.verify(0, postRequestedFor(urlEqualTo(STATUS)));
+        wireMockServer.verify(0, putRequestedFor(urlPathEqualTo(STATUS)));
     }
 
     private JSONObject updateBody(String path) {
@@ -292,22 +292,15 @@ public class CloudLeasedLineModifyProcessTest extends BaseBPMNTest {
     }
 
     private void assertCompletion() throws Exception {
-        wireMockServer.verify(1, postRequestedFor(urlEqualTo(STATUS)));
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        Document payload = factory.newDocumentBuilder()
-                .parse(new ByteArrayInputStream(wireMockServer.findAll(postRequestedFor(urlEqualTo(STATUS))).get(0)
-                        .getBodyAsString().getBytes(StandardCharsets.UTF_8)));
-        assertEquals("http://schemas.xmlsoap.org/soap/envelope/", payload.getDocumentElement().getNamespaceURI());
-        assertEquals(1, payload.getElementsByTagNameNS("http://org.onap.so/requestsdb", "updateResourceOperationStatus")
-                .getLength());
-        assertEquals(id, payload.getElementsByTagName("serviceId").item(0).getTextContent());
-        assertEquals("job-1", payload.getElementsByTagName("operationId").item(0).getTextContent());
-        assertEquals("MODIFY", payload.getElementsByTagName("operType").item(0).getTextContent());
-        assertEquals("FINISHED", payload.getElementsByTagName("status").item(0).getTextContent());
-        assertEquals("100", payload.getElementsByTagName("progress").item(0).getTextContent());
+        wireMockServer.verify(1, putRequestedFor(urlPathEqualTo(STATUS)));
+        var request = wireMockServer.findAll(putRequestedFor(urlPathEqualTo(STATUS))).get(0);
+        assertEquals(id, request.queryParameter("serviceId").firstValue());
+        assertEquals("job-1", request.queryParameter("operationId").firstValue());
+        assertTrue(request.getHeader("Content-Type").contains("application/json"));
+        JSONObject payload = new JSONObject(request.getBodyAsString());
+        assertEquals("MODIFY", payload.getString("operType"));
+        assertEquals("FINISHED", payload.getString("status"));
+        assertEquals("100", payload.getString("progress"));
     }
 
     private Object historic(ProcessInstance process, String name) {

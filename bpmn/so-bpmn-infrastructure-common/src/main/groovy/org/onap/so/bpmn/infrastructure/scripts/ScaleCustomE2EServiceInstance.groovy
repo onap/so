@@ -301,4 +301,45 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
         }
         logger.trace("COMPLETED prepareInitServiceOperationStatus Process ")
     }
+
+    public void prepareInitServiceOperationStatusHttp(DelegateExecution execution){
+
+        try{
+            String serviceId = execution.getVariable("serviceInstanceId")
+
+            String operationId = execution.getVariable("operationId")
+            String operationType = "SCALE"
+            String userId = ""
+            String result = "processing"
+            String progress = "0"
+            String reason = ""
+            String operationContent = "Prepare service scaling"
+            execution.setVariable("serviceInstanceId", serviceId)
+            execution.setVariable("operationId", operationId)
+            execution.setVariable("operationType", operationType)
+
+
+            Map payload = [
+                serviceId: "${serviceId}".toString(),
+                operationId: "${operationId}".toString(),
+                operationType: "${operationType}".toString(),
+                userId: "${userId}".toString(),
+                result: "${result}".toString(),
+                operationContent: "${operationContent}".toString(),
+                progress: "${progress}".toString(),
+                reason: "${reason}".toString()]
+
+            execution.setVariable('CVFMI_updateServiceOperStatusRequestHttp', payload)
+        execution.setVariable('CVFMI_updateServiceOperStatusRequestHttpOperation', 'updateOperationStatus')
+
+
+
+        }catch(Exception e){
+            logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    "Exception Occured Processing prepareInitServiceOperationStatus.", "BPMN",
+                    ErrorCode.UnknownError.getValue(), e);
+            execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())
+        }
+
+    }
 }

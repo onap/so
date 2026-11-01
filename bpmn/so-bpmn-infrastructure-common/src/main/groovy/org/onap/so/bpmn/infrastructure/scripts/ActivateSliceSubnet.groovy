@@ -38,6 +38,11 @@ class ActivateSliceSubnet extends AbstractServiceTaskProcessor {
     AnNssmfUtils anNssmfUtils = new AnNssmfUtils()
     RequestDBUtil requestDBUtil = new RequestDBUtil()
 
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(ActivateSliceSubnet.class)
 
      @Override

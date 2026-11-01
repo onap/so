@@ -472,6 +472,23 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 	 * @param execution the execution
 	 * @param resultVar the execution variable in which the result will be stored
 	 */
+	void prepareUpdateInfraRequestHttp(DelegateExecution execution) {
+		try {
+			String requestInfo = execution.getVariable('CVFMI_requestInfo')
+			def vnfId = execution.getVariable('CVFMI_vnfId')
+			def vfModuleId = execution.getVariable('CVFMI_vfModuleId')
+			execution.setVariable('CVFMI_updateInfraRequestHttp', [
+					requestId: utils.getNodeText(requestInfo, 'request-id'), lastModifiedBy: 'BPMN',
+					statusMessage: 'VF Module successfully created', responseBody: '',
+					requestStatus: 'COMPLETE', progress: '100',
+					vnfOutputs: '<vnf-outputs xmlns="http://org.onap/so/infra/vnf-request/v1" xmlns:aetgt="http://org.onap/so/infra/vnf-request/v1" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"><vnf-id>' +
+							vnfId + '</vnf-id><vf-module-id>' + vfModuleId + '</vf-module-id></vnf-outputs>',
+					vfModuleId: String.valueOf(vfModuleId), vfModuleName: String.valueOf(execution.getVariable('CVFMI_vfModuleName'))])
+		} catch (Exception failure) {
+			execution.setVariable('CVFMI_ErrorResponse', 'Error Occurred during prepareUpdateInfraRequest Method:\n' + failure.getMessage())
+		}
+	}
+
 	public void falloutHandlerPrep(DelegateExecution execution, String resultVar) {
 		def method = getClass().getSimpleName() + '.falloutHandlerPrep(' +
 			'execution=' + execution.getId() +

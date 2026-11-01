@@ -197,28 +197,12 @@ def createVfModuleVolumeInfraV1 = new CreateVfModuleVolumeInfraV1()
 createVfModuleVolumeInfraV1.executeMethod('postProcessResponse', execution, isDebugLogEnabled)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_11" name="" sourceRef="ScriptTask_postCompletionRequest" targetRef="CallActivity_completeMsoProcess" />
-    <bpmn2:serviceTask id="ServiceTask_callDbInfraUpdate" name="Call DB Infra Update">
-      <bpmn2:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url"><![CDATA[${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}]]></camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVMVINFRAV1_createDBRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVMVINFRAV1_createDBResponse">${response}</camunda:outputParameter>
-            <camunda:outputParameter name="CVMVINFRAV1_dbReturnCode">${statusCode}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn2:extensionElements>
+    <bpmn2:scriptTask scriptFormat="groovy" id="ServiceTask_callDbInfraUpdate" name="Call DB Infra Update">
       <bpmn2:incoming>SequenceFlow_6</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
-    </bpmn2:serviceTask>
+          <bpmn2:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, 'updateInfraRequest', 'CVMVINFRAV1_createDBResponse', 'CVMVINFRAV1_dbReturnCode', 'CVMVINFRAV1_createDBRequestHttp')</bpmn2:script>
+    </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_8" name="" sourceRef="ServiceTask_callDbInfraUpdate" targetRef="ScriptTask_postCompletionRequest" />
     <bpmn2:endEvent id="EndEvent_3">
       <bpmn2:incoming>SequenceFlow_13</bpmn2:incoming>
@@ -229,7 +213,7 @@ createVfModuleVolumeInfraV1.executeMethod('postProcessResponse', execution, isDe
       <bpmn2:outgoing>SequenceFlow_6</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def createVfModuleVolumeInfraV1 = new CreateVfModuleVolumeInfraV1()
-createVfModuleVolumeInfraV1.executeMethod('prepareDbInfraSuccessRequest', execution, isDebugLogEnabled)]]></bpmn2:script>
+createVfModuleVolumeInfraV1.executeMethod('prepareDbInfraSuccessRequestHttp', execution, isDebugLogEnabled)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_6" name="" sourceRef="ScriptTask_prepareDbInfraRequest" targetRef="ServiceTask_callDbInfraUpdate" />
     <bpmn2:sequenceFlow id="SequenceFlow_0djjra2" sourceRef="CallActivity_doCreateVfModuleVolumeV2" targetRef="ScriptTask_prepareDbInfraRequest" />

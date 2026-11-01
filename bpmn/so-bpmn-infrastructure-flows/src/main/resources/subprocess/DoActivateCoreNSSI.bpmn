@@ -9,6 +9,7 @@
       <bpmn:outgoing>SequenceFlow_139ejmn</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activateNssi = new DoActivateCoreNSSI()
+activateNssi.useRequestDbHttp()
 activateNssi.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_0usuysi" name="Call AAI&#10;get VNF/VFs and model info" scriptFormat="groovy">
@@ -16,6 +17,7 @@ activateNssi.preProcessRequest(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_09nihof</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activateNssi = new DoActivateCoreNSSI()
+activateNssi.useRequestDbHttp()
 activateNssi.getServiceVNFAndVFsFromCatalogDB(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_1t06mlw" name="Prepare request payload for SO macro service api" scriptFormat="groovy">
@@ -23,6 +25,7 @@ activateNssi.getServiceVNFAndVFsFromCatalogDB(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0fbr356</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activateNssi = new DoActivateCoreNSSI()
+activateNssi.useRequestDbHttp()
 activateNssi.prepareSOMacroRequestPayLoad(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_0lxbaxd" name="Call AAIÂ &#10;update sliceProlie service Instance status" scriptFormat="groovy">
@@ -30,6 +33,7 @@ activateNssi.prepareSOMacroRequestPayLoad(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0j0egoi</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activateNssi = new DoActivateCoreNSSI()
+activateNssi.useRequestDbHttp()
 activateNssi.updateSliceProfileOrchestrationStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_1rjha8r" name="get NSSI instance with relationships and sliceProfile instance" scriptFormat="groovy">
@@ -37,6 +41,7 @@ activateNssi.updateSliceProfileOrchestrationStatus(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1654pt0</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activateNssi = new DoActivateCoreNSSI()
+activateNssi.useRequestDbHttp()
 activateNssi.getNetworkInstanceWithSPInstanceAssociatedWithNssiId(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_1tfpgcs" name="PUT SO Macro" scriptFormat="groovy">
@@ -44,6 +49,7 @@ activateNssi.getNetworkInstanceWithSPInstanceAssociatedWithNssiId(execution)</bp
       <bpmn:outgoing>SequenceFlow_0rjd7tg</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activateNssi = new DoActivateCoreNSSI()
+activateNssi.useRequestDbHttp()
 activateNssi.sendPutRequestToSOMacro(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_1sfn88d" name="Prepare update Service operation statusÂ " scriptFormat="groovy">
@@ -51,6 +57,7 @@ activateNssi.sendPutRequestToSOMacro(execution)</bpmn:script>
       <bpmn:outgoing>Flow_09eevay</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activateNssi = new DoActivateCoreNSSI()
+activateNssi.useRequestDbHttp()
 activateNssi.prepareUpdateResourceOperationStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0wwo1lh" sourceRef="StartEvent_0lgslwq" targetRef="ScriptTask_1x13jc1" />
@@ -79,29 +86,12 @@ activateNssi.prepareUpdateResourceOperationStatus(execution)</bpmn:script>
     <bpmn:sequenceFlow id="Flow_039sx2v" name="Yes" sourceRef="Gateway_03lo8jx" targetRef="Activity_14jev2r">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{(execution.getVariable("isSOResponseSucceed" )  == "yes")}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:serviceTask id="ServiceTask_02x7eqy" name="Update Service Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_02x7eqy" name="Update Service Operation Status">
       <bpmn:incoming>Flow_1jchhgj</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0j0egoi</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0v0dntm</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0v0dntm" sourceRef="ServiceTask_02x7eqy" targetRef="EndEvent_1061mty" />
     <bpmn:sequenceFlow id="Flow_1jchhgj" name="No" sourceRef="Gateway_03lo8jx" targetRef="ServiceTask_02x7eqy" />
     <bpmn:sequenceFlow id="SequenceFlow_0j0egoi" sourceRef="ScriptTask_0lxbaxd" targetRef="ServiceTask_02x7eqy" />
@@ -125,30 +115,14 @@ ex.processJavaException(execution)</bpmn:script>
         <bpmn:outgoing>Flow_1dh5sht</bpmn:outgoing>
         <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activateNssi = new DoActivateCoreNSSI()
+activateNssi.useRequestDbHttp()
 activateNssi.prepareFailedOperationStatusUpdate(execution)</bpmn:script>
       </bpmn:scriptTask>
-      <bpmn:serviceTask id="Activity_11422x1" name="Update Resource Operation Status">
-        <bpmn:extensionElements>
-          <camunda:connector>
-            <camunda:inputOutput>
-              <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-              <camunda:inputParameter name="headers">
-                <camunda:map>
-                  <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                  <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-                </camunda:map>
-              </camunda:inputParameter>
-              <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-              <camunda:inputParameter name="method">POST</camunda:inputParameter>
-              <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-              <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-            </camunda:inputOutput>
-            <camunda:connectorId>http-connector</camunda:connectorId>
-          </camunda:connector>
-        </bpmn:extensionElements>
+      <bpmn:scriptTask scriptFormat="groovy" id="Activity_11422x1" name="Update Resource Operation Status">
         <bpmn:incoming>Flow_1dh5sht</bpmn:incoming>
         <bpmn:outgoing>Flow_1iqw69c</bpmn:outgoing>
-      </bpmn:serviceTask>
+            <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
       <bpmn:sequenceFlow id="Flow_1iqw69c" sourceRef="Activity_11422x1" targetRef="Activity_0u3yna7" />
       <bpmn:sequenceFlow id="Flow_1dh5sht" sourceRef="Activity_0u4a0ry" targetRef="Activity_11422x1" />
       <bpmn:sequenceFlow id="Flow_149oqyp" sourceRef="Event_159txw2" targetRef="Activity_0u4a0ry" />
@@ -160,6 +134,7 @@ activateNssi.prepareFailedOperationStatusUpdate(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1mtsx52</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activateNssi = new DoActivateCoreNSSI()
+activateNssi.useRequestDbHttp()
 activateNssi.getSOPUTProgress(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="Gateway_0fdseyg" default="Flow_1a7o8s7">
@@ -172,6 +147,7 @@ activateNssi.getSOPUTProgress(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0q5mlhf</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activateNssi = new DoActivateCoreNSSI()
+activateNssi.useRequestDbHttp()
 activateNssi.timeDelay()</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0q5mlhf" sourceRef="Activity_0fbp09r" targetRef="Activity_14jev2r" />

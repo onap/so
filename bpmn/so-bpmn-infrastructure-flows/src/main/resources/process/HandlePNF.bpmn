@@ -46,31 +46,15 @@ handlePNF.sendSyncResponse(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1la8oih</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def handlePNF = new HandlePNF()
-handlePNF.postProcessRequest(execution)</bpmn:script>
+handlePNF.postProcessRequestHttp(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1ud44f8" sourceRef="Task_1kxmpj3" targetRef="Task_1r8h7of" />
-    <bpmn:serviceTask id="Task_1kxmpj3" name="update progress update">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_updateResOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Task_1kxmpj3" name="update progress update">
       <bpmn:incoming>SequenceFlow_1la8oih</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ud44f8</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, execution.getVariable('CVFMI_updateResOperStatusRequestHttpOperation'), 'CVFMI_dbResponse', 'CVFMI_dbResponseCode', 'CVFMI_updateResOperStatusRequestHttp')</bpmn:script>
+    </bpmn:scriptTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="HandlePNF">

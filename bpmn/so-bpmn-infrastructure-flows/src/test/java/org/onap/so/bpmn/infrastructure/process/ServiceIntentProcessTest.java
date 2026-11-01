@@ -27,6 +27,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.Assert.assertArrayEquals;
@@ -63,7 +64,7 @@ import org.onap.so.bpmn.core.WorkflowException;
 import org.w3c.dom.Document;
 
 public class ServiceIntentProcessTest extends BaseBPMNTest {
-    private static final String STATUS_PATH = "/intent-status";
+    private static final String STATUS_PATH = "/v1/request-db/resource-operations";
     private static final String[] PROCESSES =
             {"CreateServiceIntentInstance", "ModifyServiceIntentInstance", "DeleteServiceIntentInstance"};
     private final List<String> instances = new ArrayList<>();
@@ -81,7 +82,7 @@ public class ServiceIntentProcessTest extends BaseBPMNTest {
         wireMockServer.resetAll();
         variables.clear();
         Map<String, Object> properties = new HashMap<>();
-        properties.put("mso.adapters.openecomp.db.endpoint", "http://localhost:" + wireMockPort + STATUS_PATH);
+        properties.put("mso.adapters.requestDb.endpoint", "http://localhost:" + wireMockPort);
         properties.put("mso.workflow.sdncadapter.callback", "http://localhost:" + wireMockPort + "/intent-callback");
         setWorkflowProperties(properties);
         requestId = "request-" + UUID.randomUUID();
@@ -92,10 +93,8 @@ public class ServiceIntentProcessTest extends BaseBPMNTest {
         variables.put("mso-request-id", requestId);
         variables.put("isAsyncProcess", Boolean.TRUE);
         variables.put("networkType", "OTHER");
-        variables.put("mso.adapters.openecomp.db.endpoint", "http://localhost:" + wireMockPort + STATUS_PATH);
-        wireMockServer.stubFor(
-                post(urlEqualTo(STATUS_PATH)).willReturn(aResponse().withStatus(200).withHeader("Connection", "close")
-                        .withHeader("Content-Type", "application/soap+xml").withBody("<accepted/>")));
+        variables.put("mso.adapters.requestDb.endpoint", "http://localhost:" + wireMockPort);
+        wireMockServer.stubFor(post(urlEqualTo(STATUS_PATH)).willReturn(aResponse().withStatus(204)));
         JSONObject node = new JSONObject().put("resource-type", "service-instance").put("resource-link",
                 "http://localhost:" + wireMockPort + "/aai/" + AAIVersion.LATEST
                         + "/business/customers/customer/customer-1/"
@@ -218,25 +217,19 @@ public class ServiceIntentProcessTest extends BaseBPMNTest {
         wireMockServer.verify(1, deleteRequestedFor(urlPathMatching(resourcePath)));
         assertNull("CLL deletion must complete its status handoff without a workflow error",
                 historic(process, "WorkflowException"));
-        List<com.github.tomakehurst.wiremock.verification.LoggedRequest> writes =
-                wireMockServer.findAll(postRequestedFor(urlEqualTo(STATUS_PATH)));
-        assertEquals("Initialize and complete the same job", 2, writes.size());
-        String completion = writes.stream().map(value -> value.getBodyAsString())
-                .filter(value -> value.contains("updateResourceOperationStatus")).findFirst().orElse(null);
-        assertNotNull("A successful deletion must write its final status", completion);
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-        Document document = factory.newDocumentBuilder()
-                .parse(new ByteArrayInputStream(completion.getBytes(StandardCharsets.UTF_8)));
+        List<com.github.tomakehurst.wiremock.verification.LoggedRequest> writes = wireMockServer
+                .findAll(putRequestedFor(com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo(STATUS_PATH)));
+        wireMockServer.verify(1, postRequestedFor(urlEqualTo(STATUS_PATH)));
+        assertEquals("Complete the initialized job", 1, writes.size());
+        var completion = writes.get(0);
+        JSONObject command = new JSONObject(completion.getBodyAsString());
         assertEquals("Final status must retain service and model identity", Arrays.asList(serviceId, "model-2"),
-                Arrays.asList(text(document, "serviceId"), text(document, "resourceTemplateUUID")));
-        assertEquals(historic(process, "jobId"), text(document, "operationId"));
-        assertEquals(serviceId, text(document, "resourceInstanceID"));
-        assertEquals("FINISHED", text(document, "status"));
-        assertEquals("100", text(document, "progress"));
+                Arrays.asList(completion.queryParameter("serviceId").firstValue(),
+                        completion.queryParameter("resourceTemplateUUID").firstValue()));
+        assertEquals(historic(process, "jobId"), completion.queryParameter("operationId").firstValue());
+        assertEquals(serviceId, command.getString("resourceInstanceID"));
+        assertEquals("FINISHED", command.getString("status"));
+        assertEquals("100", command.getString("progress"));
     }
 
     private JSONObject cllRequest() {
@@ -256,8 +249,10 @@ public class ServiceIntentProcessTest extends BaseBPMNTest {
         assertEquals(202, context.getWorkflowResponse().getMessageCode());
         assertEquals(job, new JSONObject(context.getWorkflowResponse().getResponse()).getString("jobId"));
         wireMockServer.verify(1, postRequestedFor(urlEqualTo(STATUS_PATH)));
-        assertTrue(wireMockServer.findAll(postRequestedFor(urlEqualTo(STATUS_PATH))).get(0).getBodyAsString()
-                .contains("initResourceOperationStatus"));
+        JSONObject initialization = new JSONObject(
+                wireMockServer.findAll(postRequestedFor(urlEqualTo(STATUS_PATH))).get(0).getBodyAsString());
+        assertEquals("Delete", initialization.getString("operationType"));
+        assertTrue(initialization.has("resourceTemplateUUIDs"));
     }
 
     private JSONObject request() {
@@ -293,22 +288,14 @@ public class ServiceIntentProcessTest extends BaseBPMNTest {
         assertEquals(job, response.getString("jobId"));
         assertEquals("processing", response.getString("status"));
         assertEquals(2, response.length());
-        wireMockServer.verify(1, postRequestedFor(urlEqualTo(STATUS_PATH)).withHeader("Content-Type",
-                containing("application/soap+xml")));
+        wireMockServer.verify(1,
+                postRequestedFor(urlEqualTo(STATUS_PATH)).withHeader("Content-Type", containing("application/json")));
         String body = wireMockServer.findAll(postRequestedFor(urlEqualTo(STATUS_PATH))).get(0).getBodyAsString();
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-        Document document =
-                factory.newDocumentBuilder().parse(new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8)));
-        assertEquals(1, document.getElementsByTagNameNS("http://org.onap.so/requestsdb", "initResourceOperationStatus")
-                .getLength());
-        assertEquals(serviceId, text(document, "serviceId"));
-        assertEquals(job, text(document, "operationId"));
-        assertEquals(operation, text(document, "operType"));
-        assertEquals("model-2", text(document, "resourceTemplateUUIDs"));
+        JSONObject command = new JSONObject(body);
+        assertEquals(serviceId, command.getString("serviceId"));
+        assertEquals(job, command.getString("operationId"));
+        assertEquals(operation, command.getString("operationType"));
+        assertEquals("model-2", command.getString("resourceTemplateUUIDs"));
     }
 
     private void assertInventoryRead() {

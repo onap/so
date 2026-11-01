@@ -152,30 +152,14 @@ csi.sendSyncResponse(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1euqjsp</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi= new CreateCustomE2EServiceInstance()
-csi.prepareInitServiceOperationStatus(execution)</bpmn:script>
+csi.prepareInitServiceOperationStatusHttp(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="Task_19mxcw3" name="Update Service Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_updateServiceOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Task_19mxcw3" name="Update Service Operation Status">
       <bpmn:incoming>SequenceFlow_1euqjsp</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_081z8l2</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, execution.getVariable('CVFMI_updateServiceOperStatusRequestHttpOperation'), 'CVFMI_dbResponse', 'CVFMI_dbResponseCode', 'CVFMI_updateServiceOperStatusRequestHttp')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_081z8l2" sourceRef="Task_19mxcw3" targetRef="ScriptTask_0xupxj9" />
     <bpmn:sequenceFlow id="SequenceFlow_0kaz8ac" sourceRef="Task_1bgdtc9" targetRef="CallActivity_02fyxz0" />
     <bpmn:scriptTask id="Task_1bgdtc9" name="Update AAI Status" scriptFormat="groovy">

@@ -36,6 +36,11 @@ class DeAllocateSliceSubnet extends AbstractServiceTaskProcessor {
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
     RequestDBUtil requestDBUtil = new RequestDBUtil()
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     AnNssmfUtils anNssmfUtils = new AnNssmfUtils()
 
     private static final Logger logger = LoggerFactory.getLogger(DeAllocateSliceSubnet.class)

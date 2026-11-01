@@ -9,6 +9,7 @@
       <bpmn:outgoing>SequenceFlow_0rl5u9x</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def act= new ActivateCommunicationService()
+act.useRequestDbHttp()
 act.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_199lc2s" sourceRef="StartEvent_1" targetRef="ScriptTask_08alvv7" />
@@ -17,36 +18,21 @@ act.preProcessRequest(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0xunetn</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def act= new ActivateCommunicationService()
+act.useRequestDbHttp()
 act.prepareInitOperationStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="ServiceTask_1h8uywz" name="Init Service Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="ACS_init_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="ACS_init_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_1h8uywz" name="Init Service Operation Status">
       <bpmn:incoming>SequenceFlow_0xunetn</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_07brvnu</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateOperationStatus', 'ACS_init_dbResponse', 'ACS_init_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0xunetn" sourceRef="ScriptTask_0t2aizp" targetRef="ServiceTask_1h8uywz" />
     <bpmn:scriptTask id="ScriptTask_1rshcew" name="Send Sync Ack Response" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_07brvnu</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0c01147</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def act= new ActivateCommunicationService()
+act.useRequestDbHttp()
 act.sendSyncResponse(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_0soxu97" name="check AAI Orch Status of cs" scriptFormat="groovy">
@@ -54,6 +40,7 @@ act.sendSyncResponse(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0337wg2</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def act= new ActivateCommunicationService()
+act.useRequestDbHttp()
 act.checkAAIOrchStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0rl5u9x" sourceRef="ScriptTask_08alvv7" targetRef="ScriptTask_0soxu97" />
@@ -78,6 +65,7 @@ act.checkAAIOrchStatus(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1b8q7l5</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def act= new ActivateCommunicationService()
+act.useRequestDbHttp()
 act.updateFinishStatusInAAI(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_1seqo87" name="Prepare Complete Status in requestDB" scriptFormat="groovy">
@@ -85,30 +73,14 @@ act.updateFinishStatusInAAI(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_103y3rz</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def act= new ActivateCommunicationService()
+act.useRequestDbHttp()
 act.prepareCompleteStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="ServiceTask_10gsfd1" name="Update Service Operation Status Completed">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="ACS_complete_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="ACS_complete_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_10gsfd1" name="Update Service Operation Status Completed">
       <bpmn:incoming>SequenceFlow_103y3rz</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_15dmqcp</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateOperationStatus', 'ACS_complete_dbResponse', 'ACS_complete_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1b8q7l5" sourceRef="ScriptTask_0fbubvu" targetRef="ScriptTask_1seqo87" />
     <bpmn:sequenceFlow id="SequenceFlow_103y3rz" sourceRef="ScriptTask_1seqo87" targetRef="ServiceTask_10gsfd1" />
     <bpmn:sequenceFlow id="SequenceFlow_176pwpd" name="yes" sourceRef="ExclusiveGateway_1j8khf8" targetRef="ScriptTask_0zqkikf">
@@ -145,6 +117,7 @@ act.prepareCompleteStatus(execution)</bpmn:script>
         <bpmn:outgoing>SequenceFlow_18sqlo7</bpmn:outgoing>
         <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def act= new ActivateCommunicationService()
+act.useRequestDbHttp()
 act.sendSyncError(execution)</bpmn:script>
       </bpmn:scriptTask>
       <bpmn:sequenceFlow id="SequenceFlow_1dkviys" sourceRef="StartEvent_1f90rxc" targetRef="ScriptTask_003nbzc" />
@@ -155,36 +128,21 @@ act.sendSyncError(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0mruwcs</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def act= new ActivateCommunicationService()
+act.useRequestDbHttp()
 act.prepareUpdateOperationStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="ServiceTask_11v60ns" name="Update Service Operation Status processing">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="ACS_processing_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="ACS_processing_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_11v60ns" name="Update Service Operation Status processing">
       <bpmn:incoming>SequenceFlow_0mruwcs</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0f57hgr</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateOperationStatus', 'ACS_processing_dbResponse', 'ACS_processing_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0mruwcs" sourceRef="ScriptTask_0zqkikf" targetRef="ServiceTask_11v60ns" />
     <bpmn:scriptTask id="ScriptTask_0oun39f" name="Pre Request Send To NSMF" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1om5m6o</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_12ax52p</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def act= new ActivateCommunicationService()
+act.useRequestDbHttp()
 act.preRequestSend2NSMF(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:serviceTask id="ServiceTask_1pbp58s" name="Send Request To NSMF">
@@ -214,6 +172,7 @@ act.preRequestSend2NSMF(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1i6cshg</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def act= new ActivateCommunicationService()
+act.useRequestDbHttp()
 act.processNSMFResponse(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_12ax52p" sourceRef="ScriptTask_0oun39f" targetRef="ServiceTask_1pbp58s" />
@@ -224,6 +183,7 @@ act.processNSMFResponse(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_102nqyb</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def act= new ActivateCommunicationService()
+act.useRequestDbHttp()
 act.prepareCallCheckProcessStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_102nqyb" sourceRef="ScriptTask_0iubb84" targetRef="CallActivity_12eufsa" />

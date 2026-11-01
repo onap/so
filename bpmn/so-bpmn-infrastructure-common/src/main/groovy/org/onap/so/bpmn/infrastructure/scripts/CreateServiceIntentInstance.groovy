@@ -37,6 +37,11 @@ class CreateServiceIntentInstance extends AbstractServiceTaskProcessor {
     String Prefix = "CreateSiInstance_"
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     RequestDBUtil requestDBUtil = new RequestDBUtil()
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     JsonUtils jsonUtil = new JsonUtils()
     ServiceIntentUtils serviceIntentUtils = new ServiceIntentUtils()
     private static final Logger logger = LoggerFactory.getLogger(CreateServiceIntentInstance.class)

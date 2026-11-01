@@ -287,6 +287,47 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		logger.debug( "======== COMPLETED prepareInitServiceOperationStatus Process ======== ")
 	}
 
+	public void prepareInitServiceOperationStatusHttp(DelegateExecution execution){
+		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+
+		try{
+			String serviceId = execution.getVariable("serviceInstanceId")
+			String operationId = execution.getVariable("operationId")
+			String operationType = execution.getVariable("operationType")
+			String userId = ""
+			String result = "processing"
+			String progress = "0"
+			String reason = ""
+			String operationContent = "Prepare service updating"
+
+
+			serviceId = UriUtils.encode(serviceId,"UTF-8")
+			execution.setVariable("serviceInstanceId", serviceId)
+			execution.setVariable("operationId", operationId)
+			execution.setVariable("operationType", operationType)
+
+
+			Map payload = [
+                serviceId: "${serviceId}".toString(),
+                operationId: "${operationId}".toString(),
+                operationType: "${operationType}".toString(),
+                userId: "${userId}".toString(),
+                result: "${result}".toString(),
+                operationContent: "${operationContent}".toString(),
+                progress: "${progress}".toString(),
+                reason: "${reason}".toString()]
+
+			execution.setVariable('CVFMI_updateServiceOperStatusRequestHttp', payload)
+        execution.setVariable('CVFMI_updateServiceOperStatusRequestHttpOperation', 'updateOperationStatus')
+			logger.error( "Outgoing updateServiceOperStatusRequest: \n" + payload)
+
+		}catch(Exception e){
+
+			execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())
+		}
+
+	}
+
 	/**
 	 * Update the service Operation Status
 	 */
@@ -347,6 +388,54 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		}
 		logger.info( "======== COMPLETED preUpdateServiceOperationStatus Process ======== ")
 		logger.info( "Exited " + method)
+	}
+
+	public void preUpdateServiceOperationStatusHttp(DelegateExecution execution){
+		def method = getClass().getSimpleName() + '.preUpdateServiceOperationStatus(' +'execution=' + execution.getId() +')'
+		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
+
+
+		try{
+			String serviceId = execution.getVariable("serviceInstanceId")
+			String operationId = execution.getVariable("operationId")
+			String operationType = execution.getVariable("operationType")
+			String serviceName = execution.getVariable("serviceInstanceName")
+			String result = execution.getVariable("operationResult")
+			String progress = execution.getVariable("progress")
+			String reason = execution.getVariable("operationReason")
+			String userId = ""
+
+
+			String operationContent = "Prepare service : " + execution.getVariable("operationStatus")
+
+
+			serviceId = UriUtils.encode(serviceId,"UTF-8")
+			execution.setVariable("serviceInstanceId", serviceId)
+			execution.setVariable("operationId", operationId)
+			execution.setVariable("operationType", operationType)
+
+
+			Map payload = [
+                serviceId: "${serviceId}".toString(),
+                operationId: "${operationId}".toString(),
+                operationType: "${operationType}".toString(),
+                userId: "${userId}".toString(),
+                result: "${result}".toString(),
+                operationContent: "${operationContent}".toString(),
+                progress: "${progress}".toString(),
+                reason: "${reason}".toString()]
+
+			execution.setVariable('CVFMI_updateServiceOperStatusRequestHttp', payload)
+        execution.setVariable('CVFMI_updateServiceOperStatusRequestHttpOperation', 'updateOperationStatus')
+			logger.error( "Outgoing preUpdateServiceOperationStatus: \n" + payload)
+
+
+		}catch(Exception e){
+
+			execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preUpdateServiceOperationStatus Method:\n" + e.getMessage())
+		}
+
+
 	}
 
 	public void sendSyncResponse (DelegateExecution execution) {

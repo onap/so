@@ -18,7 +18,7 @@ dcsi.preProcessRequest(execution)</bpmn2:script>
 def csi = new  DoCreateResources()
 csi.postConfigRequest(execution)</bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:serviceTask id="Task_0io5qby" name="Call Sync SDNC service Create " camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncServiceTopologyOperationTask">
+    <bpmn2:serviceTask id="Task_0io5qby" name="Call Sync SDNC service Create " camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncServiceTopologyRequestDbHttpTask">
       <bpmn2:incoming>SequenceFlow_0k0f7lm</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_11f2zuu</bpmn2:outgoing>
     </bpmn2:serviceTask>

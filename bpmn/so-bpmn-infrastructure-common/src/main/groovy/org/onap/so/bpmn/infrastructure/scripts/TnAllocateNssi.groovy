@@ -59,6 +59,11 @@ class TnAllocateNssi extends AbstractServiceTaskProcessor {
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
     RequestDBUtil requestDBUtil = new RequestDBUtil()
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     JsonSlurper jsonSlurper = new JsonSlurper()
     OofUtils oofUtils = new OofUtils()
     TnNssmfUtils tnNssmfUtils = new TnNssmfUtils()

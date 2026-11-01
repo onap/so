@@ -596,6 +596,50 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
         }
         logger.debug("======== COMPLETED preInitResourcesOperStatus Process ======== ")
     }
+
+    public void preInitResourcesOperStatusHttp(DelegateExecution execution){
+
+        try{
+            String serviceId = execution.getVariable("serviceInstanceId")
+            String operationId = execution.getVariable("operationId")
+            String operationType = execution.getVariable("operationType")
+            String resourceTemplateUUIDs = ""
+            String result = "processing"
+            String progress = "0"
+            String reason = ""
+            String operationContent = "Prepare service creation"
+
+
+            serviceId = UriUtils.encode(serviceId,"UTF-8")
+            execution.setVariable("serviceInstanceId", serviceId)
+            execution.setVariable("operationId", operationId)
+            execution.setVariable("operationType", operationType)
+            List<ImmutablePair<Resource, List<Resource>>> deleteResourceList = execution.getVariable("deleteResourceList")
+
+            String serviceRelationShip = execution.getVariable("serviceRelationShip")
+            for (ImmutablePair rc : deleteResourceList) {
+                Resource resource = rc.getKey()
+                resourceTemplateUUIDs = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"
+            }
+
+
+            Map payload = [
+                serviceId: "${serviceId}".toString(),
+                operationId: "${operationId}".toString(),
+                operationType: "${operationType}".toString(),
+                resourceTemplateUUIDs: "${resourceTemplateUUIDs}".toString()]
+
+            execution.setVariable('CVFMI_initResOperStatusRequestHttp', payload)
+        execution.setVariable('CVFMI_initResOperStatusRequestHttpOperation', 'initResourceOperationStatus')
+
+
+
+        }catch(Exception e){
+
+            execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
+        }
+
+    }
     
     public void prepareUpdateServiceOperationStatus(DelegateExecution execution){
         logger.debug(" ======== STARTED prepareUpdateServiceOperationStatus Process ======== ")
@@ -641,6 +685,40 @@ public class DoDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareUpdateServiceOperationStatus Method:\n" + e.getMessage())
         }
         logger.debug("======== COMPLETED prepareUpdateServiceOperationStatus Process ======== ")
+    }
+
+    public void prepareUpdateServiceOperationStatusHttp(DelegateExecution execution){
+
+        try{
+            String serviceId = execution.getVariable("serviceInstanceId")
+            serviceId = UriUtils.encode(serviceId,"UTF-8")
+            String operationId = execution.getVariable("operationId")
+            String userId = ""
+            String result = execution.getVariable("result")
+            String progress = execution.getVariable("progress")
+            String reason = ""
+            String operationContent = execution.getVariable("operationContent")
+
+
+            Map payload = [
+                serviceId: "${serviceId}".toString(),
+                operationId: "${operationId}".toString(),
+                operationType: "DELETE".toString(),
+                userId: "${userId}".toString(),
+                result: "${result}".toString(),
+                operationContent: "${operationContent}".toString(),
+                progress: "${progress}".toString(),
+                reason: "${reason}".toString()]
+
+            execution.setVariable('CVFMI_updateServiceOperStatusRequestHttp', payload)
+        execution.setVariable('CVFMI_updateServiceOperStatusRequestHttpOperation', 'updateOperationStatus')
+
+
+        }catch(Exception e){
+            logger.error("Exception Occured Processing prepareUpdateServiceOperationStatus. Exception is:\n" + e)
+            execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareUpdateServiceOperationStatus Method:\n" + e.getMessage())
+        }
+
     }
 
      /**

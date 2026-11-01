@@ -111,31 +111,14 @@ DeleteNetworkInstance.prepareCompletion(execution)]]></bpmn2:script>
         <bpmn2:outgoing>SequenceFlow_1s5niqb</bpmn2:outgoing>
         <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def DeleteNetworkInstance = new DeleteNetworkInstance()
-DeleteNetworkInstance.prepareDBRequestError(execution)]]></bpmn2:script>
+DeleteNetworkInstance.prepareDBRequestErrorHttp(execution)]]></bpmn2:script>
       </bpmn2:scriptTask>
-      <bpmn2:serviceTask id="ServiceTask_0sztuly" name="Call DB Infra Error Update">
-        <bpmn2:extensionElements>
-          <camunda:connector>
-            <camunda:inputOutput>
-              <camunda:inputParameter name="url"><![CDATA[${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}
-]]></camunda:inputParameter>
-              <camunda:inputParameter name="payload">${DELNI_deleteDBRequest}</camunda:inputParameter>
-              <camunda:inputParameter name="headers">
-                <camunda:map>
-                  <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                  <camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
-                </camunda:map>
-              </camunda:inputParameter>
-              <camunda:inputParameter name="method">POST</camunda:inputParameter>
-              <camunda:outputParameter name="DELNI_deleteDBResponse">${response}</camunda:outputParameter>
-              <camunda:outputParameter name="DELNI_dbReturnCode">${statusCode}</camunda:outputParameter>
-            </camunda:inputOutput>
-            <camunda:connectorId>http-connector</camunda:connectorId>
-          </camunda:connector>
-        </bpmn2:extensionElements>
+      <bpmn2:scriptTask id="ServiceTask_0sztuly" name="Call DB Infra Error Update" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_1s5niqb</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_06s5eu4</bpmn2:outgoing>
-      </bpmn2:serviceTask>
+        <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.DeleteNetworkInstance
+new DeleteNetworkInstance().updateDBRequestErrorHttp(execution)]]></bpmn2:script>
+      </bpmn2:scriptTask>
       <bpmn2:scriptTask id="ScriptTask_1hql91g" name="Prepare FalloutHandler" scriptFormat="groovy">
         <bpmn2:incoming>SequenceFlow_06s5eu4</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_1reso2f</bpmn2:outgoing>

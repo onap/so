@@ -140,6 +140,33 @@ public class ActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         setProgressUpdateVariables(execution, body)
     }
 
+     void prepareUpdateAfterActivateSDNCResourceHttp(DelegateExecution execution) {
+
+
+        ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
+        String operType = resourceInputObj.getOperationType()
+        String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
+        String ServiceInstanceId = resourceInputObj.getServiceInstanceId()
+        String operationId = resourceInputObj.getOperationId()
+        String progress = "80"
+        String status = "activated"
+        String statusDescription = "SDCN resource activation completed"
+
+        execution.getVariable("operationId")
+
+        Map body = [
+                operType: "${operType}".toString(),
+                operationId: "${operationId}".toString(),
+                progress: "${progress}".toString(),
+                resourceTemplateUUID: "${resourceCustomizationUuid}".toString(),
+                serviceId: "${ServiceInstanceId}".toString(),
+                status: "${status}".toString(),
+                statusDescription: "${statusDescription}".toString()]
+
+        execution.setVariable('CVFMI_updateResOperStatusRequestHttp', body)
+        execution.setVariable('CVFMI_updateResOperStatusRequestHttpOperation', 'updateResourceOperationStatus')
+    }
+
     private void setProgressUpdateVariables(DelegateExecution execution, String body) {
         def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
         execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)

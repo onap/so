@@ -7,33 +7,17 @@
     <bpmn:sequenceFlow id="SequenceFlow_1kjqnil" sourceRef="StartEvent_1" targetRef="Task_1mqm4nb" />
     <bpmn:sequenceFlow id="SequenceFlow_0ogievs" sourceRef="Task_1mqm4nb" targetRef="Task_0q2v7qe" />
     <bpmn:sequenceFlow id="SequenceFlow_192yyii" sourceRef="Task_0q2v7qe" targetRef="Task_0zaekmn" />
-    <bpmn:serviceTask id="Task_0zaekmn" name="Init Service Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Task_0zaekmn" name="Init Service Operation Status">
       <bpmn:incoming>SequenceFlow_192yyii</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0xvoume</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateOperationStatus', 'CSMF_dbResponse', 'CSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:scriptTask id="Task_0q2v7qe" name="Init Service Operation Status" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0ogievs</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_192yyii</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcs= new DeleteCommunicationService()
+dcs.useRequestDbHttp()
 dcs.preInitUpdateOperationStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Task_1mqm4nb" name="PreProcessRequest" scriptFormat="groovy">
@@ -41,6 +25,7 @@ dcs.preInitUpdateOperationStatus(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0ogievs</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcs= new DeleteCommunicationService()
+dcs.useRequestDbHttp()
 dcs.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_1k5stey" name="Send Sync Ack Response" scriptFormat="groovy">
@@ -48,56 +33,23 @@ dcs.preProcessRequest(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_017qgen</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcs = new DeleteCommunicationService()
+dcs.useRequestDbHttp()
 dcs.sendSyncResponse(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0xvoume" sourceRef="Task_0zaekmn" targetRef="ScriptTask_1k5stey" />
     <bpmn:sequenceFlow id="SequenceFlow_017qgen" sourceRef="ScriptTask_1k5stey" targetRef="Task_0ux5uk1" />
-    <bpmn:serviceTask id="Task_1kizznk" name="Update Service Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Task_1kizznk" name="Update Service Operation Status">
       <bpmn:incoming>SequenceFlow_0jrbkau</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ssiyug</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_0xwjycr" name="update operation status completed">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/json</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateOperationStatus', 'CSMF_dbResponse', 'CSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask scriptFormat="groovy" id="Task_0xwjycr" name="update operation status completed">
       <bpmn:incoming>SequenceFlow_00g94pg</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_16ewagx</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_1amyd7h</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_10g2pnj</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateOperationStatus', 'CSMF_dbResponse', 'CSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:endEvent id="EndEvent_0ixagvk" name="end">
       <bpmn:incoming>SequenceFlow_10g2pnj</bpmn:incoming>
     </bpmn:endEvent>
@@ -107,6 +59,7 @@ dcs.sendSyncResponse(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1j0e2po</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcs = new DeleteCommunicationService()
+dcs.useRequestDbHttp()
 dcs.queryCommunicationSeriveFromAAI(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_0ce724z" name="Go to Query delete progress">
@@ -122,6 +75,7 @@ dcs.queryCommunicationSeriveFromAAI(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0bmtfxq</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcs = new DeleteCommunicationService()
+dcs.useRequestDbHttp()
 dcs.sendRequest2NSMFWF(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0bmtfxq" sourceRef="Task_0qg5gn6" targetRef="IntermediateThrowEvent_0ce724z" />
@@ -130,6 +84,7 @@ dcs.sendRequest2NSMFWF(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0arvpzv</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcs = new DeleteCommunicationService()
+dcs.useRequestDbHttp()
 dcs.delCSProfileFromAAI(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0arvpzv" sourceRef="Task_0qvxmnh" targetRef="Task_0b5j6rg" />
@@ -138,6 +93,7 @@ dcs.delCSProfileFromAAI(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_00g94pg</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcs = new DeleteCommunicationService()
+dcs.useRequestDbHttp()
 dcs.delCSFromAAI(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:subProcess id="SubProcess_0p6namq" name="Exception Handling Sub-Process" triggeredByEvent="true">
@@ -151,6 +107,7 @@ dcs.delCSFromAAI(execution)</bpmn:script>
         <bpmn:outgoing>SequenceFlow_05yfw7t</bpmn:outgoing>
         <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcs = new DeleteCommunicationService()
+dcs.useRequestDbHttp()
 dcs.sendSyncError(execution)</bpmn:script>
       </bpmn:scriptTask>
       <bpmn:sequenceFlow id="SequenceFlow_05yfw7t" sourceRef="Task_1spbb2x" targetRef="Task_0yqtfvh" />
@@ -159,31 +116,15 @@ dcs.sendSyncError(execution)</bpmn:script>
         <bpmn:outgoing>SequenceFlow_0c0btia</bpmn:outgoing>
         <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcs = new DeleteCommunicationService()
+dcs.useRequestDbHttp()
 dcs.preFailedOperationStatus(execution)</bpmn:script>
       </bpmn:scriptTask>
       <bpmn:sequenceFlow id="SequenceFlow_0c0btia" sourceRef="Task_0yqtfvh" targetRef="Task_1s3l3fc" />
-      <bpmn:serviceTask id="Task_1s3l3fc" name="Update Service Operation Status">
-        <bpmn:extensionElements>
-          <camunda:connector>
-            <camunda:inputOutput>
-              <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-              <camunda:inputParameter name="headers">
-                <camunda:map>
-                  <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                  <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-                </camunda:map>
-              </camunda:inputParameter>
-              <camunda:inputParameter name="payload">${updateOperationStatus}</camunda:inputParameter>
-              <camunda:inputParameter name="method">POST</camunda:inputParameter>
-              <camunda:outputParameter name="CSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-              <camunda:outputParameter name="CSMF_dbResponse">${response}</camunda:outputParameter>
-            </camunda:inputOutput>
-            <camunda:connectorId>http-connector</camunda:connectorId>
-          </camunda:connector>
-        </bpmn:extensionElements>
+      <bpmn:scriptTask scriptFormat="groovy" id="Task_1s3l3fc" name="Update Service Operation Status">
         <bpmn:incoming>SequenceFlow_0c0btia</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_1w55zo7</bpmn:outgoing>
-      </bpmn:serviceTask>
+            <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateOperationStatus', 'CSMF_dbResponse', 'CSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
       <bpmn:endEvent id="EndEvent_1fsful5">
         <bpmn:incoming>SequenceFlow_1w55zo7</bpmn:incoming>
       </bpmn:endEvent>
@@ -268,6 +209,7 @@ ex.processJavaException(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1amyd7h</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcs = new DeleteCommunicationService()
+dcs.useRequestDbHttp()
 dcs.prepareFailureStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1amyd7h" sourceRef="Task_1ovewjr" targetRef="Task_0xwjycr" />
@@ -279,6 +221,7 @@ dcs.prepareFailureStatus(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0thr8dc</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcs = new DeleteCommunicationService()
+dcs.useRequestDbHttp()
 dcs.prepareCallCheckProcessStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
   </bpmn:process>

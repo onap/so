@@ -68,6 +68,11 @@ class DoAllocateCoreSharedSlice extends AbstractServiceTaskProcessor {
     private static final Logger logger = LoggerFactory.getLogger(DoAllocateCoreSharedSlice.class);
     private CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
     private RequestDBUtil requestDBUtil = new RequestDBUtil()
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     private ExceptionUtil exceptionUtil = new ExceptionUtil()
     private JsonUtils jsonUtil = new JsonUtils()
     private static final ObjectMapper mapper = new ObjectMapper()

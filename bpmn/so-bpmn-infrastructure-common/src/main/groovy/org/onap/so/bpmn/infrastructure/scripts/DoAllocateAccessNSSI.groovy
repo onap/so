@@ -60,6 +60,11 @@ class DoAllocateAccessNSSI extends AbstractServiceTaskProcessor {
 	String Prefix="AASS_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	RequestDBUtil requestDBUtil = new RequestDBUtil()
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
 	JsonUtils jsonUtil = new JsonUtils()
 	OofUtils oofUtils = new OofUtils()
 	AnNssmfUtils anNssmfUtils = new AnNssmfUtils()

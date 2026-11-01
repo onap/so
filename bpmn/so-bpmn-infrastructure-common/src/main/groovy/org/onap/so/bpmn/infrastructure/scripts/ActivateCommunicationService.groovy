@@ -53,6 +53,11 @@ class ActivateCommunicationService extends AbstractServiceTaskProcessor {
 
     RequestDBUtil requestDBUtil = new RequestDBUtil()
 
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     JsonUtils jsonUtil = new JsonUtils()
 
     AAIResourcesClient client = getAAIClient()

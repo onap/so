@@ -82,30 +82,14 @@ execution.setVariable("progress", "100")
 execution.setVariable("status", "finished")
 execution.setVariable("statusDescription", "Finished for the devType")
 def dcsi = new DeleteDeviceResource()
-dcsi.prepareUpdateProgress(execution)]]></bpmn:script>
+dcsi.prepareUpdateProgressHttp(execution)]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="ServiceTask_1b3omyh" name="resource progress update">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_updateResOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_1b3omyh" name="resource progress update">
       <bpmn:incoming>SequenceFlow_003svcq</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1donwoj</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, execution.getVariable('CVFMI_updateResOperStatusRequestHttpOperation'), 'CVFMI_dbResponse', 'CVFMI_dbResponseCode', 'CVFMI_updateResOperStatusRequestHttp')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_003svcq" sourceRef="ScriptTask_14oc86m" targetRef="ServiceTask_1b3omyh" />
     <bpmn:sequenceFlow id="SequenceFlow_1g6azih" sourceRef="ExclusiveGateway_0kba700" targetRef="ScriptTask_14oc86m" />
     <bpmn:endEvent id="EndEvent_1tn8i1e">

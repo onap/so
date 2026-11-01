@@ -238,6 +238,35 @@ public class DeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 	}
 	
+	public void prepareDBRequestErrorHttp(DelegateExecution execution) {
+		execution.setVariable('prefix', Prefix)
+		try {
+			WorkflowException failure = execution.getVariable('WorkflowException')
+			execution.setVariable(Prefix + 'deleteDBRequest', groovy.json.JsonOutput.toJson([
+				lastModifiedBy: 'BPMN', statusMessage: failure.getErrorMessage(),
+				responseBody: '', requestStatus: 'FAILED', progress: '',
+				vnfOutputs: '<network-outputs xmlns="http://org.onap/so/infra/vnf-request/v1" xmlns:aetgt="http://org.onap/so/infra/vnf-request/v1" xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"/>'
+			]))
+		} catch (Exception ex) {
+			String exceptionMessage = 'Bpmn error encountered in  DeleteNetworkInstance, prepareDBRequestError() - ' + ex.getMessage()
+			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
+		}
+	}
+
+	public void updateDBRequestErrorHttp(DelegateExecution execution) {
+		def fields = new groovy.json.JsonSlurper().parseText(execution.getVariable(Prefix + 'deleteDBRequest'))
+		def command = new org.onap.so.db.request.client.RequestDbCommands.InfraRequestUpdate(fields)
+		try {
+			org.onap.so.bpmn.common.scripts.RequestDbHttp.createClient(execution)
+					.updateInfraRequest(execution.getVariable(Prefix + 'requestId'), command)
+			execution.setVariable(Prefix + 'dbReturnCode', 204)
+			execution.setVariable(Prefix + 'deleteDBResponse', '')
+		} catch (org.springframework.web.client.HttpStatusCodeException ex) {
+			execution.setVariable(Prefix + 'dbReturnCode', ex.getStatusCode().value())
+			execution.setVariable(Prefix + 'deleteDBResponse', ex.getResponseBodyAsString())
+		}
+	}
+
 	public void prepareDBRequestError (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)

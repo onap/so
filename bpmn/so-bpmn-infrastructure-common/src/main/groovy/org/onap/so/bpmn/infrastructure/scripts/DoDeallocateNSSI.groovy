@@ -50,6 +50,11 @@ class DoDeallocateNSSI extends AbstractServiceTaskProcessor {
     private ExceptionUtil exceptionUtil = new ExceptionUtil()
     private JsonUtils jsonUtil = new JsonUtils()
     private RequestDBUtil requestDBUtil = new RequestDBUtil()
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     private NssmfAdapterUtils nssmfAdapterUtils = new NssmfAdapterUtils(httpClientFactory, jsonUtil)
 
 

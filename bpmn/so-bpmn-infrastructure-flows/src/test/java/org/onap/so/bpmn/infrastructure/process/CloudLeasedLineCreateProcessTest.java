@@ -20,6 +20,7 @@
 package org.onap.so.bpmn.infrastructure.process;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
@@ -60,7 +61,7 @@ import org.w3c.dom.Document;
 public class CloudLeasedLineCreateProcessTest extends BaseBPMNTest {
     private static final String PROCESS = "DoCloudLeasedLineCreate";
     private static final String RESOURCE = "subprocess/DoCloudLeasedLineCreate.bpmn";
-    private static final String STATUS_PATH = "/cll-create-status";
+    private static final String STATUS_PATH = "/v1/request-db/resource-operations";
     private static final String BUSINESS = "/business/customers/customer/customer-1/service-subscriptions/"
             + "service-subscription/service-type/service-instances/service-instance/";
     private static final String POLICY = "/aai/v[0-9]+/network/network-policies/network-policy/[0-9a-f-]+";
@@ -87,14 +88,14 @@ public class CloudLeasedLineCreateProcessTest extends BaseBPMNTest {
         variables.put("serviceType", "leased-line");
         variables.put("globalSubscriberId", "customer-1");
         variables.put("mso.workflow.sdncadapter.callback", "http://localhost:" + wireMockPort + "/callback");
-        variables.put("mso.adapters.openecomp.db.endpoint", "http://localhost:" + wireMockPort + STATUS_PATH);
+        variables.put("mso.adapters.requestDb.endpoint", "http://localhost:" + wireMockPort);
         JSONObject link = new JSONObject().put("name", "endpoint-A").put("transportEndpointA", "endpoint-A")
                 .put("transportEndpointB", "endpoint-B").put("transportEndpointBProtection", "backup-B");
         network = new JSONObject().put("id", "network-1")
                 .put("sla", new JSONObject().put("maxBandwidth", 0).put("latency", 0))
                 .put("connectionLinks", new JSONArray().put(link));
         inputs();
-        stubStatus(200);
+        stubStatus(204);
         stubPut(servicePath, 201);
         stubPut(resourcePath, 201);
         stubPut(resourcePath + "/relationship-list/relationship", 200);
@@ -184,7 +185,7 @@ public class CloudLeasedLineCreateProcessTest extends BaseBPMNTest {
     public void finalStatusRejectionCannotCompleteTheWorkflowSuccessfully() {
         Assume.assumeTrue("SO-4456: CLL creation ignores rejected final request-database status",
                 Boolean.getBoolean("groovy.migration.verification"));
-        wireMockServer.stubFor(post(urlEqualTo(STATUS_PATH)).atPriority(1).withRequestBody(containing("FINISHED"))
+        wireMockServer.stubFor(put(urlPathEqualTo(STATUS_PATH)).atPriority(1).withRequestBody(containing("FINISHED"))
                 .willReturn(aResponse().withStatus(500).withHeader("Connection", "close").withBody("<rejected/>")));
         assertFailure(start());
     }
@@ -254,20 +255,15 @@ public class CloudLeasedLineCreateProcessTest extends BaseBPMNTest {
     }
 
     private void assertStatusPayloads() throws Exception {
-        wireMockServer.verify(2, postRequestedFor(urlEqualTo(STATUS_PATH)));
+        wireMockServer.verify(2, putRequestedFor(urlPathEqualTo(STATUS_PATH)));
         java.util.Set<String> states = new java.util.HashSet<>();
-        for (var request : wireMockServer.findAll(postRequestedFor(urlEqualTo(STATUS_PATH)))) {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-            Document payload = factory.newDocumentBuilder()
-                    .parse(new ByteArrayInputStream(request.getBodyAsString().getBytes(StandardCharsets.UTF_8)));
-            assertEquals(id, payload.getElementsByTagName("serviceId").item(0).getTextContent());
-            assertEquals("job-1", payload.getElementsByTagName("operationId").item(0).getTextContent());
-            assertEquals("CREATE", payload.getElementsByTagName("operType").item(0).getTextContent());
-            states.add(payload.getElementsByTagName("status").item(0).getTextContent());
+        for (var request : wireMockServer.findAll(putRequestedFor(urlPathEqualTo(STATUS_PATH)))) {
+            assertEquals(id, request.queryParameter("serviceId").firstValue());
+            assertEquals("job-1", request.queryParameter("operationId").firstValue());
+            assertTrue(request.getHeader("Content-Type").contains("application/json"));
+            JSONObject payload = new JSONObject(request.getBodyAsString());
+            assertEquals("CREATE", payload.getString("operType"));
+            states.add(payload.getString("status"));
         }
         assertEquals(java.util.Set.of("INPROGRESS", "FINISHED"), states);
     }
@@ -281,8 +277,9 @@ public class CloudLeasedLineCreateProcessTest extends BaseBPMNTest {
     }
 
     private void assertOnlyInitialStatus() {
-        wireMockServer.verify(1, postRequestedFor(urlEqualTo(STATUS_PATH)).withRequestBody(containing("INPROGRESS")));
-        wireMockServer.verify(0, postRequestedFor(urlEqualTo(STATUS_PATH)).withRequestBody(containing("FINISHED")));
+        wireMockServer.verify(1,
+                putRequestedFor(urlPathEqualTo(STATUS_PATH)).withRequestBody(containing("INPROGRESS")));
+        wireMockServer.verify(0, putRequestedFor(urlPathEqualTo(STATUS_PATH)).withRequestBody(containing("FINISHED")));
     }
 
     private Object historic(ProcessInstance process, String name) {
@@ -302,9 +299,8 @@ public class CloudLeasedLineCreateProcessTest extends BaseBPMNTest {
     }
 
     private void stubStatus(int status) {
-        wireMockServer.stubFor(post(urlEqualTo(STATUS_PATH))
-                .willReturn(aResponse().withStatus(status).withHeader("Content-Type", "application/soap+xml")
-                        .withHeader("Connection", "close").withBody("<updated/>")));
+        wireMockServer.stubFor(put(urlPathEqualTo(STATUS_PATH))
+                .willReturn(aResponse().withStatus(status).withHeader("Connection", "close")));
     }
 
     private void assertProductionResource() throws Exception {

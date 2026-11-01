@@ -57,30 +57,14 @@ csi.postProcessForDeleteResource(execution)]]></bpmn2:script>
       <bpmn2:outgoing>SequenceFlow_0r6c0ci</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def ddsi = new DoUpdateE2EServiceInstance()
-ddsi.preInitResourcesOperStatus(execution)]]></bpmn2:script>
+ddsi.preInitResourcesOperStatusHttp(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:serviceTask id="ServiceTask_17u9q9u" name="Init Resource Oper Status">
-      <bpmn2:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_initResOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn2:extensionElements>
+    <bpmn2:scriptTask scriptFormat="groovy" id="ServiceTask_17u9q9u" name="Init Resource Oper Status">
       <bpmn2:incoming>SequenceFlow_0r6c0ci</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1muxopq</bpmn2:outgoing>
-    </bpmn2:serviceTask>
+          <bpmn2:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, execution.getVariable('CVFMI_initResOperStatusRequestHttpOperation'), 'CVFMI_dbResponse', 'CVFMI_dbResponseCode', 'CVFMI_initResOperStatusRequestHttp')</bpmn2:script>
+    </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_0r6c0ci" sourceRef="ScriptTask_0acnvkp" targetRef="ServiceTask_17u9q9u" />
     <bpmn2:sequenceFlow id="SequenceFlow_1muxopq" sourceRef="ServiceTask_17u9q9u" targetRef="IntermediateThrowEvent_09ur9ds" />
     <bpmn2:intermediateThrowEvent id="IntermediateThrowEvent_0vneaao" name="GoTo StartDeleteResources">

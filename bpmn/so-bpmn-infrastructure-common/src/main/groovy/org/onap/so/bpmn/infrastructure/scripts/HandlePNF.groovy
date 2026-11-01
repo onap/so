@@ -101,6 +101,31 @@ public class HandlePNF extends AbstractServiceTaskProcessor{
         logger.debug("exit postProcess for HandlePNF")
     }
 
+    void postProcessRequestHttp(DelegateExecution execution) {
+
+        ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable("resourceInput"), ResourceInput.class)
+        String operType = resourceInputObj.getOperationType()
+        String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
+        String serviceInstanceId = resourceInputObj.getServiceInstanceId()
+        String operationId = resourceInputObj.getOperationId()
+        String progress = "100"
+        String status = "finished"
+        String statusDescription = "SDCN resource creation and activation completed"
+
+        Map body = [
+                operType: "${operType}".toString(),
+                operationId: "${operationId}".toString(),
+                progress: "${progress}".toString(),
+                resourceTemplateUUID: "${resourceCustomizationUuid}".toString(),
+                serviceId: "${serviceInstanceId}".toString(),
+                status: "${status}".toString(),
+                statusDescription: "${statusDescription}".toString()]
+
+        execution.setVariable('CVFMI_updateResOperStatusRequestHttp', body)
+        execution.setVariable('CVFMI_updateResOperStatusRequestHttpOperation', 'updateResourceOperationStatus')
+
+    }
+
     public void sendSyncResponse (DelegateExecution execution) {
         logger.debug(" *** sendSyncResponse *** ")
 

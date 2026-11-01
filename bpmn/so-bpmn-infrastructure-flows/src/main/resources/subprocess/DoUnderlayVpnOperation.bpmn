@@ -22,7 +22,7 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{execution.getVariable("SendSdncResult")=='ok'}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_083crve" name="error" sourceRef="ExclusiveGateway_0vvnd7x" targetRef="EndEvent_0urwhzh" />
-    <bpmn:serviceTask id="Task_0brg0a4" name="call sdnc network operation" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncNetworkTopologyOperationTask">
+    <bpmn:serviceTask id="Task_0brg0a4" name="call sdnc network operation" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncNetworkTopologyRequestDbHttpTask">
       <bpmn:incoming>SequenceFlow_0h35z1p</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_07bp14s</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -36,7 +36,7 @@
       <bpmn:outgoing>SequenceFlow_0h35z1p</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_199ig0b" sourceRef="Task_0p43ddw" targetRef="ExclusiveGateway_0qsgg4i" />
-    <bpmn:serviceTask id="Task_0rfvkh0" name="call SdncServiceTopologyOperationTask" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncServiceTopologyOperationTask">
+    <bpmn:serviceTask id="Task_0rfvkh0" name="call SdncServiceTopologyOperationTask" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncServiceTopologyRequestDbHttpTask">
       <bpmn:incoming>SequenceFlow_1rj6k5t</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1vncx6p</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -45,7 +45,7 @@
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0h35z1p" name="no" sourceRef="ExclusiveGateway_0qsgg4i" targetRef="Task_0brg0a4" />
     <bpmn:sequenceFlow id="SequenceFlow_1vncx6p" sourceRef="Task_0rfvkh0" targetRef="ExclusiveGateway_0vvnd7x" />
-    <bpmn:serviceTask id="ServiceTask_1uy6bdu" name="call sdnc network operation" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncNetworkTopologyOperationTask">
+    <bpmn:serviceTask id="ServiceTask_1uy6bdu" name="call sdnc network operation" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncNetworkTopologyRequestDbHttpTask">
       <bpmn:incoming>SequenceFlow_1amfirn</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0bsmh51</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -63,7 +63,7 @@
       <bpmn:outgoing>SequenceFlow_1oz5grh</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_19glon5</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="ServiceTask_0dixxe6" name="call SdncServiceTopologyOperationTask" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncServiceTopologyOperationTask">
+    <bpmn:serviceTask id="ServiceTask_0dixxe6" name="call SdncServiceTopologyOperationTask" camunda:class="org.onap.so.bpmn.infrastructure.workflow.serviceTask.SdncServiceTopologyRequestDbHttpTask">
       <bpmn:incoming>SequenceFlow_1oz5grh</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_06e7qr6</bpmn:outgoing>
     </bpmn:serviceTask>

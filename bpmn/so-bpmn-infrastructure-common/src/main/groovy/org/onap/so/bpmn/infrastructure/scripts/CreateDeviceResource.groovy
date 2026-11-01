@@ -195,6 +195,32 @@ public class CreateDeviceResource extends AbstractServiceTaskProcessor {
 		logger.info(" ***** Exit prepareUpdateProgress *****")
 	}
 
+	public void prepareUpdateProgressHttp(DelegateExecution execution) {
+
+		ResourceInput resourceInputObj = execution.getVariable(Prefix + "ResourceInput")
+		String operType = resourceInputObj.getOperationType()
+		String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
+		String ServiceInstanceId = resourceInputObj.getServiceInstanceId()
+		String modelName = resourceInputObj.getResourceModelInfo().getModelName()
+		String operationId = resourceInputObj.getOperationId()
+		String progress = execution.getVariable("progress")
+		String status = execution.getVariable("status")
+		String statusDescription = execution.getVariable("statusDescription")
+
+		Map body = [
+                operType: "${operType}".toString(),
+                operationId: "${operationId}".toString(),
+                progress: "${progress}".toString(),
+                resourceTemplateUUID: "${resourceCustomizationUuid}".toString(),
+                serviceId: "${ServiceInstanceId}".toString(),
+                status: "${status}".toString(),
+                statusDescription: "${statusDescription}".toString()]
+
+		execution.setVariable('CVFMI_updateResOperStatusRequestHttp', body)
+        execution.setVariable('CVFMI_updateResOperStatusRequestHttpOperation', 'updateResourceOperationStatus')
+
+	}
+
 	private void getVNFTemplatefromSDC(DelegateExecution execution){
 		logger.info(" ***** Started getVNFTemplatefromSDC *****")
 		try {

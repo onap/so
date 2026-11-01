@@ -391,6 +391,20 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
         }
     }
 
+    void postProcessServiceInstanceCreateHttp(DelegateExecution execution) {
+        try {
+            execution.setVariable(Prefix + 'setUpdateDbInstancePayloadHttp', [
+                    requestId: String.valueOf(execution.getVariable('mso-request-id')),
+                    lastModifiedBy: 'BPEL', serviceInstanceId: String.valueOf(execution.getVariable('serviceInstanceId')),
+                    serviceInstanceName: String.valueOf(execution.getVariable('serviceInstanceName'))])
+        } catch (BpmnError failure) {
+            throw failure
+        } catch (Exception failure) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 2000, 'Internal Error - Occured in' +
+                    getClass().getSimpleName() + '.postProcessServiceInstanceCreate(execution=' + execution.getId() + ')')
+        }
+    }
+
     public void postProcessServiceInstanceCreate(DelegateExecution execution) {
         def method = getClass().getSimpleName() + '.postProcessServiceInstanceCreate(' + 'execution=' + execution.getId() + ')'
         logger.trace('Entered ' + method)

@@ -62,6 +62,10 @@ class DoCommonCoreNSSI extends AbstractServiceTaskProcessor {
     private ExceptionUtil exceptionUtil = new ExceptionUtil()
     private RequestDBUtil requestDBUtil = new RequestDBUtil()
 
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     @Override
     void preProcessRequest(DelegateExecution execution) {
         LOGGER.debug("${getPrefix()} Start preProcessRequest")

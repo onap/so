@@ -666,6 +666,32 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
     }
 
+    public void prepareUpdateBeforeCreateSDNCResourceHttp(DelegateExecution execution) {
+        ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
+        String operType = resourceInputObj.getOperationType()
+        String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
+        String ServiceInstanceId = resourceInputObj.getServiceInstanceId()
+        String operationId = resourceInputObj.getOperationId()
+        String progress = "20"
+        String status = "processing"
+        String statusDescription = "SDCN resource creation invoked"
+
+        execution.getVariable("operationId")
+
+        Map body = [
+                operType: "${operType}".toString(),
+                operationId: "${operationId}".toString(),
+                progress: "${progress}".toString(),
+                resourceTemplateUUID: "${resourceCustomizationUuid}".toString(),
+                serviceId: "${ServiceInstanceId}".toString(),
+                status: "${status}".toString(),
+                statusDescription: "${statusDescription}".toString()]
+
+        execution.setVariable('CVFMI_updateResOperStatusRequestHttp', body)
+        execution.setVariable('CVFMI_updateResOperStatusRequestHttpOperation', 'updateResourceOperationStatus')
+
+    }
+
     public void prepareUpdateAfterCreateSDNCResource(execution) {
         ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
         String operType = resourceInputObj.getOperationType()
@@ -696,6 +722,31 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 </soapenv:Envelope>"""
 
         setProgressUpdateVariables(execution, body)
+    }
+
+    public void prepareUpdateAfterCreateSDNCResourceHttp(execution) {
+        ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
+        String operType = resourceInputObj.getOperationType()
+        String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
+        String ServiceInstanceId = resourceInputObj.getServiceInstanceId()
+        String operationId = resourceInputObj.getOperationId()
+        String progress = "100"
+        String status = "finished"
+        String statusDescription = "SDCN resource creation and activation completed"
+
+        execution.getVariable("operationId")
+
+        Map body = [
+                operType: "${operType}".toString(),
+                operationId: "${operationId}".toString(),
+                progress: "${progress}".toString(),
+                resourceTemplateUUID: "${resourceCustomizationUuid}".toString(),
+                serviceId: "${ServiceInstanceId}".toString(),
+                status: "${status}".toString(),
+                statusDescription: "${statusDescription}".toString()]
+
+        execution.setVariable('CVFMI_updateResOperStatusRequestHttp', body)
+        execution.setVariable('CVFMI_updateResOperStatusRequestHttpOperation', 'updateResourceOperationStatus')
     }
 
     public void afterCreateSDNCCall(DelegateExecution execution){

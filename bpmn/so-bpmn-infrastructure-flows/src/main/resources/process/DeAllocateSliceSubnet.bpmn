@@ -10,6 +10,7 @@
       <bpmn:outgoing>Flow_0pttfuf</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DeAllocateSliceSubnet()
+nss.useRequestDbHttp()
 nss.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_0c6o2o7" name="Send Sync Response" scriptFormat="groovy">
@@ -17,30 +18,14 @@ nss.preProcessRequest(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1kljyhj</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DeAllocateSliceSubnet()
+nss.useRequestDbHttp()
 nss.sendSyncResponse(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="Activity_1dykbz9" name="Update Resource Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${initResourceOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Activity_1dykbz9" name="Update Resource Operation Status">
       <bpmn:incoming>Flow_04jsg9s</bpmn:incoming>
       <bpmn:outgoing>Flow_1c1j5i1</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'initResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0pttfuf" sourceRef="Activity_0zyhkvj" targetRef="Activity_1fj0cge" />
     <bpmn:sequenceFlow id="Flow_1c1j5i1" sourceRef="Activity_1dykbz9" targetRef="Activity_0c6o2o7" />
     <bpmn:scriptTask id="Activity_1fj0cge" name="Init Resource Operation Status" scriptFormat="groovy">
@@ -48,6 +33,7 @@ nss.sendSyncResponse(execution)</bpmn:script>
       <bpmn:outgoing>Flow_04jsg9s</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def nss = new DeAllocateSliceSubnet()
+nss.useRequestDbHttp()
 nss.prepareInitOperationStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_04jsg9s" sourceRef="Activity_1fj0cge" targetRef="Activity_1dykbz9" />

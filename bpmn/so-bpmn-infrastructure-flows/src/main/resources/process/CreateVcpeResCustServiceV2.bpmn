@@ -349,32 +349,18 @@ CreateVcpeResCustService.prepareCreateServiceInstance(execution)]]></bpmn2:scrip
       <bpmn2:linkEventDefinition name="StartService" />
     </bpmn2:intermediateThrowEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_0j6sjye" sourceRef="prepareCreateService_scriptTask" targetRef="doCreateServiceInstance_CallActivity" />
-    <bpmn2:serviceTask id="updateInfraRequest" name="Update DB status to SUCCESS">
-      <bpmn2:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${URN_mso_adapters_db_endpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="payload"><![CDATA[${execution.getVariable("CVRCS_setUpdateDbInstancePayload")}]]></camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>soap-http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn2:extensionElements>
+    <bpmn2:scriptTask scriptFormat="groovy" id="updateInfraRequest" name="Update DB status to SUCCESS">
       <bpmn2:incoming>SequenceFlow_0vj46ej</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0sjpja4</bpmn2:outgoing>
-    </bpmn2:serviceTask>
+          <bpmn2:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, 'updateInfraRequest', 'CVRCS_updateDbResponse', 'CVRCS_updateDbResponseCode', 'CVRCS_setUpdateDbInstancePayloadHttp')</bpmn2:script>
+    </bpmn2:scriptTask>
     <bpmn2:scriptTask id="ScriptTask_1qd3uwb" name="Post Process&#10;Create&#10;Service&#10;" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_1ky2sv9</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0vj46ej</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.onap.so.bpmn.vcpe.scripts.*
 def CreateVcpeResCustService = new CreateVcpeResCustService()
-CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)]]></bpmn2:script>
+CreateVcpeResCustService.postProcessServiceInstanceCreateHttp(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_1ky2sv9" sourceRef="doCreateServiceInstance_CallActivity" targetRef="ScriptTask_1qd3uwb" />
     <bpmn2:sequenceFlow id="SequenceFlow_0vj46ej" sourceRef="ScriptTask_1qd3uwb" targetRef="updateInfraRequest" />

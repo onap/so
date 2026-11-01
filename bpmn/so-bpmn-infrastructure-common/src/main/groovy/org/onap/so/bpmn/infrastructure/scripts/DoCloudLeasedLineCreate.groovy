@@ -46,6 +46,11 @@ class DoCloudLeasedLineCreate extends AbstractServiceTaskProcessor {
     private static final Logger logger = LoggerFactory.getLogger(DoCloudLeasedLineCreate.class);
     JsonUtils jsonUtil = new JsonUtils()
     RequestDBUtil requestDBUtil = new RequestDBUtil()
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     ServiceIntentUtils serviceIntentUtils = new ServiceIntentUtils()
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     String Prefix = "CLLC_"

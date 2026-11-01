@@ -27,6 +27,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
+import org.onap.so.db.request.beans.OperationStatus
 
 import static org.junit.Assert.assertEquals
 import static org.mockito.ArgumentMatchers.eq
@@ -41,6 +42,76 @@ class CheckServiceProcessStatusTest extends MsoGroovyTest {
 
     @Captor
     static ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class)
+
+    @Test
+    void testHttpReaderUsesTypedResult() {
+        mockData()
+        when(mockExecution.getVariable('dbResponseCode')).thenReturn(200)
+        when(mockExecution.getVariable('dbResponse')).thenReturn(new OperationStatus(result: 'finished'))
+        when(mockExecution.getVariable('successConditions')).thenReturn(['finished'])
+        def script = new CheckServiceProcessStatus()
+        script.handlerServiceStatusRespHttp(mockExecution)
+        Mockito.verify(mockExecution).setVariable('operationStatus', 'finished')
+        Mockito.verify(mockExecution).setVariable('isAllFinished', 'true')
+    }
+
+    @Test
+    void testHttpReaderRetainsErrorAndMissingResponsePaths() {
+        mockData()
+        when(mockExecution.getVariable('dbResponseCode')).thenReturn(200)
+        when(mockExecution.getVariable('dbResponse')).thenReturn(new OperationStatus(result: 'failed'))
+        when(mockExecution.getVariable('successConditions')).thenReturn(['finished'])
+        when(mockExecution.getVariable('errorConditions')).thenReturn(['failed'])
+        def script = new CheckServiceProcessStatus()
+        script.handlerServiceStatusRespHttp(mockExecution)
+        Mockito.verify(mockExecution).setVariable('orchestrationStatus', 'error')
+        when(mockExecution.getVariable('dbResponseCode')).thenReturn(404)
+        when(mockExecution.getVariable('dbResponse')).thenReturn(null)
+        script.handlerServiceStatusRespHttp(mockExecution)
+        Mockito.verify(mockExecution).setVariable('isAllFinished', 'false')
+    }
+
+    @Test
+    void testHttpReaderRetainsProgressPolling() {
+        mockData()
+        when(mockExecution.getVariable('dbResponseCode')).thenReturn(200)
+        when(mockExecution.getVariable('dbResponse')).thenReturn(new OperationStatus(result: 'processing', progress: '50'))
+        when(mockExecution.getVariable('successConditions')).thenReturn(['finished'])
+        when(mockExecution.getVariable('errorConditions')).thenReturn(['failed'])
+        when(mockExecution.getVariable('progress')).thenReturn('50')
+        def script = new CheckServiceProcessStatus()
+        script.handlerServiceStatusRespHttp(mockExecution)
+        Mockito.verify(mockExecution).setVariable('isNeedUpdateDB', false)
+        when(mockExecution.getVariable('progress')).thenReturn('40')
+        script.handlerServiceStatusRespHttp(mockExecution)
+        Mockito.verify(mockExecution).setVariable('progress', '50')
+        Mockito.verify(mockExecution).setVariable('isNeedUpdateDB', true)
+        Mockito.verify(mockExecution, times(2)).setVariable('isAllFinished', 'false')
+    }
+
+    @Test
+    void testHttpSelectionReachesPrivateInheritedProducers() {
+        when(mockExecution.getVariable('nsiId')).thenReturn('service/%20')
+        when(mockExecution.getVariable('jobId')).thenReturn('job')
+        when(mockExecution.getVariable('serviceInstanceID')).thenReturn('instance')
+        when(mockExecution.getVariable('modelUuid')).thenReturn('model')
+        when(mockExecution.getVariable('operationType')).thenReturn('ACTIVATE')
+        def script = new DoActivateCoreNSSI()
+        script.useRequestDbHttp()
+        script.prepareFailedOperationStatusUpdate(mockExecution)
+        Mockito.verify(mockExecution).setVariable(eq('updateResourceOperationStatusHttp'), captor.capture())
+        assertEquals('service%2F%2520', (captor.value as Map).serviceId)
+        assertEquals('job', (captor.value as Map).operationId)
+        assertEquals('0', (captor.value as Map).progress)
+        assertEquals('failed', (captor.value as Map).status)
+
+        def inheritedScript = new DoModifyCoreNSSI()
+        when(mockExecution.getVariable('currentNSSI')).thenReturn([nsiId: 'service', nssiId: 'instance',
+                nssi: new org.onap.aai.domain.yang.v19.ServiceInstance(modelVersionId: 'model')])
+        inheritedScript.useRequestDbHttp()
+        inheritedScript.prepareFailedOperationStatusUpdate(mockExecution)
+        Mockito.verify(mockExecution, times(2)).setVariable(eq('updateResourceOperationStatusHttp'), captor.capture())
+    }
 
 
     @Test

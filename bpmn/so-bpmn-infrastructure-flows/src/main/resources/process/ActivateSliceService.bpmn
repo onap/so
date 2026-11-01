@@ -7,33 +7,17 @@
     <bpmn:startEvent id="StartEvent_01bdhbw" name="start">
       <bpmn:outgoing>SequenceFlow_1tdecf1</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="ServiceTask_1hmtmeq" name="Update Service Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_1hmtmeq" name="Update Service Operation Status">
       <bpmn:incoming>SequenceFlow_1ox6oh6</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0szxmyf</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateOperationStatus', 'CVFMI_dbResponse', 'CVFMI_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_1wow08q" name="Pre Process Incoming Request" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_1tdecf1</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0bvnci8</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi= new ActivateSliceService()
+csi.useRequestDbHttp()
 csi.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_1730kjg" name="Init Service Operation Status" scriptFormat="groovy">
@@ -41,6 +25,7 @@ csi.preProcessRequest(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1ox6oh6</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi= new ActivateSliceService()
+csi.useRequestDbHttp()
 csi.prepareInitServiceOperationStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1tdecf1" sourceRef="StartEvent_01bdhbw" targetRef="ScriptTask_1wow08q" />
@@ -51,6 +36,7 @@ csi.prepareInitServiceOperationStatus(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1p778c2</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi = new  ActivateSliceService()
+csi.useRequestDbHttp()
 csi.sendSyncResponse(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0szxmyf" sourceRef="ServiceTask_1hmtmeq" targetRef="ScriptTask_1gm0rl4" />
@@ -60,6 +46,7 @@ csi.sendSyncResponse(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0mr8oz6</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi= new ActivateSliceService()
+csi.useRequestDbHttp()
 csi.checkAAIOrchStatusOfE2ESlice(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="ExclusiveGateway_0nce7pi" name="Success?">
@@ -79,6 +66,7 @@ csi.checkAAIOrchStatusOfE2ESlice(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1b7nvps</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi= new ActivateSliceService()
+csi.useRequestDbHttp()
 csi.prepareActivation(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:endEvent id="EndEvent_0bvm36p">
@@ -105,6 +93,7 @@ csi.prepareActivation(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0eiek58</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi= new ActivateSliceService()
+csi.useRequestDbHttp()
 csi.updateStatusSNSSAIandNSIandNSSI(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_0032ffo" name="Prepare Completion Request" scriptFormat="groovy">
@@ -112,30 +101,14 @@ csi.updateStatusSNSSAIandNSIandNSSI(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0dc8i0s</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi = new ActivateSliceService()
+csi.useRequestDbHttp()
 csi.prepareCompletionRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="ServiceTask_06tcv65" name="Update Service Operation Status to Success">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">${UrnPropertiesReader.getSoBasicAuthHeader(execution)}</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_06tcv65" name="Update Service Operation Status to Success">
       <bpmn:incoming>SequenceFlow_0dc8i0s</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_11u2ido</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateOperationStatus', 'CVFMI_dbResponse', 'CVFMI_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:endEvent id="EndEvent_1uebh6a" name="end">
       <bpmn:incoming>SequenceFlow_11u2ido</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0cs78yf</bpmn:incoming>
@@ -147,6 +120,7 @@ csi.prepareCompletionRequest(execution)</bpmn:script>
         <bpmn:outgoing>SequenceFlow_097vxbl</bpmn:outgoing>
         <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi= new ActivateSliceService()
+csi.useRequestDbHttp()
 csi.sendSyncError(execution)</bpmn:script>
       </bpmn:scriptTask>
       <bpmn:endEvent id="EndEvent_0yy0a8r">
@@ -173,6 +147,7 @@ csi.sendSyncError(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1ny9zkw</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi= new ActivateSliceService()
+csi.useRequestDbHttp()
 csi.checkAAIOrchStatusOfAllocates(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1wrrg4v" name="continue" sourceRef="ScriptTask_1yc7wdf" targetRef="ScriptTask_1oa27ir">
@@ -189,6 +164,7 @@ csi.checkAAIOrchStatusOfAllocates(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_19gpkz7</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi= new ActivateSliceService()
+csi.useRequestDbHttp()
 csi.checkAAIOrchStatusOfNSI(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1b7nvps" sourceRef="ScriptTask_0916zkl" targetRef="CallActivity_06ommam" />
@@ -206,6 +182,7 @@ csi.checkAAIOrchStatusOfNSI(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1rsr0hp</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi= new ActivateSliceService()
+csi.useRequestDbHttp()
 csi.isOperationFinished(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1p778c2" sourceRef="ScriptTask_1gm0rl4" targetRef="ScriptTask_1yc7wdf" />

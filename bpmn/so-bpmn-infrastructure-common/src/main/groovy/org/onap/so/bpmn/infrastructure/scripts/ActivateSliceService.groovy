@@ -70,6 +70,11 @@ class ActivateSliceService extends AbstractServiceTaskProcessor {
 
     RequestDBUtil requestDBUtil = new RequestDBUtil()
 
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     AAIResourcesClient client = getAAIClient()
 
     private static final Logger logger = LoggerFactory.getLogger(ActivateSliceService.class)

@@ -543,6 +543,57 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
         logger.trace("COMPLETED preInitResourcesOperStatus Process ")
     }
 
+   public void preInitResourcesOperStatusHttp(DelegateExecution execution){
+
+        try{
+            String serviceId = execution.getVariable("serviceInstanceId")
+            String operationId = execution.getVariable("operationId")
+            String operationType = execution.getVariable("operationType")
+            String resourceTemplateUUIDs = ""
+            String result = "processing"
+            String progress = "0"
+            String reason = ""
+            String operationContent = "Prepare service creation"
+
+
+			serviceId = UriUtils.encode(serviceId,"UTF-8")
+            execution.setVariable("serviceInstanceId", serviceId)
+            execution.setVariable("operationId", operationId)
+            execution.setVariable("operationType", operationType)
+
+            String serviceRelationShip = execution.getVariable("serviceRelationShip")
+
+            def jsonSlurper = new JsonSlurper()
+            def jsonOutput = new JsonOutput()
+            List relationShipList =  jsonSlurper.parseText(serviceRelationShip)
+
+            if (relationShipList != null) {
+                relationShipList.each {
+                    resourceTemplateUUIDs  = resourceTemplateUUIDs + it.resourceInstanceId + ":"
+                }
+            }
+
+
+            Map payload = [
+                serviceId: "${serviceId}".toString(),
+                operationId: "${operationId}".toString(),
+                operationType: "${operationType}".toString(),
+                resourceTemplateUUIDs: "${resourceTemplateUUIDs}".toString()]
+
+            execution.setVariable('CVFMI_initResOperStatusRequestHttp', payload)
+        execution.setVariable('CVFMI_initResOperStatusRequestHttpOperation', 'initResourceOperationStatus')
+
+
+
+        }catch(Exception e){
+			logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing preInitResourcesOperStatus.", "BPMN",
+					ErrorCode.UnknownError.getValue(), e)
+            execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
+        }
+
+    }
+
    /**
     * prepare delete parameters
     */

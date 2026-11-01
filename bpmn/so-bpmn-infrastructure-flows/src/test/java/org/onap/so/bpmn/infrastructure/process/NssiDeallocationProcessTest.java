@@ -20,6 +20,8 @@
 package org.onap.so.bpmn.infrastructure.process;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -56,7 +58,7 @@ public class NssiDeallocationProcessTest extends BaseBPMNTest {
     private static final String PROCESS = "DoDeallocateNSSIV1";
     private static final String ADAPTER_PATH = "/api/rest/provMns/v1/NSS/SliceProfiles/profile-1";
     private static final String JOB_PATH = "/api/rest/provMns/v1/NSS/jobs/job-1";
-    private static final String STATUS_PATH = "/nssi-status";
+    private static final String STATUS_PATH = "/v1/request-db/service-operations";
     private static final String SERVICE_PATH =
             "/aai/v[0-9]+/business/customers/customer/customer-1/service-subscriptions/"
                     + "service-subscription/5G/service-instances/service-instance/profile-1";
@@ -104,7 +106,7 @@ public class NssiDeallocationProcessTest extends BaseBPMNTest {
         variables.put("mso.adapters.nssmf.endpoint", "http://localhost:" + wireMockPort);
         variables.put("so.auth.username", "test");
         variables.put("so.auth.password", "test");
-        variables.put("mso.adapters.openecomp.db.endpoint", "http://localhost:" + wireMockPort + STATUS_PATH);
+        variables.put("mso.adapters.requestDb.endpoint", "http://localhost:" + wireMockPort);
         JSONObject service = new JSONObject().put("modelInfo", new JSONObject().put("modelUuid", "model-2"))
                 .put("serviceRole", "vendor-1").put("serviceCategory", "CN").put("serviceVnfs", new JSONArray())
                 .put("serviceNetworks", new JSONArray()).put("serviceAllottedResources", new JSONArray());
@@ -114,9 +116,8 @@ public class NssiDeallocationProcessTest extends BaseBPMNTest {
                                 .withBody(new JSONObject().put("serviceResources", service).toString())));
         adapterResponse(202);
         jobResponse("finished", 100);
-        wireMockServer.stubFor(
-                post(urlEqualTo(STATUS_PATH)).willReturn(aResponse().withStatus(200).withHeader("Connection", "close")
-                        .withHeader("Content-Type", "application/soap+xml").withBody("<accepted/>")));
+        wireMockServer.stubFor(put(urlPathEqualTo(STATUS_PATH))
+                .willReturn(aResponse().withStatus(204).withHeader("Connection", "close")));
         inventory(SERVICE_PATH + "/slice-profiles", new JSONObject()
                 .put("slice-profile", new JSONArray().put(new JSONObject().put("profile-id", "slice-1"))).toString());
         inventory(PROFILE_PATH,
@@ -147,7 +148,7 @@ public class NssiDeallocationProcessTest extends BaseBPMNTest {
         }
         wireMockServer.verify(1, postRequestedFor(urlEqualTo(ADAPTER_PATH)));
         wireMockServer.verify(1, postRequestedFor(urlEqualTo(JOB_PATH)));
-        wireMockServer.verify(1, postRequestedFor(urlEqualTo(STATUS_PATH)));
+        wireMockServer.verify(1, putRequestedFor(urlPathEqualTo(STATUS_PATH)));
         wireMockServer.verify(1, deleteRequestedFor(urlPathMatching(PROFILE_PATH)).withQueryParam("resource-version",
                 equalTo("profile-version")));
         wireMockServer.verify(1, deleteRequestedFor(urlPathMatching(SERVICE_PATH)).withQueryParam("resource-version",
@@ -182,7 +183,7 @@ public class NssiDeallocationProcessTest extends BaseBPMNTest {
         assertError(process, 7000);
         wireMockServer.verify(1, deleteRequestedFor(urlPathMatching(PROFILE_PATH)));
         wireMockServer.verify(0, deleteRequestedFor(urlPathMatching(SERVICE_PATH)));
-        wireMockServer.verify(1, postRequestedFor(urlEqualTo(STATUS_PATH)));
+        wireMockServer.verify(1, putRequestedFor(urlPathEqualTo(STATUS_PATH)));
         assertActivity(process, "Task_0ocemjg", 0);
         assertActivity(process, "EndEvent_1f579t4", 0);
     }
@@ -194,7 +195,7 @@ public class NssiDeallocationProcessTest extends BaseBPMNTest {
         assertError(process, 7000);
         wireMockServer.verify(1, deleteRequestedFor(urlPathMatching(PROFILE_PATH)));
         wireMockServer.verify(1, deleteRequestedFor(urlPathMatching(SERVICE_PATH)));
-        wireMockServer.verify(1, postRequestedFor(urlEqualTo(STATUS_PATH)));
+        wireMockServer.verify(1, putRequestedFor(urlPathEqualTo(STATUS_PATH)));
         assertActivity(process, "EndEvent_1f579t4", 0);
     }
 
@@ -234,7 +235,7 @@ public class NssiDeallocationProcessTest extends BaseBPMNTest {
     }
 
     private void assertNoStatusOrDeletion(ProcessInstance process) {
-        wireMockServer.verify(0, postRequestedFor(urlEqualTo(STATUS_PATH)));
+        wireMockServer.verify(0, putRequestedFor(urlPathEqualTo(STATUS_PATH)));
         wireMockServer.verify(0, deleteRequestedFor(urlPathMatching(SERVICE_PATH)));
         wireMockServer.verify(0, deleteRequestedFor(urlPathMatching(PROFILE_PATH)));
         assertActivity(process, "Task_13vaezk", 0);

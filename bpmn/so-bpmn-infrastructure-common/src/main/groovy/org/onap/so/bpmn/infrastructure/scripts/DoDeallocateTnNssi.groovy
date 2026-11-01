@@ -57,6 +57,11 @@ class DoDeallocateTnNssi extends AbstractServiceTaskProcessor {
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
     RequestDBUtil requestDBUtil = new RequestDBUtil()
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     TnNssmfUtils tnNssmfUtils = new TnNssmfUtils()
     OofUtils oofUtils = new OofUtils()
     JsonSlurper jsonSlurper = new JsonSlurper()

@@ -44,6 +44,46 @@ class CheckServiceProcessStatus extends AbstractServiceTaskProcessor  {
 
     RequestDBUtil requestDBUtil = new RequestDBUtil()
 
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
+    void handlerServiceStatusRespHttp(DelegateExecution execution) {
+        try {
+            int responseCode = execution.getVariable('dbResponseCode') as Integer
+            if (responseCode >= 200 && responseCode < 400) {
+                OperationStatus response = execution.getVariable('dbResponse') as OperationStatus
+                String result = response.result
+                if (isSuccessCompleted(execution, result)) {
+                    handlerSuccess(execution, result)
+                    execution.setVariable('isAllFinished', 'true')
+                } else if (isErrorCompleted(execution, result)) {
+                    handlerError(execution, result)
+                    execution.setVariable('isAllFinished', 'true')
+                } else {
+                    String progress = response.progress
+                    String oldProgress = execution.getVariable('progress')
+                    if (progress == oldProgress) {
+                        execution.setVariable('isNeedUpdateDB', false)
+                    } else {
+                        execution.setVariable('progress', progress)
+                        execution.setVariable('isNeedUpdateDB', true)
+                    }
+                    execution.setVariable('isAllFinished', 'false')
+                    TimeUnit.SECONDS.sleep(10)
+                }
+            } else {
+                execution.setVariable('isAllFinished', 'false')
+                TimeUnit.MILLISECONDS.sleep(10)
+            }
+        } catch (BpmnError failure) {
+            throw failure
+        } catch (Exception failure) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000,
+                    'Exception in ' + Prefix + 'handlerServiceStatusResp: ' + failure.message)
+        }
+    }
+
     JsonUtils jsonUtil = new JsonUtils()
 
     AAIResourcesClient client = getAAIClient()

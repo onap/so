@@ -412,6 +412,33 @@ public class DoDeleteResourcesV1 extends AbstractServiceTaskProcessor {
         execution.setVariable("CVFMI_updateResOperStatusRequest", body)
     }
 
+    public void prepareFinishedProgressForResourceHttp(DelegateExecution execution) {
+
+        String serviceInstanceId = execution.getVariable("serviceInstanceId")
+        String serviceType = execution.getVariable("serviceType")
+        String resourceInstanceId = execution.getVariable("resourceInstanceId")
+        Resource currentResource = execution.getVariable("currentResource")
+        String resourceCustomizationUuid = currentResource.getModelInfo().getModelCustomizationUuid()
+        String resourceModelName = currentResource.getModelInfo().getModelName()
+        String operationType = execution.getVariable("operationType")
+        String progress = "100"
+        String status = "finished"
+        String statusDescription = "The resource instance does not exist for " + resourceModelName
+        String operationId = execution.getVariable("operationId")
+
+        Map body = [
+                operType: "${operationType}".toString(),
+                operationId: "${operationId}".toString(),
+                progress: "${progress}".toString(),
+                resourceTemplateUUID: "${resourceCustomizationUuid}".toString(),
+                serviceId: "${serviceInstanceId}".toString(),
+                status: "${status}".toString(),
+                statusDescription: "${statusDescription}".toString()];
+
+        execution.setVariable('CVFMI_updateResOperStatusRequestHttp', body)
+        execution.setVariable('CVFMI_updateResOperStatusRequestHttpOperation', 'updateResourceOperationStatus')
+    }
+
     public void prepareSDNCServiceDeactivateRequest (DelegateExecution execution) {
     	prepareSDNCServiceRequest (execution, "deactivate")
     }

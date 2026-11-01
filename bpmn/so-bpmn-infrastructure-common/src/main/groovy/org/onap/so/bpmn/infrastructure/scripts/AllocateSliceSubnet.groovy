@@ -36,6 +36,11 @@ class AllocateSliceSubnet extends AbstractServiceTaskProcessor {
     String Prefix="AllocateSliceSubnet_"
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     RequestDBUtil requestDBUtil = new RequestDBUtil()
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     JsonUtils jsonUtil = new JsonUtils()
     private static final Logger logger = LoggerFactory.getLogger(AllocateSliceSubnet.class)
 

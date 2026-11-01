@@ -19,20 +19,37 @@
  */
 package org.onap.so;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.cloud.contract.wiremock.WireMockConfiguration;
+import org.springframework.cloud.contract.wiremock.WireMockTestExecutionListener;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.StandardEnvironment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.test.context.TestContext;
+import org.springframework.test.context.support.TestPropertySourceUtils;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.client.RestTemplate;
 
 public class BpmnWorkflowPropertiesTest {
     private static final String KEY = "mso.workflow.fixture.property";
@@ -83,6 +100,33 @@ public class BpmnWorkflowPropertiesTest {
         fixture.shutDown();
         assertEquals(originalSources, environment.getPropertySources().size());
         verify(server, times(2)).resetAll();
+    }
+
+    @Test
+    public void classCleanupDoesNotRestartTheContextOwnedWireMockServer() {
+        try (AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext()) {
+            TestPropertySourceUtils.addInlinedPropertiesToEnvironment(applicationContext, "wiremock.server.port=0");
+            applicationContext.registerBean(WireMockConfiguration.class.getName(), WireMockConfiguration.class);
+            applicationContext.refresh();
+            WireMockServer liveServer = applicationContext.getBean(WireMockServer.class);
+            liveServer.stubFor(get(urlEqualTo("/connection-lifecycle")).willReturn(aResponse().withStatus(204)));
+            SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+            factory.setConnectTimeout(1000);
+            factory.setReadTimeout(1000);
+            RestTemplate client = new RestTemplate(factory);
+            String url = "http://localhost:" + liveServer.port() + "/connection-lifecycle";
+            assertEquals(HttpStatus.NO_CONTENT, client.getForEntity(url, Void.class).getStatusCode());
+            TestContext testContext = mock(TestContext.class);
+            when(testContext.getApplicationContext()).thenReturn(applicationContext);
+            doReturn(Fixture.class).when(testContext).getTestClass();
+
+            new WireMockTestExecutionListener().afterTestClass(testContext);
+
+            liveServer.stubFor(put(urlEqualTo("/connection-lifecycle")).willReturn(aResponse().withStatus(204)));
+            assertEquals(HttpStatus.NO_CONTENT,
+                    client.exchange(url, HttpMethod.PUT, new HttpEntity<>("status"), Void.class).getStatusCode());
+            liveServer.verify(1, putRequestedFor(urlEqualTo("/connection-lifecycle")));
+        }
     }
 
     private static class Fixture extends BaseBPMNTest {

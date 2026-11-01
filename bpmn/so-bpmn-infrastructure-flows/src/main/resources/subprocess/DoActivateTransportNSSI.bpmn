@@ -30,6 +30,7 @@ ex.processJavaException(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1qv8qw1</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def runScript = new DoActivateTnNssi()
+runScript.useRequestDbHttp()
 runScript.prepareUpdateJobStatus(execution,"FINISHED","100","Activate or Deactivate successfully")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_03s744c" sourceRef="StartEvent_1nbljfd" targetRef="ScriptTask_1tc44ge" />
@@ -41,6 +42,7 @@ runScript.prepareUpdateJobStatus(execution,"FINISHED","100","Activate or Deactiv
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def actionType = execution.getVariable("actionType")
 def runScript = new DoActivateTnNssi()
+runScript.useRequestDbHttp()
 def orchStatus = runScript.getOrchStatusBasedOnActionType(actionType)
 execution.setVariable("orchestrationStatus", orchStatus)
 runScript.updateAAIOrchStatus(execution)</bpmn:script>
@@ -51,6 +53,7 @@ runScript.updateAAIOrchStatus(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0cpctye</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def runScript = new DoActivateTnNssi()
+runScript.useRequestDbHttp()
 runScript.preprocessSdncActOrDeactTnNssiRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0cpctye" sourceRef="Activity_1tw8eyy" targetRef="Activity_0p20esb" />
@@ -76,6 +79,7 @@ runScript.preprocessSdncActOrDeactTnNssiRequest(execution)</bpmn:script>
 String response = execution.getVariable("TNNSSMF_SDNCAdapterResponse")
 
 def runScript = new DoActivateTnNssi()
+runScript.useRequestDbHttp()
 runScript.validateSDNCResponse(execution, response)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1jdb2oq" sourceRef="Activity_0phv8e5" targetRef="ScriptTask_19uxoi8" />
@@ -84,31 +88,15 @@ runScript.validateSDNCResponse(execution, response)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_07e12rt</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def runScript = new DoActivateTnNssi()
+runScript.useRequestDbHttp()
 runScript.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_07e12rt" sourceRef="ScriptTask_1tc44ge" targetRef="Gateway_1v41rsb" />
-    <bpmn:serviceTask id="Activity_0nhxd67" name="Update Resource Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Activity_0nhxd67" name="Update Resource Operation Status">
       <bpmn:incoming>SequenceFlow_1qv8qw1</bpmn:incoming>
       <bpmn:outgoing>Flow_1032bi1</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1032bi1" sourceRef="Activity_0nhxd67" targetRef="EndEvent_05h01gx" />
     <bpmn:exclusiveGateway id="Gateway_1v41rsb" name="Enable SDNC?">
       <bpmn:incoming>SequenceFlow_07e12rt</bpmn:incoming>

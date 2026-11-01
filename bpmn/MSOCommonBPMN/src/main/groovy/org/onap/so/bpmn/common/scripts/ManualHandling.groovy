@@ -23,6 +23,7 @@
 package org.onap.so.bpmn.common.scripts
 
 import org.onap.so.logger.LoggingAnchor
+import org.onap.so.db.request.client.RequestDbCommands
 import org.onap.logging.filter.base.ErrorCode;
 
 import static org.apache.commons.lang3.StringUtils.*;
@@ -262,6 +263,23 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 		logger.trace("Exit completeTask of ManualHandling ")
+	}
+
+	public void updateRequestsDBStatusHttp(DelegateExecution execution, String requestStatus) {
+		try {
+			def command = new RequestDbCommands.InfraRequestUpdate()
+			command.setLastModifiedBy('ManualHandling')
+			command.setRequestStatus(requestStatus)
+			RequestDbHttp.createClient(execution).updateInfraRequest(
+					execution.getVariable('msoRequestId') as String, command)
+			execution.setVariable('updateRequestResponse', '')
+			execution.setVariable('updateRequestResponseCode', 204)
+		} catch (BpmnError error) {
+			throw error
+		} catch (Exception failure) {
+			logger.error('RequestDB REST status update failed', failure)
+			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, 'RequestDB status update failed')
+		}
 	}
 
 	public void prepareRequestsDBStatusUpdate (DelegateExecution execution, String requestStatus){

@@ -28,30 +28,14 @@ dcsi.preProcessRequest(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1jr6zi0_activate</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcsi = new ActivateSDNCNetworkResource()
-dcsi.prepareUpdateAfterActivateSDNCResource(execution)</bpmn:script>
+dcsi.prepareUpdateAfterActivateSDNCResourceHttp(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="ServiceTask_1cm8iwr_activate" name="update progress update">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_updateResOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_1cm8iwr_activate" name="update progress update">
       <bpmn:incoming>SequenceFlow_1jr6zi0_activate</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1vnx1pp_activate</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, execution.getVariable('CVFMI_updateResOperStatusRequestHttpOperation'), 'CVFMI_dbResponse', 'CVFMI_dbResponseCode', 'CVFMI_updateResOperStatusRequestHttp')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1jr6zi0_activate" sourceRef="Task_0uwlr22_activate" targetRef="ServiceTask_1cm8iwr_activate" />
     <bpmn:sequenceFlow id="SequenceFlow_1vnx1pp_activate" sourceRef="ServiceTask_1cm8iwr_activate" targetRef="Task_023hred_activate" />
     <bpmn:sequenceFlow id="SequenceFlow_1c92ks3_activate" sourceRef="createNS_StartEvent_activate" targetRef="Task_13sx2bp_activate" />

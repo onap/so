@@ -26,6 +26,7 @@
       <bpmn:outgoing>SequenceFlow_1xiszom</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreNSSI()
+allocateNssi.useRequestDbHttp()
 allocateNssi.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_13krb7d" name="Get NSST name from CatalogDB" scriptFormat="groovy">
@@ -33,6 +34,7 @@ allocateNssi.preProcessRequest(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0enouyb</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreNSSI()
+allocateNssi.useRequestDbHttp()
 allocateNssi.getNSSTName(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_0ybe0w9" name="Prepare OOF request" scriptFormat="groovy">
@@ -40,6 +42,7 @@ allocateNssi.getNSSTName(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1r5aycw</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreNSSI()
+allocateNssi.useRequestDbHttp()
 allocateNssi.prepareOOFRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="CallActivity_0ue7vug" name="Call non-shared slice flow" calledElement="DoAllocateCoreNonSharedSlice">
@@ -106,6 +109,7 @@ allocateNssi.prepareOOFRequest(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0kbpihh</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi = new DoAllocateCoreNSSI()
+allocateNssi.useRequestDbHttp()
 allocateNssi.processOOFAsyncResponse(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0kbpihh" sourceRef="ScriptTask_1bg09vu" targetRef="ExclusiveGateway_1xjahhp" />
@@ -129,30 +133,14 @@ ex.processJavaException(execution)</bpmn:script>
         <bpmn:outgoing>Flow_167qlhy</bpmn:outgoing>
         <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def allocateNssi= new DoAllocateCoreNSSI()
+allocateNssi.useRequestDbHttp()
 allocateNssi.prepareFailedOperationStatusUpdate(execution)</bpmn:script>
       </bpmn:scriptTask>
-      <bpmn:serviceTask id="Activity_0frxrqx" name="Update Resource Operation Status">
-        <bpmn:extensionElements>
-          <camunda:connector>
-            <camunda:inputOutput>
-              <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-              <camunda:inputParameter name="headers">
-                <camunda:map>
-                  <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                  <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-                </camunda:map>
-              </camunda:inputParameter>
-              <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-              <camunda:inputParameter name="method">POST</camunda:inputParameter>
-              <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-              <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-            </camunda:inputOutput>
-            <camunda:connectorId>http-connector</camunda:connectorId>
-          </camunda:connector>
-        </bpmn:extensionElements>
+      <bpmn:scriptTask scriptFormat="groovy" id="Activity_0frxrqx" name="Update Resource Operation Status">
         <bpmn:incoming>Flow_167qlhy</bpmn:incoming>
         <bpmn:outgoing>Flow_1jn84pa</bpmn:outgoing>
-      </bpmn:serviceTask>
+            <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
       <bpmn:sequenceFlow id="Flow_1jn84pa" sourceRef="Activity_0frxrqx" targetRef="Activity_016fs4l" />
       <bpmn:sequenceFlow id="Flow_167qlhy" sourceRef="Activity_1wmb5hd" targetRef="Activity_0frxrqx" />
       <bpmn:sequenceFlow id="Flow_1bd9s44" sourceRef="Event_0jeyy28" targetRef="Activity_1wmb5hd" />

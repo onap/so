@@ -9,6 +9,7 @@
       <bpmn:outgoing>Flow_0g84uy5</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
         def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
         dcnssi.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0xxq2h8" sourceRef="StartEvent_1" targetRef="Activity_0u06qij" />
@@ -17,6 +18,7 @@
       <bpmn:outgoing>Flow_16192dm</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
         dcnssi.getNetworkServiceInstance(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="Gateway_1dqw1bg" name="Is terminateNSSI=true?" default="Flow_0e3yvck">
@@ -30,6 +32,7 @@ def dcnssi= new DoDeallocateCoreNSSI()
       <bpmn:outgoing>Flow_1b14can</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
         dcnssi.deleteServiceOrder(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_1anr9ry" name="Get constitute VNF from Network Service Instance" scriptFormat="groovy">
@@ -37,6 +40,7 @@ def dcnssi= new DoDeallocateCoreNSSI()
       <bpmn:outgoing>Flow_01q7kcf</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
         dcnssi.getConstituteVNFFromNetworkServiceInst(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_16wfqhu" name="Get NSSI associated profiles" scriptFormat="groovy">
@@ -44,6 +48,7 @@ def dcnssi= new DoDeallocateCoreNSSI()
       <bpmn:outgoing>Flow_0xrq94a</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
         dcnssi.getNSSIAssociatedProfiles(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_0es9or8" name="Calculate remaining S-NSSAI" scriptFormat="groovy">
@@ -51,6 +56,7 @@ def dcnssi= new DoDeallocateCoreNSSI()
       <bpmn:outgoing>Flow_1qwi2ka</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
         dcnssi.calculateSNSSAI(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_0mnkgd6" name="Invoke PUT Service Instance API" scriptFormat="groovy">
@@ -58,6 +64,7 @@ def dcnssi= new DoDeallocateCoreNSSI()
       <bpmn:outgoing>Flow_178myd8</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
         dcnssi.invokePUTServiceInstance(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_19z90sm" name="Remove the NSSI association with NSI" scriptFormat="groovy">
@@ -65,6 +72,7 @@ def dcnssi= new DoDeallocateCoreNSSI()
       <bpmn:outgoing>Flow_0nvtepd</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
         dcnssi.removeNSSIAssociationWithNSI(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_1mbtpe6" name="Remove association of slice profile instance with the NSSI&#10;" scriptFormat="groovy">
@@ -72,13 +80,16 @@ def dcnssi= new DoDeallocateCoreNSSI()
       <bpmn:outgoing>Flow_0j8gu83</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
         dcnssi.removeSPAssociationWithNSSI(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:scriptTask id="Activity_0tanqh5" name="Delete the slice profile instance" scriptFormat="groovy">
+    <bpmn:scriptTask id="Activity_0tanqh5" name="Delete the slice profile instance
+" scriptFormat="groovy">
       <bpmn:incoming>Flow_0j8gu83</bpmn:incoming>
       <bpmn:outgoing>Flow_009x8vn</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
         dcnssi.deleteSliceProfileInstance(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="Gateway_07ygtxz" name="Is terminateNSSI=true?" default="Flow_12nxpx6">
@@ -86,11 +97,13 @@ def dcnssi= new DoDeallocateCoreNSSI()
       <bpmn:outgoing>Flow_12nxpx6</bpmn:outgoing>
       <bpmn:outgoing>Flow_1r39237</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:scriptTask id="Activity_1gcmlps" name=" Delete the NSSI service instance" scriptFormat="groovy">
+    <bpmn:scriptTask id="Activity_1gcmlps" name=" Delete the NSSI service instance
+" scriptFormat="groovy">
       <bpmn:incoming>Flow_1r39237</bpmn:incoming>
       <bpmn:outgoing>Flow_04hswb4</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
         dcnssi.deleteNSSIServiceInstance(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_0gs71qq" name="Prepare Update Operation Status" scriptFormat="groovy">
@@ -99,6 +112,7 @@ def dcnssi= new DoDeallocateCoreNSSI()
       <bpmn:outgoing>Flow_15rk73d</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
         dcnssi.prepareUpdateResourceOperationStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:intermediateThrowEvent id="Event_016dxue" name="Goto No terminate NSSI Subflow">
@@ -138,6 +152,7 @@ def dcnssi= new DoDeallocateCoreNSSI()
       <bpmn:outgoing>Flow_16bwdkl</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
         dcnssi.executeTerminateNSSIQuery(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0g84uy5" sourceRef="Activity_0u06qij" targetRef="Activity_13qnpcn" />
@@ -161,63 +176,31 @@ ex.processJavaException(execution)</bpmn:script>
         <bpmn:outgoing>Flow_1cl22g1</bpmn:outgoing>
         <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi = new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
 dcnssi.prepareFailedOperationStatusUpdate(execution)</bpmn:script>
       </bpmn:scriptTask>
-      <bpmn:serviceTask id="Activity_0ckr2ke" name="Update Resource Operation Status">
-        <bpmn:extensionElements>
-          <camunda:connector>
-            <camunda:inputOutput>
-              <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-              <camunda:inputParameter name="headers">
-                <camunda:map>
-                  <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                  <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-                </camunda:map>
-              </camunda:inputParameter>
-              <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-              <camunda:inputParameter name="method">POST</camunda:inputParameter>
-              <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-              <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-            </camunda:inputOutput>
-            <camunda:connectorId>http-connector</camunda:connectorId>
-          </camunda:connector>
-        </bpmn:extensionElements>
+      <bpmn:scriptTask scriptFormat="groovy" id="Activity_0ckr2ke" name="Update Resource Operation Status">
         <bpmn:incoming>Flow_1cl22g1</bpmn:incoming>
         <bpmn:outgoing>Flow_1vq4jz8</bpmn:outgoing>
-      </bpmn:serviceTask>
+            <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
       <bpmn:sequenceFlow id="Flow_1vq4jz8" sourceRef="Activity_0ckr2ke" targetRef="Activity_1hh3qh1" />
       <bpmn:sequenceFlow id="Flow_1cl22g1" sourceRef="Activity_009mpgu" targetRef="Activity_0ckr2ke" />
       <bpmn:sequenceFlow id="Flow_0z51qfz" sourceRef="Event_1blx2tk" targetRef="Activity_009mpgu" />
       <bpmn:sequenceFlow id="Flow_139pcs3" sourceRef="Activity_1hh3qh1" targetRef="Event_1umlj38" />
     </bpmn:subProcess>
-    <bpmn:serviceTask id="Activity_1npwfvi" name="Update Resource Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Activity_1npwfvi" name="Update Resource Operation Status">
       <bpmn:incoming>Flow_15rk73d</bpmn:incoming>
       <bpmn:outgoing>Flow_0pj1yb5</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_1a5fd5v" name="Call Get Delete ServiceOrder Progress" scriptFormat="groovy">
       <bpmn:incoming>Flow_1b14can</bpmn:incoming>
       <bpmn:incoming>Flow_0zxtlgn</bpmn:incoming>
       <bpmn:outgoing>Flow_1h8q1h1</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
 dcnssi.getDeleteServiceOrderProgress(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1h8q1h1" sourceRef="Activity_1a5fd5v" targetRef="Gateway_13cwisg" />
@@ -232,6 +215,7 @@ dcnssi.getDeleteServiceOrderProgress(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0zxtlgn</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
 dcnssi.timeDelay(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1j1en2h" name="Yes" sourceRef="Gateway_13cwisg" targetRef="Activity_1ym1op6">
@@ -243,6 +227,7 @@ dcnssi.timeDelay(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0pvh1x9</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
 dcnssi.getPUTServiceInstanceProgress(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0pvh1x9" sourceRef="Activity_07qrjro" targetRef="Gateway_1yftwt8" />
@@ -261,6 +246,7 @@ dcnssi.getPUTServiceInstanceProgress(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0att74c</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
 dcnssi.timeDelay(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0afgah7" name="Yes" sourceRef="Gateway_1yftwt8" targetRef="Activity_1lafl76">
@@ -272,6 +258,7 @@ dcnssi.timeDelay(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0eigzrb</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
         def dcnssi= new DoDeallocateCoreNSSI()
+dcnssi.useRequestDbHttp()
         dcnssi.postProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0pj1yb5" sourceRef="Activity_1npwfvi" targetRef="Activity_03j1rrj" />

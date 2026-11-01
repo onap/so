@@ -20,6 +20,9 @@
 package org.onap.so.bpmn.infrastructure.process;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -61,7 +64,7 @@ import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 public class TnTransportLifecycleProcessTest extends BaseBPMNTest {
     private static final String PROCESS = "DoActivateTransportNSSI";
     private static final String RESOURCE = "subprocess/DoActivateTransportNSSI.bpmn";
-    private static final String STATUS_PATH = "/tn-status";
+    private static final String STATUS_PATH = "/v1/request-db/resource-operations";
     private static final String BUSINESS_PATH = "/business/customers/customer/customer-1/service-subscriptions/"
             + "service-subscription/service-type/service-instances/service-instance/";
     private String nssiId;
@@ -88,14 +91,14 @@ public class TnTransportLifecycleProcessTest extends BaseBPMNTest {
         variables.put("globalSubscriberId", "customer-1");
         variables.put("sliceParams", "{\"enableSdnc\":false}");
         variables.put("mso.workflow.sdncadapter.callback", "http://localhost:" + wireMockPort + "/sdnc-callback");
-        variables.put("mso.adapters.openecomp.db.endpoint", "http://localhost:" + wireMockPort + STATUS_PATH);
+        variables.put("mso.adapters.requestDb.endpoint", "http://localhost:" + wireMockPort);
         String link = "http://localhost:" + wireMockPort + "/aai/" + AAIVersion.LATEST + BUSINESS_PATH + nssiId;
         JSONObject node = new JSONObject().put("resource-type", "service-instance").put("resource-link", link);
         wireMockServer.stubFor(get(urlPathMatching(nodesPath)).withQueryParam("format", equalTo("pathed"))
                 .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
                         .withBody(new JSONObject().put("results", new JSONArray().put(node)).toString())));
         stubAaiUpdate(200);
-        stubStatusUpdate(200);
+        stubStatusUpdate(204);
     }
 
     @Test
@@ -119,7 +122,7 @@ public class TnTransportLifecycleProcessTest extends BaseBPMNTest {
         assertActivity(process, "ScriptTask_1swzdpw", 1);
         assertActivity(process, "ScriptTask_19uxoi8", 0);
         wireMockServer.verify(0, postRequestedFor(urlPathMatching(resourcePath)));
-        wireMockServer.verify(0, postRequestedFor(urlEqualTo(STATUS_PATH)));
+        wireMockServer.verify(0, putRequestedFor(urlPathEqualTo(STATUS_PATH)));
         WorkflowException error = (WorkflowException) historic(process, "WorkflowException");
         assertNotNull(error);
         assertEquals(500, error.getErrorCode());
@@ -137,7 +140,7 @@ public class TnTransportLifecycleProcessTest extends BaseBPMNTest {
         assertActivity(process, "ScriptTask_19uxoi8", 1);
         assertActivity(process, "ScriptTask_1swzdpw", 1);
         wireMockServer.verify(1, postRequestedFor(urlPathMatching(resourcePath)));
-        wireMockServer.verify(0, postRequestedFor(urlEqualTo(STATUS_PATH)));
+        wireMockServer.verify(0, putRequestedFor(urlPathEqualTo(STATUS_PATH)));
         WorkflowException error = (WorkflowException) historic(process, "WorkflowException");
         assertNotNull(error);
         assertEquals(7000, error.getErrorCode());
@@ -152,7 +155,7 @@ public class TnTransportLifecycleProcessTest extends BaseBPMNTest {
         ProcessInstance process = start("activateInstance");
 
         wireMockServer.verify(1, postRequestedFor(urlPathMatching(resourcePath)));
-        wireMockServer.verify(1, postRequestedFor(urlEqualTo(STATUS_PATH)));
+        wireMockServer.verify(1, putRequestedFor(urlPathEqualTo(STATUS_PATH)));
         assertEquals(Integer.valueOf(500), historic(process, "NSSMF_dbResponseCode"));
         assertNotNull("The rejected status write must remain visible as a workflow failure",
                 historic(process, "WorkflowException"));
@@ -171,7 +174,7 @@ public class TnTransportLifecycleProcessTest extends BaseBPMNTest {
         assertTrue(historic(process, "startTime") instanceof Long);
         assertEquals(action, historic(process, "actionType"));
         assertEquals(status, historic(process, "orchestrationStatus"));
-        assertEquals(Integer.valueOf(200), historic(process, "NSSMF_dbResponseCode"));
+        assertEquals(Integer.valueOf(204), historic(process, "NSSMF_dbResponseCode"));
         assertActivity(process, "ScriptTask_1tc44ge", 1);
         assertActivity(process, "ScriptTask_19uxoi8", 1);
         assertActivity(process, "ScriptTask_1ssh2l9", 1);
@@ -188,20 +191,17 @@ public class TnTransportLifecycleProcessTest extends BaseBPMNTest {
         assertTrue(updates.get(0).getHeader("Content-Type").contains("application/merge-patch+json"));
         assertEquals(status, new JSONObject(updates.get(0).getBodyAsString()).getString("orchestration-status"));
         wireMockServer.verify(1,
-                postRequestedFor(urlEqualTo(STATUS_PATH)).withHeader("Content-Type", containing("application/soap+xml"))
+                putRequestedFor(urlPathEqualTo(STATUS_PATH)).withHeader("Content-Type", containing("application/json"))
                         .withHeader("Authorization", containing("Basic ")));
-        Document payload =
-                xml(wireMockServer.findAll(postRequestedFor(urlEqualTo(STATUS_PATH))).get(0).getBodyAsString());
-        assertEquals("http://schemas.xmlsoap.org/soap/envelope/", payload.getDocumentElement().getNamespaceURI());
-        assertEquals(1, payload.getElementsByTagNameNS("http://org.onap.so/requestsdb", "updateResourceOperationStatus")
-                .getLength());
-        assertEquals("nsi-1", text(payload, "serviceId"));
-        assertEquals("job-1", text(payload, "operationId"));
-        assertEquals("model-1", text(payload, "resourceTemplateUUID"));
-        assertEquals(nssiId, text(payload, "resourceInstanceID"));
-        assertEquals(action.toUpperCase(Locale.ROOT), text(payload, "operType"));
-        assertEquals("FINISHED", text(payload, "status"));
-        assertEquals("100", text(payload, "progress"));
+        var request = wireMockServer.findAll(putRequestedFor(urlPathEqualTo(STATUS_PATH))).get(0);
+        assertEquals("nsi-1", request.queryParameter("serviceId").firstValue());
+        assertEquals("job-1", request.queryParameter("operationId").firstValue());
+        assertEquals("model-1", request.queryParameter("resourceTemplateUUID").firstValue());
+        JSONObject payload = new JSONObject(request.getBodyAsString());
+        assertEquals(nssiId, payload.getString("resourceInstanceID"));
+        assertEquals(action.toUpperCase(Locale.ROOT), payload.getString("operType"));
+        assertEquals("FINISHED", payload.getString("status"));
+        assertEquals("100", payload.getString("progress"));
     }
 
     private ProcessInstance start(String operation) {
@@ -228,9 +228,8 @@ public class TnTransportLifecycleProcessTest extends BaseBPMNTest {
     }
 
     private void stubStatusUpdate(int status) {
-        wireMockServer.stubFor(post(urlEqualTo(STATUS_PATH))
-                .willReturn(aResponse().withStatus(status).withHeader("Connection", "close")
-                        .withHeader("Content-Type", "application/soap+xml").withBody("<updated/>")));
+        wireMockServer.stubFor(put(urlPathEqualTo(STATUS_PATH))
+                .willReturn(aResponse().withStatus(status).withHeader("Connection", "close")));
     }
 
     private void assertProductionResource() throws Exception {

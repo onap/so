@@ -26,6 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -318,13 +319,14 @@ public class WorkflowMessagePersistenceTest {
         WireMockServer requests = new WireMockServer(0);
         requests.start();
         try {
-            requests.stubFor(post(urlEqualTo("/requests")).willReturn(aResponse().withStatus(204)));
+            requests.stubFor(post(urlPathMatching("/v1/request-db/infra-requests/[^/]+/updates"))
+                    .willReturn(aResponse().withStatus(204)));
             for (String response : new String[] {"retry", "abort"}) {
                 requests.resetRequests();
                 String requestId = "manual-" + response;
                 Map<String, Object> input = new HashMap<>();
                 input.put("msoRequestId", requestId);
-                input.put("mso.adapters.openecomp.db.endpoint", "http://localhost:" + requests.port() + "/requests");
+                input.put("mso.adapters.requestDb.endpoint", "http://localhost:" + requests.port());
                 input.put("so.auth.username", "test");
                 input.put("so.auth.password", "test");
                 input.put("mso.msoKey", "");
@@ -396,8 +398,8 @@ public class WorkflowMessagePersistenceTest {
                             return String.valueOf(value);
                         }
                         switch (name) {
-                            case "mso.adapters.openecomp.db.endpoint":
-                                return "http://localhost:" + requests.port() + "/requests";
+                            case "mso.adapters.requestDb.endpoint":
+                                return "http://localhost:" + requests.port();
                             case "mso.msoKey":
                                 return "";
                             default:
@@ -406,7 +408,7 @@ public class WorkflowMessagePersistenceTest {
                     });
             properties.when(() -> UrnPropertiesReader.getSoBasicAuthHeader(any(DelegateExecution.class)))
                     .thenReturn("Basic dGVzdDp0ZXN0");
-            requests.stubFor(post(urlEqualTo("/requests"))
+            requests.stubFor(post(urlPathMatching("/v1/request-db/infra-requests/[^/]+/updates"))
                     .willReturn(aResponse().withStatus(204).withHeader("Connection", "close")));
             for (String response : new String[] {"retry", "abort"}) {
                 requests.resetRequests();
@@ -727,10 +729,11 @@ public class WorkflowMessagePersistenceTest {
 
     private static void assertDatabaseUpdates(WireMockServer requests, String requestId, String... statuses)
             throws Exception {
-        var calls = requests.findAll(postRequestedFor(urlEqualTo("/requests")));
+        String path = "/v1/request-db/infra-requests/" + requestId + "/updates";
+        var calls = requests.findAll(postRequestedFor(urlEqualTo(path)));
         assertEquals(statuses.length, calls.size());
         requests.verify(statuses.length,
-                postRequestedFor(urlEqualTo("/requests")).withHeader("Content-Type", containing("application/soap+xml"))
+                postRequestedFor(urlEqualTo(path)).withHeader("Content-Type", containing("application/json"))
                         .withHeader("Authorization", equalTo("Basic dGVzdDp0ZXN0")));
         Map<String, Long> expected = new HashMap<>();
         for (String status : statuses) {
@@ -738,18 +741,11 @@ public class WorkflowMessagePersistenceTest {
         }
         Map<String, Long> actual = new HashMap<>();
         for (var call : calls) {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-            Document document = factory.newDocumentBuilder().parse(new ByteArrayInputStream(call.getBody()));
-            assertEquals("http://schemas.xmlsoap.org/soap/envelope/", document.getDocumentElement().getNamespaceURI());
-            assertEquals(1,
-                    document.getElementsByTagNameNS("http://org.onap.so/requestsdb", "updateInfraRequest").getLength());
-            assertEquals(requestId, document.getElementsByTagName("requestId").item(0).getTextContent());
-            assertEquals("ManualHandling", document.getElementsByTagName("lastModifiedBy").item(0).getTextContent());
-            actual.merge(document.getElementsByTagName("requestStatus").item(0).getTextContent(), 1L, Long::sum);
+            com.fasterxml.jackson.databind.JsonNode document =
+                    new com.fasterxml.jackson.databind.ObjectMapper().readTree(call.getBody());
+            assertEquals(2, document.size());
+            assertEquals("ManualHandling", document.get("lastModifiedBy").asText());
+            actual.merge(document.get("requestStatus").asText(), 1L, Long::sum);
         }
         assertEquals(expected, actual);
     }

@@ -76,35 +76,19 @@ dvfm.completionHandlerPrep(execution, 'DELVfModI_CompletionHandlerRequest')
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_17" name="" sourceRef="ScriptTask_10" targetRef="CallActivity_1" />
     <bpmn2:sequenceFlow id="SequenceFlow_8" name="" sourceRef="ScriptTask_6" targetRef="ScriptTask_5" />
-    <bpmn2:serviceTask id="ScriptTask_8" name="UpdateInfraRequest">
-      <bpmn2:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url"><![CDATA[${UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)}]]></camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">#{BasicAuthHeaderValueDB}</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${DELVfModI_updateInfraRequest}</camunda:inputParameter>
-            <camunda:outputParameter name="DELVfModI_updateInfraRequestResponse">${response}</camunda:outputParameter>
-            <camunda:outputParameter name="DELVfModI_updateInfraRequestResponseCode">${statusCode}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>soap-http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn2:extensionElements>
+    <bpmn2:scriptTask scriptFormat="groovy" id="ScriptTask_8" name="UpdateInfraRequest">
       <bpmn2:incoming>SequenceFlow_10</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_13</bpmn2:outgoing>
-    </bpmn2:serviceTask>
+          <bpmn2:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, 'updateInfraRequest', 'DELVfModI_updateInfraRequestResponse', 'DELVfModI_updateInfraRequestResponseCode', 'DELVfModI_updateInfraRequestHttp')</bpmn2:script>
+    </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_13" name="" sourceRef="ScriptTask_8" targetRef="ScriptTask_10" />
     <bpmn2:scriptTask id="ScriptTask_5" name="Update Infra Request (prep)" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_8</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_10</bpmn2:outgoing>
       <bpmn2:script><![CDATA[import org.onap.so.bpmn.infrastructure.scripts.*
 def dvfm = new DeleteVfModuleInfra()
-dvfm.prepUpdateInfraRequest(execution)]]></bpmn2:script>
+dvfm.prepUpdateInfraRequestHttp(execution)]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_10" name="" sourceRef="ScriptTask_5" targetRef="ScriptTask_8" />
     <bpmn2:subProcess id="SubProcess_1" name="Error Handler" triggeredByEvent="true">

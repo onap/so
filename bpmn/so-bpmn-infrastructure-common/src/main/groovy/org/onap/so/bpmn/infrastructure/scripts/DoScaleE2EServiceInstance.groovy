@@ -147,4 +147,41 @@ public class DoScaleE2EServiceInstance extends AbstractServiceTaskProcessor {
         logger.trace("COMPLETED preInitResourcesOperStatus Process ")
     }
 
+    public void preInitResourcesOperStatusHttp(DelegateExecution execution){
+
+        try{
+            String serviceId = execution.getVariable("serviceInstanceId")
+            String operationId = execution.getVariable("operationId")
+            String operationType = "SCALE"
+
+            String resourceTemplateUUIDs = execution.getVariable("resourceTemplateUUIDs")
+
+
+            serviceId = UriUtils.encode(serviceId,"UTF-8")
+            execution.setVariable("serviceInstanceId", serviceId)
+            execution.setVariable("operationId", operationId)
+            execution.setVariable("operationType", operationType)
+
+            execution.setVariable("URN_mso_openecomp_adapters_db_endpoint","http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
+
+            Map payload = [
+                serviceId: "${serviceId}".toString(),
+                operationId: "${operationId}".toString(),
+                operationType: "${operationType}".toString(),
+                resourceTemplateUUIDs: "${resourceTemplateUUIDs}".toString()]
+
+            execution.setVariable('CVFMI_initResOperStatusRequestHttp', payload)
+        execution.setVariable('CVFMI_initResOperStatusRequestHttpOperation', 'initResourceOperationStatus')
+
+
+
+        }catch(Exception e){
+            logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    "Exception Occured Processing preInitResourcesOperStatus.", "BPMN",
+                    ErrorCode.UnknownError.getValue(), e);
+            execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
+        }
+
+    }
+
 }

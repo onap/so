@@ -9,6 +9,7 @@
       <bpmn:outgoing>SequenceFlow_07e12rt</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def css= new DoCloudLeasedLineCreate()
+css.useRequestDbHttp()
 css.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:subProcess id="SubProcess_1yv9i68" name="Sub-process for FalloutHandler and Rollback" triggeredByEvent="true">
@@ -37,6 +38,7 @@ ex.processJavaException(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0t094g7</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def runScript = new DoCloudLeasedLineCreate()
+runScript.useRequestDbHttp()
 runScript.prepareUpdateJobStatus(execution,"INPROGRESS","10","Create Cloud Leased Line started")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_1ssh2l9" name="Prepare Update Resource Oper Status((finish)" scriptFormat="groovy">
@@ -44,6 +46,7 @@ runScript.prepareUpdateJobStatus(execution,"INPROGRESS","10","Create Cloud Lease
       <bpmn:outgoing>SequenceFlow_1qv8qw1</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def runScript = new DoCloudLeasedLineCreate()
+runScript.useRequestDbHttp()
 runScript.prepareUpdateJobStatus(execution,"FINISHED","100","Created CLL successfully")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:endEvent id="EndEvent_1oouvuh" name="End" />
@@ -58,60 +61,28 @@ runScript.prepareUpdateJobStatus(execution,"FINISHED","100","Created CLL success
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 execution.setVariable("orchestrationStatus", "created")
 def runScript = new DoCloudLeasedLineCreate()
+runScript.useRequestDbHttp()
 runScript.updateAAIOrchStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0kixzdj" sourceRef="ScriptTask_19uxoi8" targetRef="ScriptTask_1ssh2l9" />
-    <bpmn:serviceTask id="Activity_14an583" name="Update Resource Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Activity_14an583" name="Update Resource Operation Status">
       <bpmn:incoming>SequenceFlow_0t094g7</bpmn:incoming>
       <bpmn:outgoing>Flow_1k88aak</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1k88aak" sourceRef="Activity_14an583" targetRef="Activity_1tiyq9t" />
-    <bpmn:serviceTask id="Activity_1xko5pk" name="Update Resource Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Activity_1xko5pk" name="Update Resource Operation Status">
       <bpmn:incoming>SequenceFlow_1qv8qw1</bpmn:incoming>
       <bpmn:outgoing>Flow_06rrcwf</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_06rrcwf" sourceRef="Activity_1xko5pk" targetRef="EndEvent_05h01gx" />
     <bpmn:scriptTask id="Activity_1tiyq9t" name="create Service Instance in AAI" scriptFormat="groovy">
       <bpmn:incoming>Flow_1k88aak</bpmn:incoming>
       <bpmn:outgoing>Flow_0xqfi6l</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcsi = new DoCloudLeasedLineCreate()
+dcsi.useRequestDbHttp()
 dcsi.createServiceInstance(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_09pfclp" name="Create Allottedsource in AAI" scriptFormat="groovy">
@@ -119,6 +90,7 @@ dcsi.createServiceInstance(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1wzmy62</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcsi = new DoCloudLeasedLineCreate()
+dcsi.useRequestDbHttp()
 dcsi.createAllottedResource(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="Gateway_1h7dpdn" name="Enable SDNC?">
@@ -131,6 +103,7 @@ dcsi.createAllottedResource(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1xqkjy9</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcsi = new DoCloudLeasedLineCreate()
+dcsi.useRequestDbHttp()
 dcsi.preprocessSdncCreateCllRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="Activity_01m0xuh" name="Call SDNC Adapter: Create CLL" calledElement="sdncAdapter">
@@ -154,6 +127,7 @@ dcsi.preprocessSdncCreateCllRequest(execution)</bpmn:script>
 String response = execution.getVariable("CLL_SDNCAdapterResponse")
 
 def dcsi = new DoCloudLeasedLineCreate()
+dcsi.useRequestDbHttp()
 dcsi.validateSDNCResponse(execution, response, "allocate")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0xqfi6l" sourceRef="Activity_1tiyq9t" targetRef="Activity_09pfclp" />

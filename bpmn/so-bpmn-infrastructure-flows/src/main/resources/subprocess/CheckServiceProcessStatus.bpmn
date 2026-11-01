@@ -10,36 +10,21 @@
       <bpmn:outgoing>SequenceFlow_0r1x26k</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi= new CheckServiceProcessStatus()
+csi.useRequestDbHttp()
 csi.preCheckServiceStatusReq(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="ServiceTask_0w5fmqn" name="get service Operation Status&#10;">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${getOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_0w5fmqn" name="get service Operation Status&#10;">
       <bpmn:incoming>SequenceFlow_0r1x26k</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_009p8v1</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'getOperationStatus', 'dbResponse', 'dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_0z37e29" name="handler service status Response&#10;" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_009p8v1</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0yws8fh</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi= new CheckServiceProcessStatus()
-csi.handlerServiceStatusResp(execution)</bpmn:script>
+csi.useRequestDbHttp()
+csi.handlerServiceStatusRespHttp(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="ExclusiveGateway_0gk7p3l" name="Is service process finished?&#10;" default="SequenceFlow_01o92x6">
       <bpmn:incoming>SequenceFlow_0yws8fh</bpmn:incoming>
@@ -52,6 +37,7 @@ csi.handlerServiceStatusResp(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_0e29y0f</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi= new CheckServiceProcessStatus()
+csi.useRequestDbHttp()
 csi.timeWaitDelay(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_0e29y0f" sourceRef="ScriptTask_1ao91w3" targetRef="ScriptTask_1mlave2" />
@@ -71,6 +57,7 @@ csi.timeWaitDelay(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1n5nl53</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi= new CheckServiceProcessStatus()
+csi.useRequestDbHttp()
 csi.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_0oic8cv" name="prepare Update Service Operation progress" scriptFormat="groovy">
@@ -78,31 +65,15 @@ csi.preProcessRequest(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1q8dls4</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def csi= new CheckServiceProcessStatus()
+csi.useRequestDbHttp()
 csi.preUpdateOperationProgress(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1q8dls4" sourceRef="ScriptTask_0oic8cv" targetRef="ServiceTask_1b60rre" />
-    <bpmn:serviceTask id="ServiceTask_1b60rre" name="Update Service Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_1b60rre" name="Update Service Operation Status">
       <bpmn:incoming>SequenceFlow_1q8dls4</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1pxnqsp</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateOperationStatus', 'CSMF_dbResponse', 'CSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_1pxnqsp" sourceRef="ServiceTask_1b60rre" targetRef="ScriptTask_1ao91w3" />
     <bpmn:sequenceFlow id="SequenceFlow_01o92x6" sourceRef="ExclusiveGateway_0gk7p3l" targetRef="ExclusiveGateway_1pdfjh4" />
     <bpmn:exclusiveGateway id="ExclusiveGateway_1pdfjh4" name="isNeedUpdateDB?&#10;" default="SequenceFlow_1ktr440">

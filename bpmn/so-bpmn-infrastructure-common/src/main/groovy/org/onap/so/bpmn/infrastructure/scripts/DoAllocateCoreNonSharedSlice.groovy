@@ -72,6 +72,11 @@ class DoAllocateCoreNonSharedSlice extends AbstractServiceTaskProcessor {
     private static final ObjectMapper objectMapper = new ObjectMapper()
     private CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
     private RequestDBUtil requestDBUtil = new RequestDBUtil()
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     private ExceptionUtil exceptionUtil = new ExceptionUtil()
     private JsonUtils jsonUtil = new JsonUtils()
 

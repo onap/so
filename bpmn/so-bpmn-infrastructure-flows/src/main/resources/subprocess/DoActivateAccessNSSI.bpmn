@@ -92,6 +92,7 @@
       <bpmn:outgoing>Flow_10f44ab</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.getRelatedInstances(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_1fv6ljk" name="Preprocess request" scriptFormat="groovy">
@@ -99,6 +100,7 @@ activator.getRelatedInstances(execution)</bpmn:script>
       <bpmn:outgoing>Flow_14z4acw</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.preProcessRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_19myg2v" name="Check AN Slice profile status" scriptFormat="groovy">
@@ -106,6 +108,7 @@ activator.preProcessRequest(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0uxerfg</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.getSPOrchStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_1atych2" name="Check Orchestration status of AN NF sliceprofile" scriptFormat="groovy">
@@ -113,6 +116,7 @@ activator.getSPOrchStatus(execution)</bpmn:script>
       <bpmn:outgoing>Flow_00yl2jk</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.getAnNfSPOrchStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_0iluozh" name="Prepare RAN NF NSSI activation request" scriptFormat="groovy">
@@ -120,6 +124,7 @@ activator.getAnNfSPOrchStatus(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1gxv9id</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.prepareSdnrActivationRequest(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="Activity_0u2aqld" name="Call SDNR subprocess" calledElement="DoHandleSdnrDmaapRequest">
@@ -140,6 +145,7 @@ activator.prepareSdnrActivationRequest(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1myzbqw</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.processSdnrResponse(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="Gateway_1xwu5f0" name="Is Success response" default="Flow_1v4zg98">
@@ -156,30 +162,14 @@ activator.processSdnrResponse(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0rizzsm</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.prepareUpdateJobStatus(execution,"processing","40","AN NF NSSI activation completed")</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="Activity_08yj5gq" name="Update Resource Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Activity_08yj5gq" name="Update Resource Operation Status">
       <bpmn:incoming>Flow_0rizzsm</bpmn:incoming>
       <bpmn:outgoing>Flow_0mtkhmv</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1yrel0t" name="Yes" sourceRef="Gateway_1xwu5f0" targetRef="Activity_09e5oh6">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("isANactivationSuccess") == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -203,33 +193,17 @@ activator.prepareUpdateJobStatus(execution,"processing","40","AN NF NSSI activat
 ExceptionUtil ex = new ExceptionUtil()
 ex.processJavaException(execution)</bpmn:script>
       </bpmn:scriptTask>
-      <bpmn:serviceTask id="Activity_1szd5yp" name="Update Resource Operation Status">
-        <bpmn:extensionElements>
-          <camunda:connector>
-            <camunda:inputOutput>
-              <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-              <camunda:inputParameter name="headers">
-                <camunda:map>
-                  <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                  <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-                </camunda:map>
-              </camunda:inputParameter>
-              <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-              <camunda:inputParameter name="method">POST</camunda:inputParameter>
-              <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-              <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-            </camunda:inputOutput>
-            <camunda:connectorId>http-connector</camunda:connectorId>
-          </camunda:connector>
-        </bpmn:extensionElements>
+      <bpmn:scriptTask scriptFormat="groovy" id="Activity_1szd5yp" name="Update Resource Operation Status">
         <bpmn:incoming>Flow_075rb1i</bpmn:incoming>
         <bpmn:outgoing>Flow_1bqk5yt</bpmn:outgoing>
-      </bpmn:serviceTask>
+            <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
       <bpmn:scriptTask id="Activity_0lpw3j7" name="Update Job status" scriptFormat="groovy">
         <bpmn:incoming>Flow_0tw7xsp</bpmn:incoming>
         <bpmn:outgoing>Flow_075rb1i</bpmn:outgoing>
         <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.prepareUpdateJobStatus(execution,"failed","0","AN NSSI activation Failed")</bpmn:script>
       </bpmn:scriptTask>
       <bpmn:sequenceFlow id="Flow_0y0r82m" sourceRef="Activity_1eedm9e" targetRef="Event_1n2qjvx" />
@@ -260,6 +234,7 @@ ex.processJavaException(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1sroz8o</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.updateAnNfStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0mtkhmv" sourceRef="Activity_08yj5gq" targetRef="Gateway_0n3zhxo" />
@@ -268,6 +243,7 @@ activator.updateAnNfStatus(execution)</bpmn:script>
       <bpmn:outgoing>Flow_1yd57bl</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.getTnFhSPOrchStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_0gtw2p7" name="Handle TN FH NSSI Activation" scriptFormat="groovy">
@@ -275,6 +251,7 @@ activator.getTnFhSPOrchStatus(execution)</bpmn:script>
       <bpmn:outgoing>Flow_0heuc95</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.doTnFhNssiActivation(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_07cr1m2" name="Prepare job status query" scriptFormat="groovy">
@@ -287,6 +264,7 @@ String networkType="tn"
 String nssiid=execution.getVariable("tnFhNssiId")
 
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.prepareQueryJobStatus(execution, jobId,networkType, nssiid)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="Activity_03hbxfi" name="QueryJobStatus" calledElement="QueryJobStatus">
@@ -309,6 +287,7 @@ activator.prepareQueryJobStatus(execution, jobId,networkType, nssiid)</bpmn:scri
 String responseDescriptor = execution.getVariable("tn_responseDescriptor")
 
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.validateJobStatus(execution, responseDescriptor)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="Gateway_1ot96tc" name="Is Job complete?" default="Flow_0ajre96">
@@ -328,28 +307,11 @@ activator.validateJobStatus(execution, responseDescriptor)</bpmn:script>
       <bpmn:incoming>Flow_0ajre96</bpmn:incoming>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0p0lfhq" errorRef="Error_1beg2za" />
     </bpmn:endEvent>
-    <bpmn:serviceTask id="Activity_1t28p4r" name="Update Resource Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Activity_1t28p4r" name="Update Resource Operation Status">
       <bpmn:incoming>Flow_1ldkgyg</bpmn:incoming>
       <bpmn:outgoing>Flow_1qszzfv</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1ldkgyg" sourceRef="Activity_1o0a55b" targetRef="Activity_1t28p4r" />
     <bpmn:sequenceFlow id="Flow_1qszzfv" sourceRef="Activity_1t28p4r" targetRef="Event_0ki3ncn" />
     <bpmn:scriptTask id="Activity_1o0a55b" name="Update Job status" scriptFormat="groovy">
@@ -357,6 +319,7 @@ activator.validateJobStatus(execution, responseDescriptor)</bpmn:script>
       <bpmn:outgoing>Flow_1ldkgyg</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.prepareUpdateJobStatus(execution,"processing","60","TN FH NSSI activation completed")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_068a0cy" name="Check TN MH Slice profile status" scriptFormat="groovy">
@@ -364,6 +327,7 @@ activator.prepareUpdateJobStatus(execution,"processing","60","TN FH NSSI activat
       <bpmn:outgoing>Flow_0q02qno</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.getTnMhSPOrchStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:intermediateCatchEvent id="Event_1azfo77" name="AN NSSI Activation">
@@ -376,6 +340,7 @@ activator.getTnMhSPOrchStatus(execution)</bpmn:script>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.doTnMhNssiActivation(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_1kszh5k" name="Prepare job status query" scriptFormat="groovy">
@@ -388,6 +353,7 @@ String networkType="tn"
 String nssiid=execution.getVariable("tnMhNssiId")
 
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.prepareQueryJobStatus(execution, jobId,networkType, nssiid)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:callActivity id="Activity_09jt4b0" name="QueryJobStatus" calledElement="QueryJobStatus">
@@ -410,6 +376,7 @@ activator.prepareQueryJobStatus(execution, jobId,networkType, nssiid)</bpmn:scri
 String responseDescriptor = execution.getVariable("tn_responseDescriptor")
 
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.validateJobStatus(execution, responseDescriptor)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:exclusiveGateway id="Gateway_114io6q" name="Is Job complete?" default="Flow_0rzuxa0">
@@ -426,30 +393,14 @@ activator.validateJobStatus(execution, responseDescriptor)</bpmn:script>
       <bpmn:outgoing>Flow_1wx5w6i</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.prepareUpdateJobStatus(execution,"processing","80","TN MH NSSI activation completed")</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="Activity_1xnstqr" name="Update Resource Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Activity_1xnstqr" name="Update Resource Operation Status">
       <bpmn:incoming>Flow_1wx5w6i</bpmn:incoming>
       <bpmn:outgoing>Flow_1b6vtso</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0sqsq1x" sourceRef="Activity_1kszh5k" targetRef="Activity_09jt4b0" />
     <bpmn:sequenceFlow id="Flow_0b7aq1k" sourceRef="Activity_09jt4b0" targetRef="Activity_1su25xm" />
     <bpmn:sequenceFlow id="Flow_0to1idt" sourceRef="Activity_1su25xm" targetRef="Gateway_114io6q" />
@@ -466,6 +417,7 @@ activator.prepareUpdateJobStatus(execution,"processing","80","TN MH NSSI activat
       <bpmn:outgoing>Flow_1b95clk</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.updateTNFHStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_0xmezab" name="Update TN MH SP and NSSI Orch Status" scriptFormat="groovy">
@@ -474,6 +426,7 @@ activator.updateTNFHStatus(execution)</bpmn:script>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.updateTNMHStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_0k5cyz7" sourceRef="Activity_0xmezab" targetRef="Activity_0ftm8b6" />
@@ -483,6 +436,7 @@ activator.updateTNMHStatus(execution)</bpmn:script>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.updateANStatus(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_0huy5ph" name="Update Job status" scriptFormat="groovy">
@@ -490,30 +444,14 @@ activator.updateANStatus(execution)</bpmn:script>
       <bpmn:outgoing>Flow_06nfip0</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def activator = new DoActivateAccessNSSI()
+activator.useRequestDbHttp()
 activator.prepareUpdateJobStatus(execution,"finished","100","AN NSSI activation completed")</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="Activity_1tbardv" name="Update Resource Operation Status">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${updateResourceOperationStatus}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="NSSMF_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Activity_1tbardv" name="Update Resource Operation Status">
       <bpmn:incoming>Flow_06nfip0</bpmn:incoming>
       <bpmn:outgoing>Flow_1876ml0</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>new org.onap.so.bpmn.common.scripts.RequestDBUtil().invokeHttp(execution, 'updateResourceOperationStatus', 'NSSMF_dbResponse', 'NSSMF_dbResponseCode')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_06nfip0" sourceRef="Activity_0huy5ph" targetRef="Activity_1tbardv" />
     <bpmn:sequenceFlow id="Flow_0cblklk" sourceRef="Activity_1j0xkqc" targetRef="Activity_0huy5ph" />
     <bpmn:sequenceFlow id="Flow_1876ml0" sourceRef="Activity_1tbardv" targetRef="Event_0gx3ps0" />

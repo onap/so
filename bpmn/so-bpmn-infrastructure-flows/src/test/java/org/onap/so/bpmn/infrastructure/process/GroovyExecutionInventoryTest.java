@@ -70,6 +70,94 @@ public class GroovyExecutionInventoryTest {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
+    public void workflowSpecificOperationDefinitionsUseRest() throws Exception {
+        int invocations = 0;
+        try (Stream<Path> paths = Files.walk(Paths.get("src/main/resources"))) {
+            for (Path path : paths.filter(value -> value.toString().endsWith(".bpmn"))
+                    .collect(java.util.stream.Collectors.toList())) {
+                String definition = Files.readString(path);
+                if (path.getFileName().toString().equals("DoCreateE2EServiceInstanceV2.bpmn")
+                        || path.getFileName().toString().equals("CreateActivateSDNCResource.bpmn")) {
+                    Matcher legacy = Pattern.compile(
+                            "\\$\\{CVFMI_(?:updateServiceOperStatusRequest|initResOperStatusRequest|updateResOperStatusRequest)\\}")
+                            .matcher(definition);
+                    int blocked = 0;
+                    while (legacy.find()) {
+                        blocked++;
+                    }
+                    assertEquals(path.toString(),
+                            path.getFileName().toString().equals("DoCreateE2EServiceInstanceV2.bpmn") ? 5 : 3, blocked);
+                    continue;
+                }
+                for (String variable : Arrays.asList("CVFMI_updateServiceOperStatusRequest",
+                        "CVFMI_initResOperStatusRequest", "CVFMI_updateResOperStatusRequest")) {
+                    assertFalse(path.toString(), definition.contains("${" + variable + "}"));
+                }
+                Matcher matcher = Pattern.compile(
+                        "requestDb.invokeHttp\\(execution,.*'CVFMI_(?:updateServiceOperStatusRequest|initResOperStatusRequest|updateResOperStatusRequest)Http'\\)")
+                        .matcher(definition);
+                while (matcher.find()) {
+                    invocations++;
+                }
+            }
+        }
+        assertEquals(35, invocations);
+    }
+
+    @Test
+    public void workflowSpecificInfraDefinitionsUseRestPreparations() throws Exception {
+        for (String name : Arrays.asList("CreateVfModuleInfra", "CreateVfModuleVolumeInfraV1",
+                "DeleteVfModuleVolumeInfraV1", "DeleteVfModuleInfra", "UpdateVfModuleVolumeInfraV1",
+                "CreateVcpeResCustService", "CreateVcpeResCustServiceV2")) {
+            String definition = Files.readString(Paths.get("src/main/resources/process", name + ".bpmn"));
+            assertFalse(name, definition.contains("application/soap+xml"));
+            assertTrue(name, definition.contains("requestDb.invokeHttp(execution, 'updateInfraRequest'"));
+            assertTrue(name, definition.contains("Http', execution") || definition.contains("Http(execution)"));
+        }
+    }
+
+    @Test
+    public void sharedRequestDbConsumersUseExplicitHttpHelpers() throws Exception {
+        int definitions = 0;
+        int invocations = 0;
+        try (java.util.stream.Stream<Path> paths = Files.walk(Paths.get("src/main/resources"))) {
+            for (Path path : paths.filter(value -> value.toString().endsWith(".bpmn"))
+                    .collect(java.util.stream.Collectors.toList())) {
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                factory.setNamespaceAware(true);
+                factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                Document document = factory.newDocumentBuilder().parse(path.toFile());
+                NodeList inputs = document.getElementsByTagNameNS(CAMUNDA, "inputParameter");
+                for (int index = 0; index < inputs.getLength(); index++) {
+                    String payload = inputs.item(index).getTextContent().trim();
+                    assertTrue(path.toString(),
+                            !Arrays.asList("${updateOperationStatus}", "${getOperationStatus}",
+                                    "${initResourceOperationStatus}", "${updateResourceOperationStatus}")
+                                    .contains(payload));
+                }
+                NodeList scripts = document.getElementsByTagNameNS(BPMN, "script");
+                int count = 0;
+                boolean selected = false;
+                for (int index = 0; index < scripts.getLength(); index++) {
+                    String script = scripts.item(index).getTextContent();
+                    if (script.contains("RequestDBUtil().invokeHttp(")) {
+                        count++;
+                    }
+                    selected |= script.contains(".useRequestDbHttp()");
+                    assertTrue(path.toString(), !script.contains(".handlerServiceStatusResp(execution)"));
+                }
+                if (count > 0) {
+                    assertTrue(path.toString(), selected);
+                    definitions++;
+                    invocations += count;
+                }
+            }
+        }
+        assertEquals(31, definitions);
+        assertEquals(63, invocations);
+    }
+
+    @Test
     public void packagedGroovySurfacesMatchReviewedBaseline() throws Exception {
         Assume.assumeTrue("Packaged inventory requires groovy-migration-verification profile",
                 Boolean.getBoolean("groovy.migration.verification"));

@@ -383,4 +383,39 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		}
 		logger.debug("======== COMPLETED prepareInitServiceOperationStatus Process ======== ")
 	}
+
+	public void prepareInitServiceOperationStatusHttp(DelegateExecution execution){
+
+		try{
+			String serviceId = execution.getVariable("serviceInstanceId")
+			serviceId = UriUtils.encode(serviceId,"UTF-8")
+			String operationId = execution.getVariable("operationId")
+			String userId = ""
+			String result = "processing"
+			String progress = "0"
+			String reason = ""
+			String operationContent = "Prepare service creation"
+
+
+
+			Map payload = [
+                serviceId: "${serviceId}".toString(),
+                operationId: "${operationId}".toString(),
+                operationType: "DELETE".toString(),
+                userId: "${userId}".toString(),
+                result: "${result}".toString(),
+                operationContent: "${operationContent}".toString(),
+                progress: "${progress}".toString(),
+                reason: "${reason}".toString()]
+
+			execution.setVariable('CVFMI_updateServiceOperStatusRequestHttp', payload)
+        execution.setVariable('CVFMI_updateServiceOperStatusRequestHttpOperation', 'updateOperationStatus')
+
+
+		}catch(Exception e){
+			logger.error("Exception Occured Processing prepareInitServiceOperationStatus. Exception is:\n" + e)
+			execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())
+		}
+
+	}
 }

@@ -51,6 +51,11 @@ class DeleteSliceService extends AbstractServiceTaskProcessor {
     JsonUtils jsonUtil = new JsonUtils()
     private RequestDBUtil requestDBUtil = new RequestDBUtil()
 
+
+    void useRequestDbHttp() {
+        requestDBUtil = RequestDBUtil.forHttp()
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger( DeleteSliceService.class)
 
     @Override

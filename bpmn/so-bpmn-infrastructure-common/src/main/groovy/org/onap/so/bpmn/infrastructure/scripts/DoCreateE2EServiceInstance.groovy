@@ -553,6 +553,51 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
         logger.trace("COMPLETED preInitResourcesOperStatus Process ")
 	}
 
+	public void preInitResourcesOperStatusHttp(DelegateExecution execution){
+
+        try{
+            String serviceId = execution.getVariable("serviceInstanceId")
+            String operationId = execution.getVariable("operationId")
+            String operationType = execution.getVariable("operationType")
+            String resourceTemplateUUIDs = ""
+            String result = "processing"
+            String progress = "0"
+            String reason = ""
+            String operationContent = "Prepare service creation"
+
+
+			serviceId = UriUtils.encode(serviceId,"UTF-8")
+            execution.setVariable("serviceInstanceId", serviceId)
+            execution.setVariable("operationId", operationId)
+            execution.setVariable("operationType", operationType)
+            ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
+            List<Resource>  resourceList = serviceDecomposition.getServiceResources()
+
+            for(Resource resource : resourceList){
+                    resourceTemplateUUIDs  = resourceTemplateUUIDs + resource.getModelInfo().getModelCustomizationUuid() + ":"
+            }
+
+
+            Map payload = [
+                serviceId: "${serviceId}".toString(),
+                operationId: "${operationId}".toString(),
+                operationType: "${operationType}".toString(),
+                resourceTemplateUUIDs: "${resourceTemplateUUIDs}".toString()]
+
+            execution.setVariable('CVFMI_initResOperStatusRequestHttp', payload)
+        execution.setVariable('CVFMI_initResOperStatusRequestHttpOperation', 'initResourceOperationStatus')
+
+
+
+        }catch(Exception e){
+            logger.error(LoggingAnchor.FIVE, MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing preInitResourcesOperStatus.", "BPMN",
+					ErrorCode.UnknownError.getValue(), e)
+            execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
+        }
+
+	}
+
 	// if site location is in local Operator, create all resources in local ONAP
 	// if site location is in 3rd Operator, only process sp-partner to create all resources in 3rd ONAP
 	public void doProcessSiteLocation(DelegateExecution execution){

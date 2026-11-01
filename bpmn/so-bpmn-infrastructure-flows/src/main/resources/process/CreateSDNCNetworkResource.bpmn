@@ -52,52 +52,20 @@ dcsi.preProcessRequest(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1mz0vdx</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcsi = new CreateSDNCNetworkResource()
-dcsi.prepareUpdateBeforeCreateSDNCResource(execution)</bpmn:script>
+dcsi.prepareUpdateBeforeCreateSDNCResourceHttp(execution)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="Task_18tomkl" name="update progress update">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_updateResOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+    <bpmn:scriptTask scriptFormat="groovy" id="Task_18tomkl" name="update progress update">
       <bpmn:incoming>SequenceFlow_1mz0vdx</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_15mvedq</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="ServiceTask_1cm8iwr" name="update progress update">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">${CVFMI_dbAdapterEndpoint}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="content-type">application/soap+xml</camunda:entry>
-                <camunda:entry key="Authorization">Basic YnBlbDpwYXNzd29yZDEk</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">${CVFMI_updateResOperStatusRequest}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponseCode">${statusCode}</camunda:outputParameter>
-            <camunda:outputParameter name="CVFMI_dbResponse">${response}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
+          <bpmn:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, execution.getVariable('CVFMI_updateResOperStatusRequestHttpOperation'), 'CVFMI_dbResponse', 'CVFMI_dbResponseCode', 'CVFMI_updateResOperStatusRequestHttp')</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask scriptFormat="groovy" id="ServiceTask_1cm8iwr" name="update progress update">
       <bpmn:incoming>SequenceFlow_1cd8ujq</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0drbyvd</bpmn:outgoing>
-    </bpmn:serviceTask>
+          <bpmn:script>def requestDb = new org.onap.so.bpmn.common.scripts.RequestDBUtil()
+requestDb.invokeHttp(execution, execution.getVariable('CVFMI_updateResOperStatusRequestHttpOperation'), 'CVFMI_dbResponse', 'CVFMI_dbResponseCode', 'CVFMI_updateResOperStatusRequestHttp')</bpmn:script>
+    </bpmn:scriptTask>
     <bpmn:scriptTask id="ScriptTask_1g5zyi6" name="Send Sync Ack Response" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0drbyvd</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0auvfvm</bpmn:outgoing>
@@ -119,7 +87,7 @@ csi.sendSyncResponse(execution)</bpmn:script>
       <bpmn:outgoing>SequenceFlow_1cd8ujq</bpmn:outgoing>
       <bpmn:script>import org.onap.so.bpmn.infrastructure.scripts.*
 def dcsi = new CreateSDNCNetworkResource()
-dcsi.prepareUpdateAfterCreateSDNCResource(execution)</bpmn:script>
+dcsi.prepareUpdateAfterCreateSDNCResourceHttp(execution)</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="SequenceFlow_05m2j56" name="No" sourceRef="ExclusiveGateway_0cdulnk" targetRef="Task_0uwlr22" />
     <bpmn:sequenceFlow id="SequenceFlow_05niqbf" sourceRef="Task_0bga3e8" targetRef="Task_0uwlr22" />

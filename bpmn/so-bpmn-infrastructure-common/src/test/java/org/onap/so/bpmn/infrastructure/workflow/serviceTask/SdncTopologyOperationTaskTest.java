@@ -21,6 +21,11 @@ package org.onap.so.bpmn.infrastructure.workflow.serviceTask;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
@@ -29,7 +34,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.util.HashMap;
@@ -49,6 +56,7 @@ public class SdncTopologyOperationTaskTest {
     private static final String NETWORK_TOPOLOGY =
             "/restconf/operations/GENERIC-RESOURCE-API:network-topology-operation";
     private static final String REQUESTS_DB = "/dbadapters/RequestsDbAdapter";
+    private static final String RESOURCE_OPERATIONS = "/v1/request-db/resource-operations";
 
     @Rule
     public WireMockRule wireMock = new WireMockRule(0);
@@ -68,6 +76,101 @@ public class SdncTopologyOperationTaskTest {
             return null;
         }).when(execution).setVariable(anyString(), any());
         wireMock.stubFor(post(urlEqualTo(REQUESTS_DB)).willReturn(aResponse().withStatus(200)));
+    }
+
+    @Test
+    public void restNetworkDelegatePreservesResourceFieldsAndSdncRequest() throws Exception {
+        configureRestResource(200);
+        wireMock.stubFor(post(urlEqualTo(NETWORK_TOPOLOGY)).willReturn(aResponse().withStatus(200)));
+
+        restTask("SdncNetworkTopologyRequestDbHttpTask").execute(execution);
+
+        assertEquals(true, variables.get("SDNCA_SuccessIndicator"));
+        verifyRestProgress(3);
+        wireMock.verify(1, putRequestedFor(urlPathEqualTo(RESOURCE_OPERATIONS))
+                .withRequestBody(matchingJsonPath("$.progress", equalTo("100"))));
+        wireMock.verify(1, postRequestedFor(urlEqualTo(NETWORK_TOPOLOGY)));
+    }
+
+    @Test
+    public void restServiceDelegatePreservesStatusWhenOnlyProgressChanges() throws Exception {
+        configureRestResource(200);
+        wireMock.stubFor(post(urlEqualTo(SERVICE_TOPOLOGY)).willReturn(aResponse().withStatus(200)));
+
+        restTask("SdncServiceTopologyRequestDbHttpTask").execute(execution);
+
+        assertEquals(true, variables.get("SDNCA_SuccessIndicator"));
+        verifyRestProgress(2);
+        wireMock.verify(2, putRequestedFor(urlPathEqualTo(RESOURCE_OPERATIONS))
+                .withRequestBody(matchingJsonPath("$.status", equalTo("existing-status"))));
+        wireMock.verify(1, postRequestedFor(urlEqualTo(SERVICE_TOPOLOGY)));
+    }
+
+    @Test
+    public void restMissingResourceRemainsBestEffort() throws Exception {
+        configureRestResource(404);
+        wireMock.stubFor(post(urlEqualTo(NETWORK_TOPOLOGY)).willReturn(aResponse().withStatus(200)));
+
+        restTask("SdncNetworkTopologyRequestDbHttpTask").execute(execution);
+
+        assertEquals(true, variables.get("SDNCA_SuccessIndicator"));
+        wireMock.verify(3, getRequestedFor(urlPathEqualTo(RESOURCE_OPERATIONS)));
+        wireMock.verify(0, putRequestedFor(urlPathEqualTo(RESOURCE_OPERATIONS)));
+        wireMock.verify(0, postRequestedFor(urlEqualTo(REQUESTS_DB)));
+    }
+
+    @Test
+    public void restSdncFailureKeepsFailureIndicatorAndTerminalProgress() throws Exception {
+        configureRestResource(200);
+        wireMock.stubFor(post(urlEqualTo(NETWORK_TOPOLOGY)).willReturn(aResponse().withStatus(500)));
+
+        restTask("SdncNetworkTopologyRequestDbHttpTask").execute(execution);
+
+        assertEquals(false, variables.get("SDNCA_SuccessIndicator"));
+        verifyRestProgress(3);
+        wireMock.verify(1,
+                putRequestedFor(urlPathEqualTo(RESOURCE_OPERATIONS))
+                        .withRequestBody(matchingJsonPath("$.status", equalTo("error")))
+                        .withRequestBody(matchingJsonPath("$.progress", equalTo("100"))));
+    }
+
+    private void configureRestResource(int status) {
+        variables.put("mso.adapters.requestDb.endpoint", wireMock.baseUrl());
+        variables.put("so.auth.username", "test-user");
+        variables.put("so.auth.password", java.util.UUID.randomUUID().toString());
+        wireMock.stubFor(get(urlPathEqualTo(RESOURCE_OPERATIONS))
+                .willReturn(aResponse().withStatus(status).withHeader("Content-Type", "application/json")
+                        .withBody("{\"serviceId\":\"service-1\",\"operationId\":\"operation-1\","
+                                + "\"resourceTemplateUUID\":\"resource-1\",\"operType\":\"CREATE\",\"jobId\":\"job-1\","
+                                + "\"status\":\"existing-status\",\"errorCode\":\"existing-error\"}")));
+        wireMock.stubFor(put(urlPathEqualTo(RESOURCE_OPERATIONS)).willReturn(aResponse().withStatus(204)));
+    }
+
+    private AbstractSdncOperationTask restTask(String name) throws Exception {
+        AbstractSdncOperationTask task = spy((AbstractSdncOperationTask) Class
+                .forName("org.onap.so.bpmn.infrastructure.workflow.serviceTask." + name).getDeclaredConstructor()
+                .newInstance());
+        doReturn(wireMock.baseUrl()).when(task).getSdncHost();
+        doReturn("127.0.0.1").when(task).getSdncIp();
+        doReturn(String.valueOf(wireMock.port())).when(task).getSdncPort();
+        return task;
+    }
+
+    private void verifyRestProgress(int calls) {
+        wireMock.verify(calls,
+                getRequestedFor(urlPathEqualTo(RESOURCE_OPERATIONS)).withQueryParam("serviceId", equalTo("service-1"))
+                        .withQueryParam("operationId", equalTo("operation-1"))
+                        .withQueryParam("resourceTemplateUUID", equalTo("resource-1")));
+        wireMock.verify(calls,
+                putRequestedFor(urlPathEqualTo(RESOURCE_OPERATIONS))
+                        .withHeader("Content-Type", equalTo("application/json"))
+                        .withHeader("Authorization",
+                                equalTo(org.onap.so.utils.BasicAuth.header("test-user",
+                                        (String) variables.get("so.auth.password"))))
+                        .withRequestBody(matchingJsonPath("$.operType", equalTo("CREATE")))
+                        .withRequestBody(matchingJsonPath("$.jobId", equalTo("job-1")))
+                        .withRequestBody(matchingJsonPath("$.errorCode", equalTo("existing-error"))));
+        wireMock.verify(0, postRequestedFor(urlEqualTo(REQUESTS_DB)));
     }
 
     @Test

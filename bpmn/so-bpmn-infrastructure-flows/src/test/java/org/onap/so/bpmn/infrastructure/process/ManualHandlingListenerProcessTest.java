@@ -31,14 +31,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilderFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.camunda.bpm.engine.ProcessEngineException;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.history.HistoricVariableInstance;
@@ -51,14 +50,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.BaseBPMNTest;
 import org.onap.so.bpmn.core.WorkflowException;
+import org.onap.so.utils.BasicAuth;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
 public class ManualHandlingListenerProcessTest extends BaseBPMNTest {
     private static final String PROCESS = "ManualHandling";
     private static final String USER_TASK = "ManualHandlingUserTask";
-    private static final String PATH = "/manual-request-status";
+    private static final String PATH = "/v1/request-db/infra-requests/request%3C%261/updates";
+    private String authorization;
     private final List<String> instances = new ArrayList<>();
     @Autowired
     private TaskService tasks;
@@ -86,8 +85,11 @@ public class ManualHandlingListenerProcessTest extends BaseBPMNTest {
         variables.put("errorCode", "5300");
         variables.put("errorText", "東京 & <controller> failed");
         variables.put("validResponses", "retry,abort");
-        variables.put("mso.adapters.openecomp.db.endpoint", "http://localhost:" + wireMockPort + PATH);
-        variables.put("BasicAuthHeaderValueDB", "Basic dGVzdDp0ZXN0");
+        variables.put("mso.adapters.requestDb.endpoint", "http://localhost:" + wireMockPort);
+        String password = UUID.randomUUID().toString();
+        variables.put("so.auth.username", "test-user");
+        variables.put("so.auth.password", password);
+        authorization = BasicAuth.header("test-user", password);
         wireMockServer.stubFor(
                 post(urlEqualTo(PATH)).willReturn(aResponse().withStatus(204).withHeader("Connection", "close")));
     }
@@ -178,20 +180,14 @@ public class ManualHandlingListenerProcessTest extends BaseBPMNTest {
         assertActivity(process, "processJavaError", 0);
         assertEquals(Integer.valueOf(204), historic(process, "updateRequestResponseCode"));
         assertEquals("", historic(process, "updateRequestResponse"));
-        wireMockServer.verify(1,
-                postRequestedFor(urlEqualTo(PATH)).withHeader("Authorization", equalTo("Basic dGVzdDp0ZXN0"))
-                        .withHeader("Content-Type", equalTo("application/soap+xml")));
+        wireMockServer.verify(1, postRequestedFor(urlEqualTo(PATH)).withHeader("Authorization", equalTo(authorization))
+                .withHeader("Content-Type", equalTo("application/json")));
         assertEquals(1, wireMockServer.getAllServeEvents().size());
         String payload = wireMockServer.findAll(postRequestedFor(urlEqualTo(PATH))).get(0).getBodyAsString();
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        Document xml = factory.newDocumentBuilder().parse(new InputSource(new StringReader(payload)));
-        assertEquals(1, xml.getElementsByTagNameNS("http://org.onap.so/requestsdb", "updateInfraRequest").getLength());
-        assertEquals("request<&1", xml.getElementsByTagName("requestId").item(0).getTextContent());
-        assertEquals("IN_PROGRESS", xml.getElementsByTagName("requestStatus").item(0).getTextContent());
-        assertEquals("ManualHandling", xml.getElementsByTagName("lastModifiedBy").item(0).getTextContent());
+        JsonNode json = new ObjectMapper().readTree(payload);
+        assertEquals(2, json.size());
+        assertEquals("IN_PROGRESS", json.get("requestStatus").asText());
+        assertEquals("ManualHandling", json.get("lastModifiedBy").asText());
         try {
             tasks.complete(task.getId());
             fail("A completed manual task must not be completed twice");

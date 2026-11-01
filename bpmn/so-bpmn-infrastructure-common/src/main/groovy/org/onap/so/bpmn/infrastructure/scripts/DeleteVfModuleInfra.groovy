@@ -241,6 +241,18 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 	 *
 	 * @param execution The flow's execution instance.
 	 */
+	void prepUpdateInfraRequestHttp(DelegateExecution execution) {
+		try {
+			execution.setVariable('DELVfModI_updateInfraRequestHttp', [
+					requestId: String.valueOf(execution.getVariable('DELVfModI_requestId')),
+					lastModifiedBy: 'BPMN', requestStatus: 'COMPLETED', progress: '100'])
+		} catch (BpmnError failure) {
+			throw failure
+		} catch (Exception failure) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepInfraRequest(): ' + failure.getMessage())
+		}
+	}
+
 	public void prepUpdateInfraRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepUpdateInfraRequest(' +
 			'execution=' + execution.getId() +

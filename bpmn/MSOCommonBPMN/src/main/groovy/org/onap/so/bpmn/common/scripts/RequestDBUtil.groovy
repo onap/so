@@ -23,6 +23,8 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.db.request.beans.OperationStatus
 import org.onap.so.db.request.beans.ResourceOperationStatus
+import org.onap.so.db.request.client.RequestDbCommands
+import org.springframework.web.client.HttpStatusCodeException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.util.UriUtils
@@ -30,6 +32,111 @@ import org.springframework.web.util.UriUtils
 class RequestDBUtil {
     private static final Logger logger = LoggerFactory.getLogger( RequestDBUtil.class);
     private ExceptionUtil exceptionUtil = new ExceptionUtil()
+
+    static RequestDBUtil forHttp() {
+        return new HttpPreparation()
+    }
+
+    void prepareUpdateOperationStatusHttp(DelegateExecution execution, OperationStatus status) {
+        execution.setVariable('updateOperationStatusHttp', [serviceId: UriUtils.encode(status.serviceId, 'UTF-8'),
+                operationId: status.operationId, operationType: status.operation, userId: status.userId,
+                result: status.result, operationContent: status.operationContent ?: '',
+                progress: status.progress, reason: status.reason ?: ''].collectEntries { name, value ->
+                    [(name): String.valueOf(value)]
+                })
+    }
+
+    void getOperationStatusHttp(DelegateExecution execution, String serviceId, String operationId) {
+        execution.setVariable('getOperationStatusHttp', [serviceId: UriUtils.encode(serviceId, 'UTF-8'),
+            operationId: UriUtils.encode(operationId, 'UTF-8')])
+    }
+
+    void prepareInitResourceOperationStatusHttp(DelegateExecution execution, ResourceOperationStatus status) {
+        execution.setVariable('initResourceOperationStatusHttp', [serviceId: UriUtils.encode(status.serviceId, 'UTF-8'),
+                operationId: status.operationId, operationType: status.operType,
+                resourceTemplateUUIDs: status.resourceTemplateUUID].collectEntries { name, value ->
+                    [(name): String.valueOf(value)]
+                })
+    }
+
+    void prepareUpdateResourceOperationStatusHttp(DelegateExecution execution, ResourceOperationStatus status) {
+        execution.setVariable('updateResourceOperationStatusHttp', [serviceId: UriUtils.encode(status.serviceId, 'UTF-8'),
+                operationId: status.operationId, resourceTemplateUUID: status.resourceTemplateUUID,
+                operType: status.operType, resourceInstanceID: status.resourceInstanceID, jobId: status.jobId,
+                status: status.status, progress: status.progress, errorCode: status.errorCode ?: '',
+                statusDescription: status.statusDescription ?: ''].collectEntries { name, value ->
+                    [(name): String.valueOf(value)]
+                })
+    }
+
+    void invokeHttp(DelegateExecution execution, String operation, String responseVariable, String codeVariable,
+            String commandVariable = operation + 'Http') {
+        try {
+            Map command = execution.getVariable(commandVariable) as Map
+            def client = RequestDbHttp.createClient(execution)
+            Object response = ''
+            int code = 204
+            switch (operation) {
+                case 'updateInfraRequest':
+                    Map fields = new LinkedHashMap(command)
+                    String requestId = fields.remove('requestId')
+                    client.updateInfraRequest(requestId, new RequestDbCommands.InfraRequestUpdate(fields))
+                    break
+                case 'updateOperationStatus':
+                    client.updateServiceOperationStatus(new RequestDbCommands.ServiceOperationWrite(command))
+                    break
+                case 'initServiceOperationStatus':
+                    client.initServiceOperationStatus(new RequestDbCommands.ServiceOperationWrite(command))
+                    break
+                case 'initResourceOperationStatus':
+                    client.initResourceOperationStatus(new RequestDbCommands.ResourceOperationInit(command))
+                    break
+                case 'updateResourceOperationStatus':
+                    Map fields = new LinkedHashMap(command)
+                    String serviceId = fields.remove('serviceId')
+                    String operationId = fields.remove('operationId')
+                    String templateId = fields.remove('resourceTemplateUUID')
+                    client.updateResourceOperationStatus(serviceId, operationId, templateId,
+                            new RequestDbCommands.ResourceOperationUpdate(fields))
+                    break
+                case 'getOperationStatus':
+                    response = client.getServiceOperationStatus(command.serviceId, command.operationId)
+                    code = response == null ? 404 : 200
+                    break
+                default:
+                    throw new IllegalArgumentException('Unsupported RequestDB operation: ' + operation)
+            }
+            execution.setVariable(responseVariable, response)
+            execution.setVariable(codeVariable, code)
+        } catch (HttpStatusCodeException failure) {
+            execution.setVariable(responseVariable, null)
+            execution.setVariable(codeVariable, failure.statusCode.value())
+        } catch (Exception failure) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, 'RequestDB HTTP operation failed')
+        }
+    }
+
+    private static class HttpPreparation extends RequestDBUtil {
+        @Override
+        void prepareUpdateOperationStatus(DelegateExecution execution, OperationStatus status) {
+            prepareUpdateOperationStatusHttp(execution, status)
+        }
+
+        @Override
+        void getOperationStatus(DelegateExecution execution, String serviceId, String operationId) {
+            getOperationStatusHttp(execution, serviceId, operationId)
+        }
+
+        @Override
+        void prepareInitResourceOperationStatus(DelegateExecution execution, ResourceOperationStatus status) {
+            prepareInitResourceOperationStatusHttp(execution, status)
+        }
+
+        @Override
+        void prepareUpdateResourceOperationStatus(DelegateExecution execution, ResourceOperationStatus status) {
+            prepareUpdateResourceOperationStatusHttp(execution, status)
+        }
+    }
 
     /**
      * update operation status in requestDB
