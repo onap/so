@@ -235,6 +235,98 @@ public class MSORequestDBImplTest extends RequestsAdapterBase {
     }
 
     @Test
+    public void invalidProgressPreservesExistingValue() throws MsoRequestsDbException {
+        String requestId = setupTestEntities().getRequestId();
+        Long originalProgress = dbAdapter.getInfraRequest(requestId).getProgress();
+
+        dbAdapter.updateInfraRequest(requestId, "soap-retirement", null, null, null, "invalid", null, null, null, null,
+                null, null, null, null, null, null);
+
+        assertThat(dbAdapter.getInfraRequest(requestId).getProgress()).isEqualTo(originalProgress);
+    }
+
+    @Test
+    public void terminalRequestSetsEndTimeAndPreservesOtherFields() throws MsoRequestsDbException {
+        String requestId = setupTestEntities().getRequestId();
+        InfraActiveRequests before = dbAdapter.getInfraRequest(requestId);
+        long earliestEndTimeSeconds = System.currentTimeMillis() / 1000;
+
+        dbAdapter.updateInfraRequest(requestId, "soap-retirement", "", null, RequestStatusType.FAILED, null, null, null,
+                null, null, null, null, null, null, null, null);
+
+        InfraActiveRequests after = dbAdapter.getInfraRequest(requestId);
+        assertThat(after.getEndTime().getTime() / 1000).isBetween(earliestEndTimeSeconds,
+                System.currentTimeMillis() / 1000);
+        assertThat(after.getStatusMessage()).isEmpty();
+        assertThat(after.getResponseBody()).isEqualTo(before.getResponseBody());
+        assertThat(after.getRequestStatus()).isEqualTo("FAILED");
+        assertThat(after.getLastModifiedBy()).isEqualTo("soap-retirement");
+    }
+
+    @Test
+    public void missingNfvoMappingReturnsNull() throws MsoRequestsDbException {
+        assertThat(dbAdapter.getInstanceNfvoMapping("soap-retirement-missing-nfvo")).isNull();
+    }
+
+    @Test
+    public void missingServiceOperationReturnsNull() throws MsoRequestsDbException {
+        assertThat(dbAdapter.getServiceOperationStatus("soap-retirement-missing-service", "missing-operation"))
+                .isNull();
+    }
+
+    @Test
+    public void emptyOperationIdLooksUpService() throws MsoRequestsDbException {
+        String serviceId = "soap-retirement-service-lookup";
+        dbAdapter.initServiceOperationStatus(serviceId, "operation", "CREATE", "user", "processing", "content", "10",
+                "reason");
+
+        OperationStatus operation = dbAdapter.getServiceOperationStatus(serviceId, "");
+
+        assertThat(operation.getOperationId()).isEqualTo("operation");
+        assertThat(operation.getProgress()).isEqualTo("10");
+        assertThat(operation.getOperationContent()).isEqualTo("content");
+    }
+
+    @Test
+    public void missingResourceOperationProducesFault() throws MsoRequestsDbException {
+        thrown.expect(jakarta.xml.ws.WebServiceException.class);
+        thrown.expectMessage("Operation not found:missing-operation");
+        dbAdapter.getResourceOperationStatus("soap-retirement-missing-resource", "missing-operation", "resource");
+    }
+
+    @Test
+    public void resourceFailureUpdatesAggregateServiceStatus() throws MsoRequestsDbException {
+        String serviceId = "soap-retirement-aggregate-error";
+        String operationId = "operation";
+        dbAdapter.initServiceOperationStatus(serviceId, operationId, "CREATE", "user",
+                RequestsDbConstant.Status.PROCESSING, "content", "0", "");
+        dbAdapter.updateResourceOperationStatus(serviceId, operationId, "first", "CREATE", null, null,
+                RequestsDbConstant.Status.PROCESSING, "20", "", "working");
+        dbAdapter.updateResourceOperationStatus(serviceId, operationId, "second", "CREATE", null, null,
+                RequestsDbConstant.Status.ERROR, "40", "failure", "resource failed");
+
+        OperationStatus operation = dbAdapter.getServiceOperationStatus(serviceId, operationId);
+
+        assertThat(operation.getProgress()).isEqualTo("30");
+        assertThat(operation.getResult()).isEqualTo(RequestsDbConstant.Status.ERROR);
+        assertThat(operation.getReason()).isEqualTo("resource failed");
+        assertThat(operation.getOperationContent()).isEqualTo("resource failed");
+    }
+
+    @Test
+    public void finishedResourcesCompleteAggregateServiceStatus() throws MsoRequestsDbException {
+        String serviceId = "soap-retirement-aggregate-finished";
+        String operationId = "operation";
+        dbAdapter.updateResourceOperationStatus(serviceId, operationId, "resource", "CREATE", null, null,
+                RequestsDbConstant.Status.FINISHED, "50", "", "done");
+
+        OperationStatus operation = dbAdapter.getServiceOperationStatus(serviceId, operationId);
+
+        assertThat(operation.getProgress()).isEqualTo("100");
+        assertThat(operation.getResult()).isEqualTo(RequestsDbConstant.Status.FINISHED);
+    }
+
+    @Test
     public void getSiteStatusNotDisabled() {
         setupTestEntities();
         // Given
