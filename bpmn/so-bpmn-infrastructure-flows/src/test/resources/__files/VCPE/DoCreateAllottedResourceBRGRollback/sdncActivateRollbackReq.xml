@@ -4,7 +4,7 @@
 	<sdncadapter:RequestHeader>
         <sdncadapter:RequestId>b043d290-140d-4a38-a9b6-95d3b8bd27d1</sdncadapter:RequestId>
         <sdncadapter:SvcInstanceId>MIS%252F1604%252F0026%252FSW_INTERNET</sdncadapter:SvcInstanceId>
-        <sdncadapter:SvcAction>deactvate</sdncadapter:SvcAction>
+        <sdncadapter:SvcAction>deactivate</sdncadapter:SvcAction>
         <sdncadapter:SvcOperation>brg-topology-operation</sdncadapter:SvcOperation>
         <sdncadapter:CallbackUrl>http://localhost:28090/mso/SDNCAdapterCallbackService</sdncadapter:CallbackUrl>
 	</sdncadapter:RequestHeader>
