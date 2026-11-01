@@ -50,11 +50,10 @@ public class DoCreateAllottedResourceTXCRollbackIT extends AbstractTestBase {
     @Test
     public void testDoCreateAllottedResourceTXCRollback_Success() throws Exception {
         logStart();
-        MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID,
-                "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
-        MockPatchAllottedResource(wireMockServer, CUST, SVC, INST, ARID);
+        stubAllottedResourceLookup(INST, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml");
+        stubAllottedResourceRelationshipsAndUpdates(INST);
         MockDeleteAllottedResource(wireMockServer, CUST, SVC, INST, ARID, ARVERS);
-        mockSDNCAdapter(wireMockServer, 200);
+        stubControllerResponse(200);
         mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
         String businessKey = UUID.randomUUID().toString();
@@ -75,6 +74,7 @@ public class DoCreateAllottedResourceTXCRollbackIT extends AbstractTestBase {
         assertEquals(null, workflowException);
         assertEquals("true", BPMNUtil.getVariable(processEngine, PROCNAME, "rolledBack", processId));
         assertNull(BPMNUtil.getVariable(processEngine, PROCNAME, "rollbackError", processId));
+        assertRolledBackAllottedResource(INST);
         logEnd();
     }
 

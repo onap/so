@@ -41,9 +41,11 @@ import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.BaseBPMNTest;
+import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.core.domain.Resource;
 import org.onap.so.bpmn.core.domain.ServiceDecomposition;
 
@@ -128,6 +130,61 @@ public class ModelVersionComparisonProcessTest extends BaseBPMNTest {
         assertFailed(process);
         assertActivity(process, "CallActivity_1va14ul", 0);
         assertTrue(wireMockServer.getAllServeEvents().isEmpty());
+    }
+
+    @Test
+    public void emptyDecompositionsReturnTypedEmptyChanges() {
+        stubCatalog("version-2", 200, decomposition("version-2"));
+        stubCatalog("version-1", 200, decomposition("version-1"));
+        ProcessInstance process = start();
+        assertNull(historic(process, "WorkflowException"));
+        assertTrue(historic(process, "addResourceList") instanceof List);
+        assertTrue(historic(process, "delResourceList") instanceof List);
+        assertEquals(0, models(process, "addResourceList").size());
+        assertEquals(0, models(process, "delResourceList").size());
+        assertSuccessfulActivities(process);
+        assertCatalogCalls(1, 1);
+    }
+
+    @Test
+    public void customizationOnlyChangesSurviveBothProductionCallMappings() {
+        JSONObject target = new JSONObject(decomposition("version-2", "same-version"));
+        JSONObject original = new JSONObject(decomposition("version-1", "same-version"));
+        target.getJSONObject("serviceResources").getJSONArray("serviceVnfs").getJSONObject(0).getJSONObject("modelInfo")
+                .put("modelCustomizationUuid", "new-customization");
+        original.getJSONObject("serviceResources").getJSONArray("serviceVnfs").getJSONObject(0)
+                .getJSONObject("modelInfo").put("modelCustomizationUuid", "old-customization");
+        stubCatalog("version-2", 200, target.toString());
+        stubCatalog("version-1", 200, original.toString());
+        ProcessInstance process = start();
+        assertNull(historic(process, "WorkflowException"));
+        assertEquals(Arrays.asList("same-version"), models(process, "addResourceList"));
+        assertEquals(Arrays.asList("same-version"), models(process, "delResourceList"));
+        List<?> added = (List<?>) historic(process, "addResourceList");
+        List<?> deleted = (List<?>) historic(process, "delResourceList");
+        assertEquals("new-customization", ((Resource) added.get(0)).getModelInfo().getModelCustomizationUuid());
+        assertEquals("old-customization", ((Resource) deleted.get(0)).getModelInfo().getModelCustomizationUuid());
+        assertSuccessfulActivities(process);
+        assertCatalogCalls(1, 1);
+    }
+
+    @Test
+    public void parentPreservesTheFailedDecompositionBusinessError() {
+        Assume.assumeTrue("SO-4457: model comparison Java-error handler overwrites the child business error with 2500",
+                Boolean.getBoolean("groovy.migration.verification"));
+        stubCatalog("version-2", 503, "{}");
+        ProcessInstance process = start();
+        assertFailed(process);
+        var child = historyService.createHistoricProcessInstanceQuery().superProcessInstanceId(process.getId())
+                .processDefinitionKey("DecomposeService").singleResult();
+        assertNotNull(child);
+        WorkflowException childError = (WorkflowException) historyService.createHistoricVariableInstanceQuery()
+                .processInstanceId(child.getId()).variableName("WorkflowException").singleResult().getValue();
+        WorkflowException parentError = (WorkflowException) historic(process, "WorkflowException");
+        assertEquals(7000, childError.getErrorCode());
+        assertEquals(childError.getErrorCode(), parentError.getErrorCode());
+        assertEquals(childError.getErrorMessage(), parentError.getErrorMessage());
+        assertCatalogCalls(1, 0);
     }
 
     private void assertSuccessfulActivities(ProcessInstance process) {
