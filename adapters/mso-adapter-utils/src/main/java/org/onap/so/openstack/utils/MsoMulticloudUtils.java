@@ -27,6 +27,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriBuilderException;
@@ -55,6 +56,9 @@ import org.onap.so.openstack.mappers.StackInfoMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.context.properties.bind.PlaceholdersResolver;
+import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -88,6 +92,23 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
 
     @Autowired
     private Environment environment;
+
+    private String multicloudAuth;
+
+    @PostConstruct
+    private void initializeMulticloudAuth() {
+        Binder credentials = new Binder(ConfigurationPropertySources.get(environment), PlaceholdersResolver.NONE);
+        String username = credentials.bind("multicloud.auth.username", String.class).orElse("");
+        String password = credentials.bind("multicloud.auth.password", String.class).orElse("");
+        if (username.isEmpty() && password.isEmpty()) {
+            return;
+        }
+        if (username.isBlank() || password.isBlank() || username.contains(":")) {
+            throw new IllegalArgumentException("multicloud.auth.username and multicloud.auth.password must both be "
+                    + "non-blank when configured; multicloud.auth.username must not contain a colon");
+        }
+        multicloudAuth = username + ":" + password;
+    }
 
     /******************************************************************************
      *
@@ -827,6 +848,9 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         HttpClient client = null;
         try {
             client = httpClientFactory.newJsonClient(new URL(endpoint), ONAPComponents.MULTICLOUD);
+            if (multicloudAuth != null) {
+                client.addBasicAuthHeader(multicloudAuth, null);
+            }
             if (tenantId != null && !tenantId.isEmpty()) {
                 client.addAdditionalHeader("Project", tenantId);
             }

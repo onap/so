@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -181,7 +182,7 @@ public abstract class RestClient {
      * @param key unused, kept for API compatibility
      */
     protected void addBasicAuthHeader(String auth, String key) {
-        String authHeaderValue = "Basic " + Base64.getEncoder().encodeToString(auth.getBytes());
+        String authHeaderValue = "Basic " + Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
         headerMap.add("ALL", Pair.with("Authorization", authHeaderValue));
     }
 

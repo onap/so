@@ -1,0 +1,46 @@
+# Outbound MultiCloud Authentication
+
+The OpenStack adapter's MultiCloud client supports optional HTTP Basic
+authentication. Configure the application at startup using Spring properties or
+their environment-variable equivalents:
+
+| Spring property | Environment variable |
+| --- | --- |
+| `multicloud.auth.username` | `MULTICLOUD_AUTH_USERNAME` |
+| `multicloud.auth.password` | `MULTICLOUD_AUTH_PASSWORD` |
+
+Both values default to empty. If both are absent or empty, including a mixture
+of absent and empty, no Authorization header is added and existing unauthenticated
+behavior is preserved. To enable authentication, supply both values from the
+runtime secret-management mechanism. Values are plaintext credentials, not
+encrypted SO passwords or pre-encoded Basic headers. Do not store them in source
+control or include them in logs or command-line arguments.
+
+Partial configuration, whitespace-only fields, and a username containing a colon
+cause application initialization to fail. The validation error names the properties
+without revealing their values. Passwords may contain colons, dollar signs,
+quotes, and non-ASCII characters. Credentials are preserved without trimming and
+encoded as UTF-8 before Base64 encoding. Both values are opaque literal strings:
+Spring placeholders and SpEL expressions are not evaluated, including known
+placeholders such as `literal${HOME}`, `literal#{2*3}`, and unmatched expressions.
+Supply the credential itself, not a `${MULTICLOUD_AUTH_PASSWORD}` property alias.
+Ensure the runtime configuration mechanism
+passes special characters literally without shell interpolation. Restart the
+application after changing credentials; they are validated and captured at startup.
+
+Authentication applies to every request created by `MsoMulticloudUtils`, including
+workload creation, status queries/polling, deletion, and MultiCloud-mediated AAI
+updates. The existing Project header and tracing remain in place. Direct AAI
+clients and unrelated outbound clients do not receive these credentials. Existing
+request and response error handling is unchanged.
+
+## TLS Requirement
+
+Basic authentication only Base64-encodes credentials; it does not encrypt them.
+Use a trusted HTTPS endpoint whenever authentication is enabled. Set
+`mso.msb-scheme=https` (or `MSB_SCHEME=https`) and configure `mso.msb-ip` and
+`mso.msb-port` for the TLS endpoint. An explicit `MSB_SCHEME` environment variable
+overrides the property. The existing HTTP default is unchanged, so enabling
+authentication does not automatically enable TLS. Verify certificate trust and
+protect any proxy-to-MultiCloud hop carrying the Authorization header with TLS
+or an equivalently protected transport. Do not disable certificate validation.
