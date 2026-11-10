@@ -10,11 +10,6 @@
   <artifactId>mso-requests-db-adapter</artifactId>
   <dependencies>
     <dependency>
-      <groupId>org.onap.so.common</groupId>
-      <artifactId>common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
     </dependency>
@@ -43,6 +38,13 @@
     <dependency>
       <groupId>org.onap.so</groupId>
       <artifactId>mso-requests-db-repositories</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- Keep below the CXF starters: common brings Jersey, and whichever JAX-RS implementation comes
+         first on the classpath supplies ClientBuilder and RuntimeDelegate for the CXF endpoints. -->
+    <dependency>
+      <groupId>org.onap.so.common</groupId>
+      <artifactId>common</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
