@@ -50,7 +50,6 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoPnf;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import joptsimple.internal.Strings;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class AAIPnfResourcesTest extends TestDataSetup {
@@ -182,7 +181,7 @@ public class AAIPnfResourcesTest extends TestDataSetup {
     public void existingPnfInAaiWithEmptyStatusCanBeUsed() throws Exception {
         // given
         Pnf pnfTest = createPnfWithDefaultName();
-        org.onap.aai.domain.yang.Pnf pnfFromAai = createPnf(Strings.EMPTY);
+        org.onap.aai.domain.yang.Pnf pnfFromAai = createPnf("");
         when(injectionHelperMock.getAaiClient().get(org.onap.aai.domain.yang.Pnf.class,
                 AAIUriFactory.createResourceUri(AAIFluentTypeBuilder.network().pnf(PNF_NAME))))
                         .thenReturn(Optional.of(pnfFromAai));
