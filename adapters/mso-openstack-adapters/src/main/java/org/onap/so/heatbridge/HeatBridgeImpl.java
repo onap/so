@@ -49,7 +49,6 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.UriBuilder;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.InetAddressValidator;
 import org.onap.aai.domain.yang.Flavor;
 import org.onap.aai.domain.yang.Image;
 import org.onap.aai.domain.yang.L3InterfaceIpv4AddressList;
@@ -113,6 +112,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.net.InetAddresses;
 import inet.ipaddr.IPAddressString;
 
 /**
@@ -730,10 +730,20 @@ public class HeatBridgeImpl implements HeatBridgeApi {
         return pfRelationshipsExist;
     }
 
+    // Classified by notation, not by the parsed type: InetAddresses.forString("::ffff:10.0.0.1") yields an
+    // Inet4Address, but such an address belongs to an IPv6 subnet.
+    private static boolean isIpv4Literal(String ipAddress) {
+        return InetAddresses.isInetAddress(ipAddress) && !ipAddress.contains(":");
+    }
+
+    private static boolean isIpv6Literal(String ipAddress) {
+        return InetAddresses.isInetAddress(ipAddress) && ipAddress.contains(":");
+    }
+
     protected void updateLInterfaceIps(final Port port, final LInterface lIf) {
         for (IP ip : port.getFixedIps()) {
             String ipAddress = ip.getIpAddress();
-            if (InetAddressValidator.getInstance().isValidInet4Address(ipAddress)) {
+            if (isIpv4Literal(ipAddress)) {
                 Subnet subnet = osClient.getSubnetById(ip.getSubnetId());
                 IPAddressString cidr = new IPAddressString(subnet.getCidr());
                 L3InterfaceIpv4AddressList lInterfaceIp = new L3InterfaceIpv4AddressList();
@@ -748,7 +758,7 @@ public class HeatBridgeImpl implements HeatBridgeApi {
                                 .cloudRegion(cloudOwner, cloudRegionId).tenant(tenantId).vserver(port.getDeviceId())
                                 .lInterface(lIf.getInterfaceName()).l3InterfaceIpv4AddressList(ipAddress)),
                         Optional.of(lInterfaceIp));
-            } else if (InetAddressValidator.getInstance().isValidInet6Address(ipAddress)) {
+            } else if (isIpv6Literal(ipAddress)) {
                 Subnet subnet = osClient.getSubnetById(ip.getSubnetId());
                 IPAddressString cidr = new IPAddressString(subnet.getCidr());
                 L3InterfaceIpv6AddressList ipv6 = new L3InterfaceIpv6AddressList();

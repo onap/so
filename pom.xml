@@ -80,7 +80,6 @@
     <sdc-dist-client.version>2.3.0</sdc-dist-client.version>
     <grpc.version>1.82.1</grpc.version>
     <httpclient4.version>4.5.14</httpclient4.version>
-    <kafka.version>3.9.2</kafka.version>
     <aai-schema.version>1.14.0</aai-schema.version>
     <surefire.forkCount>1</surefire.forkCount>
     <surefire.threadCount>1</surefire.threadCount>
@@ -1099,11 +1098,6 @@
         <groupId>org.modelmapper</groupId>
         <artifactId>modelmapper</artifactId>
         <version>3.2.6</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.kafka</groupId>
-        <artifactId>kafka-clients</artifactId>
-        <version>${kafka.version}</version>
       </dependency>
       <dependency>
         <groupId>org.camunda.bpm</groupId>
