@@ -10,6 +10,11 @@
   <artifactId>mso-requests-db-adapter</artifactId>
   <dependencies>
     <dependency>
+      <groupId>org.onap.so.common</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
     </dependency>

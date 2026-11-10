@@ -14,23 +14,14 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onap.so.common</groupId>
-      <artifactId>common</artifactId>
+      <groupId>org.onap.so</groupId>
+      <artifactId>clients-base</artifactId>
       <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.onap.ccsdk.cds.blueprintsprocessor.modules</groupId>
-          <artifactId>blueprint-proto</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.grpc</groupId>
-          <artifactId>grpc-netty</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.grpc</groupId>
-          <artifactId>grpc-protobuf</artifactId>
-        </exclusion>
-      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.so</groupId>
+      <artifactId>utils</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -128,4 +119,34 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-lean-aai-client</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>org.onap.so.common:common</exclude>
+                    <exclude>org.onap.so.common.clients:clients</exclude>
+                    <exclude>org.apache.kafka:kafka-clients</exclude>
+                  </excludes>
+                  <searchTransitive>true</searchTransitive>
+                  <message>aai-client ships in every adapter image; depend on clients-base or utils instead</message>
+                </bannedDependencies>
+              </rules>
+              <fail>true</fail>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
