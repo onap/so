@@ -39,6 +39,10 @@
       <artifactId>jersey-common</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.hibernate.orm</groupId>
+      <artifactId>hibernate-core</artifactId>
+    </dependency>
   </dependencies>
   <packaging>jar</packaging>
   <build>

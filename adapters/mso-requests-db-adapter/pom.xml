@@ -112,6 +112,11 @@
       <artifactId>cxf-logging</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>

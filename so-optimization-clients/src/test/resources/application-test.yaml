@@ -191,9 +191,6 @@ spring:
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
-  sql:
-    init:
-      mode: always
   jpa:
     generate-ddl: false
     show-sql: false

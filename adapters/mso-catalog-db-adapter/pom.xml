@@ -183,5 +183,10 @@
       <artifactId>junit-vintage-engine</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
