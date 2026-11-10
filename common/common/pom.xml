@@ -11,9 +11,6 @@
   <artifactId>common</artifactId>
   <name>common</name>
   <description>MSO Common classes:- Logger</description>
-  <properties>
-    <!-- Match the Spring Boot 3.5 BOM's managed Tomcat version (tomcat.version). -->
-  </properties>
   <dependencies>
     <dependency>
       <groupId>org.onap.so</groupId>
