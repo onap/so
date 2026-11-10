@@ -23,13 +23,16 @@ package org.onap.so.openstack.utils;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import org.junit.Test;
+import org.onap.so.StubOpenStack;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.onap.so.BaseTest;
@@ -60,6 +63,17 @@ public class MsoCommonUtilsTest extends BaseTest {
 
     @Mock
     private OpenStackRequest openstackRequest;
+
+    @Test
+    public void getKeystoneAuthHolder_keepsCauseWhenNoServiceTypeMatches() throws Exception {
+        StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        try {
+            commonUtils.getKeystoneAuthHolder("MTN13", "tenantId", "no-such-type", "no-such-type-either");
+            fail("expected MsoAdapterException");
+        } catch (MsoAdapterException e) {
+            assertNotNull(e.getCause());
+        }
+    }
 
     @Test
     public final void testExecuteAndRecordOpenstackRequest() {

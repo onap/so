@@ -47,7 +47,8 @@ public class CinderClientImpl extends MsoCommonUtils {
      * @throws MsoException the mso exception
      */
     private Cinder getCinderClient(String cloudSiteId, String tenantId) throws MsoException {
-        KeystoneAuthHolder keystone = getKeystoneAuthHolder(cloudSiteId, tenantId, "volumev2");
+        KeystoneAuthHolder keystone =
+                getKeystoneAuthHolder(cloudSiteId, tenantId, "volumev3", "volumev2", "volume", "block-storage");
         Cinder cinderClient = new Cinder(keystone.getServiceUrl());
         cinderClient.token(keystone.getId());
         return cinderClient;

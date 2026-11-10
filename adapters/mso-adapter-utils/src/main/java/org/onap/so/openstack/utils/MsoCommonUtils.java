@@ -451,10 +451,11 @@ public class MsoCommonUtils {
      *
      * @param cloudSite the cloud site
      * @param tenantId the tenant id
+     * @param serviceTypes catalog service types to try, in order of preference
      * @return the Neutron client
      * @throws MsoException the mso exception
      */
-    protected KeystoneAuthHolder getKeystoneAuthHolder(String cloudSiteId, String tenantId, String serviceName)
+    protected KeystoneAuthHolder getKeystoneAuthHolder(String cloudSiteId, String tenantId, String... serviceTypes)
             throws MsoException {
         CloudIdentity cloudIdentity = null;
         try {
@@ -468,20 +469,25 @@ public class MsoCommonUtils {
             String keystoneUrl = tenantUtils.getKeystoneUrl(cloudId, cloudIdentity);
             if (ServerType.KEYSTONE.equals(cloudIdentity.getIdentityServerType())) {
                 Access access = getKeystone(tenantId, cloudIdentity, keystoneUrl);
-                try {
-                    KeystoneAuthHolder keystoneAuthV2 = new KeystoneAuthHolder();
-                    keystoneAuthV2.setServiceUrl(
-                            KeystoneUtils.findEndpointURL(access.getServiceCatalog(), serviceName, region, "public"));
-                    keystoneAuthV2.setId(access.getToken().getId());
-                    return keystoneAuthV2;
-                } catch (RuntimeException e) {
-                    String error = "Openstack did not match an orchestration service for: region=" + region + ",cloud="
-                            + cloudIdentity.getIdentityUrl();
-                    throw new MsoAdapterException(error, e);
+                RuntimeException lastFailure = null;
+                for (String serviceType : serviceTypes) {
+                    try {
+                        KeystoneAuthHolder keystoneAuthV2 = new KeystoneAuthHolder();
+                        keystoneAuthV2.setServiceUrl(KeystoneUtils.findEndpointURL(access.getServiceCatalog(),
+                                serviceType, region, "public"));
+                        keystoneAuthV2.setId(access.getToken().getId());
+                        return keystoneAuthV2;
+                    } catch (RuntimeException e) {
+                        logger.debug("No {} endpoint in region {}", serviceType, region);
+                        lastFailure = e;
+                    }
                 }
+                String error = "Openstack did not match an orchestration service for: region=" + region + ",cloud="
+                        + cloudIdentity.getIdentityUrl();
+                throw new MsoAdapterException(error, lastFailure);
             } else if (ServerType.KEYSTONE_V3.equals(cloudIdentity.getIdentityServerType())) {
                 try {
-                    return keystoneV3Authentication.getToken(cloudSite, tenantId, serviceName);
+                    return keystoneV3Authentication.getToken(cloudSite, tenantId, serviceTypes);
                 } catch (ServiceEndpointNotFoundException e) {
                     String error = "cloud did not match an orchestration service for: region=" + region + ",cloud="
                             + cloudIdentity.getIdentityUrl();

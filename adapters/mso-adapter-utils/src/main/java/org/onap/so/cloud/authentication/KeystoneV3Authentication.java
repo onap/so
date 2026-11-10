@@ -57,7 +57,7 @@ public class KeystoneV3Authentication {
     @Autowired
     private PoConfig poConfig;
 
-    public KeystoneAuthHolder getToken(CloudSite cloudSite, String tenantId, String type) throws MsoException {
+    public KeystoneAuthHolder getToken(CloudSite cloudSite, String tenantId, String... types) throws MsoException {
 
         String cloudId = cloudSite.getId();
         String region = cloudSite.getRegionId();
@@ -72,10 +72,10 @@ public class KeystoneV3Authentication {
 
         OpenStackRequest<Token> v3Request = keystoneTenantClient.tokens().authenticate(v3Credentials);
 
-        return makeRequest(v3Request, type, region);
+        return makeRequest(v3Request, region, types);
     }
 
-    protected KeystoneAuthHolder makeRequest(OpenStackRequest<Token> v3Request, String type, String region) {
+    protected KeystoneAuthHolder makeRequest(OpenStackRequest<Token> v3Request, String region, String... types) {
 
         OpenStackResponse response = Failsafe.with(createRetryPolicy()).get(() -> {
             return v3Request.request();
@@ -85,7 +85,7 @@ public class KeystoneV3Authentication {
         KeystoneAuthHolder result = new KeystoneAuthHolder();
         result.setId(id);
         result.setexpiration(token.getExpiresAt());
-        result.setServiceUrl(findEndpointURL(token.getCatalog(), type, region, "public"));
+        result.setServiceUrl(findEndpointURL(token.getCatalog(), region, "public", types));
         return result;
     }
 
@@ -107,19 +107,20 @@ public class KeystoneV3Authentication {
         return policy;
     }
 
-    public String findEndpointURL(List<Service> serviceCatalog, String type, String region, String facing) {
-        for (Service service : serviceCatalog) {
-            if (type.equals(service.getType())) {
-                for (Service.Endpoint endpoint : service.getEndpoints()) {
-                    if (region == null || region.equals(endpoint.getRegion())) {
-                        if (facing.equals(endpoint.getInterface())) {
+    public String findEndpointURL(List<Service> serviceCatalog, String region, String facing, String... types) {
+        for (String type : types) {
+            for (Service service : serviceCatalog) {
+                if (type.equals(service.getType())) {
+                    for (Service.Endpoint endpoint : service.getEndpoints()) {
+                        if ((region == null || region.equals(endpoint.getRegion()))
+                                && facing.equals(endpoint.getInterface())) {
                             return endpoint.getUrl();
                         }
                     }
                 }
             }
         }
-        throw new ServiceEndpointNotFoundException(
-                "endpoint url not found: type:" + type + " region: " + region + " facing: " + facing);
+        throw new ServiceEndpointNotFoundException("endpoint url not found: type:" + String.join("|", types)
+                + " region: " + region + " facing: " + facing);
     }
 }
