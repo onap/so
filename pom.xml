@@ -65,7 +65,7 @@
     <snapshotNexusPath>content/repositories/snapshots/</snapshotNexusPath>
     <publicNexusPath>content/repositories/public/</publicNexusPath>
     <siteNexusPath>content/sites/site/org/onap/so/${project.version}/</siteNexusPath>
-    <cxf.version>4.0.5</cxf.version>
+    <cxf.version>4.1.9</cxf.version>
     <jax.ws.rs>2.1.1</jax.ws.rs>
     <jakarta.ws.rs.version>3.1.0</jakarta.ws.rs.version>
     <springboot.version>3.5.16</springboot.version>
