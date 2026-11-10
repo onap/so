@@ -59,13 +59,14 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder.Types;
 import org.onap.so.heatbridge.HeatBridgeException;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
-import org.openstack4j.model.compute.Server;
-import org.openstack4j.model.network.Network;
-import org.openstack4j.model.network.Port;
-import org.openstack4j.model.network.Subnet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.woorea.openstack.nova.model.Server;
+import com.woorea.openstack.quantum.model.Network;
+import com.woorea.openstack.quantum.model.Port;
+import com.woorea.openstack.quantum.model.Subnet;
 
 /**
  * This class provides wrapper methods to manage creation of AAI objects and extracting objects from AAI and
@@ -184,12 +185,14 @@ public class AaiHelper {
     public org.onap.aai.domain.yang.Subnet buildSubnet(Subnet subnet) {
         org.onap.aai.domain.yang.Subnet aaiSubnet = new org.onap.aai.domain.yang.Subnet();
         aaiSubnet.setSubnetId(subnet.getId());
-        aaiSubnet.setDhcpEnabled(subnet.isDHCPEnabled());
+        aaiSubnet.setDhcpEnabled(Boolean.TRUE.equals(subnet.getEnableDHCP()));
 
         aaiSubnet.setSubnetName(subnet.getName());
-        aaiSubnet.setGatewayAddress(subnet.getGateway());
+        aaiSubnet.setGatewayAddress(subnet.getGw());
         aaiSubnet.setCidrMask(subnet.getCidr());
-        aaiSubnet.setIpVersion(subnet.getIpVersion().name());
+        if (subnet.getIpversion() != null) {
+            aaiSubnet.setIpVersion("V" + subnet.getIpversion().code());
+        }
         return aaiSubnet;
     }
 
@@ -203,14 +206,14 @@ public class AaiHelper {
         l3Network.setIsProviderNetwork(true);
 
         // optional fields
-        l3Network.setIsSharedNetwork(network.isShared());
-        l3Network.setIsExternalNetwork(network.isRouterExternal());
-        l3Network.setOperationalStatus(String.valueOf(network.isAdminStateUp()));
+        l3Network.setIsSharedNetwork(Boolean.TRUE.equals(network.getShared()));
+        l3Network.setIsExternalNetwork(Boolean.TRUE.equals(network.getRouterExternal()));
+        l3Network.setOperationalStatus(String.valueOf(Boolean.TRUE.equals(network.getAdminStateUp())));
         if (network.getName() != null) {
             l3Network.setNetworkName(network.getName());
         }
-        if (network.getProviderPhyNet() != null) {
-            l3Network.setPhysicalNetworkName(network.getProviderPhyNet());
+        if (network.getProviderPhysicalNetwork() != null) {
+            l3Network.setPhysicalNetworkName(network.getProviderPhysicalNetwork());
         }
         return l3Network;
     }
@@ -263,7 +266,7 @@ public class AaiHelper {
      * @return AAI PInterface object
      */
     public PInterface buildPInterface(Port port) {
-        Map<String, Object> portProfile = port.getProfile();
+        Map<String, Object> portProfile = port.getBinding().getProfile();
         PInterface pInterface = new PInterface();
         pInterface.setInterfaceName(portProfile.get(HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY).toString());
         pInterface.setInMaint(false);
@@ -277,7 +280,7 @@ public class AaiHelper {
      * @param image Openstack Image object
      * @return AAI Image object
      */
-    public Image buildImage(final org.openstack4j.model.compute.Image image) {
+    public Image buildImage(final com.woorea.openstack.nova.model.Image image) {
         Image aaiImage = new Image();
         aaiImage.setImageId(image.getId());
         aaiImage.setImageName(image.getName());
@@ -302,7 +305,7 @@ public class AaiHelper {
      * @param flavor Openstack Flavor object
      * @return AAI Flavor object
      */
-    public Flavor buildFlavor(final org.openstack4j.model.compute.Flavor flavor) {
+    public Flavor buildFlavor(final com.woorea.openstack.nova.model.Flavor flavor) {
         Flavor aaiFlavor = new Flavor();
         aaiFlavor.setFlavorId(flavor.getId());
         aaiFlavor.setFlavorName(flavor.getName());
@@ -310,9 +313,9 @@ public class AaiHelper {
         aaiFlavor.setFlavorRam(flavor.getRam());
         aaiFlavor.setFlavorDisk(flavor.getDisk());
         aaiFlavor.setFlavorEphemeral(flavor.getEphemeral());
-        aaiFlavor.setFlavorDisabled(flavor.isDisabled());
+        aaiFlavor.setFlavorDisabled(flavor.getDisabled());
         aaiFlavor.setFlavorIsPublic(flavor.isPublic());
-        aaiFlavor.setFlavorSwap(Integer.toString(flavor.getSwap()));
+        aaiFlavor.setFlavorSwap(Strings.isNullOrEmpty(flavor.getSwap()) ? "0" : flavor.getSwap());
         flavor.getLinks().stream().filter(link -> link.getRel().equals(HeatBridgeConstants.OS_RESOURCES_SELF_LINK_KEY))
                 .findFirst().ifPresent(link -> aaiFlavor.setFlavorSelflink(link.getHref()));
         return aaiFlavor;

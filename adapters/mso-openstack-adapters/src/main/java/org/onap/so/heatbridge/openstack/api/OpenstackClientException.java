@@ -36,7 +36,7 @@
 
 package org.onap.so.heatbridge.openstack.api;
 
-public class OpenstackClientException extends Exception {
+public class OpenstackClientException extends RuntimeException {
     private static final long serialVersionUID = -5514207977226960180L;
 
     public OpenstackClientException(final String message) {

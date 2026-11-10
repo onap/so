@@ -49,10 +49,6 @@ public class HeatBridgeConstants {
     public static final String OS_VLAN_NETWORK_KEY = "vlan";
     public static final String OS_UNKNOWN_KEY = "unknown";
     public static final String OS_RESOURCES_SELF_LINK_KEY = "self";
-    public static final String OS_DEFAULT_DOMAIN_NAME = "default";
-    public static final String OS_KEYSTONE_V2_KEY = "v2.0";
-    public static final String OS_KEYSTONE_V3_KEY = "v3";
-    public static final String OS_NAME_KEY = "name";
 
     /**
      * AAI related constants

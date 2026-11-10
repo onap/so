@@ -33,26 +33,17 @@
 package org.onap.so.heatbridge;
 
 import java.util.List;
-import org.onap.so.heatbridge.openstack.api.OpenstackClient;
-import org.openstack4j.model.compute.Flavor;
-import org.openstack4j.model.compute.Image;
-import org.openstack4j.model.compute.Server;
-import org.openstack4j.model.heat.Resource;
-import org.openstack4j.model.network.Network;
+import com.woorea.openstack.heat.model.Resource;
+import com.woorea.openstack.nova.model.Flavor;
+import com.woorea.openstack.nova.model.Image;
+import com.woorea.openstack.nova.model.Server;
+import com.woorea.openstack.quantum.model.Network;
 
 /**
  * Defines the contract to extract Heat Stack Resources from Openstack and inventory it to AAI. This API is used only to
  * "create" objects in AAI.
  */
 public interface HeatBridgeApi {
-
-    /**
-     * Authenticate with Openstack Keystone. The auth information is read from SO cloud configuration file.
-     *
-     * @return Openstack client object with keystone token
-     * @throws HeatBridgeException upon failure to authenticate with keystone
-     */
-    OpenstackClient authenticate() throws HeatBridgeException;
 
     /**
      * Query all the stack based resources from Openstack Heat service
@@ -70,15 +61,6 @@ public interface HeatBridgeApi {
      * @return A list of stack resources matching the specified resource-type
      */
     List<String> extractStackResourceIdsByResourceType(List<Resource> stackResources, String resourceType);
-
-    /**
-     * Get network IDs for a given list of network names. It is assumed that there is a one to one mapping between the
-     * name and ID.
-     * 
-     * @param networkNameList List of network names
-     * @return List of matching network IDs
-     */
-    List<String> extractNetworkIds(List<String> networkNameList);
 
     /**
      * Query the Openstack server objects from the list of stack resources

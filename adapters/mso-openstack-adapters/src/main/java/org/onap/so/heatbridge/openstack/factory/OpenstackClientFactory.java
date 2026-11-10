@@ -35,13 +35,31 @@
  */
 package org.onap.so.heatbridge.openstack.factory;
 
-import org.onap.so.heatbridge.openstack.api.OpenstackAccess;
 import org.onap.so.heatbridge.openstack.api.OpenstackClient;
-import org.onap.so.heatbridge.openstack.api.OpenstackClientException;
+import org.onap.so.heatbridge.openstack.api.OpenstackClientImpl;
+import org.onap.so.openstack.utils.CinderClientImpl;
+import org.onap.so.openstack.utils.MsoHeatUtils;
+import org.onap.so.openstack.utils.NeutronClientImpl;
+import org.onap.so.openstack.utils.NovaClientImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public interface OpenstackClientFactory {
+@Component
+public class OpenstackClientFactory {
 
-    OpenstackClient createOpenstackV3Client(OpenstackAccess osAccess) throws OpenstackClientException;
+    @Autowired
+    private NovaClientImpl novaClient;
 
-    OpenstackClient createOpenstackV2Client(OpenstackAccess osAccess) throws OpenstackClientException;
+    @Autowired
+    private NeutronClientImpl neutronClient;
+
+    @Autowired
+    private CinderClientImpl cinderClient;
+
+    @Autowired
+    private MsoHeatUtils heatUtils;
+
+    public OpenstackClient create(String cloudSiteId, String tenantId) {
+        return new OpenstackClientImpl(novaClient, neutronClient, cinderClient, heatUtils, cloudSiteId, tenantId);
+    }
 }

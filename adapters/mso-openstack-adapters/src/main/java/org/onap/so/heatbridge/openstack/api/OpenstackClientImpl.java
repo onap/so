@@ -37,64 +37,110 @@
 package org.onap.so.heatbridge.openstack.api;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import org.openstack4j.api.OSClient;
-import org.openstack4j.model.compute.Server;
-import org.openstack4j.model.heat.Resource;
-import org.openstack4j.model.network.Network;
-import org.openstack4j.model.network.Port;
-import org.openstack4j.model.network.Subnet;
-import org.openstack4j.model.storage.block.Volume;
+import org.onap.so.openstack.utils.CinderClientImpl;
+import org.onap.so.openstack.utils.MsoHeatUtils;
+import org.onap.so.openstack.utils.NeutronClientImpl;
+import org.onap.so.openstack.utils.NovaClientImpl;
+import com.woorea.openstack.base.client.OpenStackResponseException;
+import com.woorea.openstack.cinder.model.Volume;
+import com.woorea.openstack.heat.model.Resource;
+import com.woorea.openstack.nova.model.Flavor;
+import com.woorea.openstack.nova.model.Image;
+import com.woorea.openstack.nova.model.Server;
+import com.woorea.openstack.quantum.model.Network;
+import com.woorea.openstack.quantum.model.Port;
+import com.woorea.openstack.quantum.model.Subnet;
 
-abstract class OpenstackClientImpl implements OpenstackClient {
+public class OpenstackClientImpl implements OpenstackClient {
+
+    private static final int NOT_FOUND = 404;
+
+    private final NovaClientImpl novaClient;
+    private final NeutronClientImpl neutronClient;
+    private final CinderClientImpl cinderClient;
+    private final MsoHeatUtils heatUtils;
+    private final String cloudSiteId;
+    private final String tenantId;
+
+    public OpenstackClientImpl(NovaClientImpl novaClient, NeutronClientImpl neutronClient,
+            CinderClientImpl cinderClient, MsoHeatUtils heatUtils, String cloudSiteId, String tenantId) {
+        this.novaClient = novaClient;
+        this.neutronClient = neutronClient;
+        this.cinderClient = cinderClient;
+        this.heatUtils = heatUtils;
+        this.cloudSiteId = cloudSiteId;
+        this.tenantId = tenantId;
+    }
+
     @Override
     public Server getServerById(String serverId) {
-        return getClient().compute().servers().get(serverId);
+        return query("server " + serverId, () -> novaClient.queryServerById(cloudSiteId, tenantId, serverId));
+    }
+
+    @Override
+    public Image getImageById(String imageId) {
+        return queryOrNullIfNotFound("image " + imageId,
+                () -> novaClient.queryImageById(cloudSiteId, tenantId, imageId));
+    }
+
+    @Override
+    public Flavor getFlavorById(String flavorId) {
+        return queryOrNullIfNotFound("flavor " + flavorId,
+                () -> novaClient.queryFlavorById(cloudSiteId, tenantId, flavorId));
     }
 
     @Override
     public Port getPortById(String portId) {
-        return getClient().networking().port().get(portId);
-    }
-
-    @Override
-    public List<Port> getAllPorts() {
-        return (List<Port>) getClient().networking().port().list();
+        return query("port " + portId, () -> neutronClient.queryPortById(cloudSiteId, tenantId, portId));
     }
 
     @Override
     public List<Resource> getStackBasedResources(String stackId, int nestingDepth) {
-        return getClient().heat().resources().list(stackId, nestingDepth).stream().filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        return query("resources of stack " + stackId,
+                () -> heatUtils.queryStackResources(cloudSiteId, tenantId, stackId, nestingDepth)).getList().stream()
+                        .filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     @Override
     public Network getNetworkById(String networkId) {
-        return getClient().networking().network().get(networkId);
-    }
-
-    @Override
-    public List<Network> listNetworksByFilter(Map<String, String> filterParams) {
-        return (List<Network>) getClient().networking().network().list(filterParams);
+        return query("network " + networkId, () -> neutronClient.queryNetworkById(cloudSiteId, tenantId, networkId));
     }
 
     @Override
     public Subnet getSubnetById(String subnetId) {
-        return getClient().networking().subnet().get(subnetId);
+        return query("subnet " + subnetId, () -> neutronClient.querySubnetById(cloudSiteId, tenantId, subnetId));
     }
 
     @Override
-    public Volume getVolumeById(String id) {
-        return getClient().blockStorage().volumes().get(id);
+    public Volume getVolumeById(String volumeId) {
+        return query("volume " + volumeId, () -> cinderClient.queryVolume(cloudSiteId, tenantId, volumeId));
     }
 
-    /**
-     * Retrieves the specific client to utilize.
-     * 
-     * @return The specific client to utilize
-     */
-    protected abstract OSClient getClient();
+    @FunctionalInterface
+    private interface Query<T> {
+        T run() throws Exception;
+    }
 
+    private static <T> T query(String target, Query<T> query) {
+        try {
+            return query.run();
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new OpenstackClientException("Failed to query " + target, e);
+        }
+    }
+
+    private static <T> T queryOrNullIfNotFound(String target, Query<T> query) {
+        try {
+            return query(target, query);
+        } catch (OpenStackResponseException e) {
+            if (e.getStatus() == NOT_FOUND) {
+                return null;
+            }
+            throw e;
+        }
+    }
 }

@@ -30,8 +30,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.quantum.Quantum;
+import com.woorea.openstack.quantum.model.Network;
 import com.woorea.openstack.quantum.model.Networks;
 import com.woorea.openstack.quantum.model.Port;
+import com.woorea.openstack.quantum.model.Subnet;
 import com.woorea.openstack.quantum.model.Subnets;
 
 
@@ -140,6 +142,30 @@ public class NeutronClientImpl extends MsoCommonUtils {
         try {
             Quantum neutronClient = getNeutronClient(cloudSiteId, tenantId);
             OpenStackRequest<Port> request = neutronClient.ports().show(id);
+            return executeAndRecordOpenstackRequest(request, false);
+        } catch (MsoException e) {
+            logger.error("Error building Neutron Client", e);
+            throw new NeutronClientException("Error building Neutron Client", e);
+        }
+    }
+
+    public Network queryNetworkById(String cloudSiteId, String tenantId, String id)
+            throws MsoCloudSiteNotFound, NeutronClientException {
+        try {
+            Quantum neutronClient = getNeutronClient(cloudSiteId, tenantId);
+            OpenStackRequest<Network> request = neutronClient.networks().show(id);
+            return executeAndRecordOpenstackRequest(request, false);
+        } catch (MsoException e) {
+            logger.error("Error building Neutron Client", e);
+            throw new NeutronClientException("Error building Neutron Client", e);
+        }
+    }
+
+    public Subnet querySubnetById(String cloudSiteId, String tenantId, String id)
+            throws MsoCloudSiteNotFound, NeutronClientException {
+        try {
+            Quantum neutronClient = getNeutronClient(cloudSiteId, tenantId);
+            OpenStackRequest<Subnet> request = neutronClient.subnets().show(id);
             return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Neutron Client", e);

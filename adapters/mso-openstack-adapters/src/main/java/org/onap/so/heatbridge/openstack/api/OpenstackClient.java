@@ -37,13 +37,14 @@
 package org.onap.so.heatbridge.openstack.api;
 
 import java.util.List;
-import java.util.Map;
-import org.openstack4j.model.compute.Server;
-import org.openstack4j.model.heat.Resource;
-import org.openstack4j.model.network.Network;
-import org.openstack4j.model.network.Port;
-import org.openstack4j.model.network.Subnet;
-import org.openstack4j.model.storage.block.Volume;
+import com.woorea.openstack.cinder.model.Volume;
+import com.woorea.openstack.heat.model.Resource;
+import com.woorea.openstack.nova.model.Flavor;
+import com.woorea.openstack.nova.model.Image;
+import com.woorea.openstack.nova.model.Server;
+import com.woorea.openstack.quantum.model.Network;
+import com.woorea.openstack.quantum.model.Port;
+import com.woorea.openstack.quantum.model.Subnet;
 
 public interface OpenstackClient {
 
@@ -56,19 +57,28 @@ public interface OpenstackClient {
     Server getServerById(String serverId);
 
     /**
+     * Get an image object by image ID
+     *
+     * @param imageId Unique UUID of the image.
+     * @return Image object, or null when the image no longer exists.
+     */
+    Image getImageById(String imageId);
+
+    /**
+     * Get a flavor object by flavor ID
+     *
+     * @param flavorId Unique ID of the flavor.
+     * @return Flavor object, or null when the flavor no longer exists.
+     */
+    Flavor getFlavorById(String flavorId);
+
+    /**
      * Get a port object by port ID
      * 
      * @param portId Unique UUID of the port.
      * @return Port object.
      */
     Port getPortById(String portId);
-
-    /**
-     * Returns a list of all ports we have the right to see
-     * 
-     * @return List of all Openstack ports
-     */
-    List<Port> getAllPorts();
 
     /**
      * Returns a list of all the resources for the stack
@@ -86,14 +96,6 @@ public interface OpenstackClient {
      * @return Network object.
      */
     Network getNetworkById(String networkId);
-
-    /**
-     * List networks by filtering parameters
-     * 
-     * @param filterParams key-value pairs for filtering params
-     * @return List of filtered Network objects
-     */
-    List<Network> listNetworksByFilter(Map<String, String> filterParams);
 
     /**
      * Get a subnet object by subnet ID

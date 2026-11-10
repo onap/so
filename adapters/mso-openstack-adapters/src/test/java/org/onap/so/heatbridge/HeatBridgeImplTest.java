@@ -36,6 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -55,11 +56,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -89,25 +88,9 @@ import org.onap.aaiclient.client.generated.fluentbuilders.AAIFluentTypeBuilder;
 import org.onap.aaiclient.client.graphinventory.entities.DSLQuery;
 import org.onap.aaiclient.client.graphinventory.entities.Pathed;
 import org.onap.so.cloud.resource.beans.NodeType;
-import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.heatbridge.constants.HeatBridgeConstants;
 import org.onap.so.heatbridge.helpers.AaiHelper;
 import org.onap.so.heatbridge.openstack.api.OpenstackClient;
-import org.openstack4j.model.compute.Flavor;
-import org.openstack4j.model.compute.Image;
-import org.openstack4j.model.compute.Server;
-import org.openstack4j.model.compute.Server.Status;
-import org.openstack4j.model.heat.Resource;
-import org.openstack4j.model.network.IP;
-import org.openstack4j.model.network.IPVersionType;
-import org.openstack4j.model.network.Network;
-import org.openstack4j.model.network.NetworkType;
-import org.openstack4j.model.network.Port;
-import org.openstack4j.model.network.Subnet;
-import org.openstack4j.model.storage.block.Volume;
-import org.openstack4j.model.storage.block.VolumeAttachment;
-import org.openstack4j.openstack.heat.domain.HeatResource;
-import org.openstack4j.openstack.heat.domain.HeatResource.Resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -116,9 +99,19 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.onap.so.spring.SpringContextHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+import com.woorea.openstack.cinder.model.Volume;
+import com.woorea.openstack.heat.model.Resource;
+import com.woorea.openstack.heat.model.Resources;
+import com.woorea.openstack.nova.model.Flavor;
+import com.woorea.openstack.nova.model.Image;
+import com.woorea.openstack.nova.model.Server;
+import com.woorea.openstack.quantum.model.Network;
+import com.woorea.openstack.quantum.model.Port;
+import com.woorea.openstack.quantum.model.Subnet;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class HeatBridgeImplTest {
@@ -126,14 +119,13 @@ public class HeatBridgeImplTest {
     private static final String CLOUD_OWNER = "CloudOwner";
     private static final String REGION_ID = "RegionOne";
     private static final String TENANT_ID = "7320ec4a5b9d4589ba7c4412ccfd290f";
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER =
+            new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
     private static Logger logger = LoggerFactory.getLogger(HeatBridgeImplTest.class);
 
     @Mock
     private OpenstackClient osClient;
-
-    private CloudIdentity cloudIdentity = new CloudIdentity();
 
     @Mock
     private AAIResourcesClient resourcesClient;
@@ -162,30 +154,22 @@ public class HeatBridgeImplTest {
     @Mock
     private AAIResourcesClient aaiResourcesClient;
 
-    // Built as a spy in setUp() rather than via @Spy @InjectMocks with an eager field initializer:
-    // under Mockito 5 that combination (the field is pre-instantiated with @Mock constructor args
-    // that are still null at field-init time) can leave a real, unspied instance, causing
-    // NotAMockException on doReturn/doNothing/verify. Constructing the spy after the mocks exist and
-    // injecting the mocked collaborators (as @InjectMocks previously did) guarantees a proper spy.
+    // Built as a spy in setUp(), after the mocks exist: under Mockito 5, @Spy @InjectMocks with an eager field
+    // initializer can leave a real, unspied instance (NotAMockException on doReturn/doNothing/verify).
     private HeatBridgeImpl heatbridge;
 
     @Before
     public void setUp() {
         when(resourcesClient.beginSingleTransaction()).thenReturn(transaction);
-        // HeatBridgeImpl's field initializer `new AaiHelper()` triggers a ServiceLoader lookup of
-        // RestProperties providers (AaiClientPropertiesImpl), which reads SpringContextHelper's static
-        // ApplicationContext in its constructor. Previously this was dodged because @Spy created the
-        // instance via Objenesis (no constructor); now that we construct it explicitly, seed a mock
-        // context so the provider instantiates instead of NPEing on a null context.
+        // HeatBridgeImpl's field initializer `new AaiHelper()` instantiates the RestProperties provider
+        // (AaiClientPropertiesImpl), which reads SpringContextHelper's static context and unboxes
+        // getProperty(key, type, default), so the mock context has to hand the default back.
+        when(env.getProperty(anyString(), any(Class.class), any())).thenAnswer(invocation -> invocation.getArgument(2));
         ApplicationContext springContext = mock(ApplicationContext.class);
         when(springContext.getEnvironment()).thenReturn(env);
         ReflectionTestUtils.setField(SpringContextHelper.class, "context", springContext);
-        heatbridge = spy(new HeatBridgeImpl(resourcesClient, cloudIdentity, CLOUD_OWNER, REGION_ID, REGION_ID,
-                TENANT_ID, NodeType.GREENFIELD));
-        // @InjectMocks previously field-injected the mocked collaborators by name; preserve that so
-        // the env.getProperty(...) and osClient.* stubs in the tests take effect.
-        ReflectionTestUtils.setField(heatbridge, "env", env);
-        ReflectionTestUtils.setField(heatbridge, "osClient", osClient);
+        heatbridge = spy(
+                new HeatBridgeImpl(resourcesClient, osClient, CLOUD_OWNER, REGION_ID, TENANT_ID, NodeType.GREENFIELD));
     }
 
     @Test
@@ -234,14 +218,12 @@ public class HeatBridgeImplTest {
         when(server1.getId()).thenReturn("test-server1-id");
         when(server1.getHypervisorHostname()).thenReturn("test-hypervisor");
         when(server1.getName()).thenReturn("test-server1-name");
-        when(server1.getStatus()).thenReturn(Status.ACTIVE);
         when(server1.getLinks()).thenReturn(new ArrayList<>());
 
         Server server2 = mock(Server.class);
         when(server2.getId()).thenReturn("test-server2-id");
         when(server2.getHypervisorHostname()).thenReturn("");
         when(server2.getName()).thenReturn("test-server2-name");
-        when(server2.getStatus()).thenReturn(Status.ACTIVE);
         when(server2.getLinks()).thenReturn(new ArrayList<>());
 
         List<Server> servers = Arrays.asList(server1, server2);
@@ -301,13 +283,11 @@ public class HeatBridgeImplTest {
         when(server1.getId()).thenReturn("test-server1-id");
         when(server1.getHypervisorHostname()).thenReturn("");
         when(server1.getName()).thenReturn("test-server1-name");
-        when(server1.getStatus()).thenReturn(Status.ACTIVE);
         when(server1.getLinks()).thenReturn(new ArrayList<>());
 
         Server server2 = mock(Server.class);
         when(server2.getId()).thenReturn("test-server2-id");
         when(server2.getName()).thenReturn("test-server2-name");
-        when(server2.getStatus()).thenReturn(Status.ACTIVE);
         when(server2.getLinks()).thenReturn(new ArrayList<>());
 
         List<Server> servers = Arrays.asList(server1, server2);
@@ -363,14 +343,12 @@ public class HeatBridgeImplTest {
         when(server1.getId()).thenReturn("test-server1-id");
         when(server1.getHypervisorHostname()).thenReturn("test-hypervisor");
         when(server1.getName()).thenReturn("test-server1-name");
-        when(server1.getStatus()).thenReturn(Status.ACTIVE);
         when(server1.getLinks()).thenReturn(new ArrayList<>());
 
         // HypervisorHostname is not set
         Server server2 = mock(Server.class);
         when(server2.getId()).thenReturn("test-server1-id");
         when(server2.getName()).thenReturn("test-server1-name");
-        when(server2.getStatus()).thenReturn(Status.ACTIVE);
         when(server2.getLinks()).thenReturn(new ArrayList<>());
 
         // HypervisorHostname is empty string
@@ -378,7 +356,6 @@ public class HeatBridgeImplTest {
         when(server3.getId()).thenReturn("test-server1-id");
         when(server3.getHypervisorHostname()).thenReturn("");
         when(server3.getName()).thenReturn("test-server1-name");
-        when(server3.getStatus()).thenReturn(Status.ACTIVE);
         when(server3.getLinks()).thenReturn(new ArrayList<>());
 
         org.onap.aai.domain.yang.RelationshipList relList = aaiHelper.getVserverRelationshipList(CLOUD_OWNER, REGION_ID,
@@ -450,9 +427,11 @@ public class HeatBridgeImplTest {
         List<Resource> stackResources = (List<Resource>) extractTestStackResources();
         Port port = mock(Port.class);
         when(port.getId()).thenReturn("test-port-id");
-        when(port.getHostId()).thenReturn("pserverId");
         when(port.getName()).thenReturn("test-port-name");
-        when(port.getvNicType()).thenReturn(HeatBridgeConstants.OS_SRIOV_PORT_TYPE);
+        Port.Binding binding = new Port.Binding();
+        binding.setVnicType(HeatBridgeConstants.OS_SRIOV_PORT_TYPE);
+        binding.setHostId("pserverId");
+        when(port.getBinding()).thenReturn(binding);
         when(port.getMacAddress()).thenReturn("78:4f:43:68:e2:78");
         when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
         when(port.getDeviceId()).thenReturn("test-device-id");
@@ -460,16 +439,13 @@ public class HeatBridgeImplTest {
         when(osClient.getServerById("test-device-id")).thenReturn(server);
         when(server.getHypervisorHostname()).thenReturn("test.server.name");
         String pfPciId = "0000:08:00.0";
-        when(port.getProfile()).thenReturn(ImmutableMap.of(HeatBridgeConstants.OS_PCI_SLOT_KEY, pfPciId,
+        binding.setProfile(ImmutableMap.of(HeatBridgeConstants.OS_PCI_SLOT_KEY, pfPciId,
                 HeatBridgeConstants.OS_PF_PCI_SLOT_KEY, "testPfPciId"));
 
-        IP ip = mock(IP.class);
-
-        Set<IP> ipSet = new HashSet<>();
-        ipSet.add(ip);
-        when(ip.getIpAddress()).thenReturn("2606:ae00:2e60:100::226");
-        when(ip.getSubnetId()).thenReturn("testSubnetId");
-        when(port.getFixedIps()).thenAnswer(x -> ipSet);
+        Port.Ip ip = new Port.Ip();
+        ip.setAddress("2606:ae00:2e60:100::226");
+        ip.setSubnetId("testSubnetId");
+        when(port.getList()).thenReturn(Arrays.asList(ip));
 
         Subnet subnet = mock(Subnet.class);
         when(subnet.getCidr()).thenReturn("169.254.100.0/24");
@@ -477,9 +453,9 @@ public class HeatBridgeImplTest {
 
         Network network = mock(Network.class);
         when(network.getId()).thenReturn("test-network-id");
-        when(network.getNetworkType()).thenReturn(NetworkType.VLAN);
-        when(network.getProviderSegID()).thenReturn("2345");
-        when(network.getProviderPhyNet()).thenReturn("ovsnet");
+        when(network.getProviderNetworkType()).thenReturn("vlan");
+        when(network.getProviderSegmentationId()).thenReturn(2345);
+        when(network.getProviderPhysicalNetwork()).thenReturn("ovsnet");
 
         when(osClient.getPortById("212a203a-9764-4f42-84ea-731536a8f13a")).thenReturn(port);
         when(osClient.getPortById("387e3904-8948-43d1-8635-b6c2042b54da")).thenReturn(port);
@@ -516,18 +492,18 @@ public class HeatBridgeImplTest {
         Subnet subnet1 = mock(Subnet.class);
         when(subnet1.getId()).thenReturn("test-subnet1-id");
         when(subnet1.getName()).thenReturn("test-subnet1-name");
-        when(subnet1.isDHCPEnabled()).thenReturn(true);
-        when(subnet1.getGateway()).thenReturn("test-subnet1-gateway");
+        when(subnet1.getEnableDHCP()).thenReturn(Boolean.TRUE);
+        when(subnet1.getGw()).thenReturn("test-subnet1-gateway");
         when(subnet1.getCidr()).thenReturn("test-subnet1-gateway");
-        when(subnet1.getIpVersion()).thenReturn(IPVersionType.V4);
+        when(subnet1.getIpversion()).thenReturn(Subnet.IpVersion.IPV4);
 
         Subnet subnet2 = mock(Subnet.class);
         when(subnet2.getId()).thenReturn("test-subnet2-id");
         when(subnet2.getName()).thenReturn("test-subnet2-name");
-        when(subnet2.isDHCPEnabled()).thenReturn(true);
-        when(subnet2.getGateway()).thenReturn("test-subnet1-gateway");
+        when(subnet2.getEnableDHCP()).thenReturn(Boolean.TRUE);
+        when(subnet2.getGw()).thenReturn("test-subnet1-gateway");
         when(subnet2.getCidr()).thenReturn("test-subnet1-gateway");
-        when(subnet2.getIpVersion()).thenReturn(IPVersionType.V6);
+        when(subnet2.getIpversion()).thenReturn(Subnet.IpVersion.IPV6);
 
         when(osClient.getSubnetById(subnet1.getId())).thenReturn(subnet1);
         when(osClient.getSubnetById(subnet2.getId())).thenReturn(subnet2);
@@ -537,19 +513,19 @@ public class HeatBridgeImplTest {
         // Arrange
         Network network1 = mock(Network.class);
         when(network1.getId()).thenReturn("test-network1-id");
-        when(network1.isShared()).thenReturn(true);
-        when(network1.isRouterExternal()).thenReturn(true);
-        when(network1.isAdminStateUp()).thenReturn(true);
-        when(network1.getProviderPhyNet()).thenReturn("sriov-network1");
+        when(network1.getShared()).thenReturn(Boolean.TRUE);
+        when(network1.getRouterExternal()).thenReturn(Boolean.TRUE);
+        when(network1.getAdminStateUp()).thenReturn(Boolean.TRUE);
+        when(network1.getProviderPhysicalNetwork()).thenReturn("sriov-network1");
         when(network1.getName()).thenReturn("network1");
         when(network1.getSubnets()).thenReturn(subnetIds);
 
         Network network2 = mock(Network.class);
         when(network2.getId()).thenReturn("test-network2-id");
-        when(network2.isShared()).thenReturn(true);
-        when(network2.isRouterExternal()).thenReturn(true);
-        when(network2.isAdminStateUp()).thenReturn(true);
-        when(network2.getProviderPhyNet()).thenReturn("sriov-network2");
+        when(network2.getShared()).thenReturn(Boolean.TRUE);
+        when(network2.getRouterExternal()).thenReturn(Boolean.TRUE);
+        when(network2.getAdminStateUp()).thenReturn(Boolean.TRUE);
+        when(network2.getProviderPhysicalNetwork()).thenReturn("sriov-network2");
         when(network2.getName()).thenReturn("network2");
         when(network2.getSubnets()).thenReturn(subnetIds);
 
@@ -581,7 +557,9 @@ public class HeatBridgeImplTest {
         Port port = mock(Port.class);
         when(port.getId()).thenReturn("test-port-id");
         when(port.getName()).thenReturn("test-port-name");
-        when(port.getvNicType()).thenReturn(HeatBridgeConstants.OS_SRIOV_PORT_TYPE);
+        Port.Binding binding = new Port.Binding();
+        binding.setVnicType(HeatBridgeConstants.OS_SRIOV_PORT_TYPE);
+        when(port.getBinding()).thenReturn(binding);
         when(port.getMacAddress()).thenReturn("78:4f:43:68:e2:78");
         when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
         when(port.getDeviceId()).thenReturn("test-device-id");
@@ -592,16 +570,13 @@ public class HeatBridgeImplTest {
         lIf.setInterfaceName("name");
 
         String pfPciId = "0000:08:00.0";
-        when(port.getProfile()).thenReturn(ImmutableMap.of(HeatBridgeConstants.OS_PCI_SLOT_KEY, pfPciId,
+        binding.setProfile(ImmutableMap.of(HeatBridgeConstants.OS_PCI_SLOT_KEY, pfPciId,
                 HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY, "physical_network_id"));
 
-        IP ip = mock(IP.class);
-
-        Set<IP> ipSet = new HashSet<>();
-        ipSet.add(ip);
-        when(ip.getIpAddress()).thenReturn("2606:ae00:2e60:100::226");
-        when(ip.getSubnetId()).thenReturn("testSubnetId");
-        when(port.getFixedIps()).thenAnswer(x -> ipSet);
+        Port.Ip ip = new Port.Ip();
+        ip.setAddress("2606:ae00:2e60:100::226");
+        ip.setSubnetId("testSubnetId");
+        when(port.getList()).thenReturn(Arrays.asList(ip));
 
         Subnet subnet = mock(Subnet.class);
         when(subnet.getCidr()).thenReturn("169.254.100.0/24");
@@ -609,9 +584,9 @@ public class HeatBridgeImplTest {
 
         Network network = mock(Network.class);
         when(network.getId()).thenReturn("test-network-id");
-        when(network.getNetworkType()).thenReturn(NetworkType.VLAN);
-        when(network.getProviderSegID()).thenReturn("2345");
-        when(network.getProviderPhyNet()).thenReturn("ovsnet");
+        when(network.getProviderNetworkType()).thenReturn("vlan");
+        when(network.getProviderSegmentationId()).thenReturn(2345);
+        when(network.getProviderPhysicalNetwork()).thenReturn("ovsnet");
         doNothing().when(heatbridge).processOVS(any(), any(), any());
 
         when(osClient.getNetworkById(anyString())).thenReturn(network);
@@ -638,13 +613,10 @@ public class HeatBridgeImplTest {
         when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
         when(port.getDeviceId()).thenReturn("test-device-id");
 
-        IP ip = mock(IP.class);
-
-        Set<IP> ipSet = new HashSet<>();
-        ipSet.add(ip);
-        when(ip.getIpAddress()).thenReturn("2606:ae00:2e60:100::226");
-        when(ip.getSubnetId()).thenReturn("testSubnetId");
-        when(port.getFixedIps()).thenAnswer(x -> ipSet);
+        Port.Ip ip = new Port.Ip();
+        ip.setAddress("2606:ae00:2e60:100::226");
+        ip.setSubnetId("testSubnetId");
+        when(port.getList()).thenReturn(Arrays.asList(ip));
 
         Subnet subnet = mock(Subnet.class);
         when(subnet.getCidr()).thenReturn("169.254.100.0/24");
@@ -737,13 +709,11 @@ public class HeatBridgeImplTest {
 
     private Port mockPortWithFixedIp(String ipAddress, boolean valid) {
         Port port = mock(Port.class);
-        IP ip = mock(IP.class);
-        when(ip.getIpAddress()).thenReturn(ipAddress);
-        Set<IP> ipSet = new HashSet<>();
-        ipSet.add(ip);
-        when(port.getFixedIps()).thenAnswer(x -> ipSet);
+        Port.Ip ip = new Port.Ip();
+        ip.setAddress(ipAddress);
+        when(port.getList()).thenReturn(Arrays.asList(ip));
         if (valid) {
-            when(ip.getSubnetId()).thenReturn("testSubnetId");
+            ip.setSubnetId("testSubnetId");
             when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
             when(port.getDeviceId()).thenReturn("test-device-id");
         }
@@ -757,18 +727,20 @@ public class HeatBridgeImplTest {
         Port port = mock(Port.class);
         when(port.getId()).thenReturn("test-port-id");
         when(port.getName()).thenReturn("test-port-name");
-        when(port.getvNicType()).thenReturn(HeatBridgeConstants.OS_SRIOV_PORT_TYPE);
+        Port.Binding binding = new Port.Binding();
+        binding.setVnicType(HeatBridgeConstants.OS_SRIOV_PORT_TYPE);
+        when(port.getBinding()).thenReturn(binding);
         when(port.getMacAddress()).thenReturn("78:4f:43:68:e2:78");
         when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
         when(port.getDeviceId()).thenReturn("test-device-id");
         String pfPciId = "0000:08:00.0";
-        when(port.getProfile()).thenReturn(ImmutableMap.of(HeatBridgeConstants.OS_PCI_SLOT_KEY, pfPciId,
+        binding.setProfile(ImmutableMap.of(HeatBridgeConstants.OS_PCI_SLOT_KEY, pfPciId,
                 HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY, "physical_network_id"));
 
         Network network = mock(Network.class);
         when(network.getId()).thenReturn("test-network-id");
-        when(network.getNetworkType()).thenReturn(NetworkType.VLAN);
-        when(network.getProviderSegID()).thenReturn("2345");
+        when(network.getProviderNetworkType()).thenReturn("vlan");
+        when(network.getProviderSegmentationId()).thenReturn(2345);
 
         when(osClient.getPortById("212a203a-9764-4f42-84ea-731536a8f13a")).thenReturn(port);
         when(osClient.getPortById("387e3904-8948-43d1-8635-b6c2042b54da")).thenReturn(port);
@@ -797,15 +769,17 @@ public class HeatBridgeImplTest {
         Port port = mock(Port.class);
         when(port.getId()).thenReturn("test-port-id");
         when(port.getName()).thenReturn("test-port-name");
-        when(port.getvNicType()).thenReturn(HeatBridgeConstants.OS_SRIOV_PORT_TYPE);
+        Port.Binding binding = new Port.Binding();
+        binding.setVnicType(HeatBridgeConstants.OS_SRIOV_PORT_TYPE);
+        when(port.getBinding()).thenReturn(binding);
         when(port.getMacAddress()).thenReturn("78:4f:43:68:e2:78");
         when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
         when(port.getDeviceId()).thenReturn("test-device-id");
 
         Network network = mock(Network.class);
         when(network.getId()).thenReturn("test-network-id");
-        when(network.getNetworkType()).thenReturn(NetworkType.VLAN);
-        when(network.getProviderSegID()).thenReturn("2345");
+        when(network.getProviderNetworkType()).thenReturn("vlan");
+        when(network.getProviderSegmentationId()).thenReturn(2345);
 
         when(osClient.getPortById("212a203a-9764-4f42-84ea-731536a8f13a")).thenReturn(port);
         when(osClient.getPortById("387e3904-8948-43d1-8635-b6c2042b54da")).thenReturn(port);
@@ -836,15 +810,17 @@ public class HeatBridgeImplTest {
         Port port = mock(Port.class);
         when(port.getId()).thenReturn("test-port-id");
         when(port.getName()).thenReturn("test-port-name");
-        when(port.getvNicType()).thenReturn(HeatBridgeConstants.OS_SRIOV_PORT_TYPE);
+        Port.Binding binding = new Port.Binding();
+        binding.setVnicType(HeatBridgeConstants.OS_SRIOV_PORT_TYPE);
+        when(port.getBinding()).thenReturn(binding);
         when(port.getMacAddress()).thenReturn("78:4f:43:68:e2:78");
         when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
         when(port.getDeviceId()).thenReturn(null);
 
         Network network = mock(Network.class);
         when(network.getId()).thenReturn("test-network-id");
-        when(network.getNetworkType()).thenReturn(NetworkType.VLAN);
-        when(network.getProviderSegID()).thenReturn("2345");
+        when(network.getProviderNetworkType()).thenReturn("vlan");
+        when(network.getProviderSegmentationId()).thenReturn(2345);
 
         when(osClient.getPortById("212a203a-9764-4f42-84ea-731536a8f13a")).thenReturn(port);
         when(osClient.getPortById("387e3904-8948-43d1-8635-b6c2042b54da")).thenReturn(port);
@@ -887,11 +863,9 @@ public class HeatBridgeImplTest {
     public void testBuildAddVolumes() throws HeatBridgeException {
         List<Resource> stackResources = (List<Resource>) extractTestStackResources();
         Volume volume = mock(Volume.class);
-        List<VolumeAttachment> attachments = new ArrayList<>();
-        VolumeAttachment server = mock(VolumeAttachment.class);
-        attachments.add(server);
-        when(volume.getAttachments()).thenAnswer(x -> attachments);
-        when(server.getServerId()).thenReturn("vserverIdTest");
+        Volume.Attachment attachment = new Volume.Attachment();
+        attachment.setServerId("vserverIdTest");
+        when(volume.getAttachments()).thenReturn(Arrays.asList(attachment));
 
         when(osClient.getVolumeById("5ad95036-8daf-4379-a59c-865f35976ca3")).thenReturn(volume);
 
@@ -905,8 +879,8 @@ public class HeatBridgeImplTest {
         verify(osClient, times(1)).getVolumeById(eq("5ad95036-8daf-4379-a59c-865f35976ca3"));
     }
 
-    private List<? extends Resource> extractTestStackResources() {
-        List<HeatResource> stackResources = null;
+    private List<Resource> extractTestStackResources() {
+        List<Resource> stackResources = null;
         try {
             stackResources = MAPPER.readValue(readTestResourceFile("stack-resources.json"), Resources.class).getList();
             assertNotNull(stackResources);
@@ -915,6 +889,50 @@ public class HeatBridgeImplTest {
             Assert.fail("Failed to extract test stack resources.");
         }
         return stackResources;
+    }
+
+    @Test
+    public void testGetAllOpenstackServers_bootFromVolume() {
+        Server bootFromVolume = new Server();
+        Flavor flavorRef = new Flavor();
+        flavorRef.setId("f1");
+        bootFromVolume.setFlavor(flavorRef);
+        Flavor fullFlavor = new Flavor();
+        fullFlavor.setId("f1");
+        fullFlavor.setName("m1.small");
+        when(osClient.getServerById(anyString())).thenReturn(bootFromVolume);
+        when(osClient.getFlavorById("f1")).thenReturn(fullFlavor);
+
+        List<Server> servers = heatbridge.getAllOpenstackServers(extractTestStackResources());
+
+        assertNull(servers.get(0).getImage());
+        assertEquals("m1.small", servers.get(0).getFlavor().getName());
+        verify(osClient, never()).getImageById(anyString());
+    }
+
+    @Test
+    public void testExtractOpenstackFlavorsFromServers_skipsMissingFlavor() {
+        Server withoutFlavor = new Server();
+        Server withFlavor = new Server();
+        Flavor flavor = new Flavor();
+        flavor.setId("f1");
+        withFlavor.setFlavor(flavor);
+
+        List<Flavor> flavors = heatbridge.extractOpenstackFlavorsFromServers(Arrays.asList(withoutFlavor, withFlavor));
+
+        assertEquals(1, flavors.size());
+    }
+
+    @Test
+    public void testCreatePserversAndPinterfaces_portWithoutBinding() throws HeatBridgeException {
+        Port port = new Port();
+        port.setBinding(new Port.Binding());
+        when(osClient.getPortById(anyString())).thenReturn(port);
+        when(osClient.getServerById(anyString())).thenReturn(new Server());
+
+        heatbridge.createPserversAndPinterfacesIfNotPresentInAai(extractTestStackResources());
+
+        verify(resourcesClient, never()).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
     }
 
     private String readTestResourceFile(String filePath) {

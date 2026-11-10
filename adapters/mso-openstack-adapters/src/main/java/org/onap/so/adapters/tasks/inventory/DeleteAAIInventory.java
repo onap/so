@@ -23,11 +23,11 @@ package org.onap.so.adapters.tasks.inventory;
 import org.onap.aaiclient.client.aai.AAIResourcesClient;
 import org.onap.so.cloud.CloudConfig;
 import org.onap.so.cloud.resource.beans.CloudInformation;
-import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.heatbridge.HeatBridgeApi;
 import org.onap.so.heatbridge.HeatBridgeException;
 import org.onap.so.heatbridge.HeatBridgeImpl;
+import org.onap.so.heatbridge.openstack.factory.OpenstackClientFactory;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +48,9 @@ public class DeleteAAIInventory {
     @Autowired
     protected Environment env;
 
+    @Autowired
+    protected OpenstackClientFactory openstackClientFactory;
+
     private static final String MULTICLOUD_MODE = "MULTICLOUD";
 
     public void heatbridge(CloudInformation cloudInformation) throws MsoCloudSiteNotFound, HeatBridgeException {
@@ -58,16 +61,15 @@ public class DeleteAAIInventory {
             logger.debug("Skipping Heatbridge as CloudSite orchestrator is: {}", MULTICLOUD_MODE);
             return;
         }
-        CloudIdentity cloudIdentity = cloudSite.getIdentityService();
-        HeatBridgeApi heatBridgeClient = createClient(getAaiClient(), cloudSite, cloudIdentity, cloudInformation);
-        heatBridgeClient.authenticate();
+        HeatBridgeApi heatBridgeClient = createClient(getAaiClient(), cloudInformation);
         heatBridgeClient.deleteVfModuleData(cloudInformation.getVnfId(), cloudInformation.getVfModuleId());
     }
 
-    public HeatBridgeApi createClient(AAIResourcesClient client, CloudSite cloudSite, CloudIdentity cloudIdentity,
-            CloudInformation cloudInformation) {
-        return new HeatBridgeImpl(client, cloudIdentity, cloudInformation.getOwner(), cloudInformation.getRegionId(),
-                cloudSite.getRegionId(), cloudInformation.getTenantId(), cloudInformation.getNodeType());
+    public HeatBridgeApi createClient(AAIResourcesClient client, CloudInformation cloudInformation) {
+        return new HeatBridgeImpl(client,
+                openstackClientFactory.create(cloudInformation.getRegionId(), cloudInformation.getTenantId()),
+                cloudInformation.getOwner(), cloudInformation.getRegionId(), cloudInformation.getTenantId(),
+                cloudInformation.getNodeType());
     }
 
     protected AAIResourcesClient getAaiClient() {

@@ -37,6 +37,7 @@ import com.woorea.openstack.nova.model.Flavor;
 import com.woorea.openstack.nova.model.Flavors;
 import com.woorea.openstack.nova.model.HostAggregate;
 import com.woorea.openstack.nova.model.HostAggregates;
+import com.woorea.openstack.nova.model.Image;
 import com.woorea.openstack.nova.model.Hypervisors;
 import com.woorea.openstack.nova.model.QuotaSet;
 import com.woorea.openstack.nova.model.Server;
@@ -204,6 +205,17 @@ public class NovaClientImpl extends MsoCommonUtils {
         try {
             Nova novaClient = client.getNovaClient(cloudSiteId, tenantId);
             OpenStackRequest<Server> request = novaClient.servers().show(id);
+            return executeAndRecordOpenstackRequest(request, false);
+        } catch (MsoException e) {
+            logger.error("Error building Nova Client", e);
+            throw new NovaClientException("Error building Nova Client", e);
+        }
+    }
+
+    public Image queryImageById(String cloudSiteId, String tenantId, String id) throws NovaClientException {
+        try {
+            Nova novaClient = client.getNovaClient(cloudSiteId, tenantId);
+            OpenStackRequest<Image> request = novaClient.images().show(id);
             return executeAndRecordOpenstackRequest(request, false);
         } catch (MsoException e) {
             logger.error("Error building Nova Client", e);
