@@ -159,4 +159,18 @@
                  stripComments="true"/>
     </changeSet>
 
+    <!-- Upgrade: Camunda engine 7.23 to 7.24 (schema-log row only, no DDL).
+         Skipped if the 7.24.0 schema-log entry already exists. -->
+    <changeSet id="camunda-engine-7.23-to-7.24" author="so-migration">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM ACT_GE_SCHEMA_LOG WHERE VERSION_ = '7.24.0'
+            </sqlCheck>
+        </preConditions>
+        <sqlFile path="db/changelog/mariadb_engine_7.23_to_7.24.sql"
+                 relativeToChangelogFile="false"
+                 splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
 </databaseChangeLog>
