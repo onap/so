@@ -22,6 +22,10 @@ package org.onap.so.apihandlerinfra;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -32,6 +36,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import org.json.JSONObject;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricActivityInstanceEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
 import org.junit.Before;
@@ -39,6 +46,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -50,7 +58,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
@@ -362,5 +372,50 @@ public class CamundaRequestHandlerUnitTest {
         String expectedBasicAuth = "Basic dXNlcjpwYXNzd29yZA==";
 
         assertEquals(expectedBasicAuth, basicAuth);
+    }
+
+    @Test
+    public void sendCamundaMessagesTest() {
+        ReflectionTestUtils.setField(camundaRequestHandler, "asyncExecutor", (Executor) Runnable::run);
+        JSONObject msgJson = new JSONObject().put("messageName", "testMessage");
+        String url = "http://localhost:8089/sobpmnengine/message";
+        doReturn(new ResponseEntity<>("ok", HttpStatus.OK)).when(restTemplate).postForEntity(eq(url),
+                any(HttpEntity.class), eq(String.class));
+
+        camundaRequestHandler.sendCamundaMessages(msgJson).join();
+
+        ArgumentCaptor<HttpEntity> captor = ArgumentCaptor.forClass(HttpEntity.class);
+        verify(restTemplate, times(1)).postForEntity(eq(url), captor.capture(), eq(String.class));
+        HttpEntity<?> sent = captor.getValue();
+        assertEquals(msgJson.toString(), sent.getBody());
+        assertEquals(MediaType.APPLICATION_JSON, sent.getHeaders().getContentType());
+        assertEquals(MediaType.APPLICATION_JSON, sent.getHeaders().getAccept().get(0));
+        assertEquals("Basic dXNlcjpwYXNzd29yZA==", sent.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
+    }
+
+    @Test
+    public void sendCamundaMessagesDoesNotBlockCallerTest() {
+        List<Runnable> pending = new ArrayList<>();
+        ReflectionTestUtils.setField(camundaRequestHandler, "asyncExecutor", (Executor) pending::add);
+        JSONObject msgJson = new JSONObject().put("messageName", "testMessage");
+
+        CompletableFuture<Void> result = camundaRequestHandler.sendCamundaMessages(msgJson);
+
+        verify(restTemplate, never()).postForEntity(any(String.class), any(HttpEntity.class), eq(String.class));
+        assertEquals(1, pending.size());
+        assertFalse(result.isDone());
+    }
+
+    @Test
+    public void sendCamundaMessagesErrorTest() {
+        ReflectionTestUtils.setField(camundaRequestHandler, "asyncExecutor", (Executor) Runnable::run);
+        JSONObject msgJson = new JSONObject().put("messageName", "testMessage");
+        String url = "http://localhost:8089/sobpmnengine/message";
+        doThrow(new ResourceAccessException("I/O error")).when(restTemplate).postForEntity(eq(url),
+                any(HttpEntity.class), eq(String.class));
+
+        camundaRequestHandler.sendCamundaMessages(msgJson).join();
+
+        verify(restTemplate, times(1)).postForEntity(eq(url), any(HttpEntity.class), eq(String.class));
     }
 }

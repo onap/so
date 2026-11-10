@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import jakarta.ws.rs.core.UriBuilder;
 import org.apache.hc.client5.http.classic.HttpClient;
@@ -23,6 +25,7 @@ import org.onap.so.utils.BasicAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -37,9 +40,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
 
 @Component
 public class CamundaRequestHandler {
@@ -52,6 +52,10 @@ public class CamundaRequestHandler {
 
     @Autowired
     private Environment env;
+
+    @Autowired
+    @Qualifier("asyncExecutor")
+    private Executor asyncExecutor;
 
     private String buildCamundaUrlString(boolean historyLookup, boolean sort, boolean active, String lookupId) {
         UriBuilder uriBuilder = UriBuilder.fromUri(env.getProperty("mso.camundaURL"));
@@ -208,18 +212,21 @@ public class CamundaRequestHandler {
         return retryTemplate;
     }
 
-    protected void sendCamundaMessages(JSONObject msgJson) {
+    protected CompletableFuture<Void> sendCamundaMessages(JSONObject msgJson) {
         String url = env.getProperty("mso.camundaURL") + "/sobpmnengine/message";
         HttpHeaders headers = setCamundaHeaders(env.getRequiredProperty(BasicAuth.SO_USERNAME_PROPERTY),
                 env.getProperty(BasicAuth.SO_PASSWORD_PROPERTY));
         headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(msgJson.toString(), headers);
+        RestTemplate restTemplate = getRestTemplate(false);
         // Workflow may take a long time so use non-blocking request
-        Flux<String> flux = WebClient.create().post().uri(url).headers(httpHeaders -> {
-            httpHeaders.set(httpHeaders.AUTHORIZATION, headers.get(httpHeaders.AUTHORIZATION).get(0));
-            httpHeaders.set(httpHeaders.ACCEPT, headers.get(httpHeaders.ACCEPT).get(0));
-            httpHeaders.set(httpHeaders.CONTENT_TYPE, headers.get(httpHeaders.CONTENT_TYPE).get(0));
-        }).body(BodyInserters.fromObject(msgJson.toString())).retrieve().bodyToFlux(String.class);
-        flux.subscribe(res -> logger.debug("Send Camunda Message: {}", res));
+        return CompletableFuture.runAsync(() -> {
+            ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+            logger.debug("Send Camunda Message: {}", response.getBody());
+        }, asyncExecutor).exceptionally(e -> {
+            logger.error("Error sending Camunda message to {}", url, e);
+            return null;
+        });
     }
 
     protected RestTemplate getRestTemplate(boolean retry) {
