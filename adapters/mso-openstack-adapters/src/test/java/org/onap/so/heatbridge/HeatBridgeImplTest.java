@@ -43,6 +43,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -68,6 +69,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.aai.domain.yang.L3InterfaceIpv4AddressList;
 import org.onap.aai.domain.yang.L3InterfaceIpv6AddressList;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.PInterface;
@@ -674,6 +676,78 @@ public class HeatBridgeImplTest {
         assertTrue(argument.getValue().isPresent());
 
         assertThat((L3InterfaceIpv6AddressList) argument.getValue().get()).usingRecursiveComparison().isEqualTo(ipv6);
+    }
+
+    @Test
+    public void testUpdateLInterfaceIpsIpv4() {
+        Port port = mockPortWithFixedIp("10.10.20.5", true);
+        Subnet subnet = mock(Subnet.class);
+        when(subnet.getCidr()).thenReturn("10.10.20.0/26");
+        when(osClient.getSubnetById("testSubnetId")).thenReturn(subnet);
+        LInterface lIf = new LInterface();
+        lIf.setInterfaceName("test-port-name");
+
+        heatbridge.updateLInterfaceIps(port, lIf);
+
+        L3InterfaceIpv4AddressList ipv4 = new L3InterfaceIpv4AddressList();
+        ipv4.setIsFloating(false);
+        ipv4.setL3InterfaceIpv4Address("10.10.20.5");
+        ipv4.setNeutronNetworkId("890a203a-23gg-56jh-df67-731656a8f13a");
+        ipv4.setNeutronSubnetId("testSubnetId");
+        ipv4.setL3InterfaceIpv4PrefixLength(26L);
+        ArgumentCaptor<Optional> argument = ArgumentCaptor.forClass(Optional.class);
+        verify(transaction).createIfNotExists(
+                eq(AAIUriFactory.createResourceUri(
+                        AAIFluentTypeBuilder.cloudInfrastructure().cloudRegion("CloudOwner", "RegionOne")
+                                .tenant("7320ec4a5b9d4589ba7c4412ccfd290f").vserver("test-device-id")
+                                .lInterface("test-port-name").l3InterfaceIpv4AddressList("10.10.20.5"))),
+                argument.capture());
+        assertThat((L3InterfaceIpv4AddressList) argument.getValue().get()).usingRecursiveComparison().isEqualTo(ipv4);
+    }
+
+    @Test
+    public void testUpdateLInterfaceIpsIpv4MappedIpv6() {
+        Port port = mockPortWithFixedIp("::ffff:10.10.20.5", true);
+        Subnet subnet = mock(Subnet.class);
+        when(subnet.getCidr()).thenReturn("::ffff:10.10.20.0/120");
+        when(osClient.getSubnetById("testSubnetId")).thenReturn(subnet);
+        LInterface lIf = new LInterface();
+        lIf.setInterfaceName("test-port-name");
+
+        heatbridge.updateLInterfaceIps(port, lIf);
+
+        ArgumentCaptor<Optional> argument = ArgumentCaptor.forClass(Optional.class);
+        verify(transaction).createIfNotExists(any(AAIResourceUri.class), argument.capture());
+        assertThat(argument.getValue().get()).isInstanceOf(L3InterfaceIpv6AddressList.class);
+    }
+
+    @Test
+    public void testUpdateLInterfaceIpsSkipsInvalidAddresses() {
+        for (String invalid : Arrays.asList("not-an-ip", "10.10.20.256", "10.10.20.0/24", "2606:ae00::226::1", "")) {
+            Port port = mockPortWithFixedIp(invalid, false);
+            LInterface lIf = new LInterface();
+            lIf.setInterfaceName("test-port-name");
+
+            heatbridge.updateLInterfaceIps(port, lIf);
+        }
+
+        verify(osClient, never()).getSubnetById(anyString());
+        verify(transaction, never()).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
+    }
+
+    private Port mockPortWithFixedIp(String ipAddress, boolean valid) {
+        Port port = mock(Port.class);
+        IP ip = mock(IP.class);
+        when(ip.getIpAddress()).thenReturn(ipAddress);
+        Set<IP> ipSet = new HashSet<>();
+        ipSet.add(ip);
+        when(port.getFixedIps()).thenAnswer(x -> ipSet);
+        if (valid) {
+            when(ip.getSubnetId()).thenReturn("testSubnetId");
+            when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
+            when(port.getDeviceId()).thenReturn("test-device-id");
+        }
+        return port;
     }
 
     @Test
