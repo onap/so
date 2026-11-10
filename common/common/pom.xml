@@ -23,9 +23,13 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onap.so.common.clients</groupId>
-      <artifactId>clients</artifactId>
+      <groupId>org.onap.so</groupId>
+      <artifactId>clients-base</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -211,6 +215,31 @@
             </goals>
             <configuration>
               <skip>false</skip>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-lean-common</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>org.onap.so.common.clients:clients</exclude>
+                    <exclude>org.apache.kafka:kafka-clients</exclude>
+                  </excludes>
+                  <searchTransitive>true</searchTransitive>
+                  <message>common is on every SO and adapter classpath; consumers of the clients module declare it themselves</message>
+                </bannedDependencies>
+              </rules>
+              <fail>true</fail>
             </configuration>
           </execution>
         </executions>

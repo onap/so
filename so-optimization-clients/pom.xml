@@ -49,6 +49,11 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
+      <groupId>org.onap.so.common.clients</groupId>
+      <artifactId>clients</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter</artifactId>
       <scope>test</scope>

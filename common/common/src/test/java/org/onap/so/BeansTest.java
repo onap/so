@@ -44,8 +44,6 @@ public class BeansTest {
 
     @Test
     public void pojoStructure() {
-        test("org.onap.so.client.policy.entities");
-        test("org.onap.so.client.grm.beans");
         test("org.onap.so.entity");
         test("org.onap.so.serviceinstancebeans");
     }
