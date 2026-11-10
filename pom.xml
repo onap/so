@@ -71,7 +71,7 @@
     <springboot.version>3.5.16</springboot.version>
     <tomcat.version>10.1.61</tomcat.version>
     <spring-cloud.version>2025.0.2</spring-cloud.version>
-    <camunda.version>7.23.0</camunda.version>
+    <camunda.version>7.24.0</camunda.version>
     <format.skipValidate>false</format.skipValidate>
     <format.skipExecute>true</format.skipExecute>
     <io.fabric8.version>0.33.0</io.fabric8.version>
