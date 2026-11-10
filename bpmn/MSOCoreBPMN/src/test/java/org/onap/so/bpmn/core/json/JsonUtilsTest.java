@@ -37,7 +37,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
-import org.onap.so.exceptions.ValidationException;
 
 public class JsonUtilsTest {
 
@@ -165,13 +164,6 @@ public class JsonUtilsTest {
         String response = this.getJson("SDNCServiceResponseExample.json");
         boolean isExist = JsonUtils.jsonElementExist(response, null);
         assertEquals(true, isExist);
-    }
-
-    @Test
-    public void jsonSchemaValidation_ExceptionTest() throws IOException, ValidationException {
-        expectedException.expect(ValidationException.class);
-        String response = this.getJson("SDNCServiceResponseExample.json");
-        String isExist = JsonUtils.jsonSchemaValidation(response, fileLocation);
     }
 
     @Test

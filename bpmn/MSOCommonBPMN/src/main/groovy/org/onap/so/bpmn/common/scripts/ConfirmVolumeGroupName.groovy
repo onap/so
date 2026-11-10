@@ -38,7 +38,7 @@ import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
-import joptsimple.internal.Strings
+import org.apache.commons.lang3.StringUtils
 
 public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
     private static final Logger logger = LoggerFactory.getLogger( ConfirmVolumeGroupName.class);
@@ -112,7 +112,7 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
         else if (execution.getVariable("CVGN_queryVolumeGroupResponseCode") == HttpStatus.OK.value()) {
             VolumeGroup volumeGroup = execution.getVariable("CVGN_queryVolumeGroupResponse")
 
-            if (!Strings.isNullOrEmpty(volumeGroup.getVolumeGroupName())) {
+            if (StringUtils.isNotEmpty(volumeGroup.getVolumeGroupName())) {
                 actualVolumeGroupName =  volumeGroup.getVolumeGroupName()
                 logger.debug("volumeGroupId exists in AAI")
             }

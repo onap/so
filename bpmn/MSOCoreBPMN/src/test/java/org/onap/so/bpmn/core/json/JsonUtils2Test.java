@@ -31,7 +31,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.so.bpmn.core.xml.XmlTool;
-import org.onap.so.exceptions.ValidationException;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.diff.DefaultNodeMatcher;
 import org.xmlunit.diff.Diff;
@@ -279,24 +278,5 @@ public class JsonUtils2Test {
         Diff diffXml = DiffBuilder.compare(XML_ARRAY_REQ).withTest(xmlOut).ignoreWhitespace()
                 .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byName)).checkForSimilar().build();
         assertFalse(diffXml.hasDifferences());
-    }
-
-    @Test
-    // Tests the jsonSchemaValidation() method
-    public void testJsonSchemaValidation() {
-        try {
-            String myReqArray = jsonReqArray;
-            String result = JsonUtils.jsonSchemaValidation(myReqArray, "src/test/resources/requestSchema.json");
-            System.out.println("Schema Validation Result: " + result);
-            Assert.assertTrue(result.contains("success"));
-            // remove a required parameter from the JSON doc so that validation fails
-            myReqArray = JsonUtils.delJsonValue(myReqArray, "requestDetails.requestParameters.ucpeInfo.ucpeHostName");
-            result = JsonUtils.jsonSchemaValidation(myReqArray, "src/test/resources/requestSchema.json");
-            System.out.println("Schema Validation Result: " + result);
-            Assert.assertTrue(result.contains("failure"));
-            Assert.assertTrue(result.contains("error: object has missing required properties ([\"ucpeHostName\"])"));
-        } catch (ValidationException e) {
-            e.printStackTrace();
-        }
     }
 }

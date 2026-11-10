@@ -23,7 +23,6 @@
 
 package org.onap.so.bpmn.core.json;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,13 +36,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 import org.onap.so.bpmn.core.xml.XmlTool;
-import org.onap.so.exceptions.ValidationException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JsonLoader;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.core.report.ProcessingReport;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.github.fge.jsonschema.main.JsonValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1034,34 +1026,5 @@ public class JsonUtils {
                     e.toString(), e);
         }
         return true;
-    }
-
-    /**
-     *
-     * Validates the JSON document against a schema file.
-     *
-     * @param jsonStr String containing the JSON doc
-     * @param jsonSchemaPath full path to a valid JSON schema file
-     *
-     */
-    public static String jsonSchemaValidation(String jsonStr, String jsonSchemaPath) throws ValidationException {
-        try {
-            logger.debug("JSON document to be validated: {}", jsonStr);
-            JsonNode document = JsonLoader.fromString(jsonStr);
-            JsonNode schema = JsonLoader.fromPath(jsonSchemaPath);
-
-            JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-            JsonValidator validator = factory.getValidator();
-
-            ProcessingReport report = validator.validate(schema, document);
-            logger.debug("JSON schema validation report: {}", report);
-            return report.toString();
-        } catch (IOException e) {
-            logger.debug("IOException performing JSON schema validation on document:", e);
-            throw new ValidationException(e.getMessage(), true);
-        } catch (ProcessingException e) {
-            logger.debug("ProcessingException performing JSON schema validation on document:", e);
-            throw new ValidationException(e.getMessage(), true);
-        }
     }
 }
