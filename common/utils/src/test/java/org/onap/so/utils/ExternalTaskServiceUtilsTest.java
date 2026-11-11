@@ -1,11 +1,13 @@
 package org.onap.so.utils;
 
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.camunda.bpm.client.ExternalTaskClient;
+import org.camunda.bpm.client.task.ExternalTaskHandler;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -53,4 +55,17 @@ public class ExternalTaskServiceUtilsTest {
         verify(actualClient3, times(1)).start();
     }
 
+    @Mock
+    private ExternalTaskTracing externalTaskTracing;
+
+    @Test
+    public void tracedDelegatesToTheTracing() {
+        ExternalTaskHandler handler = (task, service) -> {
+        };
+        ExternalTaskHandler wrapped = (task, service) -> {
+        };
+        when(externalTaskTracing.wrap(handler)).thenReturn(wrapped);
+
+        assertSame(wrapped, utils.traced(handler));
+    }
 }
