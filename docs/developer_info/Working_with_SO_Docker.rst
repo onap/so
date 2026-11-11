@@ -51,9 +51,13 @@ Verify that docker images are built
   onap/so/catalog-db-adapter      1.3.0-SNAPSHOT-20190213T0846   bf1c2fe49acb        2 minutes ago        218MB
   onap/so/catalog-db-adapter      1.3.0-SNAPSHOT-latest          bf1c2fe49acb        2 minutes ago        218MB
   onap/so/catalog-db-adapter      latest                         bf1c2fe49acb        2 minutes ago        218MB
-  onap/so/base-image              1.0                            1685bba9831d        3 minutes ago        108MB
   openjdk                         8-jdk-alpine                   792ff45a2a17        7 days ago           105MB
   nexus3.onap.org:10001/openjdk   8-jdk-alpine                   792ff45a2a17        7 days ago           105MB
+
+SO application images inherit Eclipse Temurin 17 JRE Alpine directly. The shared
+application Dockerfile creates the runtime user and application directories;
+there is no intermediate SO base image to build or publish. TLS uses the JRE's
+default trusted certificates unless an explicit truststore is configured.
 
 Start the containers
 ---------------------
