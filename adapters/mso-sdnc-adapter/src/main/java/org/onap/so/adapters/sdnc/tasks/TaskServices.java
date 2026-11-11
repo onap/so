@@ -42,7 +42,7 @@ public class TaskServices {
         for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
             client.subscribe("sdncPost").lockDuration(externalTaskServiceUtils.getLockDurationLong())
-                    .handler(service::executePostTask).open();
+                    .handler(externalTaskServiceUtils.traced(service::executePostTask)).open();
         }
     }
 
@@ -51,7 +51,7 @@ public class TaskServices {
         for (int i = 0; i < externalTaskServiceUtils.getMaxClients(); i++) {
             ExternalTaskClient client = externalTaskServiceUtils.createExternalTaskClient();
             client.subscribe("sdncGet").lockDuration(externalTaskServiceUtils.getLockDurationLong())
-                    .handler(service::executeGetTask).open();
+                    .handler(externalTaskServiceUtils.traced(service::executeGetTask)).open();
         }
     }
 }

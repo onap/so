@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.camunda.bpm.client.ExternalTaskClient;
 import org.camunda.bpm.client.interceptor.ClientRequestInterceptor;
 import org.camunda.bpm.client.interceptor.auth.BasicAuthProvider;
+import org.camunda.bpm.client.task.ExternalTaskHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class ExternalTaskServiceUtils {
 
     @Autowired
     public Environment env;
+
+    @Autowired
+    private ExternalTaskTracing externalTaskTracing;
 
 
     private static final long DEFAULT_LOCK_DURATION_LONG = 2700000;
@@ -38,15 +42,19 @@ public class ExternalTaskServiceUtils {
     public ExternalTaskClient createExternalTaskClient() throws Exception {
         String auth = getAuth();
         ClientRequestInterceptor interceptor = createClientInterceptor(auth);
-        ExternalTaskClient client =
-                ExternalTaskClient.create().baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1)
-                        .addInterceptor(interceptor).asyncResponseTimeout(120000).build();
+        ExternalTaskClient client = ExternalTaskClient.create()
+                .baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1).addInterceptor(interceptor)
+                .addInterceptor(externalTaskTracing).asyncResponseTimeout(120000).build();
         taskClients.add(client);
         return client;
     }
 
     protected ClientRequestInterceptor createClientInterceptor(String auth) {
         return new BasicAuthProvider(env.getRequiredProperty(BasicAuth.SO_USERNAME_PROPERTY), auth);
+    }
+
+    public ExternalTaskHandler traced(ExternalTaskHandler handler) {
+        return externalTaskTracing.wrap(handler);
     }
 
     protected String getAuth() throws Exception {
