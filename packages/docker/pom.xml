@@ -293,6 +293,12 @@
             </goals>
           </execution>
 
+          <!-- unbinds the build+push execution inherited from the root pom, which would push every image a second time -->
+          <execution>
+            <id>start</id>
+            <phase>none</phase>
+          </execution>
+
           <execution>
             <id>push-images</id>
             <phase>${docker.push.phase}</phase>
