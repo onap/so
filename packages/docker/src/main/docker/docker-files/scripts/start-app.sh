@@ -1,26 +1,5 @@
 #!/bin/sh
 
-if [ `id -u` = 0 ]
-then
-	# Install certificates found in the /app/ca-certificates volume, if any.
-
-	needUpdate=FALSE
-
-	for certificate in `ls -1 /app/ca-certificates`; do
-		echo "Installing $certificate in /usr/local/share/ca-certificates"
-		cp /app/ca-certificates/$certificate /usr/local/share/ca-certificates/$certificate
-		needUpdate=TRUE
-	done
-
-	if [ $needUpdate = TRUE ]; then
-		update-ca-certificates --fresh
-	fi
-
-	# Re-exec this script as the 'onap' user.
-	this=`readlink -f $0`
-	exec su so -c  "$this"
-fi
-
 touch /app/app.jar
 
 if [ -z "$APP" ]; then
@@ -88,25 +67,6 @@ if [ -n "${ACTIVE_PROFILE}" ]; then
     jvmargs="${jvmargs} -Dspring.profiles.active=${ACTIVE_PROFILE}"
 fi
 
-
-read_properties(){
-    while IFS="=" read -r key value; do
-        case "${key}" in
-          '#'*) ;;
-             *)
-               eKey=$(echo $key | tr '[:lower:]' '[:upper:]')
-               export "$eKey"="$value"
-        esac
-    done <<-EOF
-	$1
-	EOF
-}
-
-
-
-if [ -n "${AAF_SSL_CERTS_ENABLED}" ]; then
-read_properties "$(head -n 4 /app/certs/.passphrases)"
-fi
 
 echo "JVM Arguments: $(echo "${jvmargs}" | sed -E 's/(Password=)[^ ]*/\1***REDACTED***/g')"
 

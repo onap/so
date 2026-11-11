@@ -72,13 +72,6 @@
           <pushRegistry>${docker.push.registry}</pushRegistry>
           <images>
             <image>
-              <name>${docker.image.prefix}/base-image:1.0</name>
-              <build>
-                <cleanup>try</cleanup>
-                <dockerFile>docker-files/Dockerfile.so-base-image</dockerFile>
-              </build>
-            </image>
-            <image>
               <name>${docker.image.prefix}/catalog-db-adapter</name>
               <build>
                 <cleanup>try</cleanup>
