@@ -28,12 +28,10 @@
     <dependency>
       <groupId>org.onap.aai.schema-service</groupId>
       <artifactId>aai-annotations</artifactId>
-      <version>1.9.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.18.0</version>
     </dependency>
     <dependency>
       <groupId>org.glassfish.jersey.core</groupId>
