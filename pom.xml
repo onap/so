@@ -77,7 +77,7 @@
     <io.fabric8.version>0.33.0</io.fabric8.version>
     <bowman.client.version>0.11.0</bowman.client.version>
     <onap-logging-version>1.7.0</onap-logging-version>
-    <sdc-dist-client.version>2.3.0</sdc-dist-client.version>
+    <sdc-dist-client.version>2.4.0</sdc-dist-client.version>
     <grpc.version>1.82.1</grpc.version>
     <httpclient4.version>4.5.14</httpclient4.version>
     <aai-schema.version>1.14.0</aai-schema.version>
