@@ -73,6 +73,8 @@ import org.onap.so.db.catalog.beans.*;
 import org.onap.so.db.catalog.data.repository.*;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
+import org.onap.so.db.request.data.repository.WatchdogDistributionStatusRepository;
+import org.onap.so.db.request.data.repository.WatchdogServiceModVerIdLookupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -250,24 +252,24 @@ public class ToscaResourceInstallerTest extends BaseTest {
 
     @Test
     public void installTheResourceWithGroupAndVFModulesTest() throws Exception {
-        ToscaResourceInstaller toscaInstaller = new ToscaResourceInstaller();
-        ToscaResourceStructure toscaResourceStructObj = prepareToscaResourceStructure(true, toscaInstaller);
+        ToscaResourceStructure toscaResourceStructObj = new ToscaResourceStructure();
+        ToscaResourceInstaller installer = prepareInstaller(true, toscaResourceStructObj);
 
-        toscaInstaller.installTheResource(toscaResourceStructObj, vfResourceStruct);
+        installer.installTheResource(toscaResourceStructObj, vfResourceStruct);
         assertEquals(true, toscaResourceStructObj.isDeployedSuccessfully());
     }
 
     @Test
     public void installTheResourceGroupWithoutVFModulesTest() throws Exception {
-        ToscaResourceInstaller toscaInstaller = new ToscaResourceInstaller();
-        ToscaResourceStructure toscaResourceStructObj = prepareToscaResourceStructure(false, toscaInstaller);
+        ToscaResourceStructure toscaResourceStructObj = new ToscaResourceStructure();
+        ToscaResourceInstaller installer = prepareInstaller(false, toscaResourceStructObj);
 
-        toscaInstaller.installTheResource(toscaResourceStructObj, vfResourceStruct);
+        installer.installTheResource(toscaResourceStructObj, vfResourceStruct);
         assertEquals(true, toscaResourceStructObj.isDeployedSuccessfully());
     }
 
-    private ToscaResourceStructure prepareToscaResourceStructure(boolean prepareVFModuleStructures,
-            ToscaResourceInstaller toscaInstaller) throws ArtifactInstallerException {
+    private ToscaResourceInstaller prepareInstaller(boolean prepareVFModuleStructures,
+            ToscaResourceStructure toscaResourceStructObj) throws ArtifactInstallerException {
 
         Metadata metadata = mock(Metadata.class);
         IResourceInstance resourceInstance = mock(ResourceInstance.class);
@@ -285,7 +287,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn("Test Csar data with Group and VF module inputs").when(inputCsar).getArtifactDescription();
         doReturn("http://localhost/dummy/url/test.csar").when(inputCsar).getArtifactURL();
 
-        ToscaResourceStructure toscaResourceStructObj = new ToscaResourceStructure();
         toscaResourceStructObj.setToscaArtifact(inputCsar);
 
         ToscaCsarRepository toscaCsarRepo = spy(ToscaCsarRepository.class);
@@ -295,8 +296,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn(artifactUuid).when(toscaCsar).getArtifactUUID();
         doReturn(checkSum).when(toscaCsar).getArtifactChecksum();
         doReturn(returnValue).when(toscaCsarRepo).findById(artifactUuid);
-
-        ReflectionTestUtils.setField(toscaInstaller, "toscaCsarRepo", toscaCsarRepo);
 
         NotificationDataImpl notificationData = new NotificationDataImpl();
         notificationData.setDistributionID("testStatusSuccessfulTosca");
@@ -345,27 +344,11 @@ public class ToscaResourceInstallerTest extends BaseTest {
         VnfcInstanceGroupCustomizationRepository vnfcInstanceGroupCustomizationRepo =
                 spy(VnfcInstanceGroupCustomizationRepository.class);
 
-        ReflectionTestUtils.setField(toscaInstaller, "serviceRepo", serviceRepo);
-        ServiceModelInstaller serviceModelInstaller = new ServiceModelInstaller(serviceRepo, toscaCsarRepo);
-        ReflectionTestUtils.setField(toscaInstaller, "serviceModelInstaller", serviceModelInstaller);
-        ReflectionTestUtils.setField(toscaInstaller, "workflowResource", workflowResource);
-        ReflectionTestUtils.setField(toscaInstaller, "allottedResourceInstaller", new AllottedResourceInstaller(
-                spy(AllottedResourceRepository.class), spy(AllottedResourceCustomizationRepository.class)));
-        ReflectionTestUtils.setField(toscaInstaller, "networkResourceInstaller",
-                new NetworkResourceInstaller(spy(HeatTemplateRepository.class),
-                        spy(TempNetworkHeatTemplateRepository.class), spy(NetworkResourceRepository.class),
-                        spy(NetworkResourceCustomizationRepository.class), spy(CollectionResourceRepository.class),
-                        instanceGroupRepo));
+        ServiceModelInstaller serviceInstaller = new ServiceModelInstaller(serviceRepo, toscaCsarRepo);
         ConfigurationInstaller configurationInstaller =
                 new ConfigurationInstaller(spy(ConfigurationResourceCustomizationRepository.class), serviceRepo);
-        ReflectionTestUtils.setField(toscaInstaller, "configurationInstaller", configurationInstaller);
         HeatArtifactInstaller heatArtifactInstaller = new HeatArtifactInstaller(spy(HeatTemplateRepository.class),
                 spy(HeatEnvironmentRepository.class), spy(HeatFilesRepository.class));
-        ReflectionTestUtils.setField(toscaInstaller, "heatArtifactInstaller", heatArtifactInstaller);
-        ReflectionTestUtils.setField(toscaInstaller, "vnfResourceInstaller",
-                new VnfResourceInstaller(vnfRepo, vfModuleRepo, vnfcInstanceGroupCustomizationRepo,
-                        spy(VnfcCustomizationRepository.class), spy(CvnfcCustomizationRepository.class),
-                        instanceGroupRepo, serviceRepo, heatArtifactInstaller, configurationInstaller));
 
         // doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
         toscaResourceStructObj.setSdcCsarHelper(csarHelper);
@@ -426,20 +409,33 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn(resourceCustomizationUUID).when(resourceInstance).getResourceCustomizationUUID();
         doReturn("resourceName1").when(resourceInstance).getResourceName();
 
-        Service service = serviceModelInstaller.createService(toscaResourceStructObj, vfResourceStruct);
+        Service service = serviceInstaller.createService(toscaResourceStructObj, vfResourceStruct);
 
         assertNotNull(service);
         service.setModelVersion("1.0");
 
         doReturn(service).when(serviceRepo).save(service);
 
-        WatchdogComponentDistributionStatusRepository watchdogCDStatusRepository =
+        WatchdogComponentDistributionStatusRepository watchdogCDStatusRepo =
                 spy(WatchdogComponentDistributionStatusRepository.class);
-        ReflectionTestUtils.setField(toscaInstaller, "watchdogCDStatusRepository", watchdogCDStatusRepository);
-        doReturn(null).when(watchdogCDStatusRepository).save(any(WatchdogComponentDistributionStatus.class));
+        doReturn(null).when(watchdogCDStatusRepo).save(any(WatchdogComponentDistributionStatus.class));
 
         doReturn(null).when(vnfcInstanceGroupCustomizationRepo).save(any(VnfcInstanceGroupCustomization.class));
-        return toscaResourceStructObj;
+        return new ToscaResourceInstaller(serviceRepo, watchdogCDStatusRepo,
+                spy(WatchdogDistributionStatusRepository.class), spy(WatchdogServiceModVerIdLookupRepository.class),
+                toscaCsarRepo,
+                new PnfResourceInstaller(spy(PnfResourceRepository.class), spy(PnfCustomizationRepository.class)),
+                new AllottedResourceInstaller(spy(AllottedResourceRepository.class),
+                        spy(AllottedResourceCustomizationRepository.class)),
+                new NetworkResourceInstaller(
+                        spy(HeatTemplateRepository.class), spy(TempNetworkHeatTemplateRepository.class),
+                        spy(NetworkResourceRepository.class), spy(NetworkResourceCustomizationRepository.class),
+                        spy(CollectionResourceRepository.class), instanceGroupRepo),
+                configurationInstaller, heatArtifactInstaller,
+                new VnfResourceInstaller(vnfRepo, vfModuleRepo, vnfcInstanceGroupCustomizationRepo,
+                        spy(VnfcCustomizationRepository.class), spy(CvnfcCustomizationRepository.class),
+                        instanceGroupRepo, serviceRepo, heatArtifactInstaller, configurationInstaller),
+                serviceInstaller, workflowResource);
     }
 
     @Test
