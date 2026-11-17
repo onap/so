@@ -26,29 +26,20 @@ package org.onap.so.asdc.installer.heat;
 
 import static org.onap.so.asdc.installer.heat.ToscaEntityHelper.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.LockAcquisitionException;
 import org.onap.logging.filter.base.ErrorCode;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.notification.IStatusData;
 import org.onap.sdc.tosca.parser.api.IEntityDetails;
-import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
 import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
-import org.onap.sdc.tosca.parser.enums.EntityTemplateType;
 import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
-import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.Property;
-import org.onap.sdc.toscaparser.api.RequirementAssignment;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
-import org.onap.sdc.toscaparser.api.parameters.Input;
 import org.onap.sdc.api.notification.DistributionStatusEnum;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.installer.ASDCElementInfo;
@@ -59,8 +50,6 @@ import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.asdc.installer.VfResourceStructure;
 import org.onap.so.asdc.installer.bpmn.WorkflowResource;
 import org.onap.so.db.catalog.beans.Service;
-import org.onap.so.db.catalog.beans.ServiceArtifact;
-import org.onap.so.db.catalog.beans.ServiceInfo;
 import org.onap.so.db.catalog.beans.ToscaCsar;
 import org.onap.so.db.catalog.data.repository.CollectionResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.ExternalServiceToInternalServiceRepository;
@@ -80,14 +69,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class ToscaResourceInstaller {
 
     protected static final String MSO = "SO";
-    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     protected ServiceRepository serviceRepo;
@@ -125,6 +111,9 @@ public class ToscaResourceInstaller {
 
     @Autowired
     protected VnfResourceInstaller vnfResourceInstaller;
+
+    @Autowired
+    protected ServiceModelInstaller serviceModelInstaller;
 
     @Autowired
     protected WorkflowResource workflowResource;
@@ -236,10 +225,10 @@ public class ToscaResourceInstaller {
         // the type of artifact that failed...
         List<ASDCElementInfo> artifactListForLogging = new ArrayList<>();
         try {
-            createToscaCsar(toscaResourceStruct);
-            Service service = createService(toscaResourceStruct, resourceStruct);
+            serviceModelInstaller.createToscaCsar(toscaResourceStruct);
+            Service service = serviceModelInstaller.createService(toscaResourceStruct, resourceStruct);
 
-            processResourceSequence(toscaResourceStruct, service);
+            serviceModelInstaller.processResourceSequence(toscaResourceStruct, service);
             pnfResourceInstaller.processPnfResources(toscaResourceStruct, service, resourceStruct);
             serviceRepo.save(service);
 
@@ -295,10 +284,10 @@ public class ToscaResourceInstaller {
         // the type of artifact that failed...
         List<ASDCElementInfo> artifactListForLogging = new ArrayList<>();
         try {
-            createToscaCsar(toscaResourceStruct);
-            createService(toscaResourceStruct, vfResourceStruct);
+            serviceModelInstaller.createToscaCsar(toscaResourceStruct);
+            serviceModelInstaller.createService(toscaResourceStruct, vfResourceStruct);
             Service service = toscaResourceStruct.getCatalogService();
-            createServiceInfo(toscaResourceStruct, service);
+            serviceModelInstaller.createServiceInfo(toscaResourceStruct, service);
 
             List<IEntityDetails> vfEntityList = getEntityDetails(toscaResourceStruct,
                     EntityQuery.newBuilder(SdcTypes.VF), TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
@@ -318,7 +307,7 @@ public class ToscaResourceInstaller {
                         service, metadata);
             }
 
-            processResourceSequence(toscaResourceStruct, service);
+            serviceModelInstaller.processResourceSequence(toscaResourceStruct, service);
             allottedResourceInstaller.processAllottedResources(arEntityDetails, toscaResourceStruct, service);
             networkResourceInstaller.processNetworks(toscaResourceStruct, service);
             // process Network Collections
@@ -375,75 +364,6 @@ public class ToscaResourceInstaller {
     }
 
 
-    List<IEntityDetails> getRequirementList(List<IEntityDetails> resultList, List<IEntityDetails> entityDetails,
-            ISdcCsarHelper iSdcCsarHelper) {
-
-        List<IEntityDetails> entities = new ArrayList<>();
-        entityDetails.addAll(entityDetails);
-
-        for (IEntityDetails entity : entityDetails) {
-            List<RequirementAssignment> requirements = entity.getRequirements();
-
-            for (RequirementAssignment ra : requirements) {
-                String reqNode = ra.getNodeTemplateName();
-                for (IEntityDetails rEntity : resultList) {
-                    if (rEntity.getName().equals(reqNode)) {
-                        if (!resultList.contains(entityDetails)) {
-                            resultList.add(entity);
-                        }
-                        if (entities.contains(entityDetails)) {
-                            entities.remove(entityDetails);
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!entities.isEmpty()) {
-            getRequirementList(resultList, entities, iSdcCsarHelper);
-        }
-
-        return resultList;
-    }
-
-    // This method retrieve resource sequence from csar file
-    void processResourceSequence(ToscaResourceStructure toscaResourceStructure, Service service) {
-        List<String> resouceSequence = new ArrayList<>();
-        List<IEntityDetails> resultList = new ArrayList<>();
-
-        ISdcCsarHelper iSdcCsarHelper = toscaResourceStructure.getSdcCsarHelper();
-
-        List<IEntityDetails> vfEntityList =
-                getEntityDetails(toscaResourceStructure, EntityQuery.newBuilder(EntityTemplateType.NODE_TEMPLATE),
-                        TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
-
-        List<IEntityDetails> entities = new ArrayList<>();
-        entities.addAll(vfEntityList);
-
-        for (IEntityDetails entityDetails : vfEntityList) {
-            List<RequirementAssignment> requirements = entityDetails.getRequirements();
-
-            if (requirements == null || requirements.isEmpty()) {
-                resultList.add(entityDetails);
-                entities.remove(entityDetails);
-            }
-        }
-
-        resultList = getRequirementList(resultList, entities, iSdcCsarHelper);
-
-        for (IEntityDetails entity : resultList) {
-            String templateName = entity.getMetadata().getValue("name");
-            if (!resouceSequence.contains(templateName)) {
-                resouceSequence.add(templateName);
-            }
-        }
-
-        String resourceSeqStr = resouceSequence.stream().collect(Collectors.joining(","));
-        service.setResourceOrder(resourceSeqStr);
-        logger.debug(" resourceSeq for service uuid {}: {}", service.getModelUUID(), resourceSeqStr);
-    }
-
     public void processWatchdog(String distributionId, String servideUUID, Optional<String> distributionNotification,
             String consumerId) {
         WatchdogServiceModVerIdLookup modVerIdLookup =
@@ -461,256 +381,14 @@ public class ToscaResourceInstaller {
         }
     }
 
-    protected Service createService(ToscaResourceStructure toscaResourceStructure,
-            ResourceStructure resourceStructure) {
-
-        Metadata serviceMetadata = toscaResourceStructure.getServiceMetadata();
-        List<Service> services =
-                serviceRepo.findByModelUUID(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
-        Service service;
-        if (!services.isEmpty() && services.size() > 0) {
-            service = services.get(0);
-        } else {
-            service = new Service();
-        }
-
-        if (serviceMetadata != null) {
-
-            if (toscaResourceStructure.getServiceVersion() != null) {
-                service.setModelVersion(toscaResourceStructure.getServiceVersion());
-            }
-
-            service.setServiceType(serviceMetadata.getValue("serviceType"));
-            service.setServiceRole(serviceMetadata.getValue("serviceRole"));
-            service.setServiceFunction(serviceMetadata.getValue("serviceFunction"));
-            service.setCategory(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY));
-
-            service.setDescription(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
-            service.setModelName(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
-            service.setModelUUID(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
-            service.setEnvironmentContext(serviceMetadata.getValue("environmentContext"));
-
-            if (resourceStructure != null)
-                service.setWorkloadContext(resourceStructure.getNotification().getWorkloadContext());
-
-            service.setModelInvariantUUID(serviceMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
-            service.setCsar(toscaResourceStructure.getCatalogToscaCsar());
-            service.setNamingPolicy(serviceMetadata.getValue("namingPolicy"));
-            String generateNaming = serviceMetadata.getValue("ecompGeneratedNaming");
-            Boolean generateNamingValue = null;
-            if (generateNaming != null) {
-                generateNamingValue = "true".equalsIgnoreCase(generateNaming);
-            }
-            service.setOnapGeneratedNaming(generateNamingValue);
-
-            List<Input> serviceInputs = toscaResourceStructure.getSdcCsarHelper().getServiceInputs();
-            logger.debug("serviceInputs: {} {}", serviceInputs);
-            if (!serviceInputs.isEmpty()) {
-                serviceInputs.forEach(input -> {
-                    if (CDS_MODEL_NAME.equalsIgnoreCase(input.getName())) {
-                        String value = input.getDefault() != null ? input.getDefault().toString() : null;
-                        service.setBlueprintName(value);
-                    }
-                    if (CDS_MODEL_VERSION.equalsIgnoreCase(input.getName())) {
-                        String value = input.getDefault() != null ? input.getDefault().toString() : null;
-                        service.setBlueprintVersion(value);
-                    }
-                    if (CONTROLLER_ACTOR.equalsIgnoreCase(input.getName())) {
-                        String value = input.getDefault() != null ? input.getDefault().toString() : null;
-                        service.setControllerActor(value);
-                    }
-                    if (SKIP_POST_INST_CONF.equalsIgnoreCase(input.getName())) {
-                        String value = input.getDefault() != null ? input.getDefault().toString() : "false";
-                        service.setSkipPostInstConf(Boolean.valueOf(value));
-                    }
-                });
-            }
-        }
-        toscaResourceStructure.setCatalogService(service);
-        return service;
-    }
-
-    protected void createToscaCsar(ToscaResourceStructure toscaResourceStructure) {
-        Optional<ToscaCsar> toscaCsarOpt =
-                toscaCsarRepo.findById(toscaResourceStructure.getToscaArtifact().getArtifactUUID());
-        ToscaCsar toscaCsar;
-        if (!toscaCsarOpt.isPresent()) {
-            toscaCsar = new ToscaCsar();
-            toscaCsar.setArtifactUUID(toscaResourceStructure.getToscaArtifact().getArtifactUUID());
-        } else {
-            toscaCsar = toscaCsarOpt.get();
-        }
-        if (toscaResourceStructure.getToscaArtifact().getArtifactChecksum() != null) {
-            toscaCsar.setArtifactChecksum(toscaResourceStructure.getToscaArtifact().getArtifactChecksum());
-        } else {
-            toscaCsar.setArtifactChecksum(MANUAL_RECORD);
-        }
-        toscaCsar.setName(toscaResourceStructure.getToscaArtifact().getArtifactName());
-        toscaCsar.setVersion(toscaResourceStructure.getToscaArtifact().getArtifactVersion());
-        toscaCsar.setDescription(toscaResourceStructure.getToscaArtifact().getArtifactDescription());
-        toscaCsar.setUrl(toscaResourceStructure.getToscaArtifact().getArtifactURL());
-
-        toscaResourceStructure.setCatalogToscaCsar(toscaCsar);
-    }
-
-
-    private String getServiceInput(ToscaResourceStructure toscaResourceStructure) {
-        String serviceInput = null;
-
-        List<Object> serviceInputList;
-        ISdcCsarHelper sdcCsarHelper = toscaResourceStructure.getSdcCsarHelper();
-        List<Input> serviceInputs = sdcCsarHelper.getServiceInputs();
-        if (!serviceInputs.isEmpty()) {
-            serviceInputList = new ArrayList<>();
-            List<Input> filterList;
-            filterList = serviceInputs.stream()
-                    .filter(input -> !SKIP_POST_INST_CONF.equals(input.getName())
-                            && !CDS_MODEL_NAME.equalsIgnoreCase(input.getName())
-                            && !CDS_MODEL_VERSION.equalsIgnoreCase(input.getName())
-                            && !CONTROLLER_ACTOR.equalsIgnoreCase(input.getName()))
-                    .collect(Collectors.toList());
-
-            filterList.forEach(input -> {
-                Map<String, Object> serviceInputMap = new HashMap<>();
-                serviceInputMap.put("name", input.getName());
-                serviceInputMap.put("type", input.getType());
-                serviceInputMap.put("default", input.getDefault() == null ? "" : input.getDefault());
-                serviceInputMap.put("required", input.isRequired());
-                serviceInputList.add(serviceInputMap);
-
-            });
-            try {
-                serviceInput = mapper.writeValueAsString(serviceInputList);
-                serviceInput = serviceInput.replace("\"", "\\\"");
-            } catch (JsonProcessingException e) {
-                logger.error("service input could not be deserialized for service uuid:  {}",
-                        sdcCsarHelper.getServiceMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
-            }
-        } else {
-            logger.debug("serviceInput is null");
-        }
-        return serviceInput;
-    }
-
     @Transactional(rollbackFor = {ArtifactInstallerException.class})
     public void installNsstService(ToscaResourceStructure toscaResourceStruct, VfResourceStructure vfResourceStruct,
             String artifactContent) {
-        createToscaCsar(toscaResourceStruct);
-        createService(toscaResourceStruct, vfResourceStruct);
+        serviceModelInstaller.createToscaCsar(toscaResourceStruct);
+        serviceModelInstaller.createService(toscaResourceStruct, vfResourceStruct);
         Service service = toscaResourceStruct.getCatalogService();
-        createServiceInfo(toscaResourceStruct, service);
-        createServiceArtifact(service, vfResourceStruct, artifactContent);
+        serviceModelInstaller.createServiceInfo(toscaResourceStruct, service);
+        serviceModelInstaller.createServiceArtifact(service, vfResourceStruct, artifactContent);
         serviceRepo.save(service);
-    }
-
-    private void createServiceArtifact(Service service, VfResourceStructure vfResourceStruct, String artifactContent) {
-        if (null == vfResourceStruct) {
-            return;
-        }
-        List<ServiceArtifact> serviceArtifactList = new ArrayList<>();
-        ServiceArtifact serviceArtifact;
-        List<IArtifactInfo> artifactInfoList = vfResourceStruct.getNotification().getServiceArtifacts().stream()
-                .filter(artifact -> artifact.getArtifactType().equalsIgnoreCase("WORKFLOW"))
-                .collect(Collectors.toList());
-        for (IArtifactInfo artifactInfo : artifactInfoList) {
-            serviceArtifact = new ServiceArtifact();
-            serviceArtifact.setArtifactUUID(artifactInfo.getArtifactUUID());
-            serviceArtifact.setName(artifactInfo.getArtifactName());
-            serviceArtifact.setType("OTHER");
-            serviceArtifact.setVersion(artifactInfo.getArtifactVersion());
-            serviceArtifact.setDescription(artifactInfo.getArtifactDescription());
-            serviceArtifact.setChecksum(artifactInfo.getArtifactChecksum());
-            serviceArtifact.setContent(artifactContent);
-            serviceArtifact.setService(service);
-            serviceArtifactList.add(serviceArtifact);
-        }
-        service.setServiceArtifactList(serviceArtifactList);
-    }
-
-    private void createServiceInfo(ToscaResourceStructure toscaResourceStruct, Service service) {
-        if (!service.getServiceInfos().isEmpty()) {
-            return;
-        }
-
-        List<ServiceInfo> serviceInfos = new ArrayList<>();
-
-        ServiceInfo serviceInfo = new ServiceInfo();
-        String serviceInput = getServiceInput(toscaResourceStruct);
-        serviceInfo.setServiceInput(serviceInput);
-
-        String serviceProperties = getServiceProperties(toscaResourceStruct);
-        serviceInfo.setServiceProperties(serviceProperties);
-        serviceInfo.setService(service);
-        serviceInfos.add(serviceInfo);
-
-        service.setServiceInfos(serviceInfos);
-    }
-
-    private String getServiceProperties(ToscaResourceStructure toscaResourceStruct) {
-        String propertiesJson = null;
-        ISdcCsarHelper helper = toscaResourceStruct.getSdcCsarHelper();
-        String typeName = helper.getServiceSubstitutionMappingsTypeName();
-        Optional<NodeTemplate> nodeTemplate = helper.getServiceNodeTemplates().stream().findAny();
-
-        if (nodeTemplate.isPresent()) {
-            String serviceUUID = nodeTemplate.get().getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID);
-            LinkedHashMap<String, Object> customDef = nodeTemplate.get().getCustomDef();
-            List<Object> serviceProperties = getPropertiesFromCustomDef(customDef, typeName);
-
-            try {
-                propertiesJson = mapper.writeValueAsString(serviceProperties);
-                propertiesJson = propertiesJson.replace("\"", "\\\"");
-            } catch (JsonProcessingException e) {
-                logger.error("serviceProperties could not be deserialized for service uuid:  {}", serviceUUID);
-            } catch (Exception ex) {
-                logger.error("service properties parsing failed. service uuid:{}", serviceUUID);
-            }
-
-        } else {
-            logger.debug("ServiceNodeTemplates is null");
-        }
-        return propertiesJson;
-    }
-
-    private static List<Object> getPropertiesFromCustomDef(LinkedHashMap<String, Object> customDef,
-            final String typeName) {
-        Optional<String> machKey =
-                customDef.keySet().stream().filter(key -> key.equalsIgnoreCase(typeName)).findFirst();
-        Map<String, Object> servicePropertiesMap;
-        List<Object> serviceProperties = new ArrayList<>();
-
-        if (machKey.isPresent()) {
-            Object obj = customDef.get(machKey.get());
-            if (obj instanceof Map) {
-                Object properties = ((HashMap) obj).get("properties");
-                if (null != properties) {
-                    for (Object propertyName : ((Map) properties).keySet()) {
-                        if (propertyName.toString().split("_").length >= 2) {
-                            continue;
-                        }
-
-                        servicePropertiesMap = new HashMap<>();
-                        servicePropertiesMap.put("name", propertyName);
-                        Object object = ((Map) properties).get(propertyName);
-                        for (Object entry : ((Map) object).entrySet()) {
-                            servicePropertiesMap.put((String) ((Map.Entry) entry).getKey(),
-                                    ((Map.Entry) entry).getValue());
-                        }
-
-                        String type = servicePropertiesMap.get("type").toString();
-                        if (type.split("\\.").length >= 2) {
-                            List<Object> subProperties = getPropertiesFromCustomDef(customDef, type);
-                            if (subProperties.size() > 0) {
-                                serviceProperties.addAll(subProperties);
-                            }
-                            continue;
-                        }
-                        servicePropertiesMap.remove("description");
-                        serviceProperties.add(servicePropertiesMap);
-                    }
-                }
-            }
-        }
-        return serviceProperties;
     }
 }

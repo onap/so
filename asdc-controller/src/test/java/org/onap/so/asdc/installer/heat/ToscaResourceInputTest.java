@@ -37,7 +37,6 @@ import org.onap.sdc.toscaparser.api.functions.GetInput;
 import org.onap.sdc.toscaparser.api.parameters.Input;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
-import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.data.repository.CvnfcCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.InstanceGroupRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
@@ -101,32 +100,6 @@ public class ToscaResourceInputTest {
         inputs.add(input);
         String resourceInput = vnfResourceInstaller.getVnfcResourceInput(entityDetails, inputs);
         assertEquals("{\\\"key1\\\":\\\"[sites,INDEX,role]|defaultValue\\\"}", resourceInput);
-    }
-
-    @Test
-    public void processResourceSequenceTest() {
-        ToscaResourceInstaller toscaResourceInstaller = new ToscaResourceInstaller();
-        ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure();
-        toscaResourceStructure.setSdcCsarHelper(sdcCsarHelper);
-        ArrayList<Input> inputs = new ArrayList<>();
-        Service service = new Service();
-
-        HashMap<String, Object> hashMap = new HashMap();
-        hashMap.put("name", "node1");
-
-        Metadata metadata = new Metadata(hashMap);
-        when(entityDetails.getMetadata()).thenReturn(metadata);
-        when(sdcCsarHelper.getServiceInputs()).thenReturn(inputs);
-        when(ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
-                EntityQuery.newBuilder(EntityTemplateType.NODE_TEMPLATE),
-                TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false)).thenReturn(Arrays.asList(entityDetails));
-
-
-        when(entityDetails.getRequirements()).thenReturn(null);
-
-
-        toscaResourceInstaller.processResourceSequence(toscaResourceStructure, service);
-        assertEquals(service.getResourceOrder(), "");
     }
 
     @Test

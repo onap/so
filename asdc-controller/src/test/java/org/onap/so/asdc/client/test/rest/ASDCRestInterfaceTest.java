@@ -50,6 +50,7 @@ import org.onap.so.asdc.BaseTest;
 import org.onap.so.asdc.CatalogSnapshot;
 import org.onap.so.asdc.client.test.emulators.DistributionClientEmulator;
 import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
+import org.onap.so.asdc.installer.heat.ServiceModelInstaller;
 import org.onap.so.db.catalog.beans.AllottedResource;
 import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkResource;
@@ -98,6 +99,9 @@ public class ASDCRestInterfaceTest extends BaseTest {
     private ToscaCsarRepository toscaCsarRepo;
 
     @Autowired
+    private ServiceModelInstaller serviceModelInstaller;
+
+    @Autowired
     private ASDCRestInterface asdcRestInterface;
 
     @Autowired
@@ -121,6 +125,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
         // ASDC Controller writes to this path
         System.setProperty("mso.config.path", folder.getRoot().toString());
         ReflectionTestUtils.setField(toscaInstaller, "toscaCsarRepo", toscaCsarRepo);
+        ReflectionTestUtils.setField(serviceModelInstaller, "toscaCsarRepo", toscaCsarRepo);
     }
 
     @Test
