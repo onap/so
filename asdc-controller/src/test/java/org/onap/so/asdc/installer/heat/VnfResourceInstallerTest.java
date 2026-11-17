@@ -23,6 +23,7 @@
 package org.onap.so.asdc.installer.heat;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,12 +45,15 @@ import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
+import org.onap.sdc.toscaparser.api.CapabilityAssignment;
+import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.RequirementAssignment;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.asdc.installer.VfResourceStructure;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.Service;
+import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfcCustomization;
 import org.onap.so.db.catalog.data.repository.CvnfcCustomizationRepository;
@@ -262,5 +267,63 @@ public class VnfResourceInstallerTest {
         }
         doReturn(requirements).when(vfc).getRequirements();
         return vfc;
+    }
+
+    @Test
+    public void vnfCustomizationParsesInstanceCountsWithScalableCapability() {
+        IEntityDetails vfEntity = vfEntityWithCounts("2", "1", "4", true);
+
+        VnfResourceCustomization customization = vnfResourceInstaller.createVnfResourceCustomization(vfEntity,
+                new ToscaResourceStructure(), new VnfResource());
+
+        assertEquals(Integer.valueOf(2), customization.getAvailabilityZoneMaxCount());
+        assertEquals(Integer.valueOf(1), customization.getMinInstances());
+        assertEquals(Integer.valueOf(4), customization.getMaxInstances());
+    }
+
+    @Test
+    public void vnfCustomizationParsesInstanceCountsWithoutScalableCapability() {
+        IEntityDetails vfEntity = vfEntityWithCounts(null, "0", "3", false);
+
+        VnfResourceCustomization customization = vnfResourceInstaller.createVnfResourceCustomization(vfEntity,
+                new ToscaResourceStructure(), new VnfResource());
+
+        assertNull(customization.getAvailabilityZoneMaxCount());
+        assertEquals(Integer.valueOf(0), customization.getMinInstances());
+        assertEquals(Integer.valueOf(3), customization.getMaxInstances());
+    }
+
+    @Test
+    public void vnfCustomizationStoresBlankOrNonNumericCountsAsNull() {
+        IEntityDetails vfEntity = vfEntityWithCounts("", "", "UNBOUNDED", true);
+
+        VnfResourceCustomization customization = vnfResourceInstaller.createVnfResourceCustomization(vfEntity,
+                new ToscaResourceStructure(), new VnfResource());
+
+        assertNull(customization.getAvailabilityZoneMaxCount());
+        assertNull(customization.getMinInstances());
+        assertNull(customization.getMaxInstances());
+    }
+
+    private IEntityDetails vfEntityWithCounts(String availabilityZoneCount, String minInstances, String maxInstances,
+            boolean scalable) {
+        Metadata metadata = mock(Metadata.class);
+        doReturn(availabilityZoneCount).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT);
+        IEntityDetails vfEntity = mock(IEntityDetails.class);
+        doReturn(metadata).when(vfEntity).getMetadata();
+        doReturn(Map.of(SdcPropertyNames.PROPERTY_NAME_MININSTANCES, property(minInstances),
+                SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES, property(maxInstances))).when(vfEntity).getProperties();
+        if (scalable) {
+            CapabilityAssignment capability = mock(CapabilityAssignment.class);
+            doReturn("scalable").when(capability).getName();
+            doReturn(List.of(capability)).when(vfEntity).getCapabilities();
+        }
+        return vfEntity;
+    }
+
+    private static Property property(Object value) {
+        Property property = mock(Property.class);
+        doReturn(value).when(property).getValue();
+        return property;
     }
 }
