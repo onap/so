@@ -1,0 +1,653 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+metadata:
+  invariantUUID: dc401256-2eee-4801-841b-2960b19e902b
+  UUID: 6e644cb0-f323-40b9-aced-e283843676f7
+  name: ubuntu16test
+  description: VF
+  type: VF
+  category: Generic
+  subcategory: Abstract
+  resourceVendor: basicvm_vendor
+  resourceVendorRelease: '1.0'
+  resourceVendorModelNumber: ''
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+- annotations:
+    file: annotations.yml
+- resource-ubuntu16test-interface:
+    file: resource-Ubuntu16test-template-interface.yml
+- resource-SecurityRules:
+    file: resource-Securityrules-template.yml
+- resource-ubuntu16test-nodes.ubuntu16Cvfc:
+    file: resource-Ubuntu16testNodesUbuntu16cvfc-template.yml
+- resource-ubuntu16test-nodes.ubuntu16Cvfc-interface:
+    file: resource-Ubuntu16testNodesUbuntu16cvfc-template-interface.yml
+- resource-GlobalCompute:
+    file: resource-Globalcompute-template.yml
+- resource-Compute:
+    file: resource-Compute-template.yml
+- resource-NovaServer:
+    file: resource-Novaserver-template.yml
+- resource-Port:
+    file: resource-Port-template.yml
+- resource-extNeutronCP:
+    file: resource-Extneutroncp-template.yml
+- resource-GlobalPort:
+    file: resource-Globalport-template.yml
+- resource-Ubuntu16test.compute.nodes.heat.ubuntu16:
+    file: resource-Ubuntu16testComputeNodesHeatUbuntu16-template.yml
+- resource-ExtCP2:
+    file: resource-Extcp2-template.yml
+topology_template:
+  inputs:
+    vf_module_id:
+      default: Ubuntu16-VF-module
+      type: string
+      description: The VF Module ID is provided by ONAP
+      required: false
+    skip_post_instantiation_configuration:
+      default: true
+      type: boolean
+      required: false
+    nf_naming:
+      default:
+        ecomp_generated_naming: true
+      type: org.openecomp.datatypes.Naming
+      required: false
+    ubuntu16_flavor_name:
+      default: onap.small
+      type: string
+      description: Type of instance (flavor) to be used
+      required: false
+    multi_stage_design:
+      default: false
+      type: boolean
+      required: false
+    nf_naming_code:
+      type: string
+      required: false
+    nf_function:
+      type: string
+      required: false
+    controller_actor:
+      default: SO-REF-DATA
+      type: string
+      required: false
+    availability_zone_max_count:
+      default: 1
+      type: integer
+      required: false
+    sdnc_artifact_name:
+      type: string
+      required: false
+    vnf_name:
+      default: Ubuntu16-VNF-name
+      type: string
+      description: The VM name
+      required: false
+    max_instances:
+      type: integer
+      required: false
+    nf_type:
+      type: string
+      required: false
+    ubuntu16_name_0:
+      default: ubuntu16
+      type: string
+      description: The VM name
+      required: false
+    ubuntu16_pub_key:
+      default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDY15cdBmIs2XOpe4EiFCsaY6bmUmK/GysMoLl4UG51JCfJwvwoWCoA+6mDIbymZxhxq9IGxilp/yTA6WQ9s/5pBag1cUMJmFuda9PjOkXl04jgqh5tR6I+GZ97AvCg93KAECis5ubSqw1xOCj4utfEUtPoF1OuzqM/lE5mY4N6VKXn+fT7pCD6cifBEs6JHhVNvs5OLLp/tO8Pa3kKYQOdyS0xc3rh+t2lrzvKUSWGZbX+dLiFiEpjsUL3tDqzkEMNUn4pdv69OJuzWHCxRWPfdrY9Wg0j3mJesP29EBht+w+EC9/kBKq+1VKdmsXUXAcjEvjovVL8l1BrX3BY0R8D imported-openssh-key
+      type: string
+      description: Public key to be installed on the compute instance
+      required: false
+    vnf_id:
+      default: Ubuntu16-VNF
+      type: string
+      description: The VNF ID is provided by ONAP
+      required: false
+    sdnc_model_version:
+      type: string
+      required: false
+    nf_role:
+      type: string
+      required: false
+    min_instances:
+      type: integer
+      required: false
+    ubuntu16_image_name:
+      default: ubuntu-16.04-daily
+      type: string
+      description: Image to be used for compute instance
+      required: false
+    admin_plane_net_name:
+      default: admin
+      type: string
+      description: The external management network
+      required: false
+    ubuntu16_key_name:
+      default: cleouverte
+      type: string
+      description: openSSH key name
+      required: false
+    sdnc_model_name:
+      type: string
+      required: false
+  node_templates:
+    ubuntu16_admin_security_group:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      metadata:
+        invariantUUID: 1dcdd069-da68-4711-ba84-3fb6e3b073cc
+        UUID: 292a7633-1408-4a0c-b880-f8be451ab5da
+        customizationUUID: ede6c747-a270-499d-8a74-8995e468519a
+        version: '1.0'
+        name: SecurityRules
+        description: Configuration of policy rules to be applied on ports.
+        type: VFC
+        category: Generic
+        subcategory: Rules
+        resourceVendor: ONAP (Tosca)
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+      properties:
+        name: ubuntu16_admin_security_group
+        description: security group
+        rules:
+        - protocol: tcp
+          remote_ip_prefix: 0.0.0.0/0
+          port_range_max: 22
+          port_range_min: 22
+        - protocol: icmp
+          remote_ip_prefix: 0.0.0.0/0
+      requirements:
+      - port:
+          capability: attachment_ubuntu16_ubuntu16_admin_plane_port_0
+          node: abstract_ubuntu16
+    abstract_ubuntu16:
+      type: org.openecomp.resource.vfc.Ubuntu16testcvfc.abstract.abstract.nodes.ubuntu16
+      directives:
+      - substitutable
+      metadata:
+        invariantUUID: afb356a2-80fb-411c-bbf4-a2da807d4251
+        UUID: e2a0c3ad-d422-42ba-9194-b3cbe85f6676
+        customizationUUID: eabb7b14-de8b-46c3-9c54-9f60e8ffb001
+        version: '1.0'
+        name: ubuntu16test-nodes.ubuntu16Cvfc
+        description: Complex node type that is used as nested type in VF
+        type: CVFC
+        category: Generic
+        subcategory: Abstract
+        resourceVendor: basicvm_vendor
+        resourceVendorRelease: '1.0'
+        resourceVendorModelNumber: ''
+      properties:
+        skip_post_instantiation_configuration: true
+        port_ubuntu16_admin_plane_port_0_network_role_tag: admin_plane
+        compute_ubuntu16_key_name:
+        - UNSUPPORTED_RESOURCE_ubuntu16_instantiated_key_name
+        compute_ubuntu16_name:
+        - get_input: ubuntu16_name_0
+        index_value: 0
+        port_ubuntu16_admin_plane_port_0_security_groups:
+        - - ubuntu16_admin_security_group
+        compute_ubuntu16_user_data_format:
+        - RAW
+        nfc_naming:
+          ecomp_generated_naming: true
+        vm_flavor_name:
+          get_input: ubuntu16_flavor_name
+        service_template_filter:
+          substitute_service_template: Nested_ubuntu16ServiceTemplate.yaml
+          index_value: 0
+          count: '1'
+          scaling_enabled: true
+          mandatory: true
+        vm_image_name:
+          get_input: ubuntu16_image_name
+        vm_type_tag: ubuntu16
+        min_instances: 0
+        port_ubuntu16_admin_plane_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_ubuntu16_admin_plane_port_0_network:
+        - get_input: admin_plane_net_name
+        compute_ubuntu16_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        port_ubuntu16_admin_plane_port_0_exCP_naming:
+          ecomp_generated_naming: true
+        port_ubuntu16_admin_plane_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        nfc_naming_code: ubuntu16
+      capabilities:
+        network.outgoing.packets.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.outgoing.packets.rate
+        disk.read.bytes.rate_ubuntu16:
+          properties:
+            name: disk.read.bytes.rate
+        disk.read.bytes_ubuntu16:
+          properties:
+            name: disk.read.bytes
+        disk.device.write.bytes.rate_ubuntu16:
+          properties:
+            name: disk.device.write.bytes.rate
+        network.incoming.bytes_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.incoming.bytes
+        disk.device.latency_ubuntu16:
+          properties:
+            name: disk.device.latency
+        network.incoming.packets_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.incoming.packets
+        disk.device.read.bytes_ubuntu16:
+          properties:
+            name: disk.device.read.bytes
+        cpu_util_ubuntu16:
+          properties:
+            name: cpu_util
+        network.incoming.packets.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.incoming.packets.rate
+        disk.root.size_ubuntu16:
+          properties:
+            name: disk.root.size
+        network.incoming.bytes.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.incoming.bytes.rate
+        scalable_ubuntu16:
+          properties:
+            min_instances: 1
+            max_instances: 1
+        cpu.delta_ubuntu16:
+          properties:
+            name: cpu.delta
+        network.outgoing.bytes.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.outgoing.bytes.rate
+        network.outgoing.bytes_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.outgoing.bytes
+        disk.device.allocation_ubuntu16:
+          properties:
+            name: disk.device.allocation
+        memory.resident_ubuntu16:
+          properties:
+            name: memory.resident
+        memory.usage_ubuntu16:
+          properties:
+            name: memory.usage
+        instance_ubuntu16:
+          properties:
+            name: instance
+        disk.device.usage_ubuntu16:
+          properties:
+            name: disk.device.usage
+        network.outpoing.packets_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            name: network.outpoing.packets
+        disk.device.read.bytes.rate_ubuntu16:
+          properties:
+            name: disk.device.read.bytes.rate
+        disk.usage_ubuntu16:
+          properties:
+            name: disk.usage
+        memory_ubuntu16:
+          properties:
+            name: memory
+        disk.ephemeral.size_ubuntu16:
+          properties:
+            name: disk.ephemeral.size
+        port_mirroring_ubuntu16_ubuntu16_admin_plane_port_0:
+          properties:
+            connection_point:
+              network_role:
+                get_input: port_ubuntu16_admin_plane_port_0_network_role
+              nfc_naming_code: ubuntu16
+        disk.write.bytes.rate_ubuntu16:
+          properties:
+            name: disk.write.bytes.rate
+        disk.device.capacity_ubuntu16:
+          properties:
+            name: disk.device.capacity
+        cpu_ubuntu16:
+          properties:
+            name: cpu
+        disk.device.read.requests.rate_ubuntu16:
+          properties:
+            name: disk.device.read.requests.rate
+        disk.write.requests.rate_ubuntu16:
+          properties:
+            name: disk.write.requests.rate
+        disk.read.requests_ubuntu16:
+          properties:
+            name: disk.read.requests
+        disk.device.read.requests_ubuntu16:
+          properties:
+            name: disk.device.read.requests
+        endpoint_ubuntu16:
+          properties:
+            secure: true
+        disk.capacity_ubuntu16:
+          properties:
+            name: disk.capacity
+        vcpus_ubuntu16:
+          properties:
+            name: vcpus
+        disk.device.write.bytes_ubuntu16:
+          properties:
+            name: disk.device.write.bytes
+        disk.write.bytes_ubuntu16:
+          properties:
+            name: disk.write.bytes
+        disk.write.requests_ubuntu16:
+          properties:
+            name: disk.write.requests
+        disk.allocation_ubuntu16:
+          properties:
+            name: disk.allocation
+        disk.device.iops_ubuntu16:
+          properties:
+            name: disk.device.iops
+        disk.device.write.requests_ubuntu16:
+          properties:
+            name: disk.device.write.requests
+        disk.iops_ubuntu16:
+          properties:
+            name: disk.iops
+        disk.device.write.requests.rate_ubuntu16:
+          properties:
+            name: disk.device.write.requests.rate
+        disk.latency_ubuntu16:
+          properties:
+            name: disk.latency
+    ubuntu16_fabric_configuration:
+      type: org.openecomp.nodes.FabricConfiguration
+      metadata:
+        invariantUUID: 1eafc8ba-49c3-469a-a856-9394e8c6e1f3
+        UUID: a17ff5fb-4563-43b7-b1b4-ebd2cba57eba
+        customizationUUID: f16ba5c0-1c6f-45e1-a3b5-f84b23641a7d
+        version: '1.0'
+        name: Fabric Configuration
+        description: Fabric configuration of the ubuntu16 CVFC
+        type: Configuration
+        category: Configuration
+        subcategory: Configuration
+        resourceVendor: ONAP (Tosca)
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+      properties:
+        function: fabric-function
+        role: fabric-role
+        type: fabric-type
+      requirements:
+      - dependency:
+          capability: feature
+          node: abstract_ubuntu16
+  groups:
+    Ubuntu16test..base_ubuntu16..module-0:
+      type: org.openecomp.groups.VfModule
+      members:
+      - ubuntu16_admin_security_group
+      - abstract_ubuntu16
+      metadata:
+        vfModuleModelName: Ubuntu16test..base_ubuntu16..module-0
+        vfModuleModelInvariantUUID: 0b8beb9a-97e4-4d98-a20d-3363b13873f2
+        vfModuleModelUUID: 879572dd-0fa6-4f8c-9452-1c794bd7ba7e
+        vfModuleModelVersion: '1'
+      properties:
+        min_vf_module_instances: 1
+        vf_module_label: base_ubuntu16
+        max_vf_module_instances: 1
+        vf_module_type: Base
+        isBase: true
+        initial_count: 1
+        volume_group: false
+    base_ubuntu16_group:
+      type: org.openecomp.groups.heat.HeatStack
+      members:
+      - ubuntu16_admin_security_group
+      - abstract_ubuntu16
+      metadata:
+        invariantUUID: f9187ede-2ff5-4c97-90f9-43536b879d33
+        UUID: eeefb9cb-0063-4022-8f23-6d0a9d6b508d
+        version: '1'
+        name: base_ubuntu16_group
+      properties:
+        heat_file: ../Artifacts/base_ubuntu16.yaml
+        description: Heat template to deploy a ubuntu16 VM
+  substitution_mappings:
+    node_type: org.openecomp.resource.vf.Ubuntu16test
+    capabilities:
+      abstract_ubuntu16.disk.device.read.bytes.rate_ubuntu16:
+      - abstract_ubuntu16
+      - disk.device.read.bytes.rate_ubuntu16
+      abstract_ubuntu16.disk.ephemeral.size_ubuntu16:
+      - abstract_ubuntu16
+      - disk.ephemeral.size_ubuntu16
+      abstract_ubuntu16.endpoint_ubuntu16:
+      - abstract_ubuntu16
+      - endpoint_ubuntu16
+      abstract_ubuntu16.cpu.delta_ubuntu16:
+      - abstract_ubuntu16
+      - cpu.delta_ubuntu16
+      abstract_ubuntu16.disk.write.bytes_ubuntu16:
+      - abstract_ubuntu16
+      - disk.write.bytes_ubuntu16
+      abstract_ubuntu16.network.incoming.bytes_ubuntu16_ubuntu16_admin_plane_port_0:
+      - abstract_ubuntu16
+      - network.incoming.bytes_ubuntu16_ubuntu16_admin_plane_port_0
+      abstract_ubuntu16.network.outpoing.packets_ubuntu16_ubuntu16_admin_plane_port_0:
+      - abstract_ubuntu16
+      - network.outpoing.packets_ubuntu16_ubuntu16_admin_plane_port_0
+      abstract_ubuntu16.network.incoming.bytes.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+      - abstract_ubuntu16
+      - network.incoming.bytes.rate_ubuntu16_ubuntu16_admin_plane_port_0
+      abstract_ubuntu16.network.incoming.packets.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+      - abstract_ubuntu16
+      - network.incoming.packets.rate_ubuntu16_ubuntu16_admin_plane_port_0
+      abstract_ubuntu16.disk.root.size_ubuntu16:
+      - abstract_ubuntu16
+      - disk.root.size_ubuntu16
+      abstract_ubuntu16.disk.device.usage_ubuntu16:
+      - abstract_ubuntu16
+      - disk.device.usage_ubuntu16
+      abstract_ubuntu16.disk.device.read.bytes_ubuntu16:
+      - abstract_ubuntu16
+      - disk.device.read.bytes_ubuntu16
+      abstract_ubuntu16.disk.write.requests_ubuntu16:
+      - abstract_ubuntu16
+      - disk.write.requests_ubuntu16
+      abstract_ubuntu16.vcpus_ubuntu16:
+      - abstract_ubuntu16
+      - vcpus_ubuntu16
+      abstract_ubuntu16.port_mirroring_ubuntu16_ubuntu16_admin_plane_port_0:
+      - abstract_ubuntu16
+      - port_mirroring_ubuntu16_ubuntu16_admin_plane_port_0
+      abstract_ubuntu16.scalable_ubuntu16:
+      - abstract_ubuntu16
+      - scalable_ubuntu16
+      abstract_ubuntu16.disk.device.allocation_ubuntu16:
+      - abstract_ubuntu16
+      - disk.device.allocation_ubuntu16
+      abstract_ubuntu16.disk.device.write.bytes_ubuntu16:
+      - abstract_ubuntu16
+      - disk.device.write.bytes_ubuntu16
+      abstract_ubuntu16.disk.device.capacity_ubuntu16:
+      - abstract_ubuntu16
+      - disk.device.capacity_ubuntu16
+      abstract_ubuntu16.disk.device.latency_ubuntu16:
+      - abstract_ubuntu16
+      - disk.device.latency_ubuntu16
+      abstract_ubuntu16.instance_ubuntu16:
+      - abstract_ubuntu16
+      - instance_ubuntu16
+      abstract_ubuntu16.disk.capacity_ubuntu16:
+      - abstract_ubuntu16
+      - disk.capacity_ubuntu16
+      abstract_ubuntu16.memory.resident_ubuntu16:
+      - abstract_ubuntu16
+      - memory.resident_ubuntu16
+      abstract_ubuntu16.os_ubuntu16:
+      - abstract_ubuntu16
+      - os_ubuntu16
+      abstract_ubuntu16.binding_ubuntu16:
+      - abstract_ubuntu16
+      - binding_ubuntu16
+      abstract_ubuntu16.disk.device.iops_ubuntu16:
+      - abstract_ubuntu16
+      - disk.device.iops_ubuntu16
+      abstract_ubuntu16.disk.usage_ubuntu16:
+      - abstract_ubuntu16
+      - disk.usage_ubuntu16
+      abstract_ubuntu16.disk.device.write.requests_ubuntu16:
+      - abstract_ubuntu16
+      - disk.device.write.requests_ubuntu16
+      ubuntu16_admin_security_group.feature:
+      - ubuntu16_admin_security_group
+      - feature
+      abstract_ubuntu16.cpu_util_ubuntu16:
+      - abstract_ubuntu16
+      - cpu_util_ubuntu16
+      abstract_ubuntu16.attachment_ubuntu16_ubuntu16_admin_plane_port_0:
+      - abstract_ubuntu16
+      - attachment_ubuntu16_ubuntu16_admin_plane_port_0
+      abstract_ubuntu16.network.incoming.packets_ubuntu16_ubuntu16_admin_plane_port_0:
+      - abstract_ubuntu16
+      - network.incoming.packets_ubuntu16_ubuntu16_admin_plane_port_0
+      abstract_ubuntu16.disk.write.requests.rate_ubuntu16:
+      - abstract_ubuntu16
+      - disk.write.requests.rate_ubuntu16
+      abstract_ubuntu16.memory_ubuntu16:
+      - abstract_ubuntu16
+      - memory_ubuntu16
+      abstract_ubuntu16.disk.read.bytes_ubuntu16:
+      - abstract_ubuntu16
+      - disk.read.bytes_ubuntu16
+      abstract_ubuntu16.feature_ubuntu16:
+      - abstract_ubuntu16
+      - feature_ubuntu16
+      abstract_ubuntu16.disk.latency_ubuntu16:
+      - abstract_ubuntu16
+      - disk.latency_ubuntu16
+      abstract_ubuntu16.disk.device.read.requests.rate_ubuntu16:
+      - abstract_ubuntu16
+      - disk.device.read.requests.rate_ubuntu16
+      abstract_ubuntu16.disk.device.write.requests.rate_ubuntu16:
+      - abstract_ubuntu16
+      - disk.device.write.requests.rate_ubuntu16
+      abstract_ubuntu16.network.outgoing.bytes_ubuntu16_ubuntu16_admin_plane_port_0:
+      - abstract_ubuntu16
+      - network.outgoing.bytes_ubuntu16_ubuntu16_admin_plane_port_0
+      abstract_ubuntu16.disk.write.bytes.rate_ubuntu16:
+      - abstract_ubuntu16
+      - disk.write.bytes.rate_ubuntu16
+      abstract_ubuntu16.disk.iops_ubuntu16:
+      - abstract_ubuntu16
+      - disk.iops_ubuntu16
+      abstract_ubuntu16.network.outgoing.bytes.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+      - abstract_ubuntu16
+      - network.outgoing.bytes.rate_ubuntu16_ubuntu16_admin_plane_port_0
+      abstract_ubuntu16.disk.allocation_ubuntu16:
+      - abstract_ubuntu16
+      - disk.allocation_ubuntu16
+      abstract_ubuntu16.disk.read.requests_ubuntu16:
+      - abstract_ubuntu16
+      - disk.read.requests_ubuntu16
+      abstract_ubuntu16.cpu_ubuntu16:
+      - abstract_ubuntu16
+      - cpu_ubuntu16
+      abstract_ubuntu16.host_ubuntu16:
+      - abstract_ubuntu16
+      - host_ubuntu16
+      abstract_ubuntu16.disk.device.read.requests_ubuntu16:
+      - abstract_ubuntu16
+      - disk.device.read.requests_ubuntu16
+      abstract_ubuntu16.memory.usage_ubuntu16:
+      - abstract_ubuntu16
+      - memory.usage_ubuntu16
+      abstract_ubuntu16.disk.device.write.bytes.rate_ubuntu16:
+      - abstract_ubuntu16
+      - disk.device.write.bytes.rate_ubuntu16
+      abstract_ubuntu16.feature_ubuntu16_ubuntu16_admin_plane_port_0:
+      - abstract_ubuntu16
+      - feature_ubuntu16_ubuntu16_admin_plane_port_0
+      abstract_ubuntu16.forwarder_ubuntu16_ubuntu16_admin_plane_port_0:
+      - abstract_ubuntu16
+      - forwarder_ubuntu16_ubuntu16_admin_plane_port_0
+      abstract_ubuntu16.binding_ubuntu16_ubuntu16_admin_plane_port_0:
+      - abstract_ubuntu16
+      - binding_ubuntu16_ubuntu16_admin_plane_port_0
+      abstract_ubuntu16.disk.read.bytes.rate_ubuntu16:
+      - abstract_ubuntu16
+      - disk.read.bytes.rate_ubuntu16
+      abstract_ubuntu16.network.outgoing.packets.rate_ubuntu16_ubuntu16_admin_plane_port_0:
+      - abstract_ubuntu16
+      - network.outgoing.packets.rate_ubuntu16_ubuntu16_admin_plane_port_0
+    properties:
+      vf_module_id:
+      - vf_module_id
+      nf_naming:
+      - nf_naming
+      skip_post_instantiation_configuration:
+      - skip_post_instantiation_configuration
+      multi_stage_design:
+      - multi_stage_design
+      ubuntu16_flavor_name:
+      - ubuntu16_flavor_name
+      nf_function:
+      - nf_function
+      nf_naming_code:
+      - nf_naming_code
+      controller_actor:
+      - controller_actor
+      availability_zone_max_count:
+      - availability_zone_max_count
+      sdnc_artifact_name:
+      - sdnc_artifact_name
+      vnf_name:
+      - vnf_name
+      max_instances:
+      - max_instances
+      nf_type:
+      - nf_type
+      ubuntu16_name_0:
+      - ubuntu16_name_0
+      ubuntu16_pub_key:
+      - ubuntu16_pub_key
+      sdnc_model_version:
+      - sdnc_model_version
+      vnf_id:
+      - vnf_id
+      nf_role:
+      - nf_role
+      min_instances:
+      - min_instances
+      ubuntu16_image_name:
+      - ubuntu16_image_name
+      ubuntu16_key_name:
+      - ubuntu16_key_name
+      admin_plane_net_name:
+      - admin_plane_net_name
+      sdnc_model_name:
+      - sdnc_model_name

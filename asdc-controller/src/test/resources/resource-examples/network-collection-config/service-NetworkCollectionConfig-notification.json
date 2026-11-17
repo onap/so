@@ -1,0 +1,35 @@
+{
+  "distributionID": "992726bd-29f4-4e2b-a0ed-847bf2c2a20c",
+  "serviceName": "NetworkCollectionConfig",
+  "serviceVersion": "1.0",
+  "serviceUUID": "2f29c1da-a60b-448c-a62f-8c6b18c6bf6d",
+  "serviceDescription": "Service with network collections, a service proxy and configurations",
+  "serviceInvariantUUID": "36507e0d-3d6e-4f4a-9118-0b252fa9a0db",
+  "resources": [
+    {
+      "resourceInstanceName": "NetworkCollectionA 0",
+      "resourceName": "NetworkCollectionA",
+      "resourceVersion": "1.0",
+      "resoucreType": "CR",
+      "resourceUUID": "1727a3ef-1b82-4f2e-8f38-c74597ea320d",
+      "resourceInvariantUUID": "7cca13d8-4b0b-4c47-9271-4173528a2017",
+      "resourceCustomizationUUID": "86bdec03-6d4d-4b1b-8707-bd982f6618ed",
+      "category": "Network L2-3",
+      "subcategory": "Infrastructure",
+      "artifacts": []
+    }
+  ],
+  "serviceArtifacts": [
+    {
+      "artifactName": "service-NetworkCollectionConfig-csar.csar",
+      "artifactType": "TOSCA_CSAR",
+      "artifactURL": "/service-NetworkCollectionConfig-csar.csar",
+      "artifactChecksum": "YjJkOWM1ZGQ4MjQ3NDhhMWFmZjM0YzM3N2I0MGY0YjA=",
+      "artifactDescription": "TOSCA definition package of the asset",
+      "artifactTimeout": 0,
+      "artifactUUID": "4a39197e-ff5c-4026-b66b-2b37ad04b3d0",
+      "artifactVersion": "1"
+    }
+  ],
+  "workloadContext": "Production"
+}

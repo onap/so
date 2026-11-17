@@ -1,0 +1,144 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+metadata:
+  invariantUUID: 36507e0d-3d6e-4f4a-9118-0b252fa9a0db
+  UUID: 2f29c1da-a60b-448c-a62f-8c6b18c6bf6d
+  name: NetworkCollectionConfig
+  description: Service with network collections, a service proxy and configurations
+  type: Service
+  category: Network L1-3
+  serviceType: ''
+  serviceRole: ''
+  instantiationType: A-la-carte
+  serviceEcompNaming: 'true'
+  ecompGeneratedNaming: 'true'
+  namingPolicy: ''
+  environmentContext: General_Revenue-Bearing
+  serviceFunction: ''
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+- annotations:
+    file: annotations.yml
+- service-NetworkCollectionConfig-interface:
+    file: service-NetworkCollectionConfig-template-interface.yml
+- resource-NetworkCollectionA:
+    file: resource-NetworkCollectionA-template.yml
+- resource-NetworkCollectionB:
+    file: resource-NetworkCollectionB-template.yml
+node_types:
+  org.openecomp.nodes.basic_network_proxy:
+    derived_from: org.openecomp.nodes.ServiceProxy
+topology_template:
+  node_templates:
+    NetworkCollectionA 0:
+      type: org.openecomp.resource.cr.NetworkCollectionA
+      metadata:
+        invariantUUID: 7cca13d8-4b0b-4c47-9271-4173528a2017
+        UUID: 1727a3ef-1b82-4f2e-8f38-c74597ea320d
+        customizationUUID: 86bdec03-6d4d-4b1b-8707-bd982f6618ed
+        version: '1.0'
+        name: NetworkCollectionA
+        description: Network collection a
+        type: CR
+        category: Network L2-3
+        subcategory: Infrastructure
+        resourceVendor: ONAP (Tosca)
+        resourceVendorRelease: '1.0'
+        resourceVendorModelNumber: ''
+      properties:
+        cr_function: collection-function-a
+        cr_role: collection-role-a
+        cr_type: collection-type-a
+        collection_a_group_network_collection_function: network-collection-function-a
+        collection_a_group_network_collection_description: network collection description a
+        collection_a_group_quantity: 2
+    NetworkCollectionB 0:
+      type: org.openecomp.resource.cr.NetworkCollectionB
+      metadata:
+        invariantUUID: e9263db3-fffc-4a59-a0e2-c18629afc4aa
+        UUID: 9903f1d3-a1fb-4bbb-a4a0-cada38f26885
+        customizationUUID: bdeb5341-adca-41a3-b4c0-5ff9b05e8f68
+        version: '1.0'
+        name: NetworkCollectionB
+        description: Network collection b
+        type: CR
+        category: Network L2-3
+        subcategory: Infrastructure
+        resourceVendor: ONAP (Tosca)
+        resourceVendorRelease: '1.0'
+        resourceVendorModelNumber: ''
+      properties:
+        cr_function: collection-function-b
+        cr_role: collection-role-b
+        cr_type: collection-type-b
+        collection_b_group_network_collection_function: network-collection-function-b
+        collection_b_group_network_collection_description: network collection description b
+        collection_b_group_quantity: 3
+    basic_network_proxy 0:
+      type: org.openecomp.nodes.basic_network_proxy
+      metadata:
+        invariantUUID: 05a600cd-81da-4408-aeaa-b87af3f6d077
+        UUID: 3a06cf38-a00c-49df-b7d7-04e5b1c6b433
+        customizationUUID: ec896a75-7e31-4ba5-a05b-13ba0b62f32c
+        version: '1.0'
+        name: basic_network Service Proxy
+        description: A Proxy for Service basic_network
+        type: Service Proxy
+        category: Generic
+        subcategory: Abstract
+        resourceVendor: ONAP (Tosca)
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+        sourceModelInvariant: 26b9c145-524a-4e30-8864-ad1ff7342bf4
+        sourceModelName: basic_network
+        sourceModelUuid: 9ff42123-ff24-41dc-9f41-a956c9328699
+    vrf_entry 0:
+      type: org.openecomp.nodes.VRFEntry
+      metadata:
+        invariantUUID: 14d33cdc-3f79-4006-82db-67a50aca5060
+        UUID: 940a0d5a-0480-414c-8fd3-600f6fc1abf2
+        customizationUUID: 4274c57c-69da-47b8-a9d6-a41f9110bdc6
+        version: '1.0'
+        name: VRF Entry Configuration
+        description: VRF entry configuration
+        type: Configuration
+        category: Configuration
+        subcategory: Configuration
+        resourceVendor: ONAP (Tosca)
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+      requirements:
+      - dependency:
+          capability: feature
+          node: basic_network_proxy 0
+    vlan_network_receptor 0:
+      type: org.openecomp.nodes.VLANNetworkReceptor
+      metadata:
+        invariantUUID: 6e95cc0e-769a-4a06-807a-1ccce695fca4
+        UUID: 592a610b-935f-4295-a3ca-09927ab9bae1
+        customizationUUID: fe863a6e-2842-49d1-b574-117f6f25a265
+        version: '1.0'
+        name: VLAN Network Receptor Configuration
+        description: VLAN network receptor configuration
+        type: Configuration
+        category: Configuration
+        subcategory: Configuration
+        resourceVendor: ONAP (Tosca)
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+      requirements:
+      - dependency:
+          capability: feature
+          node: basic_network_proxy 0
+  substitution_mappings:
+    node_type: org.openecomp.service.NetworkCollectionConfig
