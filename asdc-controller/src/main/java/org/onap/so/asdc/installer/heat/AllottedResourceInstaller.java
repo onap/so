@@ -168,12 +168,14 @@ public class AllottedResourceInstaller {
 
                     if (capabilityName.equals(SCALABLE)) {
 
-                        allottedResourceCustomization
-                                .setMinInstances(Integer.getInteger(getCapabilityLeafPropertyValue(arCapability,
-                                        SdcPropertyNames.PROPERTY_NAME_MININSTANCES)));
-                        allottedResourceCustomization
-                                .setMinInstances(Integer.getInteger(getCapabilityLeafPropertyValue(arCapability,
-                                        SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES)));
+                        allottedResourceCustomization.setMinInstances(parseIntegerOrNull(
+                                getCapabilityLeafPropertyValue(arCapability,
+                                        SdcPropertyNames.PROPERTY_NAME_MININSTANCES),
+                                SdcPropertyNames.PROPERTY_NAME_MININSTANCES));
+                        allottedResourceCustomization.setMaxInstances(parseIntegerOrNull(
+                                getCapabilityLeafPropertyValue(arCapability,
+                                        SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES),
+                                SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES));
 
                     }
                 }

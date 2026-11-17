@@ -176,6 +176,18 @@ public final class ToscaEntityHelper {
         return null;
     }
 
+    static Integer parseIntegerOrNull(String value, String propName) {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Integer.valueOf(value.trim());
+        } catch (NumberFormatException e) {
+            logger.warn("Ignoring non-integer value '{}' of property {}", value, propName);
+            return null;
+        }
+    }
+
     static String getCapabilityLeafPropertyValue(CapabilityAssignment capAssign, String propName) {
 
         Property leafProperty = capAssign.getProperties().get(propName);

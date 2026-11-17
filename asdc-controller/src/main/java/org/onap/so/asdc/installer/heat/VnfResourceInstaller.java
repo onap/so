@@ -944,8 +944,9 @@ public class VnfResourceInstaller {
 
         vnfResourceCustomization.setControllerActor(getLeafPropertyValue(entityDetails, CONTROLLER_ACTOR));
         vnfResourceCustomization.setVnfResources(vnfResource);
-        vnfResourceCustomization.setAvailabilityZoneMaxCount(Integer.getInteger(
-                entityDetails.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT)));
+        vnfResourceCustomization.setAvailabilityZoneMaxCount(parseIntegerOrNull(
+                entityDetails.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT),
+                SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT));
 
         List<CapabilityAssignment> capAssignList = entityDetails.getCapabilities();
 
@@ -959,10 +960,12 @@ public class VnfResourceInstaller {
                     String capabilityName = capAssign.getName();
 
                     if (capabilityName.equalsIgnoreCase(SCALABLE)) {
-                        vnfResourceCustomization.setMinInstances(Integer.getInteger(
-                                getLeafPropertyValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_MININSTANCES)));
-                        vnfResourceCustomization.setMaxInstances(Integer.getInteger(
-                                getLeafPropertyValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES)));
+                        vnfResourceCustomization.setMinInstances(parseIntegerOrNull(
+                                getLeafPropertyValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_MININSTANCES),
+                                SdcPropertyNames.PROPERTY_NAME_MININSTANCES));
+                        vnfResourceCustomization.setMaxInstances(parseIntegerOrNull(
+                                getLeafPropertyValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES),
+                                SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES));
                     }
                 }
 
@@ -970,10 +973,12 @@ public class VnfResourceInstaller {
         }
 
         if (vnfResourceCustomization.getMinInstances() == null && vnfResourceCustomization.getMaxInstances() == null) {
-            vnfResourceCustomization.setMinInstances(Integer
-                    .getInteger(getLeafPropertyValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_MININSTANCES)));
-            vnfResourceCustomization.setMaxInstances(Integer
-                    .getInteger(getLeafPropertyValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES)));
+            vnfResourceCustomization.setMinInstances(
+                    parseIntegerOrNull(getLeafPropertyValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_MININSTANCES),
+                            SdcPropertyNames.PROPERTY_NAME_MININSTANCES));
+            vnfResourceCustomization.setMaxInstances(
+                    parseIntegerOrNull(getLeafPropertyValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES),
+                            SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES));
         }
 
         toscaResourceStructure.setCatalogVnfResourceCustomization(vnfResourceCustomization);

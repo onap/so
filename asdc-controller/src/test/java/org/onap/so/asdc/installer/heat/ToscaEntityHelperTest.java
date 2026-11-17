@@ -60,4 +60,15 @@ public class ToscaEntityHelperTest {
         assertEquals("42", ToscaEntityHelper.getLeafPropertyValue(entity, "b"));
         assertNull(ToscaEntityHelper.getLeafPropertyValue(entity, "missing"));
     }
+
+    @Test
+    public void parseIntegerOrNullParsesNumbersAndMapsEverythingElseToNull() {
+        assertEquals(Integer.valueOf(3), ToscaEntityHelper.parseIntegerOrNull("3", "p"));
+        assertEquals(Integer.valueOf(0), ToscaEntityHelper.parseIntegerOrNull(" 0 ", "p"));
+        assertNull(ToscaEntityHelper.parseIntegerOrNull(null, "p"));
+        assertNull(ToscaEntityHelper.parseIntegerOrNull("", "p"));
+        assertNull(ToscaEntityHelper.parseIntegerOrNull("  ", "p"));
+        assertNull(ToscaEntityHelper.parseIntegerOrNull("UNBOUNDED", "p"));
+        assertNull(ToscaEntityHelper.parseIntegerOrNull("{get_input=max_instances}", "p"));
+    }
 }
