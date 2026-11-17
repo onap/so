@@ -21,17 +21,21 @@
 package org.onap.so.asdc.installer.heat;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
+import org.onap.sdc.toscaparser.api.CapabilityAssignment;
+import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.db.catalog.beans.AllottedResource;
@@ -86,5 +90,42 @@ public class AllottedResourceInstallerTest {
 
         assertEquals(0, service.getAllottedCustomizations().size());
         verifyNoInteractions(allottedRepo, allottedCustomizationRepo);
+    }
+
+    @Test
+    public void scalableCapabilitySetsMinAndMaxInstances() {
+        AllottedResourceCustomization customization = installer
+                .createAllottedResourceCustomization(arEntityWithScalableCapability("1", "5"), toscaResourceStruct);
+
+        assertEquals(Integer.valueOf(1), customization.getMinInstances());
+        assertEquals(Integer.valueOf(5), customization.getMaxInstances());
+    }
+
+    @Test
+    public void blankOrNonNumericScalableValuesAreStoredAsNull() {
+        AllottedResourceCustomization customization = installer.createAllottedResourceCustomization(
+                arEntityWithScalableCapability("", "UNBOUNDED"), toscaResourceStruct);
+
+        assertNull(customization.getMinInstances());
+        assertNull(customization.getMaxInstances());
+    }
+
+    private IEntityDetails arEntityWithScalableCapability(String minInstances, String maxInstances) {
+        CapabilityAssignment scalable = mock(CapabilityAssignment.class);
+        when(scalable.getName()).thenReturn("scalable");
+        LinkedHashMap<String, Property> properties = new LinkedHashMap<>();
+        properties.put(SdcPropertyNames.PROPERTY_NAME_MININSTANCES, property(minInstances));
+        properties.put(SdcPropertyNames.PROPERTY_NAME_MAXINSTANCES, property(maxInstances));
+        when(scalable.getProperties()).thenReturn(properties);
+        IEntityDetails arEntity = mock(IEntityDetails.class);
+        when(arEntity.getMetadata()).thenReturn(mock(Metadata.class));
+        when(arEntity.getCapabilities()).thenReturn(List.of(scalable));
+        return arEntity;
+    }
+
+    private static Property property(Object value) {
+        Property property = mock(Property.class);
+        when(property.getValue()).thenReturn(value);
+        return property;
     }
 }
