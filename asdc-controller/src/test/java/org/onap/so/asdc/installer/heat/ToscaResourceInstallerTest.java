@@ -648,10 +648,7 @@ public class ToscaResourceInstallerTest extends BaseTest {
                 .getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
         doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
         doReturn(MockConstants.MODEL_CUSTOMIZATIONUUID).when(spResourceCustomization).getModelCustomizationUUID();
-        doReturn(null).when(toscaInstaller).getLeafPropertyValue(entityDetails,
-                SdcPropertyNames.PROPERTY_NAME_NFFUNCTION);
-        doReturn(null).when(toscaInstaller).getLeafPropertyValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_NFROLE);
-        doReturn(null).when(toscaInstaller).getLeafPropertyValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_NFTYPE);
+        doReturn(Collections.emptyMap()).when(entityDetails).getProperties();
     }
 
     @Test
