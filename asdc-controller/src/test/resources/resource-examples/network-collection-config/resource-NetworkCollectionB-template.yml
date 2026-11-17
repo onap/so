@@ -1,0 +1,113 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+metadata:
+  invariantUUID: e9263db3-fffc-4a59-a0e2-c18629afc4aa
+  UUID: 9903f1d3-a1fb-4bbb-a4a0-cada38f26885
+  name: NetworkCollectionB
+  description: Network collection b
+  type: CR
+  category: Network L2-3
+  subcategory: Infrastructure
+  resourceVendor: ONAP (Tosca)
+  resourceVendorRelease: '1.0'
+  resourceVendorModelNumber: ''
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+- annotations:
+    file: annotations.yml
+- resource-Generic NeutronNet:
+    file: resource-GenericNeutronnet-template.yml
+- resource-ExtVL:
+    file: resource-Extvl-template.yml
+node_types:
+  org.openecomp.resource.cr.NetworkCollectionB:
+    derived_from: org.openecomp.resource.abstract.nodes.CR
+    properties:
+      collection_b_group_network_collection_function:
+        type: string
+        required: false
+      collection_b_group_network_collection_description:
+        type: string
+        required: false
+      collection_b_group_quantity:
+        type: integer
+        required: false
+topology_template:
+  inputs:
+    collection_b_group_network_collection_function:
+      type: string
+      required: false
+    collection_b_group_network_collection_description:
+      type: string
+      required: false
+    collection_b_group_quantity:
+      type: integer
+      required: false
+  node_templates:
+    NetworkCollectionB_network 0:
+      type: org.openecomp.resource.vl.GenericNeutronNet
+      metadata:
+        invariantUUID: 8c5abd9d-866b-425d-9924-1bd32c67dafa
+        UUID: 447d8eb8-8b1f-43fb-8b7d-629ebdda4cf4
+        customizationUUID: 812443e5-980f-4ac7-9ff6-15574b8280e5
+        version: '1.0'
+        name: AIC30_CONTRAIL_BASIC
+        description: Network of collection b
+        type: VL
+        category: Generic
+        subcategory: Network Elements
+        resourceVendor: ONAP (Tosca)
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+      properties:
+        network_type: NEUTRON
+        network_technology: CONTRAIL
+        network_role: collection_role_b
+        network_scope: SERVICE
+  groups:
+    collection_b_group:
+      type: org.openecomp.groups.NetworkCollection
+      members:
+      - NetworkCollectionB_network 0
+      metadata:
+        invariantUUID: 04c8d7a1-0ef4-4657-8190-2ae38714fd8d
+        UUID: 7d1a3aad-5d57-4261-8809-fc5486512fa4
+        version: '1'
+        name: collection_b_group
+      properties:
+        network_collection_function:
+          get_input: collection_b_group_network_collection_function
+        network_collection_description:
+          get_input: collection_b_group_network_collection_description
+  policies:
+    collection_b_group_scaling:
+      type: org.openecomp.policies.scaling.Fixed
+      targets:
+      - collection_b_group
+      metadata:
+        invariantUUID: fca43378-4061-4f4e-a24f-ffd66835bf7e
+        UUID: c47cf0d3-9a45-48ab-a471-f05f94606a4d
+        version: '1'
+        name: collection_b_group_scaling
+      properties:
+        quantity:
+          get_input: collection_b_group_quantity
+  substitution_mappings:
+    node_type: org.openecomp.resource.cr.NetworkCollectionB
+    properties:
+      collection_b_group_network_collection_function:
+      - collection_b_group_network_collection_function
+      collection_b_group_network_collection_description:
+      - collection_b_group_network_collection_description
+      collection_b_group_quantity:
+      - collection_b_group_quantity

@@ -3,6 +3,7 @@
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +24,7 @@ package org.onap.so.asdc.installer.heat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,13 +34,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.LockAcquisitionException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -65,6 +70,7 @@ import org.onap.so.asdc.client.test.emulators.ArtifactInfoImpl;
 import org.onap.so.asdc.client.test.emulators.JsonStatusData;
 import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
 import org.onap.so.asdc.installer.IVfModuleData;
+import org.onap.so.asdc.installer.PnfResourceStructure;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.asdc.installer.VfModuleStructure;
 import org.onap.so.asdc.installer.VfResourceStructure;
@@ -72,6 +78,7 @@ import org.onap.so.asdc.installer.bpmn.WorkflowResource;
 import org.onap.so.db.catalog.beans.*;
 import org.onap.so.db.catalog.data.repository.*;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
+import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.onap.so.db.request.data.repository.WatchdogDistributionStatusRepository;
 import org.onap.so.db.request.data.repository.WatchdogServiceModVerIdLookupRepository;
@@ -83,6 +90,8 @@ public class ToscaResourceInstallerTest extends BaseTest {
     private ToscaResourceInstaller toscaInstaller;
     @Autowired
     private WatchdogComponentDistributionStatusRepository watchdogCDStatusRepository;
+    @Autowired
+    private WatchdogDistributionStatusRepository watchdogDistributionStatusRepository;
     @Mock
     private SdcCsarHelperImpl sdcCsarHelper;
     @Mock
@@ -114,12 +123,20 @@ public class ToscaResourceInstallerTest extends BaseTest {
     private JsonStatusData statusData;
     private static final String MSO = "SO";
 
+    private ToscaCsarRepository sharedToscaCsarRepo;
+
     @Before
     public void before() {
         MockitoAnnotations.openMocks(this);
+        sharedToscaCsarRepo = (ToscaCsarRepository) ReflectionTestUtils.getField(toscaInstaller, "toscaCsarRepo");
 
         notificationData = new NotificationDataImpl();
         statusData = new JsonStatusData();
+    }
+
+    @After
+    public void restoreToscaInstaller() {
+        ReflectionTestUtils.setField(toscaInstaller, "toscaCsarRepo", sharedToscaCsarRepo);
     }
 
     @Test
@@ -462,6 +479,44 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doThrow(LockAcquisitionException.class).when(toscaResourceStruct).getToscaArtifact();
 
         assertDoesNotThrow(() -> toscaInstaller.installTheResource(toscaResourceStruct, vfResourceStructure));
+    }
+
+    @Test
+    public void installTheResourcePnfConstraintViolationIsSwallowedTest() throws Exception {
+        PnfResourceStructure pnfResourceStruct = pnfResourceStructure("testPnfStatusConstraintViolationTosca");
+        doThrow(new ConstraintViolationException("duplicate entry", new SQLException(), "uk_tosca_csar"))
+                .when(toscaResourceStruct).getToscaArtifact();
+
+        toscaInstaller.installTheResource(toscaResourceStruct, pnfResourceStruct);
+
+        assertEquals(DistributionStatusEnum.COMPONENT_DONE_ERROR.name(),
+                getWatchdogCDStatusWithName(
+                        watchdogCDStatusRepository.findByDistributionId("testPnfStatusConstraintViolationTosca"), MSO)
+                                .getComponentDistributionStatus());
+    }
+
+    @Test
+    public void installTheResourcePnfExceptionTest() throws Exception {
+        PnfResourceStructure pnfResourceStruct = pnfResourceStructure("testPnfStatusFailureTosca");
+        doThrow(new IllegalStateException("pnf install failed")).when(toscaResourceStruct).getToscaArtifact();
+
+        ArtifactInstallerException thrown = assertThrows(ArtifactInstallerException.class,
+                () -> toscaInstaller.installTheResource(toscaResourceStruct, pnfResourceStruct));
+
+        assertEquals("Exception caught during installation of pnfResourceName. Transaction rollback.",
+                thrown.getMessage());
+        assertEquals(DistributionStatusEnum.COMPONENT_DONE_ERROR.name(),
+                getWatchdogCDStatusWithName(
+                        watchdogCDStatusRepository.findByDistributionId("testPnfStatusFailureTosca"), MSO)
+                                .getComponentDistributionStatus());
+    }
+
+    private PnfResourceStructure pnfResourceStructure(String distributionId) {
+        watchdogDistributionStatusRepository.save(new WatchdogDistributionStatus(distributionId));
+        notificationData.setDistributionID(distributionId);
+        notificationData.setServiceVersion("1.0");
+        doReturn("pnfResourceName").when(resourceInstance).getResourceName();
+        return new PnfResourceStructure(notificationData, resourceInstance);
     }
 
     private WatchdogComponentDistributionStatus getWatchdogCDStatusWithName(

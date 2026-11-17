@@ -1,6 +1,7 @@
 /*-
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix
+ *  Modifications Copyright (C) 2026 Deutsche Telekom AG.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +39,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -56,6 +59,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestName;
 import org.onap.aaiclient.client.aai.AAIVersion;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
@@ -93,8 +97,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * This is used to run some basic integration test(BIT) for ASDC controller. It will test the csar install and all the
@@ -112,6 +118,11 @@ public class ASDCControllerITTest extends BaseTest {
 
     @Rule
     public TestName testName = new TestName();
+
+    @Rule
+    public TemporaryFolder msoConfigFolder = new TemporaryFolder();
+
+    private static final String MSO_CONFIG_PATH = "mso.config.path";
 
     private String serviceUuid;
     private String serviceInvariantUuid;
@@ -197,9 +208,10 @@ public class ASDCControllerITTest extends BaseTest {
     private void assertCatalogMatchesGolden(String name, Runnable install) throws SQLException, IOException {
         // do not close: owned by the test transaction
         Connection connection = DataSourceUtils.getConnection(dataSource);
+        // Raw JDBC does not trigger Hibernate's auto-flush, so pending writes would otherwise be invisible.
+        catalogEntityManager.flush();
         Map<String, List<String>> before = CatalogSnapshot.capture(connection);
         install.run();
-        // Raw JDBC does not trigger Hibernate's auto-flush, so pending inserts would otherwise be invisible.
         catalogEntityManager.flush();
         Map<String, List<String>> delta = CatalogSnapshot.delta(before, CatalogSnapshot.capture(connection));
         // setUp draws a fresh artifactUuid per test, and it ends up in the TOSCA_CSAR and SERVICE rows.
@@ -887,6 +899,63 @@ public class ASDCControllerITTest extends BaseTest {
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
             fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void treatNotification_NetworkCollectionsAndConfigurations_ExpectedCatalogRows() throws Exception {
+        stubAaiAndActivitySpec();
+        // SERVICE_PROXY_CUSTOMIZATION has a NOT NULL foreign key to the proxied service, basic_network
+        treatJsonNotification("service-BasicNetwork", "service-BasicNetwork-notification.json");
+
+        assertCatalogMatchesGolden("network-collection-config", () -> treatJsonNotification("network-collection-config",
+                "service-NetworkCollectionConfig-notification.json"));
+    }
+
+    @Test
+    public void treatNotification_FabricConfigurationAndHeatArtifact_ExpectedCatalogRows() throws Exception {
+        stubAaiAndActivitySpec();
+
+        assertCatalogMatchesGolden("fabric-configuration",
+                () -> treatJsonNotification("fabric-configuration", "service-ubuntu16fabric-notification.json"));
+    }
+
+    @Test
+    public void treatNotification_NsstWithWorkflowArtifact_ExpectedCatalogRows() throws Exception {
+        stubAaiAndActivitySpec();
+
+        assertCatalogMatchesGolden("e2eSlicing-nsst-workflow",
+                () -> treatJsonNotification("e2eSlicing", "nsst-workflow-notification.json"));
+    }
+
+    private void stubAaiAndActivitySpec() {
+        wireMockServer.stubFor(post(urlPathMatching("/aai/.*"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")));
+        wireMockServer.stubFor(post(urlPathMatching("/v1.0/activity-spec")).willReturn(
+                aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.ACCEPTED.value())));
+    }
+
+    /**
+     * Distributes a notification from src/test/resources/resource-examples/{@code resourceDir}, the way
+     * ASDCRestInterfaceTest does, but inside this class's rolled-back transaction.
+     */
+    private void treatJsonNotification(String resourceDir, String notificationFile) {
+        String location = "src/test/resources/resource-examples/" + resourceDir;
+        String previousConfigPath = System.getProperty(MSO_CONFIG_PATH);
+        System.setProperty(MSO_CONFIG_PATH, msoConfigFolder.getRoot().toString());
+        try {
+            NotificationDataImpl notification =
+                    new ObjectMapper().readValue(new File(location, notificationFile), NotificationDataImpl.class);
+            distributionClient.setResourcePath(location);
+            asdcController.treatNotification(notification);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        } finally {
+            if (previousConfigPath == null) {
+                System.clearProperty(MSO_CONFIG_PATH);
+            } else {
+                System.setProperty(MSO_CONFIG_PATH, previousConfigPath);
+            }
         }
     }
 

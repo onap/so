@@ -74,7 +74,7 @@ public final class ToscaEntityHelper {
     private ToscaEntityHelper() {}
 
     // this of temporary solution
-    public static String getValue(Object value, List<Input> inputs) {
+    static String getValue(Object value, List<Input> inputs) {
         String outInput;
         String defaultValue = null;
         if (value instanceof Map) {
@@ -100,8 +100,8 @@ public final class ToscaEntityHelper {
         return outInput;
     }
 
-    public static String getResourceInput(ToscaResourceStructure toscaResourceStructure,
-            String resourceCustomizationUuid) throws ArtifactInstallerException {
+    static String getResourceInput(ToscaResourceStructure toscaResourceStructure, String resourceCustomizationUuid)
+            throws ArtifactInstallerException {
         Map<String, String> resouceRequest = new HashMap<>();
         ISdcCsarHelper iSdcCsarHelper = toscaResourceStructure.getSdcCsarHelper();
 
@@ -138,7 +138,7 @@ public final class ToscaEntityHelper {
         }
     }
 
-    public static String testNull(Object object) {
+    static String testNull(Object object) {
 
         if (object == null) {
             return null;
@@ -176,7 +176,7 @@ public final class ToscaEntityHelper {
         return null;
     }
 
-    public static String getCapabilityLeafPropertyValue(CapabilityAssignment capAssign, String propName) {
+    static String getCapabilityLeafPropertyValue(CapabilityAssignment capAssign, String propName) {
 
         Property leafProperty = capAssign.getProperties().get(propName);
 
@@ -187,7 +187,7 @@ public final class ToscaEntityHelper {
         return null;
     }
 
-    public static String getPropertyInput(String propertyName) {
+    static String getPropertyInput(String propertyName) {
 
         String inputName = new String();
 
@@ -202,7 +202,7 @@ public final class ToscaEntityHelper {
         return inputName;
     }
 
-    public static Timestamp getCurrentTimeStamp() {
+    static Timestamp getCurrentTimeStamp() {
 
         return new Timestamp(new Date().getTime());
     }
