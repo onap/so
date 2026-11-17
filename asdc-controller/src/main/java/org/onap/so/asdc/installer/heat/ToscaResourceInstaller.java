@@ -24,11 +24,9 @@
 package org.onap.so.asdc.installer.heat;
 
 
-import java.sql.Timestamp;
+import static org.onap.so.asdc.installer.heat.ToscaEntityHelper.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -36,8 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.LockAcquisitionException;
@@ -48,9 +44,7 @@ import org.onap.sdc.api.notification.IStatusData;
 import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
-import org.onap.sdc.tosca.parser.elements.queries.EntityQuery.EntityQueryBuilder;
 import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
-import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery.TopologyTemplateQueryBuilder;
 import org.onap.sdc.tosca.parser.enums.EntityTemplateType;
 import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
@@ -59,7 +53,6 @@ import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.RequirementAssignment;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
-import org.onap.sdc.toscaparser.api.functions.GetInput;
 import org.onap.sdc.toscaparser.api.parameters.Input;
 import org.onap.sdc.api.notification.DistributionStatusEnum;
 import org.onap.so.asdc.client.ASDCConfiguration;
@@ -158,21 +151,9 @@ public class ToscaResourceInstaller {
 
     protected static final String NODES_VRF_ENTRY = "org.openecomp.nodes.VRFEntry";
     protected static final String VLAN_NETWORK_RECEPTOR = "org.openecomp.nodes.VLANNetworkReceptor";
-    protected static final String ALLOTTED_RESOURCE = "Allotted Resource";
-    protected static final String MULTI_STAGE_DESIGN = "multi_stage_design";
-    protected static final String SCALABLE = "scalable";
     protected static final String BASIC = "BASIC";
     protected static final String PROVIDER = "PROVIDER";
-    protected static final String HEAT = "HEAT";
-    protected static final String MANUAL_RECORD = "MANUAL_RECORD";
     protected static final String MSO = "SO";
-    protected static final String SDNC_MODEL_NAME = "sdnc_model_name";
-    protected static final String SDNC_MODEL_VERSION = "sdnc_model_version";
-    private static String CUSTOMIZATION_UUID = "customizationUUID";
-    protected static final String SKIP_POST_INST_CONF = "skip_post_instantiation_configuration";
-    private static final String CONTROLLER_ACTOR = "controller_actor";
-    private static final String CDS_MODEL_NAME = "cds_model_name";
-    private static final String CDS_MODEL_VERSION = "cds_model_version";
     private static final String DEFAULT_SOFTWARE_VERSION = "default_software_version";
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -575,71 +556,6 @@ public class ToscaResourceInstaller {
         logger.debug(" resourceSeq for service uuid {}: {}", service.getModelUUID(), resourceSeqStr);
     }
 
-
-    // this of temporary solution
-    private static String getValue(Object value, List<Input> inputs) {
-        String outInput;
-        String defaultValue = null;
-        if (value instanceof Map) {
-            Collection values = ((LinkedHashMap) value).values();
-            outInput = (values.size() > 0) ? values.toArray()[0].toString() : "";
-        } else if (value instanceof GetInput) {
-            String inputName = ((GetInput) value).getInputName();
-            Optional<Input> inputOptional =
-                    inputs.stream().filter(input -> input.getName().equals(inputName)).findFirst();
-            if (inputOptional.isPresent()) {
-                Input input = inputOptional.get();
-                defaultValue = input.getDefault() != null ? input.getDefault().toString() : "";
-            }
-            // Gets a value between [ and ]
-            String regex = "\\[.*?\\]";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(value.toString());
-            String valueStr = matcher.find() ? matcher.group() : inputName;
-            outInput = valueStr + "|" + defaultValue;
-        } else {
-            outInput = value != null ? value.toString() : "";
-        }
-        return outInput;
-    }
-
-    String getResourceInput(ToscaResourceStructure toscaResourceStructure, String resourceCustomizationUuid)
-            throws ArtifactInstallerException {
-        Map<String, String> resouceRequest = new HashMap<>();
-        ISdcCsarHelper iSdcCsarHelper = toscaResourceStructure.getSdcCsarHelper();
-
-        List<IEntityDetails> nodeTemplateEntityList =
-                getEntityDetails(toscaResourceStructure, EntityQuery.newBuilder(EntityTemplateType.NODE_TEMPLATE),
-                        TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
-
-        List<Input> serInput = iSdcCsarHelper.getServiceInputs();
-        Optional<IEntityDetails> nodeTemplateOpt = nodeTemplateEntityList.stream()
-                .filter(e -> e.getMetadata().getValue(CUSTOMIZATION_UUID).equals(resourceCustomizationUuid))
-                .findFirst();
-        if (nodeTemplateOpt.isPresent()) {
-            IEntityDetails entityDetails = nodeTemplateOpt.get();
-            Map<String, Property> resourceProperties = entityDetails.getProperties();
-
-            for (String key : resourceProperties.keySet()) {
-                Property property = resourceProperties.get(key);
-
-                String value = getValue(property.getValue(), serInput);
-                resouceRequest.put(key, value);
-            }
-        }
-
-        try {
-            String jsonStr = mapper.writeValueAsString(resouceRequest);
-
-            jsonStr = jsonStr.replace("\"", "\\\"");
-            logger.debug("resource request for resource customization id {}: {}", resourceCustomizationUuid, jsonStr);
-            return jsonStr;
-        } catch (JsonProcessingException e) {
-            logger.error("resource input could not be deserialized for resource customization id ({})",
-                    resourceCustomizationUuid);
-            throw new ArtifactInstallerException("resource input could not be parsed", e);
-        }
-    }
 
     protected void processNetworks(ToscaResourceStructure toscaResourceStruct, Service service)
             throws ArtifactInstallerException {
@@ -2779,21 +2695,6 @@ public class ToscaResourceInstaller {
         return yamlEditor.getParameterList(artifactUUID);
     }
 
-    protected String testNull(Object object) {
-
-        if (object == null) {
-            return null;
-        } else if ("NULL".equals(object)) {
-            return null;
-        } else if (object instanceof Integer) {
-            return object.toString();
-        } else if (object instanceof String) {
-            return (String) object;
-        } else {
-            return "Type not recognized";
-        }
-    }
-
     protected static String identifyParentOfNestedTemplate(VfModuleStructure vfModuleStructure,
             VfModuleArtifact heatNestedArtifact) {
 
@@ -2837,55 +2738,6 @@ public class ToscaResourceInstaller {
                 + vfModuleStructure.getVfModuleMetadata().getVfModuleModelName();
     }
 
-    public List<IEntityDetails> getEntityDetails(ToscaResourceStructure toscaResourceStruct,
-            EntityQueryBuilder entityType, TopologyTemplateQueryBuilder topologyTemplateBuilder, boolean nestedSearch) {
-
-        EntityQuery entityQuery = entityType.build();
-        TopologyTemplateQuery topologyTemplateQuery = topologyTemplateBuilder.build();
-        List<IEntityDetails> entityDetails =
-                toscaResourceStruct.getSdcCsarHelper().getEntity(entityQuery, topologyTemplateQuery, nestedSearch);
-
-        return entityDetails;
-
-    }
-
-    public String getLeafPropertyValue(IEntityDetails entityDetails, String propName) {
-
-        Property leafProperty = entityDetails.getProperties().get(propName);
-
-        if (leafProperty != null && leafProperty.getValue() != null) {
-            return leafProperty.getValue().toString();
-        }
-
-        return null;
-    }
-
-    protected String getCapabilityLeafPropertyValue(CapabilityAssignment capAssign, String propName) {
-
-        Property leafProperty = capAssign.getProperties().get(propName);
-
-        if (leafProperty != null && leafProperty.getValue() != null) {
-            return leafProperty.getValue().toString();
-        }
-
-        return null;
-    }
-
-    protected String getPropertyInput(String propertyName) {
-
-        String inputName = new String();
-
-        if (propertyName != null) {
-            int getInputIndex = propertyName.indexOf("{get_input=");
-            int getClosingIndex = propertyName.indexOf("}");
-            if (getInputIndex > -1) {
-                inputName = propertyName.substring(getInputIndex + 11, getClosingIndex);
-            }
-        }
-
-        return inputName;
-    }
-
     // this method add provided vnfCustomization to service with
     // existing customization available in db.
     private void addVnfCustomization(Service service, VnfResourceCustomization vnfResourceCustomization) {
@@ -2907,11 +2759,6 @@ public class ToscaResourceInstaller {
 
     }
 
-
-    protected static Timestamp getCurrentTimeStamp() {
-
-        return new Timestamp(new Date().getTime());
-    }
 
     private String getServiceInput(ToscaResourceStructure toscaResourceStructure) {
         String serviceInput = null;
