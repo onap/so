@@ -87,8 +87,6 @@ import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkInstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkResource;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
-import org.onap.so.db.catalog.beans.PnfResource;
-import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceArtifact;
 import org.onap.so.db.catalog.beans.ServiceInfo;
@@ -117,8 +115,6 @@ import org.onap.so.db.catalog.data.repository.HeatTemplateRepository;
 import org.onap.so.db.catalog.data.repository.InstanceGroupRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
-import org.onap.so.db.catalog.data.repository.PnfCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.PnfResourceRepository;
 import org.onap.so.db.catalog.data.repository.ServiceProxyResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.TempNetworkHeatTemplateRepository;
@@ -154,7 +150,6 @@ public class ToscaResourceInstaller {
     protected static final String BASIC = "BASIC";
     protected static final String PROVIDER = "PROVIDER";
     protected static final String MSO = "SO";
-    private static final String DEFAULT_SOFTWARE_VERSION = "default_software_version";
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
@@ -234,10 +229,7 @@ public class ToscaResourceInstaller {
     protected ToscaCsarRepository toscaCsarRepo;
 
     @Autowired
-    protected PnfResourceRepository pnfResourceRepository;
-
-    @Autowired
-    protected PnfCustomizationRepository pnfCustomizationRepository;
+    protected PnfResourceInstaller pnfResourceInstaller;
 
     @Autowired
     protected WorkflowResource workflowResource;
@@ -353,7 +345,7 @@ public class ToscaResourceInstaller {
             Service service = createService(toscaResourceStruct, resourceStruct);
 
             processResourceSequence(toscaResourceStruct, service);
-            processPnfResources(toscaResourceStruct, service, resourceStruct);
+            pnfResourceInstaller.processPnfResources(toscaResourceStruct, service, resourceStruct);
             serviceRepo.save(service);
 
             WatchdogComponentDistributionStatus status =
@@ -782,154 +774,6 @@ public class ToscaResourceInstaller {
                 .add(toscaResourceStruct.getCatalogCollectionResourceCustomization());
     }
 
-
-
-    /**
-     * This is used to process the PNF specific resource, including resource and resource_customization.
-     * {@link IEntityDetails} based API is used to retrieve information. Please check {@link ISdcCsarHelper} for
-     * details.
-     */
-    protected void processPnfResources(ToscaResourceStructure toscaResourceStruct, Service service,
-            PnfResourceStructure resourceStructure) throws Exception {
-        logger.info("Processing PNF resource: {}", resourceStructure.getResourceInstance().getResourceUUID());
-
-        ISdcCsarHelper sdcCsarHelper = toscaResourceStruct.getSdcCsarHelper();
-        EntityQuery entityQuery = EntityQuery.newBuilder(SdcTypes.PNF).build();
-        TopologyTemplateQuery topologyTemplateQuery = TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE).build();
-
-        List<IEntityDetails> entityDetailsList = sdcCsarHelper.getEntity(entityQuery, topologyTemplateQuery, false);
-        for (IEntityDetails entityDetails : entityDetailsList) {
-            Metadata metadata = entityDetails.getMetadata();
-            String customizationUUID = metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
-            String modelUuid = metadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID);
-            String notifCustomizationUUID = resourceStructure.getResourceInstance().getResourceCustomizationUUID();
-            if (customizationUUID != null && customizationUUID.equals(notifCustomizationUUID)) {
-                logger.info("Resource customization UUID: {} is the same as notified resource customizationUUID: {}",
-                        customizationUUID, notifCustomizationUUID);
-
-                if (checkExistingPnfResourceCutomization(customizationUUID)) {
-                    logger.info("Resource customization UUID: {} already deployed", customizationUUID);
-                } else {
-                    PnfResource pnfResource = findExistingPnfResource(service, modelUuid);
-                    if (pnfResource == null) {
-                        pnfResource = createPnfResource(entityDetails);
-                    }
-                    PnfResourceCustomization pnfResourceCustomization =
-                            createPnfResourceCustomization(entityDetails, pnfResource);
-                    pnfResource.getPnfResourceCustomizations().add(pnfResourceCustomization);
-                    toscaResourceStruct.setPnfResourceCustomization(pnfResourceCustomization);
-                    service.getPnfCustomizations().add(pnfResourceCustomization);
-                }
-            } else {
-                logger.warn(
-                        "Resource customization UUID: {} is NOT the same as notified resource customizationUUID: {}",
-                        customizationUUID, notifCustomizationUUID);
-            }
-        }
-    }
-
-    private PnfResource findExistingPnfResource(Service service, String modelUuid) {
-        PnfResource pnfResource = null;
-        for (PnfResourceCustomization pnfResourceCustomization : service.getPnfCustomizations()) {
-            if (pnfResourceCustomization.getPnfResources() != null
-                    && pnfResourceCustomization.getPnfResources().getModelUUID().equals(modelUuid)) {
-                pnfResource = pnfResourceCustomization.getPnfResources();
-            }
-        }
-        if (pnfResource == null) {
-            pnfResource = pnfResourceRepository.findById(modelUuid).orElse(pnfResource);
-        }
-        return pnfResource;
-    }
-
-    private boolean checkExistingPnfResourceCutomization(String customizationUUID) {
-        return pnfCustomizationRepository.findById(customizationUUID).isPresent();
-    }
-
-    /**
-     * Construct the {@link PnfResource} from {@link IEntityDetails} object.
-     */
-    private PnfResource createPnfResource(IEntityDetails entity) {
-        PnfResource pnfResource = new PnfResource();
-        Metadata metadata = entity.getMetadata();
-        pnfResource.setModelInvariantUUID(testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID)));
-        pnfResource.setModelName(testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME)));
-        pnfResource.setModelUUID(testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID)));
-        pnfResource.setModelVersion(testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION)));
-        pnfResource.setDescription(testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
-        pnfResource.setCategory(testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY)));
-        pnfResource.setSubCategory(testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_SUBCATEGORY)));
-        pnfResource.setToscaNodeType(entity.getToscaType());
-        return pnfResource;
-    }
-
-    /**
-     * Construct the {@link PnfResourceCustomization} from {@link IEntityDetails} object.
-     */
-    private PnfResourceCustomization createPnfResourceCustomization(IEntityDetails entityDetails,
-            PnfResource pnfResource) {
-
-        PnfResourceCustomization pnfResourceCustomization = new PnfResourceCustomization();
-        Metadata metadata = entityDetails.getMetadata();
-        Map<String, Property> properties = entityDetails.getProperties();
-        pnfResourceCustomization.setModelCustomizationUUID(
-                testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)));
-        pnfResourceCustomization.setModelInstanceName(entityDetails.getName());
-        pnfResourceCustomization
-                .setNfFunction(getStringValue(properties.get(SdcPropertyNames.PROPERTY_NAME_NFFUNCTION)));
-        pnfResourceCustomization.setNfNamingCode(getStringValue(properties.get(SdcPropertyNames.PROPERTY_NAME_NFCODE)));
-        pnfResourceCustomization.setNfRole(getStringValue(properties.get(SdcPropertyNames.PROPERTY_NAME_NFROLE)));
-        pnfResourceCustomization.setNfType(getStringValue(properties.get(SdcPropertyNames.PROPERTY_NAME_NFTYPE)));
-        pnfResourceCustomization.setMultiStageDesign(getStringValue(properties.get(MULTI_STAGE_DESIGN)));
-        pnfResourceCustomization.setBlueprintName(getStringValue(properties.get(SDNC_MODEL_NAME)));
-        pnfResourceCustomization.setBlueprintVersion(getStringValue(properties.get(SDNC_MODEL_VERSION)));
-        pnfResourceCustomization.setSkipPostInstConf(getBooleanValue(properties.get(SKIP_POST_INST_CONF)));
-        pnfResourceCustomization.setControllerActor(getStringValue(properties.get(CONTROLLER_ACTOR)));
-        pnfResourceCustomization.setDefaultSoftwareVersion(extractDefaultSoftwareVersionFromSwVersions(properties));
-        pnfResourceCustomization.setPnfResources(pnfResource);
-        return pnfResourceCustomization;
-    }
-
-    private String extractDefaultSoftwareVersionFromSwVersions(Map<String, Property> properties) {
-        final String SOFTWARE_VERSIONS = "software_versions";
-        final String EMPTY_STRING = "";
-        String defaultSoftwareVersionValue = getStringValue(properties.get(DEFAULT_SOFTWARE_VERSION));
-        if (defaultSoftwareVersionValue != null && !defaultSoftwareVersionValue.isEmpty()) {
-            return defaultSoftwareVersionValue;
-        }
-        if (properties.containsKey(SOFTWARE_VERSIONS) && properties.get(SOFTWARE_VERSIONS).getValue() != null) {
-            if (properties.get(SOFTWARE_VERSIONS).getValue() instanceof List) {
-                List<String> propertyValueList = (List) properties.get(SOFTWARE_VERSIONS).getValue();
-                return propertyValueList.get(0);
-            } else if (properties.get(SOFTWARE_VERSIONS).getValue() instanceof String) {
-                return getStringValue(properties.get(SOFTWARE_VERSIONS));
-            }
-        }
-
-        return EMPTY_STRING;
-    }
-
-    /**
-     * Get value from {@link Property} and cast to boolean value. Return true if property is null.
-     */
-    private boolean getBooleanValue(Property property) {
-        if (null == property) {
-            return true;
-        }
-        Object value = property.getValue();
-        return new Boolean(String.valueOf(value));
-    }
-
-    /**
-     * Get value from {@link Property} and cast to String value. Return empty String if property is null value.
-     */
-    private String getStringValue(Property property) {
-        if (null == property) {
-            return "";
-        }
-        Object value = property.getValue();
-        return String.valueOf(value);
-    }
 
     protected void processVfModules(IEntityDetails vfEntityDetails, ToscaResourceStructure toscaResourceStruct,
             VfResourceStructure vfResourceStructure, Service service, Metadata metadata) throws Exception {
