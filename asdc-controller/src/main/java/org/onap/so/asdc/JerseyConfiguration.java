@@ -25,12 +25,9 @@ import java.util.stream.Stream;
 import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.onap.so.asdc.client.test.rest.ASDCRestInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.Profiles;
 import io.swagger.v3.jaxrs2.SwaggerSerializers;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
@@ -45,19 +42,8 @@ public class JerseyConfiguration extends ResourceConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(JerseyConfiguration.class);
 
-    private final Environment environment;
-
-    public JerseyConfiguration(final Environment environment) {
-        this.environment = environment;
-    }
-
     @PostConstruct
     public void setUp() {
-        // Jersey instantiates registered resources itself when Spring has no bean for them, so the
-        // @Profile on ASDCRestInterface alone does not keep the endpoint out of other profiles
-        if (environment.acceptsProfiles(Profiles.of("test"))) {
-            register(ASDCRestInterface.class);
-        }
         register(OpenApiResource.class);
         register(SwaggerSerializers.class);
 

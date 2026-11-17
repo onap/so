@@ -29,6 +29,7 @@ import java.net.http.HttpResponse;
 import org.junit.Test;
 import org.onap.so.asdc.client.ASDCController;
 import org.onap.so.asdc.client.test.rest.ASDCRestInterface;
+import org.onap.so.asdc.client.test.rest.ASDCRestInterfaceRegistration;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -71,7 +72,7 @@ public class JerseyConfigurationTest {
 
     @Configuration
     @ImportAutoConfiguration({ServletWebServerFactoryAutoConfiguration.class, JerseyAutoConfiguration.class})
-    @Import({JerseyConfiguration.class, ASDCRestInterface.class})
+    @Import({JerseyConfiguration.class, ASDCRestInterface.class, ASDCRestInterfaceRegistration.class})
     static class JerseyTestConfig {
     }
 }
