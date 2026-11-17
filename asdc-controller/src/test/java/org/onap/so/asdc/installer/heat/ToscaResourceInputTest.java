@@ -38,8 +38,16 @@ import org.onap.sdc.toscaparser.api.parameters.Input;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.db.catalog.beans.Service;
+import org.onap.so.db.catalog.data.repository.CvnfcCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.InstanceGroupRepository;
+import org.onap.so.db.catalog.data.repository.ServiceRepository;
+import org.onap.so.db.catalog.data.repository.VFModuleRepository;
+import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
+import org.onap.so.db.catalog.data.repository.VnfcCustomizationRepository;
+import org.onap.so.db.catalog.data.repository.VnfcInstanceGroupCustomizationRepository;
 import java.util.*;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ToscaResourceInputTest {
@@ -72,7 +80,11 @@ public class ToscaResourceInputTest {
 
     @Test
     public void getListResourceInput() {
-        ToscaResourceInstaller toscaResourceInstaller = new ToscaResourceInstaller();
+        VnfResourceInstaller vnfResourceInstaller = new VnfResourceInstaller(mock(VnfResourceRepository.class),
+                mock(VFModuleRepository.class), mock(VnfcInstanceGroupCustomizationRepository.class),
+                mock(VnfcCustomizationRepository.class), mock(CvnfcCustomizationRepository.class),
+                mock(InstanceGroupRepository.class), mock(ServiceRepository.class), mock(HeatArtifactInstaller.class),
+                mock(ConfigurationInstaller.class));
         LinkedHashMap<String, Property> hashMap = new LinkedHashMap<>();
         hashMap.put("key1", property);
         Map<String, Object> map = new HashMap<>();
@@ -87,7 +99,7 @@ public class ToscaResourceInputTest {
         when(entityDetails.getMetadata()).thenReturn(metadata);
         List<Input> inputs = new ArrayList<>();
         inputs.add(input);
-        String resourceInput = toscaResourceInstaller.getVnfcResourceInput(entityDetails, inputs);
+        String resourceInput = vnfResourceInstaller.getVnfcResourceInput(entityDetails, inputs);
         assertEquals("{\\\"key1\\\":\\\"[sites,INDEX,role]|defaultValue\\\"}", resourceInput);
     }
 

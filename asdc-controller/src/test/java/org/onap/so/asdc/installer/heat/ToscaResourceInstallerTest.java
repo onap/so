@@ -32,7 +32,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,8 +55,6 @@ import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.Property;
-import org.onap.sdc.toscaparser.api.RequirementAssignment;
-import org.onap.sdc.toscaparser.api.RequirementAssignments;
 import org.onap.sdc.toscaparser.api.SubstitutionMappings;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.sdc.toscaparser.api.elements.StatefulEntityType;
@@ -81,7 +78,6 @@ import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
-import java.util.stream.Collectors;
 
 public class ToscaResourceInstallerTest extends BaseTest {
     @Autowired
@@ -346,10 +342,10 @@ public class ToscaResourceInstallerTest extends BaseTest {
 
         WorkflowResource workflowResource = spy(WorkflowResource.class);
 
+        VnfcInstanceGroupCustomizationRepository vnfcInstanceGroupCustomizationRepo =
+                spy(VnfcInstanceGroupCustomizationRepository.class);
+
         ReflectionTestUtils.setField(toscaInstaller, "serviceRepo", serviceRepo);
-        ReflectionTestUtils.setField(toscaInstaller, "vnfRepo", vnfRepo);
-        ReflectionTestUtils.setField(toscaInstaller, "vfModuleRepo", vfModuleRepo);
-        ReflectionTestUtils.setField(toscaInstaller, "instanceGroupRepo", instanceGroupRepo);
         ReflectionTestUtils.setField(toscaInstaller, "workflowResource", workflowResource);
         ReflectionTestUtils.setField(toscaInstaller, "allottedResourceInstaller", new AllottedResourceInstaller(
                 spy(AllottedResourceRepository.class), spy(AllottedResourceCustomizationRepository.class)));
@@ -358,11 +354,16 @@ public class ToscaResourceInstallerTest extends BaseTest {
                         spy(TempNetworkHeatTemplateRepository.class), spy(NetworkResourceRepository.class),
                         spy(NetworkResourceCustomizationRepository.class), spy(CollectionResourceRepository.class),
                         instanceGroupRepo));
-        ReflectionTestUtils.setField(toscaInstaller, "configurationInstaller",
-                new ConfigurationInstaller(spy(ConfigurationResourceCustomizationRepository.class), serviceRepo));
-        ReflectionTestUtils.setField(toscaInstaller, "heatArtifactInstaller",
-                new HeatArtifactInstaller(spy(HeatTemplateRepository.class), spy(HeatEnvironmentRepository.class),
-                        spy(HeatFilesRepository.class)));
+        ConfigurationInstaller configurationInstaller =
+                new ConfigurationInstaller(spy(ConfigurationResourceCustomizationRepository.class), serviceRepo);
+        ReflectionTestUtils.setField(toscaInstaller, "configurationInstaller", configurationInstaller);
+        HeatArtifactInstaller heatArtifactInstaller = new HeatArtifactInstaller(spy(HeatTemplateRepository.class),
+                spy(HeatEnvironmentRepository.class), spy(HeatFilesRepository.class));
+        ReflectionTestUtils.setField(toscaInstaller, "heatArtifactInstaller", heatArtifactInstaller);
+        ReflectionTestUtils.setField(toscaInstaller, "vnfResourceInstaller",
+                new VnfResourceInstaller(vnfRepo, vfModuleRepo, vnfcInstanceGroupCustomizationRepo,
+                        spy(VnfcCustomizationRepository.class), spy(CvnfcCustomizationRepository.class),
+                        instanceGroupRepo, serviceRepo, heatArtifactInstaller, configurationInstaller));
 
         // doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
         toscaResourceStructObj.setSdcCsarHelper(csarHelper);
@@ -435,10 +436,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
         ReflectionTestUtils.setField(toscaInstaller, "watchdogCDStatusRepository", watchdogCDStatusRepository);
         doReturn(null).when(watchdogCDStatusRepository).save(any(WatchdogComponentDistributionStatus.class));
 
-        VnfcInstanceGroupCustomizationRepository vnfcInstanceGroupCustomizationRepo =
-                spy(VnfcInstanceGroupCustomizationRepository.class);
-        ReflectionTestUtils.setField(toscaInstaller, "vnfcInstanceGroupCustomizationRepo",
-                vnfcInstanceGroupCustomizationRepo);
         doReturn(null).when(vnfcInstanceGroupCustomizationRepo).save(any(VnfcInstanceGroupCustomization.class));
         return toscaResourceStructObj;
     }
@@ -567,76 +564,5 @@ public class ToscaResourceInstallerTest extends BaseTest {
         assertEquals(invariantUUID, service.getModelInvariantUUID());
         assertEquals(namingPolicy, service.getNamingPolicy());
         assertTrue(service.getOnapGeneratedNaming());
-    }
-
-    @Test
-    public void testProcessVNFCGroupSequence() {
-        List<Group> groupList = new ArrayList<>();
-
-        Group group1 = mock(Group.class);
-        NodeTemplate node1 = mock(NodeTemplate.class);
-        List<NodeTemplate> nodeList1 = new ArrayList<>();
-        nodeList1.add(node1);
-        doReturn("VfcInstanceGroup..0").when(group1).getName();
-        doReturn(nodeList1).when(group1).getMemberNodes();
-        doReturn("deviceV3").when(node1).getName();
-
-        Group group2 = mock(Group.class);
-        NodeTemplate node2 = mock(NodeTemplate.class);
-        List<NodeTemplate> nodeList2 = new ArrayList<>();
-        nodeList2.add(node2);
-        doReturn("VfcInstanceGroup..1").when(group2).getName();
-        doReturn(nodeList2).when(group2).getMemberNodes();
-        RequirementAssignments requirements2 = mock(RequirementAssignments.class);
-        RequirementAssignment requirement2 = mock(RequirementAssignment.class);
-        List<RequirementAssignment> requirementCollection2 = new ArrayList<>();
-        requirementCollection2.add(requirement2);
-        doReturn(requirementCollection2).when(requirements2).getAll();
-        doReturn("deviceV3").when(requirement2).getNodeTemplateName();
-        doReturn("SiteV2").when(node2).getName();
-
-        Group group3 = mock(Group.class);
-        NodeTemplate node3 = mock(NodeTemplate.class);
-        List<NodeTemplate> nodeList3 = new ArrayList<>();
-        nodeList3.add(node3);
-        doReturn("VfcInstanceGroup..2").when(group3).getName();
-        doReturn(nodeList3).when(group3).getMemberNodes();
-        RequirementAssignments requirements3 = mock(RequirementAssignments.class);
-        RequirementAssignment requirement3 = mock(RequirementAssignment.class);
-        List<RequirementAssignment> requirementCollection3 = new ArrayList<>();
-        requirementCollection3.add(requirement3);
-        doReturn(requirementCollection3).when(requirements3).getAll();
-        doReturn("SiteV2").when(requirement3).getNodeTemplateName();
-        doReturn("siteWanV2").when(node3).getName();
-
-        groupList.add(group1);
-        groupList.add(group2);
-        groupList.add(group3);
-
-        doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
-
-        ToscaResourceInstaller installer = new ToscaResourceInstaller();
-        Method[] methods = installer.getClass().getDeclaredMethods();
-        Method testMethod = null;
-        for (Method method : methods) {
-            String name = method.getName();
-            if (name.equals("processVNFCGroupSequence")) {
-                method.setAccessible(true);
-                testMethod = method;
-            }
-        }
-
-        if (null != testMethod) {
-            try {
-                Object seqResult = testMethod.invoke(installer, toscaResourceStructure, groupList);
-                if (seqResult instanceof List) {
-                    String resultStr = ((List<String>) seqResult).stream().collect(Collectors.joining(","));
-                    assertEquals(((List<String>) seqResult).size(), 3);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-
     }
 }
