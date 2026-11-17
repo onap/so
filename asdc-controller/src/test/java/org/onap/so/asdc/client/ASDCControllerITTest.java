@@ -38,12 +38,20 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import javax.sql.DataSource;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -59,6 +67,7 @@ import org.onap.sdc.impl.DistributionClientDownloadResultImpl;
 import org.onap.sdc.api.results.DistributionActionResultEnum;
 import org.onap.sdc.api.notification.DistributionStatusEnum;
 import org.onap.so.asdc.BaseTest;
+import org.onap.so.asdc.CatalogSnapshot;
 import org.onap.so.asdc.client.exceptions.ASDCControllerException;
 import org.onap.so.asdc.client.test.emulators.ArtifactInfoImpl;
 import org.onap.so.asdc.client.test.emulators.DistributionClientEmulator;
@@ -84,6 +93,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -148,6 +158,12 @@ public class ASDCControllerITTest extends BaseTest {
     @Autowired
     protected WatchdogComponentDistributionStatusRepository watchdogCDStatusRepository;
 
+    @Autowired
+    private DataSource dataSource;
+
+    @PersistenceContext(unitName = "catalogDB")
+    private EntityManager catalogEntityManager;
+
     private DistributionClientEmulator distributionClient;
 
     @Before
@@ -176,6 +192,20 @@ public class ASDCControllerITTest extends BaseTest {
             logger.error(e.getMessage(), e);
             fail(e.getMessage());
         }
+    }
+
+    private void assertCatalogMatchesGolden(String name, Runnable install) throws SQLException, IOException {
+        // do not close: owned by the test transaction
+        Connection connection = DataSourceUtils.getConnection(dataSource);
+        Map<String, List<String>> before = CatalogSnapshot.capture(connection);
+        install.run();
+        // Raw JDBC does not trigger Hibernate's auto-flush, so pending inserts would otherwise be invisible.
+        catalogEntityManager.flush();
+        Map<String, List<String>> delta = CatalogSnapshot.delta(before, CatalogSnapshot.capture(connection));
+        // setUp draws a fresh artifactUuid per test, and it ends up in the TOSCA_CSAR and SERVICE rows.
+        delta.replaceAll((table, rows) -> rows.stream().map(row -> row.replace(artifactUuid, "<artifactUuid>")).sorted()
+                .collect(Collectors.toList()));
+        CatalogSnapshot.assertMatchesGolden(name, delta);
     }
 
     /**
@@ -219,7 +249,7 @@ public class ASDCControllerITTest extends BaseTest {
         notificationData.setServiceArtifacts(artifactInfoList);
 
         try {
-            asdcController.treatNotification(notificationData);
+            assertCatalogMatchesGolden("pnfservice", () -> asdcController.treatNotification(notificationData));
 
             logger.info("Checking the database for PNF ingestion");
 
@@ -537,7 +567,7 @@ public class ASDCControllerITTest extends BaseTest {
         notificationData.setServiceArtifacts(artifactInfoList);
 
         try {
-            asdcController.treatNotification(notificationData);
+            assertCatalogMatchesGolden("svc140-vf", () -> asdcController.treatNotification(notificationData));
             logger.info("Checking the database for VNF ingestion");
 
             /**
@@ -669,7 +699,8 @@ public class ASDCControllerITTest extends BaseTest {
         notificationData.setServiceArtifacts(artifactInfoList);
 
         try {
-            asdcController.treatNotification(notificationData);
+            assertCatalogMatchesGolden("ericservice-default-sw-version",
+                    () -> asdcController.treatNotification(notificationData));
 
             logger.info("Checking the database for PNF ingestion");
 
@@ -779,7 +810,8 @@ public class ASDCControllerITTest extends BaseTest {
         notificationData.setServiceArtifacts(artifactInfoList);
 
         try {
-            asdcController.treatNotification(notificationData);
+            assertCatalogMatchesGolden("ericservice-sw-versions",
+                    () -> asdcController.treatNotification(notificationData));
 
             logger.info("Checking the database for PNF ingestion");
 

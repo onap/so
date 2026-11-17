@@ -31,18 +31,23 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Response;
+import javax.sql.DataSource;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Spy;
 import org.onap.so.asdc.BaseTest;
+import org.onap.so.asdc.CatalogSnapshot;
 import org.onap.so.asdc.client.test.emulators.DistributionClientEmulator;
 import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
 import org.onap.so.db.catalog.beans.AllottedResource;
@@ -95,6 +100,9 @@ public class ASDCRestInterfaceTest extends BaseTest {
     @Autowired
     private ASDCRestInterface asdcRestInterface;
 
+    @Autowired
+    private DataSource dataSource;
+
     private TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
 
     private HttpHeaders headers = new HttpHeaders();
@@ -133,10 +141,12 @@ public class ASDCRestInterfaceTest extends BaseTest {
         headers.add("resource-location", "/resource-examples/allottedresource/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
 
+        Map<String, List<String>> before = catalog();
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        CatalogSnapshot.assertMatchesGolden("allottedresource", CatalogSnapshot.delta(before, catalog()));
 
         AllottedResource expectedService = new AllottedResource();
         expectedService.setDescription("rege1802pnf");
@@ -182,10 +192,12 @@ public class ASDCRestInterfaceTest extends BaseTest {
         headers.add("resource-location", "/resource-examples/vFW/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
 
+        Map<String, List<String>> before = catalog();
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        CatalogSnapshot.assertMatchesGolden("vFW", CatalogSnapshot.delta(before, catalog()));
 
         Service expectedService = new Service();
         expectedService.setDescription("catalog service description");
@@ -223,10 +235,12 @@ public class ASDCRestInterfaceTest extends BaseTest {
         headers.add("resource-location", "/resource-examples/WorkflowBpmn/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
 
+        Map<String, List<String>> before = catalog();
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        CatalogSnapshot.assertMatchesGolden("WorkflowBpmn", CatalogSnapshot.delta(before, catalog()));
 
         Workflow actualResponse = workflowRepo.findByArtifactUUID("a90f8eaa-7c20-422f-8c81-aacbca6fb9e7");
 
@@ -272,9 +286,11 @@ public class ASDCRestInterfaceTest extends BaseTest {
         headers.add("resource-location", "/resource-examples/vcpe-infra/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
 
+        Map<String, List<String>> before = catalog();
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        CatalogSnapshot.assertMatchesGolden("vcpe-infra", CatalogSnapshot.delta(before, catalog()));
 
         Optional<ToscaCsar> toscaCsar = toscaCsarRepo.findById("144606d8-a505-4ba0-90a9-6d1c6219fc6b");
         assertTrue(toscaCsar.isPresent());
@@ -316,9 +332,11 @@ public class ASDCRestInterfaceTest extends BaseTest {
                 NotificationDataImpl.class);
         headers.add("resource-location", "/resource-examples/ccvpn/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
+        Map<String, List<String>> before = catalog();
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        CatalogSnapshot.assertMatchesGolden("ccvpn", CatalogSnapshot.delta(before, catalog()));
 
         Optional<Service> service = serviceRepo.findById("317887d3-a4e4-45cb-8971-2a78426fefac");
         assertTrue(service.isPresent());
@@ -343,15 +361,19 @@ public class ASDCRestInterfaceTest extends BaseTest {
 
         request = mapper.readValue(new File(resourceLocation + "nsst-notification.json"), NotificationDataImpl.class);
         entity = new HttpEntity<NotificationDataImpl>(request, headers);
+        Map<String, List<String>> before = catalog();
         response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"), HttpMethod.POST, entity,
                 String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        CatalogSnapshot.assertMatchesGolden("e2eSlicing-nsst", CatalogSnapshot.delta(before, catalog()));
 
         request = mapper.readValue(new File(resourceLocation + "nst-notification.json"), NotificationDataImpl.class);
         entity = new HttpEntity<NotificationDataImpl>(request, headers);
+        before = catalog();
         response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"), HttpMethod.POST, entity,
                 String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        CatalogSnapshot.assertMatchesGolden("e2eSlicing-nst", CatalogSnapshot.delta(before, catalog()));
 
         Optional<Service> service = serviceRepo.findById("7981375e-5e0a-4bf5-93fa-f3e3c02f2b11");
         assertTrue(service.isPresent());
@@ -377,9 +399,11 @@ public class ASDCRestInterfaceTest extends BaseTest {
                 NotificationDataImpl.class);
         headers.add("resource-location", "/resource-examples/public-ns/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
+        Map<String, List<String>> before = catalog();
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        CatalogSnapshot.assertMatchesGolden("public-ns", CatalogSnapshot.delta(before, catalog()));
 
         Optional<Service> service = serviceRepo.findById("da28696e-d4c9-4df4-9f91-465c6c09a81e");
         assertTrue(service.isPresent());
@@ -412,9 +436,11 @@ public class ASDCRestInterfaceTest extends BaseTest {
                 new File(resourceLocation + "demo-vcpe-rescust-notification.json"), NotificationDataImpl.class);
         headers.add("resource-location", "/resource-examples/vcpe-rescust/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
+        Map<String, List<String>> before = catalog();
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        CatalogSnapshot.assertMatchesGolden("vcpe-rescust", CatalogSnapshot.delta(before, catalog()));
 
         Optional<Service> service = serviceRepo.findById("d3aac917-543d-4421-b6d7-ba2b65884eb7");
         assertTrue(service.isPresent());
@@ -434,9 +460,11 @@ public class ASDCRestInterfaceTest extends BaseTest {
                 new File(resourceLocation + "service-ubuntu16test-notification.json"), NotificationDataImpl.class);
         headers.add("resource-location", "/resource-examples/service-ubuntu16test/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
+        Map<String, List<String>> before = catalog();
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        CatalogSnapshot.assertMatchesGolden("service-ubuntu16test", CatalogSnapshot.delta(before, catalog()));
         Optional<Service> service = serviceRepo.findById("ed0391da-b963-4c45-bf3a-b49cc7a94fab");
         assertTrue(service.isPresent());
         assertEquals("ubuntu16test", service.get().getModelName());
@@ -455,9 +483,11 @@ public class ASDCRestInterfaceTest extends BaseTest {
                 new File(resourceLocation + "service-BasicCnf-notification.json"), NotificationDataImpl.class);
         headers.add("resource-location", "/resource-examples/service-BasicCnf/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
+        Map<String, List<String>> before = catalog();
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        CatalogSnapshot.assertMatchesGolden("service-BasicCnf", CatalogSnapshot.delta(before, catalog()));
         Optional<Service> service = serviceRepo.findById("31e0cd50-0a84-42b4-a7a8-dd5d82e6907d");
         assertTrue(service.isPresent());
         assertEquals("basic_cnf", service.get().getModelName());
@@ -476,12 +506,20 @@ public class ASDCRestInterfaceTest extends BaseTest {
                 new File(resourceLocation + "service-BasicNetwork-notification.json"), NotificationDataImpl.class);
         headers.add("resource-location", "/resource-examples/service-BasicNetwork/");
         HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
+        Map<String, List<String>> before = catalog();
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/test/treatNotification/v1"),
                 HttpMethod.POST, entity, String.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        CatalogSnapshot.assertMatchesGolden("service-BasicNetwork", CatalogSnapshot.delta(before, catalog()));
         Optional<Service> service = serviceRepo.findById("9ff42123-ff24-41dc-9f41-a956c9328699");
         assertTrue(service.isPresent());
         assertEquals("basic_network", service.get().getModelName());
+    }
+
+    private Map<String, List<String>> catalog() throws SQLException {
+        try (Connection c = dataSource.getConnection()) {
+            return CatalogSnapshot.capture(c);
+        }
     }
 
     protected String createURLWithPort(String uri) {
