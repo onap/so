@@ -360,6 +360,9 @@ public class ToscaResourceInstallerTest extends BaseTest {
                         instanceGroupRepo));
         ReflectionTestUtils.setField(toscaInstaller, "configurationInstaller",
                 new ConfigurationInstaller(spy(ConfigurationResourceCustomizationRepository.class), serviceRepo));
+        ReflectionTestUtils.setField(toscaInstaller, "heatArtifactInstaller",
+                new HeatArtifactInstaller(spy(HeatTemplateRepository.class), spy(HeatEnvironmentRepository.class),
+                        spy(HeatFilesRepository.class)));
 
         // doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
         toscaResourceStructObj.setSdcCsarHelper(csarHelper);
@@ -467,57 +470,6 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doThrow(LockAcquisitionException.class).when(toscaResourceStruct).getToscaArtifact();
 
         assertDoesNotThrow(() -> toscaInstaller.installTheResource(toscaResourceStruct, vfResourceStructure));
-    }
-
-    @Test
-    public void verifyTheFilePrefixInStringTest() {
-        String body = "abcabcabcfile:///testfile.txtabcbabacbcabc";
-        String filenameToVerify = "testfile.txt";
-        String expectedFileBody = "abcabcabctestfile.txtabcbabacbcabc";
-
-        String newFileBody = toscaInstaller.verifyTheFilePrefixInString(body, filenameToVerify);
-
-        assertEquals(expectedFileBody, newFileBody);
-    }
-
-    @Test
-    public void verifyTheFilePrefixInStringNullBodyTest() {
-        String body = null;
-        String filenameToVerify = "testfile.txt";
-
-        String newFileBody = toscaInstaller.verifyTheFilePrefixInString(body, filenameToVerify);
-
-        assertEquals(body, newFileBody);
-    }
-
-    @Test
-    public void verifyTheFilePrefixInStringEmptyBodyTest() {
-        String body = "";
-        String filenameToVerify = "testfile.txt";
-
-        String newFileBody = toscaInstaller.verifyTheFilePrefixInString(body, filenameToVerify);
-
-        assertEquals(body, newFileBody);
-    }
-
-    @Test
-    public void verifyTheFilePrefixInStringNullFilenameTest() {
-        String body = "abcabcabcfile:///testfile.txtabcbabacbcabc";
-        String filenameToVerify = null;
-
-        String newFileBody = toscaInstaller.verifyTheFilePrefixInString(body, filenameToVerify);
-
-        assertEquals(body, newFileBody);
-    }
-
-    @Test
-    public void verifyTheFilePrefixInStringEmptyFilenameTest() {
-        String body = "abcabcabcfile:///testfile.txtabcbabacbcabc";
-        String filenameToVerify = "";
-
-        String newFileBody = toscaInstaller.verifyTheFilePrefixInString(body, filenameToVerify);
-
-        assertEquals(body, newFileBody);
     }
 
     private WatchdogComponentDistributionStatus getWatchdogCDStatusWithName(
