@@ -358,6 +358,11 @@ public class ToscaResourceInstallerTest extends BaseTest {
         ReflectionTestUtils.setField(toscaInstaller, "workflowResource", workflowResource);
         ReflectionTestUtils.setField(toscaInstaller, "allottedResourceInstaller", new AllottedResourceInstaller(
                 spy(AllottedResourceRepository.class), spy(AllottedResourceCustomizationRepository.class)));
+        ReflectionTestUtils.setField(toscaInstaller, "networkResourceInstaller",
+                new NetworkResourceInstaller(spy(HeatTemplateRepository.class),
+                        spy(TempNetworkHeatTemplateRepository.class), spy(NetworkResourceRepository.class),
+                        spy(NetworkResourceCustomizationRepository.class), spy(CollectionResourceRepository.class),
+                        instanceGroupRepo));
 
         // doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
         toscaResourceStructObj.setSdcCsarHelper(csarHelper);
