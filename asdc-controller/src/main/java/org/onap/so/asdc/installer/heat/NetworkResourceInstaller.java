@@ -139,8 +139,9 @@ public class NetworkResourceInstaller {
         if (crEntityList != null) {
             for (IEntityDetails ncEntity : crEntityList) {
 
-                createNetworkCollection(ncEntity, toscaResourceStruct, service);
-                collectionRepo.saveAndFlush(toscaResourceStruct.getCatalogCollectionResource());
+                NetworkCollectionResourceCustomization collectionResourceCustomization =
+                        createNetworkCollection(ncEntity, toscaResourceStruct, service);
+                collectionRepo.saveAndFlush(collectionResourceCustomization.getCollectionResource());
 
                 List<NetworkInstanceGroup> networkInstanceGroupList =
                         toscaResourceStruct.getCatalogNetworkInstanceGroup();
@@ -148,10 +149,9 @@ public class NetworkResourceInstaller {
                     instanceGroupRepo.saveAndFlush(networkInstanceGroup);
                 }
 
+                service.getCollectionResourceCustomizations().add(collectionResourceCustomization);
             }
         }
-        service.getCollectionResourceCustomizations()
-                .add(toscaResourceStruct.getCatalogCollectionResourceCustomization());
     }
 
     protected NetworkResourceCustomization createNetwork(IEntityDetails networkEntity,
@@ -269,7 +269,7 @@ public class NetworkResourceInstaller {
         return networkResource;
     }
 
-    protected CollectionNetworkResourceCustomization createNetworkCollection(IEntityDetails cnrEntity,
+    protected NetworkCollectionResourceCustomization createNetworkCollection(IEntityDetails cnrEntity,
             ToscaResourceStructure toscaResourceStructure, Service service) {
 
         CollectionNetworkResourceCustomization collectionNetworkResourceCustomization =
@@ -316,6 +316,7 @@ public class NetworkResourceInstaller {
                         false);
 
         List<NetworkInstanceGroup> networkInstanceGroupList = new ArrayList<>();
+        toscaResourceStructure.setCatalogNetworkInstanceGroup(networkInstanceGroupList);
 
         List<CollectionResourceInstanceGroupCustomization> collectionResourceInstanceGroupCustomizationList =
                 new ArrayList<>();
@@ -390,9 +391,6 @@ public class NetworkResourceInstaller {
                     .setCollectionInstanceGroupCustomizations(collectionResourceInstanceGroupCustomizationList);
 
             networkInstanceGroupList.add(networkInstanceGroup);
-
-
-            toscaResourceStructure.setCatalogNetworkInstanceGroup(networkInstanceGroupList);
 
             List<IEntityDetails> networkEntityList =
                     getEntityDetails(toscaResourceStructure, EntityQuery.newBuilder(SdcTypes.VL),
@@ -472,6 +470,6 @@ public class NetworkResourceInstaller {
 
         }
 
-        return collectionNetworkResourceCustomization;
+        return ncfc;
     }
 }
