@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +38,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.tosca.parser.api.IEntityDetails;
-import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
 import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
 import org.onap.sdc.tosca.parser.enums.SdcTypes;
@@ -196,7 +196,7 @@ public class VnfResourceInstaller {
                 vnfcInstanceGroupCustomizationRepo.saveAndFlush(vnfcInstanceGroupCustomization);
             }
 
-            List<String> seqResult = processVNFCGroupSequence(toscaResourceStruct, vfcEntityList);
+            List<String> seqResult = processVNFCGroupSequence(vfcEntityList);
             if (!CollectionUtils.isEmpty(seqResult)) {
                 String resultStr = seqResult.stream().collect(Collectors.joining(","));
                 vnfResource.setVnfcInstanceGroupOrder(resultStr);
@@ -211,21 +211,20 @@ public class VnfResourceInstaller {
         }
     }
 
-    private List<String> processVNFCGroupSequence(ToscaResourceStructure toscaResourceStructure,
-            List<IEntityDetails> groupEntityDetails) {
+    List<String> processVNFCGroupSequence(List<IEntityDetails> groupEntityDetails) {
         if (CollectionUtils.isEmpty(groupEntityDetails)) {
             return Collections.emptyList();
         }
 
-        ISdcCsarHelper iSdcCsarHelper = toscaResourceStructure.getSdcCsarHelper();
         List<String> strSequence = new ArrayList<>(groupEntityDetails.size());
         List<IEntityDetails> tempEntityList = new ArrayList<>(groupEntityDetails.size());
-        List<IEntityDetails> entities = new ArrayList<>();
-        tempEntityList.addAll(groupEntityDetails);
+        Set<String> placedMemberNames = new HashSet<>();
+        Set<String> groupMemberNames = new HashSet<>();
 
         for (IEntityDetails vnfcEntityDetails : groupEntityDetails) {
 
             List<IEntityDetails> vnfcMemberNodes = vnfcEntityDetails.getMemberNodes();
+            vnfcMemberNodes.forEach(member -> groupMemberNames.add(member.getName()));
 
             boolean hasRequirements = false;
             for (IEntityDetails vnfcDetails : vnfcMemberNodes) {
@@ -238,64 +237,61 @@ public class VnfResourceInstaller {
                 }
             }
 
-            if (!hasRequirements) {
+            if (hasRequirements) {
+                tempEntityList.add(vnfcEntityDetails);
+            } else {
                 strSequence.add(vnfcEntityDetails.getName());
-                tempEntityList.remove(vnfcEntityDetails);
-                entities.addAll(vnfcMemberNodes);
+                vnfcMemberNodes.forEach(member -> placedMemberNames.add(member.getName()));
             }
         }
 
-        getVNFCGroupSequenceList(strSequence, tempEntityList, entities, iSdcCsarHelper);
+        getVNFCGroupSequenceList(strSequence, tempEntityList, placedMemberNames, groupMemberNames);
 
         return strSequence;
 
     }
 
     private void getVNFCGroupSequenceList(List<String> strSequence, List<IEntityDetails> vnfcGroupDetails,
-            List<IEntityDetails> vnfcMemberNodes, ISdcCsarHelper iSdcCsarHelper) {
-        if (CollectionUtils.isEmpty(vnfcGroupDetails)) {
-            return;
-        }
-
-        List<IEntityDetails> tempGroupList = new ArrayList<>();
-        tempGroupList.addAll(vnfcGroupDetails);
-
-        for (IEntityDetails vnfcGroup : vnfcGroupDetails) {
-            List<IEntityDetails> members = vnfcGroup.getMemberNodes();
-            for (IEntityDetails memberNode : members) {
-                boolean isAllExists = true;
-
-
-                List<RequirementAssignment> requirements = memberNode.getRequirements();
-
-                if (requirements == null || requirements.isEmpty()) {
-                    continue;
-                }
-
-
-                for (RequirementAssignment rqa : requirements) {
-                    String name = rqa.getNodeTemplateName();
-                    for (IEntityDetails node : vnfcMemberNodes) {
-                        if (name.equals(node.getName())) {
-                            break;
-                        }
-                    }
-
-                    isAllExists = false;
-                    break;
-                }
-
-                if (isAllExists) {
+            Set<String> placedMemberNames, Set<String> groupMemberNames) {
+        List<IEntityDetails> pending = new ArrayList<>(vnfcGroupDetails);
+        boolean progress = true;
+        while (!pending.isEmpty() && progress) {
+            progress = false;
+            Iterator<IEntityDetails> it = pending.iterator();
+            while (it.hasNext()) {
+                IEntityDetails vnfcGroup = it.next();
+                if (groupRequirementsPlaced(vnfcGroup, placedMemberNames, groupMemberNames)) {
                     strSequence.add(vnfcGroup.getName());
-                    tempGroupList.remove(vnfcGroupDetails);
-                    vnfcMemberNodes.addAll(vnfcGroupDetails);
+                    vnfcGroup.getMemberNodes().forEach(member -> placedMemberNames.add(member.getName()));
+                    it.remove();
+                    progress = true;
                 }
             }
+        }
 
-            if (!tempGroupList.isEmpty() && tempGroupList.size() < vnfcGroupDetails.size()) {
-                getVNFCGroupSequenceList(strSequence, tempGroupList, vnfcMemberNodes, iSdcCsarHelper);
+        // The E2E service flows only instantiate VNFC groups that are listed in the sequence, so a cycle must
+        // not drop a group from it.
+        pending.forEach(vnfcGroup -> strSequence.add(vnfcGroup.getName()));
+    }
+
+    private static boolean groupRequirementsPlaced(IEntityDetails vnfcGroup, Set<String> placedMemberNames,
+            Set<String> groupMemberNames) {
+        Set<String> ownMemberNames = new HashSet<>();
+        vnfcGroup.getMemberNodes().forEach(member -> ownMemberNames.add(member.getName()));
+        for (IEntityDetails memberNode : vnfcGroup.getMemberNodes()) {
+            List<RequirementAssignment> requirements = memberNode.getRequirements();
+            if (requirements == null) {
+                continue;
+            }
+            for (RequirementAssignment rqa : requirements) {
+                String name = rqa.getNodeTemplateName();
+                if (groupMemberNames.contains(name) && !ownMemberNames.contains(name)
+                        && !placedMemberNames.contains(name)) {
+                    return false;
+                }
             }
         }
+        return true;
     }
 
     protected VnfcCustomization findExistingVfc(Set<VnfcCustomization> vnfcCustomizations, String customizationUUID) {

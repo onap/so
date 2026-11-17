@@ -28,10 +28,13 @@ package org.onap.so.asdc.installer.heat;
 import static org.onap.so.asdc.installer.heat.ToscaEntityHelper.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.tosca.parser.api.IEntityDetails;
@@ -74,44 +77,53 @@ public class ServiceModelInstaller {
         this.toscaCsarRepo = toscaCsarRepo;
     }
 
-    List<IEntityDetails> getRequirementList(List<IEntityDetails> resultList, List<IEntityDetails> entityDetails,
-            ISdcCsarHelper iSdcCsarHelper) {
+    List<IEntityDetails> getRequirementList(List<IEntityDetails> resultList, List<IEntityDetails> entityDetails) {
+        Set<String> nodeNames = new HashSet<>();
+        Set<String> placedNames = new HashSet<>();
+        resultList.forEach(entity -> placedNames.add(entity.getName()));
+        nodeNames.addAll(placedNames);
+        entityDetails.forEach(entity -> nodeNames.add(entity.getName()));
 
-        List<IEntityDetails> entities = new ArrayList<>();
-        entityDetails.addAll(entityDetails);
-
-        for (IEntityDetails entity : entityDetails) {
-            List<RequirementAssignment> requirements = entity.getRequirements();
-
-            for (RequirementAssignment ra : requirements) {
-                String reqNode = ra.getNodeTemplateName();
-                for (IEntityDetails rEntity : resultList) {
-                    if (rEntity.getName().equals(reqNode)) {
-                        if (!resultList.contains(entityDetails)) {
-                            resultList.add(entity);
-                        }
-                        if (entities.contains(entityDetails)) {
-                            entities.remove(entityDetails);
-                        }
-                        break;
-                    }
+        List<IEntityDetails> pending = new ArrayList<>(entityDetails);
+        boolean progress = true;
+        while (!pending.isEmpty() && progress) {
+            progress = false;
+            Iterator<IEntityDetails> it = pending.iterator();
+            while (it.hasNext()) {
+                IEntityDetails entity = it.next();
+                if (requirementsPlaced(entity.getRequirements(), nodeNames, placedNames)) {
+                    resultList.add(entity);
+                    placedNames.add(entity.getName());
+                    it.remove();
+                    progress = true;
                 }
             }
         }
 
-        if (!entities.isEmpty()) {
-            getRequirementList(resultList, entities, iSdcCsarHelper);
-        }
-
+        // The E2E service flows only instantiate resources that are listed in the order, so a requirement
+        // cycle must not drop a resource from it.
+        resultList.addAll(pending);
         return resultList;
+    }
+
+    private static boolean requirementsPlaced(List<RequirementAssignment> requirements, Set<String> nodeNames,
+            Set<String> placedNames) {
+        if (requirements == null) {
+            return true;
+        }
+        for (RequirementAssignment ra : requirements) {
+            String reqNode = ra.getNodeTemplateName();
+            if (nodeNames.contains(reqNode) && !placedNames.contains(reqNode)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // This method retrieve resource sequence from csar file
     void processResourceSequence(ToscaResourceStructure toscaResourceStructure, Service service) {
         List<String> resouceSequence = new ArrayList<>();
         List<IEntityDetails> resultList = new ArrayList<>();
-
-        ISdcCsarHelper iSdcCsarHelper = toscaResourceStructure.getSdcCsarHelper();
 
         List<IEntityDetails> vfEntityList =
                 getEntityDetails(toscaResourceStructure, EntityQuery.newBuilder(EntityTemplateType.NODE_TEMPLATE),
@@ -129,7 +141,7 @@ public class ServiceModelInstaller {
             }
         }
 
-        resultList = getRequirementList(resultList, entities, iSdcCsarHelper);
+        resultList = getRequirementList(resultList, entities);
 
         for (IEntityDetails entity : resultList) {
             String templateName = entity.getMetadata().getValue("name");

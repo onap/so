@@ -235,6 +235,51 @@ public class ServiceModelInstallerTest {
     }
 
     @Test
+    public void processResourceSequenceKeepsModelOrderWithoutRequirements() {
+        IEntityDetails b = requiringEntity("B");
+        IEntityDetails a = requiringEntity("A");
+
+        assertEquals("B,A", resourceOrder(b, a));
+    }
+
+    @Test
+    public void processResourceSequenceOrdersRequirementChainOutOfModelOrder() {
+        IEntityDetails c = requiringEntity("C", "B");
+        IEntityDetails b = requiringEntity("B", "A");
+        IEntityDetails a = requiringEntity("A");
+
+        assertEquals("A,B,C", resourceOrder(c, b, a));
+    }
+
+    @Test
+    public void processResourceSequenceWaitsForAllRequirements() {
+        IEntityDetails d = requiringEntity("D", "A", "C");
+        IEntityDetails c = requiringEntity("C", "B");
+        IEntityDetails b = requiringEntity("B", "A");
+        IEntityDetails a = requiringEntity("A");
+
+        assertEquals("A,B,C,D", resourceOrder(d, c, b, a));
+    }
+
+    @Test
+    public void processResourceSequenceIgnoresRequirementsOnNodesOutsideTheService() {
+        IEntityDetails b = requiringEntity("B", "not-in-service");
+        IEntityDetails a = requiringEntity("A");
+
+        assertEquals("A,B", resourceOrder(b, a));
+    }
+
+    @Test
+    public void processResourceSequenceAppendsResourcesInCycleInModelOrder() {
+        IEntityDetails x = requiringEntity("X", "Y");
+        IEntityDetails a = requiringEntity("A");
+        IEntityDetails y = requiringEntity("Y", "X");
+        IEntityDetails b = requiringEntity("B", "A");
+
+        assertEquals("A,B,X,Y", resourceOrder(x, a, y, b));
+    }
+
+    @Test
     public void createToscaCsarBuildsNewCsarWhenNoneIsStored() {
         IArtifactInfo artifact = mock(IArtifactInfo.class);
         when(artifact.getArtifactUUID()).thenReturn("csar-uuid");
@@ -335,6 +380,30 @@ public class ServiceModelInstallerTest {
         assertEquals("OTHER", artifacts.get(0).getType());
         assertEquals("content", artifacts.get(0).getContent());
         assertSame(service, artifacts.get(0).getService());
+    }
+
+    private String resourceOrder(IEntityDetails... serviceNodes) {
+        when(sdcCsarHelper.getEntity(any(EntityQuery.class), any(TopologyTemplateQuery.class), anyBoolean()))
+                .thenReturn(Arrays.asList(serviceNodes));
+        ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure();
+        toscaResourceStructure.setSdcCsarHelper(sdcCsarHelper);
+        Service service = new Service();
+
+        serviceModelInstaller.processResourceSequence(toscaResourceStructure, service);
+
+        return service.getResourceOrder();
+    }
+
+    private static IEntityDetails requiringEntity(String name, String... requiredNodes) {
+        IEntityDetails entity = namedEntity(name);
+        List<RequirementAssignment> requirements = new ArrayList<>();
+        for (String requiredNode : requiredNodes) {
+            RequirementAssignment requirement = mock(RequirementAssignment.class);
+            when(requirement.getNodeTemplateName()).thenReturn(requiredNode);
+            requirements.add(requirement);
+        }
+        when(entity.getRequirements()).thenReturn(requirements);
+        return entity;
     }
 
     private static IEntityDetails namedEntity(String name) {

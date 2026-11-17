@@ -30,12 +30,11 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -44,10 +43,7 @@ import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
-import org.onap.sdc.toscaparser.api.Group;
-import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.RequirementAssignment;
-import org.onap.sdc.toscaparser.api.RequirementAssignments;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.asdc.installer.VfResourceStructure;
@@ -198,73 +194,73 @@ public class VnfResourceInstallerTest {
     }
 
     @Test
-    public void testProcessVNFCGroupSequence() {
-        List<Group> groupList = new ArrayList<>();
+    public void processVNFCGroupSequenceKeepsModelOrderWithoutRequirements() {
+        IEntityDetails group2 = vnfcGroup("group2", vfc("b"));
+        IEntityDetails group1 = vnfcGroup("group1", vfc("a"));
 
-        Group group1 = mock(Group.class);
-        NodeTemplate node1 = mock(NodeTemplate.class);
-        List<NodeTemplate> nodeList1 = new ArrayList<>();
-        nodeList1.add(node1);
-        doReturn("VfcInstanceGroup..0").when(group1).getName();
-        doReturn(nodeList1).when(group1).getMemberNodes();
-        doReturn("deviceV3").when(node1).getName();
+        assertEquals(Arrays.asList("group2", "group1"),
+                vnfResourceInstaller.processVNFCGroupSequence(Arrays.asList(group2, group1)));
+    }
 
-        Group group2 = mock(Group.class);
-        NodeTemplate node2 = mock(NodeTemplate.class);
-        List<NodeTemplate> nodeList2 = new ArrayList<>();
-        nodeList2.add(node2);
-        doReturn("VfcInstanceGroup..1").when(group2).getName();
-        doReturn(nodeList2).when(group2).getMemberNodes();
-        RequirementAssignments requirements2 = mock(RequirementAssignments.class);
-        RequirementAssignment requirement2 = mock(RequirementAssignment.class);
-        List<RequirementAssignment> requirementCollection2 = new ArrayList<>();
-        requirementCollection2.add(requirement2);
-        doReturn(requirementCollection2).when(requirements2).getAll();
-        doReturn("deviceV3").when(requirement2).getNodeTemplateName();
-        doReturn("SiteV2").when(node2).getName();
+    @Test
+    public void processVNFCGroupSequenceOrdersRequirementChainOutOfModelOrder() {
+        IEntityDetails group3 = vnfcGroup("group3", vfc("c", "b"));
+        IEntityDetails group2 = vnfcGroup("group2", vfc("b", "a"));
+        IEntityDetails group1 = vnfcGroup("group1", vfc("a"));
 
-        Group group3 = mock(Group.class);
-        NodeTemplate node3 = mock(NodeTemplate.class);
-        List<NodeTemplate> nodeList3 = new ArrayList<>();
-        nodeList3.add(node3);
-        doReturn("VfcInstanceGroup..2").when(group3).getName();
-        doReturn(nodeList3).when(group3).getMemberNodes();
-        RequirementAssignments requirements3 = mock(RequirementAssignments.class);
-        RequirementAssignment requirement3 = mock(RequirementAssignment.class);
-        List<RequirementAssignment> requirementCollection3 = new ArrayList<>();
-        requirementCollection3.add(requirement3);
-        doReturn(requirementCollection3).when(requirements3).getAll();
-        doReturn("SiteV2").when(requirement3).getNodeTemplateName();
-        doReturn("siteWanV2").when(node3).getName();
+        assertEquals(Arrays.asList("group1", "group2", "group3"),
+                vnfResourceInstaller.processVNFCGroupSequence(Arrays.asList(group3, group2, group1)));
+    }
 
-        groupList.add(group1);
-        groupList.add(group2);
-        groupList.add(group3);
+    @Test
+    public void processVNFCGroupSequenceWaitsForAllRequirementsOfAllMembers() {
+        IEntityDetails group4 = vnfcGroup("group4", vfc("d1", "a"), vfc("d2", "c"));
+        IEntityDetails group3 = vnfcGroup("group3", vfc("c", "b"));
+        IEntityDetails group2 = vnfcGroup("group2", vfc("b", "a"));
+        IEntityDetails group1 = vnfcGroup("group1", vfc("a"));
 
-        doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
+        assertEquals(Arrays.asList("group1", "group2", "group3", "group4"),
+                vnfResourceInstaller.processVNFCGroupSequence(Arrays.asList(group4, group3, group2, group1)));
+    }
 
-        VnfResourceInstaller installer = vnfResourceInstaller;
-        Method[] methods = installer.getClass().getDeclaredMethods();
-        Method testMethod = null;
-        for (Method method : methods) {
-            String name = method.getName();
-            if (name.equals("processVNFCGroupSequence")) {
-                method.setAccessible(true);
-                testMethod = method;
-            }
+    @Test
+    public void processVNFCGroupSequenceIgnoresRequirementsOutsideOtherGroups() {
+        IEntityDetails ownMember = vnfcGroup("own-member", vfc("p"), vfc("q", "p"));
+        IEntityDetails outsideGroups = vnfcGroup("outside-groups", vfc("r", "not-in-a-group"));
+        IEntityDetails group1 = vnfcGroup("group1", vfc("a"));
+
+        assertEquals(Arrays.asList("group1", "own-member", "outside-groups"),
+                vnfResourceInstaller.processVNFCGroupSequence(Arrays.asList(ownMember, outsideGroups, group1)));
+    }
+
+    @Test
+    public void processVNFCGroupSequenceAppendsGroupsInCycleInModelOrder() {
+        IEntityDetails groupX = vnfcGroup("groupX", vfc("x", "y"));
+        IEntityDetails group1 = vnfcGroup("group1", vfc("a"));
+        IEntityDetails groupY = vnfcGroup("groupY", vfc("y", "x"));
+        IEntityDetails group2 = vnfcGroup("group2", vfc("b", "a"));
+
+        assertEquals(Arrays.asList("group1", "group2", "groupX", "groupY"),
+                vnfResourceInstaller.processVNFCGroupSequence(Arrays.asList(groupX, group1, groupY, group2)));
+    }
+
+    private static IEntityDetails vnfcGroup(String name, IEntityDetails... members) {
+        IEntityDetails group = mock(IEntityDetails.class);
+        doReturn(name).when(group).getName();
+        doReturn(Arrays.asList(members)).when(group).getMemberNodes();
+        return group;
+    }
+
+    private static IEntityDetails vfc(String name, String... requiredNodes) {
+        IEntityDetails vfc = mock(IEntityDetails.class);
+        doReturn(name).when(vfc).getName();
+        List<RequirementAssignment> requirements = new ArrayList<>();
+        for (String requiredNode : requiredNodes) {
+            RequirementAssignment requirement = mock(RequirementAssignment.class);
+            doReturn(requiredNode).when(requirement).getNodeTemplateName();
+            requirements.add(requirement);
         }
-
-        if (null != testMethod) {
-            try {
-                Object seqResult = testMethod.invoke(installer, toscaResourceStructure, groupList);
-                if (seqResult instanceof List) {
-                    String resultStr = ((List<String>) seqResult).stream().collect(Collectors.joining(","));
-                    assertEquals(((List<String>) seqResult).size(), 3);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-
+        doReturn(requirements).when(vfc).getRequirements();
+        return vfc;
     }
 }
