@@ -105,7 +105,7 @@ public class ToscaResourceInputTest {
         Metadata metadata = new Metadata(hashMap);
         when(entityDetails.getMetadata()).thenReturn(metadata);
         when(sdcCsarHelper.getServiceInputs()).thenReturn(inputs);
-        when(toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+        when(ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                 EntityQuery.newBuilder(EntityTemplateType.NODE_TEMPLATE),
                 TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false)).thenReturn(Arrays.asList(entityDetails));
 
@@ -119,7 +119,6 @@ public class ToscaResourceInputTest {
 
     @Test
     public void resouceInputTest() throws ArtifactInstallerException {
-        ToscaResourceInstaller toscaResourceInstaller = new ToscaResourceInstaller();
         ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure();
 
         toscaResourceStructure.setSdcCsarHelper(sdcCsarHelper);
@@ -131,7 +130,7 @@ public class ToscaResourceInputTest {
         Map<String, Property> propertyMap = new HashMap<String, Property>();
         propertyMap.put("prop1", property);
 
-        when(toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+        when(ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                 EntityQuery.newBuilder(EntityTemplateType.NODE_TEMPLATE),
                 TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false)).thenReturn(Arrays.asList(entityDetails));
 
@@ -139,13 +138,12 @@ public class ToscaResourceInputTest {
         when(entityDetails.getProperties()).thenReturn(propertyMap);
         when(property.getValue()).thenReturn("value1");
 
-        String resourceInput = toscaResourceInstaller.getResourceInput(toscaResourceStructure, "id1");
+        String resourceInput = ToscaEntityHelper.getResourceInput(toscaResourceStructure, "id1");
         assertEquals("{}", resourceInput);
     }
 
     @Test
     public void resouceInputGetInputTest() throws ArtifactInstallerException {
-        ToscaResourceInstaller toscaResourceInstaller = new ToscaResourceInstaller();
         ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure();
 
         toscaResourceStructure.setSdcCsarHelper(sdcCsarHelper);
@@ -157,7 +155,7 @@ public class ToscaResourceInputTest {
         Map<String, Property> propertyMap = new HashMap<String, Property>();
         propertyMap.put("prop1", property);
 
-        when(toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+        when(ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                 EntityQuery.newBuilder(EntityTemplateType.NODE_TEMPLATE),
                 TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false)).thenReturn(Arrays.asList(entityDetails));
         when(sdcCsarHelper.getServiceInputs()).thenReturn(Arrays.asList(input));
@@ -168,13 +166,12 @@ public class ToscaResourceInputTest {
         when(input.getName()).thenReturn("res_key");
         when(input.getDefault()).thenReturn("default_value");
 
-        String resourceInput = toscaResourceInstaller.getResourceInput(toscaResourceStructure, "id1");
+        String resourceInput = ToscaEntityHelper.getResourceInput(toscaResourceStructure, "id1");
         assertEquals("{}", resourceInput);
     }
 
     @Test
     public void resouceInputGetInputDefaultIntegerTest() throws ArtifactInstallerException {
-        ToscaResourceInstaller toscaResourceInstaller = new ToscaResourceInstaller();
         ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure();
 
         toscaResourceStructure.setSdcCsarHelper(sdcCsarHelper);
@@ -186,7 +183,7 @@ public class ToscaResourceInputTest {
         Map<String, Property> propertyMap = new HashMap<String, Property>();
         propertyMap.put("prop1", property);
 
-        when(toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+        when(ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                 EntityQuery.newBuilder(EntityTemplateType.NODE_TEMPLATE),
                 TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false)).thenReturn(Arrays.asList(entityDetails));
         when(sdcCsarHelper.getServiceInputs()).thenReturn(Arrays.asList(input));
@@ -197,13 +194,12 @@ public class ToscaResourceInputTest {
         when(input.getName()).thenReturn("res_key");
         when(input.getDefault()).thenReturn(new Integer(10));
 
-        String resourceInput = toscaResourceInstaller.getResourceInput(toscaResourceStructure, "id1");
+        String resourceInput = ToscaEntityHelper.getResourceInput(toscaResourceStructure, "id1");
         assertEquals("{}", resourceInput);
     }
 
     @Test
     public void resouceInputGetInputNoPropertyTest() throws ArtifactInstallerException {
-        ToscaResourceInstaller toscaResourceInstaller = new ToscaResourceInstaller();
         ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure();
 
         toscaResourceStructure.setSdcCsarHelper(sdcCsarHelper);
@@ -218,7 +214,7 @@ public class ToscaResourceInputTest {
         when(nodeTemplate.getMetaData()).thenReturn(metadata);
         when(nodeTemplate.getProperties()).thenReturn(propertyMap);
 
-        String resourceInput = toscaResourceInstaller.getResourceInput(toscaResourceStructure, "id1");
+        String resourceInput = ToscaEntityHelper.getResourceInput(toscaResourceStructure, "id1");
         assertEquals("{}", resourceInput);
     }
 }
