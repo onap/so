@@ -124,12 +124,4 @@ public class ASDCConfigurationTest extends BaseTest {
     public void isFilterInEmptyResourcesTest() {
         assertTrue(config.isFilterInEmptyResources());
     }
-
-    @Test
-    public void setGetAsdcControllerNameTest() {
-        String asdcControllerName = "testAsdcControllerName";
-        config.setAsdcControllerName(asdcControllerName);
-        String actualAsdcControllerName = config.getAsdcControllerName();
-        assertEquals(asdcControllerName, actualAsdcControllerName);
-    }
 }

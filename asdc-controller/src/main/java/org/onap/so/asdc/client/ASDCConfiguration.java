@@ -42,8 +42,6 @@ public class ASDCConfiguration implements IConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(ASDCConfiguration.class);
 
-    private String asdcControllerName;
-
     public static final String HEAT = "HEAT";
     public static final String HEAT_ARTIFACT = "HEAT_ARTIFACT";
     public static final String HEAT_ENV = "HEAT_ENV";
@@ -70,10 +68,6 @@ public class ASDCConfiguration implements IConfiguration {
     @Value("${mso.asdc.config.key}")
     private String configKey;
 
-    public void setAsdcControllerName(String asdcControllerName) {
-        this.asdcControllerName = asdcControllerName;
-    }
-
     @Override
     public Boolean isUseHttpsWithSDC() {
         return getBooleanPropertyWithDefault("mso.asdc-connections.asdc-controller1.useHttpsWithSdc", true);
@@ -82,10 +76,6 @@ public class ASDCConfiguration implements IConfiguration {
     @Override
     public boolean isConsumeProduceStatusTopic() {
         return true;
-    }
-
-    public String getAsdcControllerName() {
-        return asdcControllerName;
     }
 
     @Override

@@ -28,6 +28,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import org.junit.Test;
 import org.onap.so.asdc.client.ASDCController;
+import org.onap.so.asdc.client.test.emulators.EmulatorDistributionClientProvider;
 import org.onap.so.asdc.client.test.rest.ASDCRestInterface;
 import org.onap.so.asdc.client.test.rest.ASDCRestInterfaceRegistration;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
@@ -68,6 +69,8 @@ public class JerseyConfigurationTest {
     private static void registerMocks(final ConfigurableApplicationContext context) {
         context.getBeanFactory().registerSingleton("asdcController", mock(ASDCController.class));
         context.getBeanFactory().registerSingleton("toscaResourceInstaller", mock(ToscaResourceInstaller.class));
+        context.getBeanFactory().registerSingleton("emulatorDistributionClientProvider",
+                mock(EmulatorDistributionClientProvider.class));
     }
 
     @Configuration

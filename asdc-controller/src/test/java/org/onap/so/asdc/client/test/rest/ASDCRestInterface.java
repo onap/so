@@ -35,6 +35,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import org.onap.so.asdc.client.ASDCController;
 import org.onap.so.asdc.client.test.emulators.DistributionClientEmulator;
+import org.onap.so.asdc.client.test.emulators.EmulatorDistributionClientProvider;
 import org.onap.so.asdc.client.test.emulators.JsonStatusData;
 import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
@@ -72,10 +73,14 @@ public class ASDCRestInterface {
 
     private final ToscaResourceInstaller toscaInstaller;
 
+    private final EmulatorDistributionClientProvider clientProvider;
+
     @Autowired
-    public ASDCRestInterface(final ASDCController asdcController, final ToscaResourceInstaller toscaInstaller) {
+    public ASDCRestInterface(final ASDCController asdcController, final ToscaResourceInstaller toscaInstaller,
+            final EmulatorDistributionClientProvider clientProvider) {
         this.asdcController = asdcController;
         this.toscaInstaller = toscaInstaller;
+        this.clientProvider = clientProvider;
     }
 
     private static String targetDirectory = "src/test/resources";
@@ -99,14 +104,11 @@ public class ASDCRestInterface {
             final DistributionClientEmulator distributionClientEmulator =
                     getDistributionClientEmulator(validatedLocation);
 
-            asdcController.setControllerName("asdc-controller1");
-            asdcController.setDistributionClient(distributionClientEmulator);
-
-            if (asdcController.isStopped()) {
-                logger.info("{} not running will try to initialize it, currrent status: {}",
-                        asdcController.getClass().getName(), asdcController.getControllerStatus());
-                asdcController.initASDC();
+            if (!asdcController.isStopped()) {
+                asdcController.closeASDC();
             }
+            clientProvider.useNext(distributionClientEmulator);
+            asdcController.initASDC();
 
             asdcController.treatNotification(request);
 
@@ -150,7 +152,7 @@ public class ASDCRestInterface {
                     getDistributionClientEmulator("resource-examples/");
             final JsonStatusData statusData = JsonStatusData.instantiateNotifFromJsonFile("resource-examples/");
 
-            asdcController.setDistributionClient(distributionClientEmulator);
+            clientProvider.useNext(distributionClientEmulator);
             asdcController.initASDC();
             toscaInstaller.installTheComponentStatus(statusData);
             asdcController.closeASDC();

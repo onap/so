@@ -20,16 +20,33 @@
 
 package org.onap.so.asdc.client;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.onap.sdc.api.IDistributionClient;
+import org.onap.sdc.api.consumer.IConfiguration;
+import org.onap.sdc.api.consumer.INotificationCallback;
+import org.onap.sdc.api.consumer.IStatusCallback;
+import org.onap.sdc.api.results.DistributionActionResultEnum;
+import org.onap.sdc.api.results.IDistributionClientResult;
+import org.onap.sdc.impl.DistributionClientResultImpl;
 import org.onap.so.asdc.BaseTest;
 import org.onap.so.asdc.client.exceptions.ASDCControllerException;
+import org.onap.so.asdc.client.test.emulators.DistributionClientEmulator;
+import org.onap.so.asdc.client.test.emulators.EmulatorDistributionClientProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ASDCControllerTest extends BaseTest {
     @Autowired
     private ASDCController asdcController;
+    @Autowired
+    private EmulatorDistributionClientProvider clientProvider;
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -41,6 +58,48 @@ public class ASDCControllerTest extends BaseTest {
 
         try {
             asdcController.initASDC();
+        } finally {
+            asdcController.closeASDC();
+        }
+    }
+
+    @Test
+    public void initASDCUsesTheClientFromTheProvider() throws Exception {
+        DistributionClientEmulator client = new DistributionClientEmulator();
+        clientProvider.useNext(client);
+        try {
+            asdcController.initASDC();
+            assertSame(client, asdcController.getDistributionClient());
+        } finally {
+            asdcController.closeASDC();
+        }
+    }
+
+    @Test
+    public void closeASDCReleasesTheClient() throws Exception {
+        clientProvider.useNext(new DistributionClientEmulator());
+        asdcController.initASDC();
+        asdcController.closeASDC();
+        assertNull(asdcController.getDistributionClient());
+    }
+
+    @Test
+    public void failedInitReusesTheClientOnTheNextAttempt() throws Exception {
+        IDistributionClient client = mock(IDistributionClient.class);
+        IDistributionClientResult failure =
+                new DistributionClientResultImpl(DistributionActionResultEnum.FAIL, "SDC unavailable");
+        IDistributionClientResult success =
+                new DistributionClientResultImpl(DistributionActionResultEnum.SUCCESS, "SUCCESS");
+        when(client.init(any(IConfiguration.class), any(INotificationCallback.class), any(IStatusCallback.class)))
+                .thenReturn(failure, success);
+        when(client.start()).thenReturn(success);
+        when(client.stop()).thenReturn(success);
+        clientProvider.useNext(client);
+
+        assertThrows(ASDCControllerException.class, () -> asdcController.initASDC());
+        try {
+            asdcController.initASDC();
+            assertSame(client, asdcController.getDistributionClient());
         } finally {
             asdcController.closeASDC();
         }

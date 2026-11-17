@@ -22,7 +22,6 @@
 
 package org.onap.so.asdc;
 
-import java.security.SecureRandom;
 import jakarta.annotation.PreDestroy;
 import org.onap.so.asdc.client.ASDCController;
 import org.onap.so.asdc.client.exceptions.ASDCControllerException;
@@ -53,8 +52,6 @@ public class ASDCControllerSingleton {
     @Scheduled(fixedRate = 50000)
     public void periodicControllerTask() throws ScheduledTaskException {
         try {
-            final int randomNumber = new SecureRandom().nextInt(Integer.MAX_VALUE);
-            asdcController.setControllerName("mso-controller" + randomNumber);
             if (asdcController.isStopped()) {
                 logger.info("{} not running will try to initialize it, currrent status: {}",
                         asdcController.getClass().getName(), asdcController.getControllerStatus());

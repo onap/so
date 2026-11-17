@@ -75,6 +75,7 @@ import org.onap.so.asdc.CatalogSnapshot;
 import org.onap.so.asdc.client.exceptions.ASDCControllerException;
 import org.onap.so.asdc.client.test.emulators.ArtifactInfoImpl;
 import org.onap.so.asdc.client.test.emulators.DistributionClientEmulator;
+import org.onap.so.asdc.client.test.emulators.EmulatorDistributionClientProvider;
 import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
 import org.onap.so.asdc.client.test.emulators.ResourceInfoImpl;
 import org.onap.so.db.catalog.beans.PnfResource;
@@ -136,6 +137,9 @@ public class ASDCControllerITTest extends BaseTest {
     @Autowired
     private ASDCController asdcController;
 
+    @Autowired
+    private EmulatorDistributionClientProvider clientProvider;
+
     private static final String PNF_SERVICE_UUID = "77cf276e-905c-43f6-8d54-dda474be2f2e";
     private static final String PNF_SERVICE_INVARIANT_UUID = "913e6776-4bc3-49b9-b399-b5bb4690f0c7";
 
@@ -186,7 +190,7 @@ public class ASDCControllerITTest extends BaseTest {
 
         distributionClient = spy(new DistributionClientEmulator());
         distributionClient.setResourcePath("src/test/resources");
-        asdcController.setDistributionClient(distributionClient);
+        clientProvider.useNext(distributionClient);
         try {
             asdcController.initASDC();
         } catch (ASDCControllerException e) {

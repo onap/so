@@ -33,7 +33,6 @@ import org.onap.sdc.api.IDistributionClient;
 import org.onap.sdc.api.notification.INotificationData;
 import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.api.results.IDistributionClientResult;
-import org.onap.sdc.impl.DistributionClientFactory;
 import org.onap.sdc.api.results.DistributionActionResultEnum;
 import org.onap.sdc.api.notification.DistributionStatusEnum;
 import org.onap.so.asdc.activity.DeployActivitySpecs;
@@ -56,8 +55,6 @@ import org.springframework.stereotype.Component;
 public class ASDCController {
 
     protected static final Logger logger = LoggerFactory.getLogger(ASDCController.class);
-    protected boolean isAsdcClientAutoManaged = false;
-    protected String controllerName;
 
     private static final String UNKNOWN = "Unknown";
     private final ControllerState state = new ControllerState();
@@ -92,6 +89,9 @@ public class ASDCController {
     @Autowired
     private WatchdogStatusWaiter watchdogWaiter;
 
+    @Autowired
+    private DistributionClientProvider distributionClientProvider;
+
     private IDistributionClient distributionClient;
 
 
@@ -100,20 +100,6 @@ public class ASDCController {
 
     @Autowired
     DeployActivitySpecs deployActivitySpecs;
-
-    public ASDCController() {
-        this("");
-    }
-
-    public ASDCController(String controllerConfigName) {
-        isAsdcClientAutoManaged = true;
-        this.controllerName = controllerConfigName;
-    }
-
-    public ASDCController(String controllerConfigName, IDistributionClient asdcClient) {
-        distributionClient = asdcClient;
-        this.controllerName = controllerConfigName;
-    }
 
     public ASDCConfiguration getASDCConfiguration() {
         return asdcConfig;
@@ -127,24 +113,12 @@ public class ASDCController {
         return distributionClient;
     }
 
-    public void setDistributionClient(IDistributionClient distributionClient) {
-        this.distributionClient = distributionClient;
-    }
-
     protected void changeControllerStatus(ASDCControllerStatus newControllerStatus) {
         state.changeControllerStatus(newControllerStatus);
     }
 
     public ASDCControllerStatus getControllerStatus() {
         return state.getControllerStatus();
-    }
-
-    public String getControllerName() {
-        return controllerName;
-    }
-
-    public void setControllerName(String controllerName) {
-        this.controllerName = controllerName;
     }
 
     /**
@@ -161,12 +135,8 @@ public class ASDCController {
             throw new ASDCControllerException("The controller is already initialized, call the closeASDC method first");
         }
 
-        if (asdcConfig != null) {
-            asdcConfig.setAsdcControllerName(controllerName);
-        }
-
         if (this.distributionClient == null) {
-            distributionClient = DistributionClientFactory.createDistributionClient();
+            distributionClient = distributionClientProvider.create();
         }
 
         IDistributionClientResult result =
@@ -215,13 +185,7 @@ public class ASDCController {
         }
         if (this.distributionClient != null) {
             this.distributionClient.stop();
-            // If auto managed we can set it to Null, ASDCController controls it.
-            // In the other case the client of this class has specified it, so we can't reset it
-            if (isAsdcClientAutoManaged) {
-                // Next init will initialize it with a new ASDC Client
-                this.distributionClient = null;
-            }
-
+            this.distributionClient = null;
         }
         this.changeControllerStatus(ASDCControllerStatus.STOPPED);
     }
