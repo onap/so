@@ -38,11 +38,9 @@ import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
 import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
 import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
-import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.sdc.api.notification.DistributionStatusEnum;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
-import org.onap.so.asdc.installer.ASDCElementInfo;
 import org.onap.so.asdc.installer.BigDecimalVersion;
 import org.onap.so.asdc.installer.PnfResourceStructure;
 import org.onap.so.asdc.installer.ResourceStructure;
@@ -51,8 +49,6 @@ import org.onap.so.asdc.installer.VfResourceStructure;
 import org.onap.so.asdc.installer.bpmn.WorkflowResource;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ToscaCsar;
-import org.onap.so.db.catalog.data.repository.CollectionResourceCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.ExternalServiceToInternalServiceRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
@@ -65,7 +61,6 @@ import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,51 +69,44 @@ import org.springframework.transaction.annotation.Transactional;
 public class ToscaResourceInstaller {
 
     protected static final String MSO = "SO";
-
-    @Autowired
-    protected ServiceRepository serviceRepo;
-
-    @Autowired
-    protected CollectionResourceCustomizationRepository collectionCustomizationRepo;
-
-    @Autowired
-    protected WatchdogComponentDistributionStatusRepository watchdogCDStatusRepository;
-    @Autowired
-    protected WatchdogDistributionStatusRepository watchdogDistributionStatusRepository;
-    @Autowired
-    protected WatchdogServiceModVerIdLookupRepository watchdogModVerIdLookupRepository;
-
-    @Autowired
-    protected ExternalServiceToInternalServiceRepository externalServiceToInternalServiceRepository;
-
-    @Autowired
-    protected ToscaCsarRepository toscaCsarRepo;
-
-    @Autowired
-    protected PnfResourceInstaller pnfResourceInstaller;
-
-    @Autowired
-    protected AllottedResourceInstaller allottedResourceInstaller;
-
-    @Autowired
-    protected NetworkResourceInstaller networkResourceInstaller;
-
-    @Autowired
-    protected ConfigurationInstaller configurationInstaller;
-
-    @Autowired
-    protected HeatArtifactInstaller heatArtifactInstaller;
-
-    @Autowired
-    protected VnfResourceInstaller vnfResourceInstaller;
-
-    @Autowired
-    protected ServiceModelInstaller serviceModelInstaller;
-
-    @Autowired
-    protected WorkflowResource workflowResource;
-
     protected static final Logger logger = LoggerFactory.getLogger(ToscaResourceInstaller.class);
+
+    private final ServiceRepository serviceRepo;
+    private final WatchdogComponentDistributionStatusRepository watchdogCDStatusRepository;
+    private final WatchdogDistributionStatusRepository watchdogDistributionStatusRepository;
+    private final WatchdogServiceModVerIdLookupRepository watchdogModVerIdLookupRepository;
+    private final ToscaCsarRepository toscaCsarRepo;
+    private final PnfResourceInstaller pnfResourceInstaller;
+    private final AllottedResourceInstaller allottedResourceInstaller;
+    private final NetworkResourceInstaller networkResourceInstaller;
+    private final ConfigurationInstaller configurationInstaller;
+    private final HeatArtifactInstaller heatArtifactInstaller;
+    private final VnfResourceInstaller vnfResourceInstaller;
+    private final ServiceModelInstaller serviceModelInstaller;
+    private final WorkflowResource workflowResource;
+
+    public ToscaResourceInstaller(ServiceRepository serviceRepo,
+            WatchdogComponentDistributionStatusRepository watchdogCDStatusRepository,
+            WatchdogDistributionStatusRepository watchdogDistributionStatusRepository,
+            WatchdogServiceModVerIdLookupRepository watchdogModVerIdLookupRepository, ToscaCsarRepository toscaCsarRepo,
+            PnfResourceInstaller pnfResourceInstaller, AllottedResourceInstaller allottedResourceInstaller,
+            NetworkResourceInstaller networkResourceInstaller, ConfigurationInstaller configurationInstaller,
+            HeatArtifactInstaller heatArtifactInstaller, VnfResourceInstaller vnfResourceInstaller,
+            ServiceModelInstaller serviceModelInstaller, WorkflowResource workflowResource) {
+        this.serviceRepo = serviceRepo;
+        this.watchdogCDStatusRepository = watchdogCDStatusRepository;
+        this.watchdogDistributionStatusRepository = watchdogDistributionStatusRepository;
+        this.watchdogModVerIdLookupRepository = watchdogModVerIdLookupRepository;
+        this.toscaCsarRepo = toscaCsarRepo;
+        this.pnfResourceInstaller = pnfResourceInstaller;
+        this.allottedResourceInstaller = allottedResourceInstaller;
+        this.networkResourceInstaller = networkResourceInstaller;
+        this.configurationInstaller = configurationInstaller;
+        this.heatArtifactInstaller = heatArtifactInstaller;
+        this.vnfResourceInstaller = vnfResourceInstaller;
+        this.serviceModelInstaller = serviceModelInstaller;
+        this.workflowResource = workflowResource;
+    }
 
     public boolean isCsarAlreadyDeployed(ToscaResourceStructure toscaResourceStructure)
             throws ArtifactInstallerException {
@@ -221,9 +209,6 @@ public class ToscaResourceInstaller {
     private void installPnfResource(ToscaResourceStructure toscaResourceStruct, PnfResourceStructure resourceStruct)
             throws ArtifactInstallerException {
 
-        // PCLO: in case of deployment failure, use a string that will represent
-        // the type of artifact that failed...
-        List<ASDCElementInfo> artifactListForLogging = new ArrayList<>();
         try {
             serviceModelInstaller.createToscaCsar(toscaResourceStruct);
             Service service = serviceModelInstaller.createService(toscaResourceStruct, resourceStruct);
@@ -240,37 +225,7 @@ public class ToscaResourceInstaller {
             toscaResourceStruct.setSuccessfulDeployment();
 
         } catch (Exception e) {
-            logger.debug("Exception :", e);
-            WatchdogComponentDistributionStatus status =
-                    new WatchdogComponentDistributionStatus(resourceStruct.getNotification().getDistributionID(), MSO);
-            status.setComponentDistributionStatus(DistributionStatusEnum.COMPONENT_DONE_ERROR.name());
-            watchdogCDStatusRepository.save(status);
-            Throwable dbExceptionToCapture = e;
-            while (!(dbExceptionToCapture instanceof ConstraintViolationException
-                    || dbExceptionToCapture instanceof LockAcquisitionException)
-                    && (dbExceptionToCapture.getCause() != null)) {
-                dbExceptionToCapture = dbExceptionToCapture.getCause();
-            }
-
-            if (dbExceptionToCapture instanceof ConstraintViolationException
-                    || dbExceptionToCapture instanceof LockAcquisitionException) {
-                logger.warn(LoggingAnchor.FIVE, MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED.toString(),
-                        resourceStruct.getResourceInstance().getResourceName(),
-                        resourceStruct.getNotification().getServiceVersion(), ErrorCode.DataError.getValue(),
-                        "Exception - ASCDC Artifact already deployed", e);
-            } else {
-                String elementToLog = (!artifactListForLogging.isEmpty()
-                        ? artifactListForLogging.get(artifactListForLogging.size() - 1).toString()
-                        : "No element listed");
-                logger.error(LoggingAnchor.FOUR, MessageEnum.ASDC_ARTIFACT_INSTALL_EXC.toString(), elementToLog,
-                        ErrorCode.DataError.getValue(), "Exception caught during installation of "
-                                + resourceStruct.getResourceInstance().getResourceName() + ". Transaction rollback",
-                        e);
-                throw new ArtifactInstallerException(
-                        "Exception caught during installation of "
-                                + resourceStruct.getResourceInstance().getResourceName() + ". Transaction rollback.",
-                        e);
-            }
+            handleInstallFailure(e, resourceStruct);
         }
     }
 
@@ -280,9 +235,6 @@ public class ToscaResourceInstaller {
         VfResourceStructure vfResourceStructure = vfResourceStruct;
         heatArtifactInstaller.extractHeatInformation(toscaResourceStruct, vfResourceStructure);
 
-        // PCLO: in case of deployment failure, use a string that will represent
-        // the type of artifact that failed...
-        List<ASDCElementInfo> artifactListForLogging = new ArrayList<>();
         try {
             serviceModelInstaller.createToscaCsar(toscaResourceStruct);
             serviceModelInstaller.createService(toscaResourceStruct, vfResourceStruct);
@@ -310,9 +262,7 @@ public class ToscaResourceInstaller {
             serviceModelInstaller.processResourceSequence(toscaResourceStruct, service);
             allottedResourceInstaller.processAllottedResources(arEntityDetails, toscaResourceStruct, service);
             networkResourceInstaller.processNetworks(toscaResourceStruct, service);
-            // process Network Collections
             networkResourceInstaller.processNetworkCollections(toscaResourceStruct, service);
-            // Process Service Proxy & Configuration
             configurationInstaller.processServiceProxyAndConfiguration(toscaResourceStruct, service);
 
             logger.info("Saving Service: {} ", service.getModelName());
@@ -329,37 +279,7 @@ public class ToscaResourceInstaller {
             toscaResourceStruct.setSuccessfulDeployment();
 
         } catch (Exception e) {
-            logger.debug("Exception :", e);
-            WatchdogComponentDistributionStatus status = new WatchdogComponentDistributionStatus(
-                    vfResourceStruct.getNotification().getDistributionID(), MSO);
-            status.setComponentDistributionStatus(DistributionStatusEnum.COMPONENT_DONE_ERROR.name());
-            watchdogCDStatusRepository.save(status);
-            Throwable dbExceptionToCapture = e;
-            while (!(dbExceptionToCapture instanceof ConstraintViolationException
-                    || dbExceptionToCapture instanceof LockAcquisitionException)
-                    && (dbExceptionToCapture.getCause() != null)) {
-                dbExceptionToCapture = dbExceptionToCapture.getCause();
-            }
-
-            if (dbExceptionToCapture instanceof ConstraintViolationException
-                    || dbExceptionToCapture instanceof LockAcquisitionException) {
-                logger.warn(LoggingAnchor.FIVE, MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED.toString(),
-                        vfResourceStructure.getResourceInstance().getResourceName(),
-                        vfResourceStructure.getNotification().getServiceVersion(), ErrorCode.DataError.getValue(),
-                        "Exception - ASCDC Artifact already deployed", e);
-            } else {
-                String elementToLog = (!artifactListForLogging.isEmpty()
-                        ? artifactListForLogging.get(artifactListForLogging.size() - 1).toString()
-                        : "No element listed");
-                logger.error(LoggingAnchor.FOUR, MessageEnum.ASDC_ARTIFACT_INSTALL_EXC.toString(), elementToLog,
-                        ErrorCode.DataError.getValue(),
-                        "Exception caught during installation of "
-                                + vfResourceStructure.getResourceInstance().getResourceName()
-                                + ". Transaction rollback",
-                        e);
-                throw new ArtifactInstallerException("Exception caught during installation of "
-                        + vfResourceStructure.getResourceInstance().getResourceName() + ". Transaction rollback.", e);
-            }
+            handleInstallFailure(e, vfResourceStruct);
         }
     }
 
@@ -390,5 +310,34 @@ public class ToscaResourceInstaller {
         serviceModelInstaller.createServiceInfo(toscaResourceStruct, service);
         serviceModelInstaller.createServiceArtifact(service, vfResourceStruct, artifactContent);
         serviceRepo.save(service);
+    }
+
+    private void handleInstallFailure(Exception e, ResourceStructure resourceStruct) throws ArtifactInstallerException {
+        logger.debug("Exception :", e);
+        WatchdogComponentDistributionStatus status =
+                new WatchdogComponentDistributionStatus(resourceStruct.getNotification().getDistributionID(), MSO);
+        status.setComponentDistributionStatus(DistributionStatusEnum.COMPONENT_DONE_ERROR.name());
+        watchdogCDStatusRepository.save(status);
+        Throwable dbExceptionToCapture = e;
+        while (!(dbExceptionToCapture instanceof ConstraintViolationException
+                || dbExceptionToCapture instanceof LockAcquisitionException)
+                && (dbExceptionToCapture.getCause() != null)) {
+            dbExceptionToCapture = dbExceptionToCapture.getCause();
+        }
+
+        if (dbExceptionToCapture instanceof ConstraintViolationException
+                || dbExceptionToCapture instanceof LockAcquisitionException) {
+            logger.warn(LoggingAnchor.FIVE, MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED.toString(),
+                    resourceStruct.getResourceInstance().getResourceName(),
+                    resourceStruct.getNotification().getServiceVersion(), ErrorCode.DataError.getValue(),
+                    "Exception - ASCDC Artifact already deployed", e);
+        } else {
+            logger.error(LoggingAnchor.FOUR, MessageEnum.ASDC_ARTIFACT_INSTALL_EXC.toString(), "No element listed",
+                    ErrorCode.DataError.getValue(), "Exception caught during installation of "
+                            + resourceStruct.getResourceInstance().getResourceName() + ". Transaction rollback",
+                    e);
+            throw new ArtifactInstallerException("Exception caught during installation of "
+                    + resourceStruct.getResourceInstance().getResourceName() + ". Transaction rollback.", e);
+        }
     }
 }

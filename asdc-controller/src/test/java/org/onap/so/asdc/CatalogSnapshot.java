@@ -39,6 +39,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Pins the CatalogDB rows each test distribution writes. The expected rows live in
+ * {@code src/test/resources/golden/catalog/<name>.txt}; run the tests with {@code -DupdateGolden=true} to regenerate
+ * them after an intended change.
+ */
 public final class CatalogSnapshot {
 
     private static final Path GOLDEN_DIR = Paths.get("src/test/resources/golden/catalog");
@@ -124,6 +129,9 @@ public final class CatalogSnapshot {
             return;
         }
         String expected = new String(Files.readAllBytes(golden), StandardCharsets.UTF_8);
-        assertEquals("Catalog rows for '" + name + "' changed", expected, actual.toString());
+        assertEquals(
+                "Catalog rows for '" + name
+                        + "' changed; if the change is intended, regenerate with -DupdateGolden=true",
+                expected, actual.toString());
     }
 }
