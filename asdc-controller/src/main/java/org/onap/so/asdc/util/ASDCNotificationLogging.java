@@ -36,7 +36,7 @@ import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.so.asdc.installer.IVfModuleData;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.asdc.installer.VfModuleMetaData;
-import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
+import org.onap.so.asdc.installer.heat.ToscaEntityHelper;
 
 public class ASDCNotificationLogging {
 
@@ -65,7 +65,6 @@ public class ASDCNotificationLogging {
             return "NULL";
         }
 
-        ToscaResourceInstaller toscaResourceInstaller = new ToscaResourceInstaller();
         StringBuilder buffer = new StringBuilder("CSAR Notification:");
         buffer.append(System.lineSeparator());
         buffer.append(System.lineSeparator());
@@ -105,7 +104,7 @@ public class ASDCNotificationLogging {
         buffer.append(System.lineSeparator());
 
 
-        List<IEntityDetails> serviceProxyResourceList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+        List<IEntityDetails> serviceProxyResourceList = ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                 EntityQuery.newBuilder(SdcTypes.SERVICE_PROXY), TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE),
                 true);
 
@@ -159,7 +158,7 @@ public class ASDCNotificationLogging {
             }
         }
 
-        List<IEntityDetails> configurationList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+        List<IEntityDetails> configurationList = ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                 EntityQuery.newBuilder(SdcTypes.CONFIGURATION), TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE),
                 true);
 
@@ -201,22 +200,22 @@ public class ASDCNotificationLogging {
                 buffer.append(configEntity.getName());
                 buffer.append(System.lineSeparator());
                 buffer.append("NFFunction:");
-                buffer.append(toscaResourceInstaller.getLeafPropertyValue(configEntity,
+                buffer.append(ToscaEntityHelper.getLeafPropertyValue(configEntity,
                         SdcPropertyNames.PROPERTY_NAME_NFFUNCTION));
                 buffer.append(System.lineSeparator());
                 buffer.append("NFRole:");
-                buffer.append(toscaResourceInstaller.getLeafPropertyValue(configEntity,
-                        SdcPropertyNames.PROPERTY_NAME_NFROLE));
+                buffer.append(
+                        ToscaEntityHelper.getLeafPropertyValue(configEntity, SdcPropertyNames.PROPERTY_NAME_NFROLE));
                 buffer.append(System.lineSeparator());
                 buffer.append("NFType:");
-                buffer.append(toscaResourceInstaller.getLeafPropertyValue(configEntity,
-                        SdcPropertyNames.PROPERTY_NAME_NFTYPE));
+                buffer.append(
+                        ToscaEntityHelper.getLeafPropertyValue(configEntity, SdcPropertyNames.PROPERTY_NAME_NFTYPE));
                 buffer.append(System.lineSeparator());
 
             }
         }
 
-        List<IEntityDetails> vfEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+        List<IEntityDetails> vfEntityList = ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                 EntityQuery.newBuilder(SdcTypes.VF), TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
 
 
@@ -262,24 +261,23 @@ public class ASDCNotificationLogging {
             buffer.append(testNull(vfEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)));
             buffer.append(System.lineSeparator());
             buffer.append("NFFunction:");
-            buffer.append(
-                    toscaResourceInstaller.getLeafPropertyValue(vfEntity, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION));
+            buffer.append(ToscaEntityHelper.getLeafPropertyValue(vfEntity, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION));
             buffer.append(System.lineSeparator());
             buffer.append("NFCode:");
-            buffer.append(toscaResourceInstaller.getLeafPropertyValue(vfEntity, "nf_naming_code"));
+            buffer.append(ToscaEntityHelper.getLeafPropertyValue(vfEntity, "nf_naming_code"));
             buffer.append(System.lineSeparator());
             buffer.append("NFRole:");
-            buffer.append(toscaResourceInstaller.getLeafPropertyValue(vfEntity, SdcPropertyNames.PROPERTY_NAME_NFROLE));
+            buffer.append(ToscaEntityHelper.getLeafPropertyValue(vfEntity, SdcPropertyNames.PROPERTY_NAME_NFROLE));
             buffer.append(System.lineSeparator());
             buffer.append("NFType:");
-            buffer.append(toscaResourceInstaller.getLeafPropertyValue(vfEntity, SdcPropertyNames.PROPERTY_NAME_NFTYPE));
+            buffer.append(ToscaEntityHelper.getLeafPropertyValue(vfEntity, SdcPropertyNames.PROPERTY_NAME_NFTYPE));
             buffer.append(System.lineSeparator());
             buffer.append("MultiStageDesign:");
-            buffer.append(toscaResourceInstaller.getLeafPropertyValue(vfEntity, "multi_stage_design"));
+            buffer.append(ToscaEntityHelper.getLeafPropertyValue(vfEntity, "multi_stage_design"));
             buffer.append(System.lineSeparator());
 
 
-            List<IEntityDetails> vfcInstanceEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+            List<IEntityDetails> vfcInstanceEntityList = ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                     EntityQuery.newBuilder("org.openecomp.groups.VfcInstanceGroup"),
                     TopologyTemplateQuery.newBuilder(SdcTypes.VF)
                             .customizationUUID(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID),
@@ -310,7 +308,7 @@ public class ASDCNotificationLogging {
 
             }
 
-            List<IEntityDetails> vfModuleEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+            List<IEntityDetails> vfModuleEntityList = ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                     EntityQuery.newBuilder("org.openecomp.groups.VfModule"),
                     TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE)
                             .customizationUUID(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID),
@@ -341,7 +339,7 @@ public class ASDCNotificationLogging {
                 buffer.append(testNull(vfMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
                 buffer.append(System.lineSeparator());
 
-                List<IEntityDetails> groupMembers = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+                List<IEntityDetails> groupMembers = ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                         EntityQuery.newBuilder("org.openecomp.groups.VfModule")
                                 .uUID(SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID),
                         TopologyTemplateQuery.newBuilder(SdcTypes.VF), false);
@@ -356,13 +354,13 @@ public class ASDCNotificationLogging {
                 buffer.append("VF Module Customization Properties:");
                 buffer.append(System.lineSeparator());
                 buffer.append("Model Customization UUID:");
-                buffer.append(testNull(toscaResourceInstaller.getLeafPropertyValue(vfModuleEntity,
+                buffer.append(testNull(ToscaEntityHelper.getLeafPropertyValue(vfModuleEntity,
                         SdcPropertyNames.PROPERTY_NAME_VFMODULECUSTOMIZATIONUUID)));
                 buffer.append(System.lineSeparator());
 
             }
 
-            List<IEntityDetails> fabricEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+            List<IEntityDetails> fabricEntityList = ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                     EntityQuery.newBuilder(SdcTypes.CONFIGURATION), TopologyTemplateQuery.newBuilder(SdcTypes.VF),
                     false);
 
@@ -405,22 +403,22 @@ public class ASDCNotificationLogging {
                     buffer.append(configEntity.getName());
                     buffer.append(System.lineSeparator());
                     buffer.append("NFFunction:");
-                    buffer.append(toscaResourceInstaller.getLeafPropertyValue(configEntity,
+                    buffer.append(ToscaEntityHelper.getLeafPropertyValue(configEntity,
                             SdcPropertyNames.PROPERTY_NAME_NFFUNCTION));
                     buffer.append(System.lineSeparator());
                     buffer.append("NFRole:");
-                    buffer.append(toscaResourceInstaller.getLeafPropertyValue(configEntity,
+                    buffer.append(ToscaEntityHelper.getLeafPropertyValue(configEntity,
                             SdcPropertyNames.PROPERTY_NAME_NFROLE));
                     buffer.append(System.lineSeparator());
                     buffer.append("NFType:");
-                    buffer.append(toscaResourceInstaller.getLeafPropertyValue(configEntity,
+                    buffer.append(ToscaEntityHelper.getLeafPropertyValue(configEntity,
                             SdcPropertyNames.PROPERTY_NAME_NFTYPE));
                     buffer.append(System.lineSeparator());
 
                 }
             }
 
-            List<IEntityDetails> cvnfcEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+            List<IEntityDetails> cvnfcEntityList = ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                     EntityQuery.newBuilder(SdcTypes.CVFC), TopologyTemplateQuery.newBuilder(SdcTypes.VF), false);
 
             for (IEntityDetails cvnfcEntity : cvnfcEntityList) {
@@ -453,7 +451,7 @@ public class ASDCNotificationLogging {
                 buffer.append(testNull(cvnfcEntity.getName()));
                 buffer.append(System.lineSeparator());
 
-                List<IEntityDetails> vfcEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+                List<IEntityDetails> vfcEntityList = ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                         EntityQuery.newBuilder(SdcTypes.VFC),
                         TopologyTemplateQuery.newBuilder(SdcTypes.CVFC).customizationUUID(
                                 cvnfcEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)),
@@ -496,7 +494,7 @@ public class ASDCNotificationLogging {
 
         }
 
-        List<IEntityDetails> vlEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+        List<IEntityDetails> vlEntityList = ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                 EntityQuery.newBuilder(SdcTypes.VL), TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
 
         if (vlEntityList != null) {
@@ -540,27 +538,27 @@ public class ASDCNotificationLogging {
                 buffer.append(vlEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
                 buffer.append(System.lineSeparator());
                 buffer.append("Network Technology:");
-                buffer.append(toscaResourceInstaller.getLeafPropertyValue(vlEntity,
+                buffer.append(ToscaEntityHelper.getLeafPropertyValue(vlEntity,
                         SdcPropertyNames.PROPERTY_NAME_NETWORKTECHNOLOGY));
                 buffer.append(System.lineSeparator());
                 buffer.append("Network Type:");
-                buffer.append(toscaResourceInstaller.getLeafPropertyValue(vlEntity,
-                        SdcPropertyNames.PROPERTY_NAME_NETWORKTYPE));
+                buffer.append(
+                        ToscaEntityHelper.getLeafPropertyValue(vlEntity, SdcPropertyNames.PROPERTY_NAME_NETWORKTYPE));
                 buffer.append(System.lineSeparator());
                 buffer.append("Network Role:");
-                buffer.append(toscaResourceInstaller.getLeafPropertyValue(vlEntity,
-                        SdcPropertyNames.PROPERTY_NAME_NETWORKROLE));
+                buffer.append(
+                        ToscaEntityHelper.getLeafPropertyValue(vlEntity, SdcPropertyNames.PROPERTY_NAME_NETWORKROLE));
                 buffer.append(System.lineSeparator());
                 buffer.append("Network Scope:");
-                buffer.append(toscaResourceInstaller.getLeafPropertyValue(vlEntity,
-                        SdcPropertyNames.PROPERTY_NAME_NETWORKSCOPE));
+                buffer.append(
+                        ToscaEntityHelper.getLeafPropertyValue(vlEntity, SdcPropertyNames.PROPERTY_NAME_NETWORKSCOPE));
                 buffer.append(System.lineSeparator());
 
             }
 
         }
 
-        List<IEntityDetails> crEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+        List<IEntityDetails> crEntityList = ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                 EntityQuery.newBuilder(SdcTypes.CR), TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
 
         if (crEntityList != null) {
@@ -590,16 +588,16 @@ public class ASDCNotificationLogging {
                 buffer.append(crEntity.getToscaType());
                 buffer.append(System.lineSeparator());
                 buffer.append("CR Function:");
-                buffer.append(toscaResourceInstaller.getLeafPropertyValue(crEntity, "cr_function"));
+                buffer.append(ToscaEntityHelper.getLeafPropertyValue(crEntity, "cr_function"));
                 buffer.append(System.lineSeparator());
                 buffer.append("CR Role:");
-                buffer.append(toscaResourceInstaller.getLeafPropertyValue(crEntity, "cr_role"));
+                buffer.append(ToscaEntityHelper.getLeafPropertyValue(crEntity, "cr_role"));
                 buffer.append(System.lineSeparator());
                 buffer.append("CR Type:");
-                buffer.append(toscaResourceInstaller.getLeafPropertyValue(crEntity, "cr_type"));
+                buffer.append(ToscaEntityHelper.getLeafPropertyValue(crEntity, "cr_type"));
                 buffer.append(System.lineSeparator());
 
-                List<IEntityDetails> networkEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+                List<IEntityDetails> networkEntityList = ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                         EntityQuery.newBuilder(SdcTypes.VL),
                         TopologyTemplateQuery.newBuilder(SdcTypes.CR).customizationUUID(
                                 crEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)),
@@ -639,7 +637,7 @@ public class ASDCNotificationLogging {
 
                 }
 
-                List<IEntityDetails> ncEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+                List<IEntityDetails> ncEntityList = ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                         EntityQuery.newBuilder("org.openecomp.groups.NetworkCollection"),
                         TopologyTemplateQuery.newBuilder(SdcTypes.CR).customizationUUID(
                                 crEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)),
@@ -680,26 +678,26 @@ public class ASDCNotificationLogging {
                 buffer.append(crEntity.getName());
                 buffer.append(System.lineSeparator());
                 buffer.append("Network Scope:");
-                buffer.append(toscaResourceInstaller.getLeafPropertyValue(crEntity,
-                        SdcPropertyNames.PROPERTY_NAME_NETWORKSCOPE));
+                buffer.append(
+                        ToscaEntityHelper.getLeafPropertyValue(crEntity, SdcPropertyNames.PROPERTY_NAME_NETWORKSCOPE));
                 buffer.append(System.lineSeparator());
                 buffer.append("Network Role:");
-                buffer.append(toscaResourceInstaller.getLeafPropertyValue(crEntity,
-                        SdcPropertyNames.PROPERTY_NAME_NETWORKROLE));
+                buffer.append(
+                        ToscaEntityHelper.getLeafPropertyValue(crEntity, SdcPropertyNames.PROPERTY_NAME_NETWORKROLE));
                 buffer.append(System.lineSeparator());
                 buffer.append("Network Type:");
-                buffer.append(toscaResourceInstaller.getLeafPropertyValue(crEntity,
-                        SdcPropertyNames.PROPERTY_NAME_NETWORKTYPE));
+                buffer.append(
+                        ToscaEntityHelper.getLeafPropertyValue(crEntity, SdcPropertyNames.PROPERTY_NAME_NETWORKTYPE));
                 buffer.append(System.lineSeparator());
                 buffer.append("Network Technology:");
-                buffer.append(toscaResourceInstaller.getLeafPropertyValue(crEntity,
+                buffer.append(ToscaEntityHelper.getLeafPropertyValue(crEntity,
                         SdcPropertyNames.PROPERTY_NAME_NETWORKTECHNOLOGY));
                 buffer.append(System.lineSeparator());
 
             }
         }
 
-        List<IEntityDetails> arEntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+        List<IEntityDetails> arEntityList = ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                 EntityQuery.newBuilder(SdcTypes.VF), TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
 
         if (arEntityList != null) {
@@ -754,26 +752,26 @@ public class ASDCNotificationLogging {
                             arEntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)));
                     buffer.append(System.lineSeparator());
                     buffer.append("NFFunction:");
-                    buffer.append(toscaResourceInstaller.getLeafPropertyValue(arEntity,
+                    buffer.append(ToscaEntityHelper.getLeafPropertyValue(arEntity,
                             SdcPropertyNames.PROPERTY_NAME_NFFUNCTION));
                     buffer.append(System.lineSeparator());
                     buffer.append("NFCode:");
-                    buffer.append(toscaResourceInstaller.getLeafPropertyValue(arEntity, "nf_naming_code"));
+                    buffer.append(ToscaEntityHelper.getLeafPropertyValue(arEntity, "nf_naming_code"));
                     buffer.append(System.lineSeparator());
                     buffer.append("NFRole:");
-                    buffer.append(toscaResourceInstaller.getLeafPropertyValue(arEntity,
-                            SdcPropertyNames.PROPERTY_NAME_NFROLE));
+                    buffer.append(
+                            ToscaEntityHelper.getLeafPropertyValue(arEntity, SdcPropertyNames.PROPERTY_NAME_NFROLE));
                     buffer.append(System.lineSeparator());
                     buffer.append("NFType:");
-                    buffer.append(toscaResourceInstaller.getLeafPropertyValue(arEntity,
-                            SdcPropertyNames.PROPERTY_NAME_NFTYPE));
+                    buffer.append(
+                            ToscaEntityHelper.getLeafPropertyValue(arEntity, SdcPropertyNames.PROPERTY_NAME_NFTYPE));
                     buffer.append(System.lineSeparator());
                 }
 
             }
         }
 
-        List<IEntityDetails> pnfAREntityList = toscaResourceInstaller.getEntityDetails(toscaResourceStructure,
+        List<IEntityDetails> pnfAREntityList = ToscaEntityHelper.getEntityDetails(toscaResourceStructure,
                 EntityQuery.newBuilder(SdcTypes.PNF), TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE), false);
 
         if (pnfAREntityList != null) {
@@ -827,19 +825,19 @@ public class ASDCNotificationLogging {
                             pnfAREntity.getMetadata().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)));
                     buffer.append(System.lineSeparator());
                     buffer.append("NFFunction:");
-                    buffer.append(toscaResourceInstaller.getLeafPropertyValue(pnfAREntity,
+                    buffer.append(ToscaEntityHelper.getLeafPropertyValue(pnfAREntity,
                             SdcPropertyNames.PROPERTY_NAME_NFFUNCTION));
                     buffer.append(System.lineSeparator());
                     buffer.append("NFCode:");
-                    buffer.append(toscaResourceInstaller.getLeafPropertyValue(pnfAREntity, "nf_naming_code"));
+                    buffer.append(ToscaEntityHelper.getLeafPropertyValue(pnfAREntity, "nf_naming_code"));
                     buffer.append(System.lineSeparator());
                     buffer.append("NFRole:");
-                    buffer.append(toscaResourceInstaller.getLeafPropertyValue(pnfAREntity,
-                            SdcPropertyNames.PROPERTY_NAME_NFROLE));
+                    buffer.append(
+                            ToscaEntityHelper.getLeafPropertyValue(pnfAREntity, SdcPropertyNames.PROPERTY_NAME_NFROLE));
                     buffer.append(System.lineSeparator());
                     buffer.append("NFType:");
-                    buffer.append(toscaResourceInstaller.getLeafPropertyValue(pnfAREntity,
-                            SdcPropertyNames.PROPERTY_NAME_NFTYPE));
+                    buffer.append(
+                            ToscaEntityHelper.getLeafPropertyValue(pnfAREntity, SdcPropertyNames.PROPERTY_NAME_NFTYPE));
                     buffer.append(System.lineSeparator());
                 }
 
