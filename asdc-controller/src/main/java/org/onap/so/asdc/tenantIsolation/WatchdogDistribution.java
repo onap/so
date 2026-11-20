@@ -5,6 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,12 +78,7 @@ public class WatchdogDistribution {
         String status = null;
         try {
             WatchdogDistributionStatus watchdogDistributionStatus =
-                    watchdogDistributionStatusRepository.findById(distributionId).orElseGet(() -> null);
-            if (watchdogDistributionStatus == null) {
-                watchdogDistributionStatus = new WatchdogDistributionStatus();
-                watchdogDistributionStatus.setDistributionId(distributionId);
-                watchdogDistributionStatusRepository.save(watchdogDistributionStatus);
-            }
+                    watchdogDistributionStatusRepository.findOrCreate(distributionId);
             String distributionStatus = watchdogDistributionStatus.getDistributionIdStatus();
 
             if (DistributionStatus.TIMEOUT.name().equalsIgnoreCase(distributionStatus)) {

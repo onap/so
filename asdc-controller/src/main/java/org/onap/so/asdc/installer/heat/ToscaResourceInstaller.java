@@ -6,6 +6,7 @@
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +53,6 @@ import org.onap.so.db.catalog.beans.ToscaCsar;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
-import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogServiceModVerIdLookup;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.onap.so.db.request.data.repository.WatchdogDistributionStatusRepository;
@@ -61,7 +61,6 @@ import org.onap.so.logger.LoggingAnchor;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -289,16 +288,7 @@ public class ToscaResourceInstaller {
         WatchdogServiceModVerIdLookup modVerIdLookup =
                 new WatchdogServiceModVerIdLookup(distributionId, servideUUID, distributionNotification, consumerId);
         watchdogModVerIdLookupRepository.saveAndFlush(modVerIdLookup);
-
-        try {
-
-            WatchdogDistributionStatus distributionStatus = new WatchdogDistributionStatus(distributionId);
-            watchdogDistributionStatusRepository.saveAndFlush(distributionStatus);
-
-        } catch (ObjectOptimisticLockingFailureException e) {
-            logger.debug("ObjectOptimisticLockingFailureException in processWatchdog : {} ", e);
-            throw e;
-        }
+        watchdogDistributionStatusRepository.findOrCreate(distributionId);
     }
 
     @Transactional(rollbackFor = {ArtifactInstallerException.class})

@@ -7,6 +7,7 @@
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Modifications Copyright (c) 2020 Nokia
+ * Modifications Copyright (C) 2026 Deutsche Telekom AG.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +30,6 @@ import org.onap.sdc.api.notification.IStatusData;
 import org.onap.sdc.api.notification.DistributionStatusEnum;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
-import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogDistributionStatusRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,13 +63,7 @@ public final class ASDCStatusCallBack implements IStatusCallback {
                 logger.info("Status is not 'Component Done OK' or 'Component Done Error'");
                 return;
             }
-            WatchdogDistributionStatus watchdogDistributionStatus =
-                    watchdogDistributionStatusRepository.findById(iStatus.getDistributionID()).orElseGet(() -> null);
-            if (watchdogDistributionStatus == null) {
-                watchdogDistributionStatus = new WatchdogDistributionStatus();
-                watchdogDistributionStatus.setDistributionId(iStatus.getDistributionID());
-                watchdogDistributionStatusRepository.save(watchdogDistributionStatus);
-            }
+            watchdogDistributionStatusRepository.findOrCreate(iStatus.getDistributionID());
             logger.debug(event);
             toscaInstaller.installTheComponentStatus(iStatus);
 
